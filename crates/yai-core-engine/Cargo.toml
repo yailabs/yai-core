@@ -1,0 +1,8 @@
+[package]
+name = "yai-core-engine"
+version = "0.0.0-newcore"
+edition = "2021"
+
+[lib]
+name = "yai_core_engine"
+path = "src/lib.rs"

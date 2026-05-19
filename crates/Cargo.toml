@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "yai-ctl",
+    "yai-core-engine",
+    "yai-core-engine-sys",
+]
+resolver = "2"

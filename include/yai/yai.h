@@ -1,0 +1,18 @@
+#ifndef YAI_H
+#define YAI_H
+
+#define YAI_CORE_VERSION "0.0.0-newcore"
+
+#include "yai/base/error.h"
+#include "yai/base/id.h"
+#include "yai/case/case_ref.h"
+#include "yai/control/decision.h"
+#include "yai/effect/receipt.h"
+#include "yai/op/attempt.h"
+#include "yai/projection/projection.h"
+#include "yai/store/journal.h"
+#include "yai/store/record.h"
+#include "yai/subject/subject_binding.h"
+#include "yai/subject/subject_ref.h"
+
+#endif

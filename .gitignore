@@ -1,0 +1,8 @@
+build/
+crates/target/
+
+*.o
+*.a
+*.d
+
+.DS_Store
