@@ -1,4 +1,7 @@
 use crate::record::Record;
+use std::fs;
+use std::io;
+use std::path::Path;
 
 #[derive(Default)]
 pub struct Journal {
@@ -22,5 +25,20 @@ impl Journal {
 
     pub fn records(&self) -> &[Record] {
         &self.records
+    }
+
+    pub fn from_jsonl_str(contents: &str) -> Self {
+        let mut journal = Self::new();
+        for line in contents.lines() {
+            if let Some(record) = Record::from_jsonl(line) {
+                journal.append(record);
+            }
+        }
+        journal
+    }
+
+    pub fn load_jsonl(path: impl AsRef<Path>) -> io::Result<Self> {
+        let contents = fs::read_to_string(path)?;
+        Ok(Self::from_jsonl_str(&contents))
     }
 }

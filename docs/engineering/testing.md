@@ -44,6 +44,25 @@ append store record
 query projection
 ```
 
+## NEW.2 Persistent Loop
+
+```text
+open case
+bind subject
+submit op attempt
+control decision
+receipt
+append store record
+write JSONL journal
+reload journal records
+reconstruct subject state
+build projection from reloaded records
+```
+
+`tests/smoke/persistent-journal/test_persistent_journal.c` proves that the
+minimum loop survives outside the process. Generated journal files live under
+`build/tmp/` and must remain ignored build artifacts.
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

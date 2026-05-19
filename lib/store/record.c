@@ -1,6 +1,7 @@
 #include "yai/store/record.h"
 
 #include <stddef.h>
+#include <string.h>
 
 void yai_copy_string(char *dst, size_t dst_size, const char *src);
 
@@ -67,4 +68,29 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
     default:
         return "unknown";
     }
+}
+
+yai_status_t yai_record_kind_from_string(const char *value,
+                                         yai_record_kind_t *kind) {
+    if (value == 0 || kind == 0) {
+        return YAI_ERR_INVALID;
+    }
+
+    if (strcmp(value, "case") == 0) {
+        *kind = YAI_RECORD_CASE;
+    } else if (strcmp(value, "subject_binding") == 0) {
+        *kind = YAI_RECORD_SUBJECT_BINDING;
+    } else if (strcmp(value, "attempt") == 0) {
+        *kind = YAI_RECORD_ATTEMPT;
+    } else if (strcmp(value, "decision") == 0) {
+        *kind = YAI_RECORD_DECISION;
+    } else if (strcmp(value, "receipt") == 0) {
+        *kind = YAI_RECORD_RECEIPT;
+    } else if (strcmp(value, "projection") == 0) {
+        *kind = YAI_RECORD_PROJECTION;
+    } else {
+        return YAI_ERR_INVALID;
+    }
+
+    return YAI_OK;
 }

@@ -280,6 +280,43 @@ conflicted
 State is always time-bound. Stale state must be marked stale instead of reused
 as current truth.
 
+### NEW.2 Subject State V0
+
+NEW.2 implements a smaller C state object for reconstruction from persisted
+records:
+
+```text
+subject_ref
+case_ref
+state_kind
+last_receipt_id
+last_decision_id
+last_observed_at
+summary
+```
+
+Initial state kinds:
+
+```text
+bound
+observed
+controlled
+lost
+conflicted
+unknown
+```
+
+Only `bound` and `observed` are exercised in NEW.2. The reconstruction rules
+are:
+
+```text
+subject_binding record -> state_kind = bound
+receipt record         -> state_kind = observed, last_receipt_id updated
+```
+
+This state is still residue-based. It is the latest YAI-known posture from the
+journal, not complete external truth about the subject.
+
 ## 11. Subject Policy Scope
 
 Policy can attach to:

@@ -36,5 +36,7 @@ yai_status_t yai_store_record_init(yai_store_record_t *record,
                                    const yai_id_t *receipt_id,
                                    const char *summary);
 const char *yai_record_kind_string(yai_record_kind_t kind);
+yai_status_t yai_record_kind_from_string(const char *value,
+                                         yai_record_kind_t *kind);
 
 #endif

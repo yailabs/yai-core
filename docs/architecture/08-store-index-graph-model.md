@@ -19,6 +19,31 @@ backend abstraction
 
 Store does not own semantic truth.
 
+## NEW.2 Store V0
+
+The first persistent store path is intentionally narrow:
+
+```text
+build/tmp/new2/journal.jsonl
+```
+
+Each line is a `yai.store.record.v0` JSON object produced by the C record codec
+and loaded back into the C in-memory journal. This is not yet the stable user
+layout, not a multi-case store and not the Rust production backend.
+
+NEW.2 store guarantees:
+
+```text
+append-only file journal
+record serialization/deserialization for known v0 fields
+receipt linkage through attempt_id, decision_id and receipt_id
+projection derived from reloaded records
+subject state reconstructed from records
+```
+
+NEW.2 explicitly does not implement locking, encryption, indexing, graph
+traversal or memory consolidation.
+
 ## Index
 
 Index owns technical retrieval structures:

@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -12,23 +12,27 @@ C_SOURCES := \
 	lib/case/case_ref.c \
 	lib/subject/subject_ref.c \
 	lib/subject/subject_binding.c \
+	lib/subject/subject_state.c \
 	lib/op/attempt.c \
 	lib/control/decision.c \
 	lib/effect/receipt.c \
 	lib/store/record.c \
 	lib/store/journal.c \
+	lib/store/record_codec.c \
+	lib/store/journal_file.c \
 	lib/projection/projection.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new1.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new2.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
+SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
 
 info:
-	@printf "yai-core: new core minimum loop\n"
-	@printf "status: NEW.1\n"
+	@printf "yai-core: persistent journal and subject state\n"
+	@printf "status: NEW.2\n"
 	@printf "ctl: Rust yaictl\n"
-	@printf "engine: Rust operational data skeleton\n"
+	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh
@@ -56,7 +60,11 @@ $(SMOKE_MINIMUM_LOOP): tests/smoke/minimum-loop/test_minimum_loop.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/minimum-loop/test_minimum_loop.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP)
+$(SMOKE_PERSISTENT_JOURNAL): tests/smoke/persistent-journal/test_persistent_journal.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/persistent-journal/test_persistent_journal.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -64,8 +72,13 @@ build-rust:
 
 build: build-c build-rust
 
-smoke: $(SMOKE_MINIMUM_LOOP)
+smoke-new1: $(SMOKE_MINIMUM_LOOP)
 	@$(SMOKE_MINIMUM_LOOP)
+
+smoke-new2: $(SMOKE_PERSISTENT_JOURNAL)
+	@$(SMOKE_PERSISTENT_JOURNAL)
+
+smoke: smoke-new1 smoke-new2
 
 check: check-layout check-docs build smoke
 

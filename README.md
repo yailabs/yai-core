@@ -19,9 +19,10 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.1 minimum-loop package.
+Status: NEW.2 persistent journal and subject state package.
 
-NEW.1 implements the first in-process minimum loop:
+NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
+persistent and reconstructable through a file-backed JSONL journal:
 
 ```text
 open case
@@ -30,7 +31,10 @@ submit op attempt
 emit control decision
 emit effect receipt
 append store record
-build projection
+write journal file
+reload journal records
+reconstruct subject state
+build projection from persisted records
 ```
 
 Ownership:
@@ -40,13 +44,21 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. There is no
-persistent store, no real carrier-owned filesystem/process/model effect, no
-daemon IPC and no full policy engine yet.
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.2 adds
+file-based journal inspection commands, but there is no real daemon IPC, no
+carrier-owned filesystem/process/model effect, no full policy engine, no graph
+engine and no memory consolidation yet.
 
 Build and validate:
 
 ```text
 make info
 make check
+```
+
+Inspect the NEW.2 smoke journal after `make smoke-new2`:
+
+```text
+crates/target/debug/yaictl store tail --journal build/tmp/new2/journal.jsonl
+crates/target/debug/yaictl projection summary --journal build/tmp/new2/journal.jsonl
 ```

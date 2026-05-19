@@ -11,8 +11,11 @@
 #include "yai/op/attempt.h"
 #include "yai/projection/projection.h"
 #include "yai/store/journal.h"
+#include "yai/store/journal_file.h"
 #include "yai/store/record.h"
+#include "yai/store/record_codec.h"
 #include "yai/subject/subject_binding.h"
 #include "yai/subject/subject_ref.h"
+#include "yai/subject/subject_state.h"
 
 #endif

@@ -10,6 +10,7 @@ for file in \
   docs/architecture/06-control-policy-model.md \
   docs/engineering/target-layout.md \
   docs/engineering/new1-minimum-loop.md \
+  docs/engineering/new2-persistent-journal.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

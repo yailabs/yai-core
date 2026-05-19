@@ -9,6 +9,7 @@ It must distinguish:
 target layout     = final desired shape
 NEW.0 package     = first documentation/skeleton package
 NEW.1 loop        = first executable loop
+NEW.2 journal     = first persistent/reconstructable loop
 extraction plan   = conceptual mining from old roots
 export matrices   = controlled projections and consumer boundaries
 ```
@@ -23,6 +24,7 @@ extraction-plan.md
 export-matrices.md
 new0-package.md
 new1-minimum-loop.md
+new2-persistent-journal.md
 c-abi.md
 rust-engine.md
 ctl-console-split.md

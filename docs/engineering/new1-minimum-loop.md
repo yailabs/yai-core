@@ -128,7 +128,7 @@ make check-layout
 make build-c
 make build-rust
 make build
-make smoke
+make smoke-new1
 make check
 ```
 
