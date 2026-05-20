@@ -17,6 +17,7 @@ pub enum RecordKind {
     SubjectState,
     GraphEdge,
     Reconstruction,
+    MemoryCandidate,
 }
 
 impl RecordKind {
@@ -39,6 +40,7 @@ impl RecordKind {
             Self::SubjectState => "subject_state",
             Self::GraphEdge => "graph_edge",
             Self::Reconstruction => "reconstruction",
+            Self::MemoryCandidate => "memory_candidate",
         }
     }
 
@@ -61,6 +63,7 @@ impl RecordKind {
             "subject_state" => Some(Self::SubjectState),
             "graph_edge" => Some(Self::GraphEdge),
             "reconstruction" => Some(Self::Reconstruction),
+            "memory_candidate" => Some(Self::MemoryCandidate),
             _ => None,
         }
     }

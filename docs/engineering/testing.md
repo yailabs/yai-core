@@ -136,6 +136,29 @@ core can explain a receipt through case, operation, decision and subject refs.
 crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
 
+## NEW.6 Operational Memory Loop
+
+```text
+open case
+bind subject
+submit mutative operation
+emit require_review decision
+emit blocked receipt
+append graph edges
+reconstruct receipt chain
+derive memory candidate
+append memory_candidate record
+reload journal
+build memory projection
+```
+
+`tests/smoke/operational-memory/test_operational_memory.c` proves that memory is
+derived from scoped residue and persisted as a candidate.
+
+```text
+crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

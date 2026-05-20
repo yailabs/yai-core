@@ -20,6 +20,12 @@ pub struct ProjectionSummary {
     pub effect_count: usize,
     pub graph_edge_count: usize,
     pub reconstruction_count: usize,
+    pub memory_candidate_count: usize,
+    pub operational_memory_candidate_count: usize,
+    pub decision_memory_candidate_count: usize,
+    pub subject_memory_candidate_count: usize,
+    pub error_memory_candidate_count: usize,
+    pub recovery_memory_candidate_count: usize,
 }
 
 impl ProjectionSummary {
@@ -92,6 +98,32 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.kind == RecordKind::Reconstruction)
             .count();
+        let memory_records = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::MemoryCandidate)
+            .collect::<Vec<_>>();
+        let memory_candidate_count = memory_records.len();
+        let operational_memory_candidate_count = memory_records
+            .iter()
+            .filter(|record| record.summary.contains("memory:operational"))
+            .count();
+        let decision_memory_candidate_count = memory_records
+            .iter()
+            .filter(|record| record.summary.contains("memory:decision"))
+            .count();
+        let subject_memory_candidate_count = memory_records
+            .iter()
+            .filter(|record| record.summary.contains("memory:subject"))
+            .count();
+        let error_memory_candidate_count = memory_records
+            .iter()
+            .filter(|record| record.summary.contains("memory:error"))
+            .count();
+        let recovery_memory_candidate_count = memory_records
+            .iter()
+            .filter(|record| record.summary.contains("memory:recovery"))
+            .count();
         let subject_count = journal
             .records()
             .iter()
@@ -101,7 +133,7 @@ impl ProjectionSummary {
             .len();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count}"
             ),
             consumer,
             case_ref,
@@ -118,6 +150,12 @@ impl ProjectionSummary {
             effect_count,
             graph_edge_count,
             reconstruction_count,
+            memory_candidate_count,
+            operational_memory_candidate_count,
+            decision_memory_candidate_count,
+            subject_memory_candidate_count,
+            error_memory_candidate_count,
+            recovery_memory_candidate_count,
         }
     }
 }

@@ -33,6 +33,12 @@ typedef struct yai_projection {
     size_t effect_count;
     size_t graph_edge_count;
     size_t reconstruction_count;
+    size_t memory_candidate_count;
+    size_t operational_memory_candidate_count;
+    size_t decision_memory_candidate_count;
+    size_t subject_memory_candidate_count;
+    size_t error_memory_candidate_count;
+    size_t recovery_memory_candidate_count;
 } yai_projection_t;
 
 yai_status_t yai_projection_build(const char *projection_id,

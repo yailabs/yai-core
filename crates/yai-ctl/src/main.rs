@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use yai_core_engine::graph::GraphSummary;
 use yai_core_engine::journal::Journal;
+use yai_core_engine::memory::MemorySummary;
 use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::record::RecordKind;
 
@@ -33,6 +34,7 @@ fn print_usage() {
     println!("       yaictl decision inspect --journal <path>");
     println!("       yaictl receipt summary --journal <path>");
     println!("       yaictl graph summary --journal <path>");
+    println!("       yaictl memory summary --journal <path>");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -242,6 +244,22 @@ fn graph_summary(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn memory_summary(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let summary = MemorySummary::from_journal(&journal);
+
+    println!("records: {}", summary.records);
+    println!("memory_candidates: {}", summary.memory_candidates);
+    println!("operational: {}", summary.operational);
+    println!("decision: {}", summary.decision);
+    println!("subject: {}", summary.subject);
+    println!("error: {}", summary.error);
+    println!("recovery: {}", summary.recovery);
+    Ok(())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -280,6 +298,12 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = graph_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("memory") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = memory_summary(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

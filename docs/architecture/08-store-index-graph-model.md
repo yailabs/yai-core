@@ -44,6 +44,28 @@ subject state reconstructed from records
 NEW.2 explicitly does not implement locking, encryption, indexing, graph
 traversal or memory consolidation.
 
+## NEW.6 Memory Candidate Records
+
+NEW.6 adds a residue-derived record kind:
+
+```text
+memory_candidate
+```
+
+The record keeps the same `yai.store.record.v0` envelope and uses existing refs:
+
+```text
+case_ref
+subject_ref
+attempt_id
+decision_id
+receipt_id
+summary
+```
+
+The summary carries candidate posture and basis counts. Store persists the fact;
+memory owns continuity semantics; projection owns read-model counts.
+
 ## Index
 
 Index owns technical retrieval structures:

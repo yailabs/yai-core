@@ -166,6 +166,18 @@ CONSOLE.CANON.*  console over interfaces and projections
 
 The full roadmap lives in `docs/engineering/four-repo-roadmap.md`.
 
+NEW.6 applied wave-coupled extraction for operational memory:
+
+```text
+src/substrate/memory/*           -> memory candidate concepts and future consolidation evidence
+src/lineage/episodic_summary.c   -> memory basis count concept
+src/lineage/semantic_summary.c   -> memory basis count concept
+src/analytics/signals/*          -> freshness/confidence posture, not truth
+src/agents/grounding/*strategy.c -> future ai-environment memory experiments
+```
+
+The inventory records which material was absorbed, mined or externalized.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

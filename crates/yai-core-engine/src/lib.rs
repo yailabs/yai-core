@@ -168,4 +168,27 @@ mod tests {
         assert_eq!(graph.decision_controls_op, 1);
         assert_eq!(projection.graph_edge_count, 2);
     }
+
+    #[test]
+    fn build_memory_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:memory-candidate",
+            "case:new6-memory",
+            RecordKind::MemoryCandidate,
+            "subject:repo-test",
+            "op:fs-write-memory",
+            "decision:new6",
+            "receipt:fs-write-blocked",
+            "memory:decision scope:subject freshness:fresh confidence:high",
+        ));
+
+        let memory = crate::memory::MemorySummary::from_journal(&journal);
+        let projection = ProjectionSummary::from_journal("memory", &journal);
+
+        assert_eq!(memory.memory_candidates, 1);
+        assert_eq!(memory.decision, 1);
+        assert_eq!(projection.memory_candidate_count, 1);
+        assert_eq!(projection.decision_memory_candidate_count, 1);
+    }
 }

@@ -1,6 +1,18 @@
 #include "yai/projection/projection.h"
 
 #include <stdio.h>
+#include <string.h>
+
+static int summary_has_memory_kind(const yai_store_record_t *record,
+                                   const char *kind) {
+    char pattern[64];
+
+    if (record == 0 || kind == 0) {
+        return 0;
+    }
+    (void)snprintf(pattern, sizeof(pattern), "memory:%s", kind);
+    return strstr(record->summary, pattern) != 0;
+}
 
 yai_status_t yai_projection_build(const char *projection_id,
                                   const yai_case_ref_t *case_ref,
@@ -28,6 +40,12 @@ yai_status_t yai_projection_build(const char *projection_id,
     projection->effect_count = 0;
     projection->graph_edge_count = 0;
     projection->reconstruction_count = 0;
+    projection->memory_candidate_count = 0;
+    projection->operational_memory_candidate_count = 0;
+    projection->decision_memory_candidate_count = 0;
+    projection->subject_memory_candidate_count = 0;
+    projection->error_memory_candidate_count = 0;
+    projection->recovery_memory_candidate_count = 0;
 
     for (index = 0; index < yai_journal_count(journal); index += 1) {
         const yai_store_record_t *record = yai_journal_get(journal, index);
@@ -57,12 +75,25 @@ yai_status_t yai_projection_build(const char *projection_id,
             projection->graph_edge_count += 1;
         } else if (record->record_kind == YAI_RECORD_RECONSTRUCTION) {
             projection->reconstruction_count += 1;
+        } else if (record->record_kind == YAI_RECORD_MEMORY_CANDIDATE) {
+            projection->memory_candidate_count += 1;
+            if (summary_has_memory_kind(record, "operational")) {
+                projection->operational_memory_candidate_count += 1;
+            } else if (summary_has_memory_kind(record, "decision")) {
+                projection->decision_memory_candidate_count += 1;
+            } else if (summary_has_memory_kind(record, "subject")) {
+                projection->subject_memory_candidate_count += 1;
+            } else if (summary_has_memory_kind(record, "error")) {
+                projection->error_memory_candidate_count += 1;
+            } else if (summary_has_memory_kind(record, "recovery")) {
+                projection->recovery_memory_candidate_count += 1;
+            }
         }
     }
 
     (void)snprintf(projection->summary,
                    sizeof(projection->summary),
-                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu",
+                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu",
                    yai_projection_consumer_string(consumer_kind),
                    projection->source_record_count,
                    projection->decision_count,
@@ -74,7 +105,8 @@ yai_status_t yai_projection_build(const char *projection_id,
                    projection->subject_state_count,
                    projection->effect_count,
                    projection->graph_edge_count,
-                   projection->reconstruction_count);
+                   projection->reconstruction_count,
+                   projection->memory_candidate_count);
     return YAI_OK;
 }
 
