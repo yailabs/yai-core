@@ -18,6 +18,11 @@ fast-path index and doctrine view. It does not replace the atomic ADRs.
 Maintain this file as the fast-path index for the current ADR set while keeping
 the numbered ADRs as the atomic records.
 
+SPINE.0 adds the four-repo doctrine: `yai-core` is the canonical new core,
+old `yai` is transition concept mine and future `ai-environment` material,
+`interfaces` projects primitive truth through API/SDK/conformance, and `console`
+is an operator client over projections and interfaces.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -53,6 +58,25 @@ decisions, receipts, graph relations, memory and projections. The legacy `yai`
 repository is a concept mine. The `yai-core` repository is shaped by primitives,
 protocols and receipts, not by old folder names.
 
+Four-repo ownership:
+
+```text
+yai-core   owns core primitives and local operational control
+yai        remains transition concept mine until ai-environment canonicalization
+interfaces consumes yai-core truth and publishes schemas, SDK and conformance
+console    consumes projections and interfaces for human operator UX
+```
+
+Canonical wave families:
+
+```text
+CORE.NEW.*
+ENV.CANON.*
+INTF.CANON.*
+CONSOLE.CANON.*
+PLATFORM.LATER.*
+```
+
 ## Consequences
 
 Readers can understand the decision set quickly without losing atomic ADR
@@ -65,6 +89,8 @@ ADR first, then this compendium.
 do not use this compendium as the only ADR record
 do not implement NEW.1 from this file alone
 do not treat the old src roots as migration targets
+do not rename yai during SPINE.0
+do not let interfaces or console define core semantics independently
 ```
 
 ## Supersedes
@@ -79,4 +105,5 @@ No atomic ADR. This file supersedes ad hoc reading order notes for the ADR set.
 ../architecture/06-control-policy-model.md
 ../engineering/target-layout.md
 ../engineering/extraction-plan.md
+../engineering/four-repo-roadmap.md
 ```

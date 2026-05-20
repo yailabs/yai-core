@@ -232,14 +232,46 @@ the future `yai-core` must not recreate these names as core roots.
 
 ## 5. Repo Split
 
+Current transition workspace:
+
 ```text
-yai-core        = local AI operational control core
-ai-environment  = external AI systems / agents / tools / workflows lab
-interfaces      = schemas / transports / SDK / conformance
-console         = operator client / TUI / human control surface
+YAI/
+├── yai-core/
+├── yai/
+├── interfaces/
+└── console/
 ```
+
+Canonical future workspace:
+
+```text
+YAI/
+├── yai-core/
+├── ai-environment/
+├── interfaces/
+└── console/
+```
+
+Ownership:
+
+```text
+yai-core       = canonical new core and local AI operational control core
+yai            = transition concept mine and future ai-environment source
+ai-environment = external AI systems, adapters, tools and workflow lab
+interfaces     = projection/API/SDK/conformance over yai-core primitive truth
+console        = operator client / TUI / human control surface
+```
+
+`yai` is not renamed in SPINE.0. It remains a sibling repo and must not be
+migrated folder-by-folder into `yai-core`.
 
 Core first. Interfaces second. Console later. Platform last.
 
 `yaictl` belongs in `yai-core` as technical control. Console belongs outside the
 core as a human operator surface consuming projections and operations.
+
+The updated milestone roadmap is maintained in:
+
+```text
+docs/engineering/four-repo-roadmap.md
+```

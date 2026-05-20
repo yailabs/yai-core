@@ -2,6 +2,10 @@
 
 The old repository is a concept mine, not a folder migration source.
 
+SPINE.0 clarifies that old `yai` is the transition concept mine and future
+`ai-environment` source. It is not the future core. Extraction is concept
+mining and evidence gathering, not folder movement into `yai-core`.
+
 ## 1. Core Rule
 
 Do not migrate old roots as roots. Extract primitive concepts into future roots.
@@ -100,19 +104,28 @@ Compatibility wrappers cannot become semantic owners.
 
 ## 6. First-Wave Extraction Order
 
-Order for future code waves:
+The completed CORE.NEW line has already moved past the first executable loops:
 
 ```text
-NEW.0: docs, guards, empty roots
-NEW.1: case_ref, subject_binding, attempt, decision, receipt, record, projection
-NEW.2: carrier request and null/filesystem carrier
-NEW.3: observed mode import and receipt gaps
-NEW.4: graph edges and reconstruction projection
-NEW.5: Rust store dual-write experiment
+NEW.0  Skeleton + guards
+NEW.1  Minimum loop
+NEW.2  Persistent journal + subject state
+NEW.3  Control gate skeleton
+NEW.4  Filesystem carrier v0
+NEW.5  Graph reconstruction v0
+NEW.5A Smoke isolation hardening
 ```
 
-This order keeps subject/control/effect/store residue ahead of memory and
-advanced retrieval.
+Next core work starts at NEW.6 Operational Memory Candidate v0, but sibling repo
+canonicalization must be tracked separately:
+
+```text
+ENV.CANON.*      old yai to ai-environment concept mine and lab
+INTF.CANON.*     interfaces over yai-core primitive truth
+CONSOLE.CANON.*  console over interfaces and projections
+```
+
+The full roadmap lives in `docs/engineering/four-repo-roadmap.md`.
 
 ## 7. Old Root Non-Recreation Rule
 

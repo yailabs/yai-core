@@ -2,13 +2,18 @@
 
 The commercial path follows the maturity of the core.
 
+The product begins as `yai-core`: a local AI operational control core.
+`interfaces` and `console` are not the first product root. They are surfaces
+around the core: interfaces project primitive truth, and console gives humans an
+operator surface over projections and review flows.
+
 ## Sequence
 
 | Stage | Product | Core Proof |
 |---|---|---|
-| 1 | YAI Core Developer / Local | Local case, subject, attempt, decision, receipt, store and projection. |
-| 2 | YAI Integration Kit | Adapters for existing tools, workflows, shell, filesystem, providers and services. |
-| 3 | YAI Operational Memory / Audit Pack | Observed-mode reconstruction, receipt gaps, divergence and memory candidates. |
+| 1 | Core Developer / Local | Local case, subject, attempt, decision, receipt, store, graph and projection. |
+| 2 | Integration Kit | Interfaces, SDK, conformance fixtures and adapters around core primitives. |
+| 3 | Operational Memory / Audit Pack | Memory candidates, receipt reconstruction, divergence and redaction posture. |
 | 4 | Professional / Team | Multi-case store, policy packs, team subject registry and audit export. |
 | 5 | Enterprise / Embedded | Custom carriers, subject models, policy materialization and support. |
 | 6 | Platform / Cloud | Sync, dashboards, managed policy registry and organization control plane. |
@@ -16,3 +21,5 @@ The commercial path follows the maturity of the core.
 ## Rule
 
 Do not sell the platform before the local core proves the loop.
+Do not make interfaces or console the product root before `yai-core` reaches a
+core milestone freeze.
