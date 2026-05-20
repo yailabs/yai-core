@@ -22,6 +22,7 @@ pub enum RecordKind {
     Reconciliation,
     ProjectionRequest,
     ProjectionResult,
+    QueryResult,
 }
 
 impl RecordKind {
@@ -49,6 +50,7 @@ impl RecordKind {
             Self::Reconciliation => "reconciliation",
             Self::ProjectionRequest => "projection_request",
             Self::ProjectionResult => "projection_result",
+            Self::QueryResult => "query_result",
         }
     }
 
@@ -76,6 +78,7 @@ impl RecordKind {
             "reconciliation" => Some(Self::Reconciliation),
             "projection_request" => Some(Self::ProjectionRequest),
             "projection_result" => Some(Self::ProjectionResult),
+            "query_result" => Some(Self::QueryResult),
             _ => None,
         }
     }

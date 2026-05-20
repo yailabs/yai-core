@@ -97,6 +97,8 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "projection_request";
     case YAI_RECORD_PROJECTION_RESULT:
         return "projection_result";
+    case YAI_RECORD_QUERY_RESULT:
+        return "query_result";
     default:
         return "unknown";
     }
@@ -152,6 +154,8 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_PROJECTION_REQUEST;
     } else if (strcmp(value, "projection_result") == 0) {
         *kind = YAI_RECORD_PROJECTION_RESULT;
+    } else if (strcmp(value, "query_result") == 0) {
+        *kind = YAI_RECORD_QUERY_RESULT;
     } else {
         return YAI_ERR_INVALID;
     }

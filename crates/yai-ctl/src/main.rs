@@ -6,6 +6,7 @@ use yai_core_engine::graph::GraphSummary;
 use yai_core_engine::journal::Journal;
 use yai_core_engine::memory::MemorySummary;
 use yai_core_engine::projection::ProjectionSummary;
+use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::RecordKind;
 
@@ -41,6 +42,8 @@ fn print_usage() {
     println!("       yaictl graph summary --journal <path>");
     println!("       yaictl memory summary --journal <path>");
     println!("       yaictl reconcile summary --journal <path>");
+    println!("       yaictl query summary --journal <path>");
+    println!("       yaictl query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -71,6 +74,17 @@ fn named_arg(args: &[String], name: &str) -> Result<String, String> {
         index += 1;
     }
     Err(format!("{name} is required"))
+}
+
+fn optional_arg(args: &[String], name: &str) -> Option<String> {
+    let mut index = 0;
+    while index < args.len() {
+        if args[index] == name {
+            return args.get(index + 1).cloned();
+        }
+        index += 1;
+    }
+    None
 }
 
 fn path_inside_sandbox(sandbox: &str, path: &str) -> bool {
@@ -331,6 +345,64 @@ fn reconcile_summary(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn query_filter_from_args(args: &[String]) -> Result<QueryFilter, String> {
+    let record_kind = optional_arg(args, "--kind")
+        .map(|kind| {
+            RecordKind::from_str(&kind).ok_or_else(|| format!("unknown record kind: {kind}"))
+        })
+        .transpose()?;
+    let limit = optional_arg(args, "--limit")
+        .map(|value| {
+            value
+                .parse::<usize>()
+                .map_err(|error| format!("invalid --limit value: {error}"))
+        })
+        .transpose()?;
+
+    Ok(QueryFilter {
+        case_ref: optional_arg(args, "--case"),
+        record_kind,
+        limit,
+        include_summary: true,
+        ..Default::default()
+    })
+}
+
+fn query_summary(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let filter = QueryFilter::default();
+    let result = QueryResult::scan(&journal, &filter);
+    println!("records: {}", result.records);
+    println!("matched: {}", result.matched);
+    println!("returned: {}", result.returned);
+    println!("truncated: {}", result.truncated);
+    Ok(())
+}
+
+fn query_records(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let filter = query_filter_from_args(args)?;
+    let include_summary = filter.include_summary;
+    let result = QueryResult::scan(&journal, &filter);
+
+    println!("records: {}", result.records);
+    println!("matched: {}", result.matched);
+    println!("returned: {}", result.returned);
+    println!("truncated: {}", result.truncated);
+    for record in result.matched_records {
+        if include_summary {
+            println!("{} {} {}", record.id, record.kind.as_str(), record.summary);
+        } else {
+            println!("{} {}", record.id, record.kind.as_str());
+        }
+    }
+    Ok(())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -393,6 +465,18 @@ fn main() {
         }
         Some("reconcile") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = reconcile_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("query") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = query_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("query") if args.get(1).map(String::as_str) == Some("records") => {
+            if let Err(error) = query_records(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

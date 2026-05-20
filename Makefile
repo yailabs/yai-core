@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -31,6 +31,9 @@ C_SOURCES := \
 	lib/reconcile/divergence.c \
 	lib/reconcile/reconcile.c \
 	lib/reconcile/recovery.c \
+	lib/index/query.c \
+	lib/index/query_filter.c \
+	lib/index/query_result.c \
 	lib/graph/edge.c \
 	lib/graph/graph.c \
 	lib/graph/reconstruct.c \
@@ -46,7 +49,7 @@ C_SOURCES := \
 	lib/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new8.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new9.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -56,10 +59,11 @@ SMOKE_GRAPH_RECONSTRUCTION := $(BUILD_DIR)/test_graph_reconstruction
 SMOKE_OPERATIONAL_MEMORY := $(BUILD_DIR)/test_operational_memory
 SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
 SMOKE_PROJECTION_HARDENING := $(BUILD_DIR)/test_projection_hardening
+SMOKE_QUERY_BOUNDARY := $(BUILD_DIR)/test_query_boundary
 
 info:
-	@printf "yai-core: projection hardening\n"
-	@printf "status: NEW.8\n"
+	@printf "yai-core: store index query boundary\n"
+	@printf "status: NEW.9\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -117,7 +121,11 @@ $(SMOKE_PROJECTION_HARDENING): tests/smoke/projection-hardening/test_projection_
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-hardening/test_projection_hardening.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING)
+$(SMOKE_QUERY_BOUNDARY): tests/smoke/query-boundary/test_query_boundary.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/query-boundary/test_query_boundary.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -149,7 +157,10 @@ smoke-new7: $(SMOKE_RECONCILE_DIVERGENCE)
 smoke-new8: $(SMOKE_PROJECTION_HARDENING)
 	@$(SMOKE_PROJECTION_HARDENING)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8
+smoke-new9: $(SMOKE_QUERY_BOUNDARY)
+	@$(SMOKE_QUERY_BOUNDARY)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9
 
 check: check-layout check-docs build smoke
 

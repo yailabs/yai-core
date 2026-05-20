@@ -109,6 +109,26 @@ query safety
 
 Index does not own memory or projection truth.
 
+## NEW.9 Query Boundary V0
+
+NEW.9 adds a minimal query boundary under `index`:
+
+```text
+query request
+query filter
+query result
+journal scan
+```
+
+It supports optional filters by case, record kind, subject, decision id, receipt
+id, memory marker and projection marker. Results remain in journal order and
+can be limited. This is deliberately not a database, index file, graph
+traversal, vector search or retrieval ranking layer.
+
+`query_result` is a derived residue record kind for count summaries. Store
+persists the result artifact; query owns scan/filter posture; projection may
+summarize query results but does not become query truth.
+
 ## Graph
 
 Graph owns causal reconstruction and relationship edges:
@@ -161,4 +181,4 @@ exists and which case, operation, decision and subject it belongs to.
 
 ## Split Rule
 
-Records are facts, store is persistence, graph is relation, index is retrieval, memory is continuity, projection is controlled read model.
+Records are facts, store is persistence, graph is relation, index/query is retrieval posture, memory is continuity, projection is controlled read model.

@@ -28,7 +28,8 @@ typedef enum yai_record_kind {
     YAI_RECORD_DIVERGENCE = 18,
     YAI_RECORD_RECONCILIATION = 19,
     YAI_RECORD_PROJECTION_REQUEST = 20,
-    YAI_RECORD_PROJECTION_RESULT = 21
+    YAI_RECORD_PROJECTION_RESULT = 21,
+    YAI_RECORD_QUERY_RESULT = 22
 } yai_record_kind_t;
 
 typedef struct yai_store_record {

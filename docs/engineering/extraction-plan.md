@@ -207,6 +207,23 @@ The implementation absorbs projection request/result records, consumer kind,
 projection kind, freshness and redaction posture only. It does not port old
 views, model frames, agent context packs or console surfaces.
 
+NEW.9 applied wave-coupled extraction for query boundary:
+
+```text
+src/substrate/query/*                 -> read posture and filter boundary concepts
+src/substrate/indexes/*               -> future index/retrieval evidence
+src/substrate/store/*                 -> store backend evidence, not backend port
+src/substrate/records/*               -> record taxonomy evidence
+src/substrate/views/*                 -> query/projection boundary evidence
+src/analytics/features/*              -> future ranking/index features
+src/agents/grounding/query_strategy.c -> future ai-environment query experiments
+src/agents/grounding/retrieval_strategy.c -> future ai-environment retrieval experiments
+```
+
+The implementation absorbs only journal scan/filter query, query result counts
+and `yaictl query` inspection. It does not port old query surfaces, backend
+registries, vector indexes, feature stores or agent retrieval strategy.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

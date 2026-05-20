@@ -279,4 +279,56 @@ mod tests {
         assert_eq!(projection.model_projection_count, 2);
         assert_eq!(projection.limited_projection_count, 1);
     }
+
+    #[test]
+    fn query_records_by_kind_and_case() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:receipt",
+            "case:new9-query",
+            RecordKind::Receipt,
+            "subject:repo-test",
+            "op:query",
+            "decision:query",
+            "receipt:query",
+            "receipt:blocked",
+        ));
+        journal.append(Record::from_parts(
+            "record:memory",
+            "case:new9-query",
+            RecordKind::MemoryCandidate,
+            "subject:repo-test",
+            "op:query",
+            "decision:query",
+            "receipt:query",
+            "memory:decision",
+        ));
+        journal.append(Record::from_parts(
+            "record:other-case",
+            "case:other",
+            RecordKind::Receipt,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "receipt:other",
+        ));
+
+        let receipt_filter = crate::query::QueryFilter {
+            record_kind: Some(RecordKind::Receipt),
+            ..Default::default()
+        };
+        let case_filter = crate::query::QueryFilter {
+            case_ref: Some("case:new9-query".to_string()),
+            ..Default::default()
+        };
+
+        let receipts = crate::query::QueryResult::scan(&journal, &receipt_filter);
+        let case_records = crate::query::QueryResult::scan(&journal, &case_filter);
+
+        assert_eq!(receipts.records, 3);
+        assert_eq!(receipts.matched, 2);
+        assert_eq!(case_records.matched, 2);
+        assert!(!case_records.truncated);
+    }
 }

@@ -107,3 +107,10 @@ blocked
 The model and agent defaults are `summary_only`. Debug defaults to `refs_only`.
 This is not a full sensitive-data redaction engine; it is the first metadata
 and posture boundary for controlled read models.
+
+## Query Interaction
+
+NEW.9 query can produce `query_result` residue. Projection may count those
+results and expose them in read models, but projection does not execute query
+planning or become query truth. Query remains a scan/filter boundary over store
+records; projection remains a controlled view over residue.

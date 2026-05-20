@@ -15,6 +15,7 @@ graph
 memory
 projection
 divergence
+query
 ```
 
 ## Primitive Coverage
@@ -31,6 +32,7 @@ divergence
 | `memory` | memory is derived only from scoped residue |
 | `projection` | query returns controlled read model with provenance |
 | `reconcile` | receipt gaps and divergences are visible |
+| `query` | journal residue can be filtered without becoming a database |
 
 ## NEW.1 Minimum Loop
 
@@ -198,6 +200,28 @@ redaction posture.
 
 ```text
 crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+```
+
+## NEW.9 Query Boundary Loop
+
+```text
+create residue
+reload journal
+query all records
+query receipt records
+query memory candidate records
+query by case
+append query_result records
+build projection over query residue
+```
+
+`tests/smoke/query-boundary/test_query_boundary.c` proves that query scans
+persisted journal records and filters by record kind and case without adding a
+database or graph traversal layer.
+
+```text
+crates/target/debug/yaictl query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+crates/target/debug/yaictl query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
 ```
 
 ## Minimum Test Cases
