@@ -61,7 +61,9 @@ build projection from reloaded records
 
 `tests/smoke/persistent-journal/test_persistent_journal.c` proves that the
 minimum loop survives outside the process. Generated journal files live under
-`build/tmp/` and must remain ignored build artifacts.
+`build/tmp/` and must remain ignored build artifacts. Smoke tests that write
+mutable files must use run-specific directories such as
+`build/tmp/new2/persistent-journal-<pid>/` instead of shared journal paths.
 
 ## NEW.3 Control Gate Loop
 
@@ -84,8 +86,8 @@ build control projection
 persisted and inspectable. The debug commands are:
 
 ```text
-crates/target/debug/yaictl control summary --journal build/tmp/new3/journal.jsonl
-crates/target/debug/yaictl decision inspect --journal build/tmp/new3/journal.jsonl
+crates/target/debug/yaictl control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
+crates/target/debug/yaictl decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
 ```
 
 ## NEW.4 Filesystem Carrier Loop
@@ -106,10 +108,11 @@ filesystem projection
 ```
 
 `tests/smoke/filesystem-carrier/test_filesystem_carrier.c` proves the first real
-effect path while keeping all writes inside `build/tmp/new4/sandbox/`.
+effect path while keeping all writes inside a per-run sandbox such as
+`build/tmp/new4/filesystem-carrier-<pid>/sandbox/`.
 
 ```text
-crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
+crates/target/debug/yaictl receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
 ```
 
 ## NEW.5 Graph Reconstruction Loop
@@ -130,7 +133,7 @@ build graph projection
 core can explain a receipt through case, operation, decision and subject refs.
 
 ```text
-crates/target/debug/yaictl graph summary --journal build/tmp/new5/journal.jsonl
+crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
 
 ## Minimum Test Cases

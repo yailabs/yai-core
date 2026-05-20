@@ -64,8 +64,11 @@ This is a compact receipt-chain proof, not a general traversal engine.
 ## Debug Command
 
 ```text
-crates/target/debug/yaictl graph summary --journal build/tmp/new5/journal.jsonl
+crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
+
+Smoke validation writes graph journals under a per-run directory so independent
+and parallel smoke invocations do not share mutable `build/tmp` files.
 
 ## Out Of Scope
 

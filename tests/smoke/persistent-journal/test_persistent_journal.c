@@ -12,10 +12,11 @@ static void require_ok(yai_status_t status) {
     }
 }
 
-static void make_tmp_dirs(void) {
+static void make_tmp_dirs(const char *run_dir) {
     (void)mkdir("build", 0777);
     (void)mkdir("build/tmp", 0777);
     (void)mkdir("build/tmp/new2", 0777);
+    (void)mkdir(run_dir, 0777);
 }
 
 static void append_record(const yai_journal_file_t *journal_file,
@@ -41,7 +42,8 @@ static void append_record(const yai_journal_file_t *journal_file,
 }
 
 int main(void) {
-    const char *journal_path = "build/tmp/new2/journal.jsonl";
+    char run_dir[128];
+    char journal_path[160];
     yai_case_ref_t case_ref;
     yai_subject_ref_t actor_ref;
     yai_subject_ref_t subject_ref;
@@ -53,8 +55,17 @@ int main(void) {
     yai_journal_t reloaded_journal;
     yai_subject_state_t subject_state;
     yai_projection_t projection;
+    int written = 0;
 
-    make_tmp_dirs();
+    written = snprintf(run_dir,
+                       sizeof(run_dir),
+                       "build/tmp/new2/persistent-journal-%ld",
+                       (long)getpid());
+    assert(written > 0 && (size_t)written < sizeof(run_dir));
+    written = snprintf(journal_path, sizeof(journal_path), "%s/journal.jsonl", run_dir);
+    assert(written > 0 && (size_t)written < sizeof(journal_path));
+
+    make_tmp_dirs(run_dir);
     (void)unlink(journal_path);
 
     require_ok(yai_case_ref_init(&case_ref, "case:new2-persistent", "new2-test", "open"));

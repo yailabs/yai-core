@@ -13,11 +13,12 @@ static void require_ok(yai_status_t status) {
     }
 }
 
-static void make_tmp_dirs(void) {
+static void make_tmp_dirs(const char *run_dir, const char *sandbox) {
     (void)mkdir("build", 0777);
     (void)mkdir("build/tmp", 0777);
     (void)mkdir("build/tmp/new4", 0777);
-    (void)mkdir("build/tmp/new4/sandbox", 0777);
+    (void)mkdir(run_dir, 0777);
+    (void)mkdir(sandbox, 0777);
 }
 
 static void write_fixture(const char *path, const char *content) {
@@ -102,11 +103,12 @@ static void make_allow_with_constraints_decision(const yai_op_attempt_t *attempt
 }
 
 int main(void) {
-    const char *sandbox = "build/tmp/new4/sandbox";
-    const char *journal_path = "build/tmp/new4/journal.jsonl";
-    const char *input_path = "build/tmp/new4/sandbox/input.txt";
-    const char *blocked_path = "build/tmp/new4/sandbox/blocked.txt";
-    const char *output_path = "build/tmp/new4/sandbox/output.txt";
+    char run_dir[128];
+    char sandbox[160];
+    char journal_path[192];
+    char input_path[192];
+    char blocked_path[192];
+    char output_path[192];
     yai_case_ref_t case_ref;
     yai_subject_ref_t actor_ref;
     yai_subject_ref_t file_subject_ref;
@@ -125,8 +127,25 @@ int main(void) {
     yai_subject_state_t subject_state;
     yai_projection_t projection;
     char subject_state_summary[128];
+    int written = 0;
 
-    make_tmp_dirs();
+    written = snprintf(run_dir,
+                       sizeof(run_dir),
+                       "build/tmp/new4/filesystem-carrier-%ld",
+                       (long)getpid());
+    assert(written > 0 && (size_t)written < sizeof(run_dir));
+    written = snprintf(sandbox, sizeof(sandbox), "%s/sandbox", run_dir);
+    assert(written > 0 && (size_t)written < sizeof(sandbox));
+    written = snprintf(journal_path, sizeof(journal_path), "%s/journal.jsonl", run_dir);
+    assert(written > 0 && (size_t)written < sizeof(journal_path));
+    written = snprintf(input_path, sizeof(input_path), "%s/input.txt", sandbox);
+    assert(written > 0 && (size_t)written < sizeof(input_path));
+    written = snprintf(blocked_path, sizeof(blocked_path), "%s/blocked.txt", sandbox);
+    assert(written > 0 && (size_t)written < sizeof(blocked_path));
+    written = snprintf(output_path, sizeof(output_path), "%s/output.txt", sandbox);
+    assert(written > 0 && (size_t)written < sizeof(output_path));
+
+    make_tmp_dirs(run_dir, sandbox);
     (void)unlink(journal_path);
     (void)unlink(input_path);
     (void)unlink(blocked_path);
