@@ -242,6 +242,23 @@ counts, kind query and projection summary JSON. It does not port cJSON, old
 substrate headers, external DB backends, vector indexes, graph traversal or
 memory consolidation.
 
+NEW.11 applied wave-coupled extraction for daemon IPC:
+
+```text
+src/runtime/activation/*             -> daemon entry and startup posture
+src/runtime/lifecycle/*              -> service status/readiness posture
+src/runtime/machine/*                 -> future resident loop evidence
+src/runtime/connections/*             -> client connection boundary evidence
+src/runtime/boundary/transport/*      -> local IPC transport evidence
+tools/runtime/*                       -> future daemon tooling evidence
+Documentation/manuals/runtime-service-operations.md -> runtime operations posture
+```
+
+The implementation absorbs only local Unix socket IPC, status/info/shutdown
+messages and daemon status JSON. It does not port runtime loop, transport
+normalization/security, API dispatch, service manager integration or carrier
+execution.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

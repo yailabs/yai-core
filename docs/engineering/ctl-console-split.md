@@ -40,3 +40,12 @@ runtime attachment UX
 ## Rule
 
 Console consumes core operations and projections. `yaictl` inspects and controls core primitives. Neither should redefine protocol truth; that belongs to core plus `interfaces`.
+
+## NEW.11 Daemon IPC
+
+NEW.11 lets `yaictl` talk to `yaid` for technical daemon status, info and
+shutdown over a local Unix socket.
+
+This does not make `yaictl` the Console UX and does not expose case/op execution
+over IPC. It proves the local service boundary that Console and interfaces can
+consume later.

@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -23,6 +23,7 @@ C_SOURCES := \
 	lib/control/decision.c \
 	lib/control/obligation.c \
 	lib/control/receipt_requirement.c \
+	lib/daemon/daemon_status.c \
 	lib/effect/carrier.c \
 	lib/effect/effect_hash.c \
 	lib/effect/receipt.c \
@@ -52,7 +53,7 @@ C_SOURCES := \
 	lib/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new10.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new11.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -64,10 +65,11 @@ SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
 SMOKE_PROJECTION_HARDENING := $(BUILD_DIR)/test_projection_hardening
 SMOKE_QUERY_BOUNDARY := $(BUILD_DIR)/test_query_boundary
 SMOKE_RUST_ENGINE_R1 := $(BUILD_DIR)/test_rust_engine_r1
+SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 
 info:
-	@printf "yai-core: rust operational data engine r1\n"
-	@printf "status: NEW.10\n"
+	@printf "yai-core: daemon ipc v0\n"
+	@printf "status: NEW.11\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -89,9 +91,9 @@ $(C_LIBRARY): $(C_OBJECTS)
 	@mkdir -p "$(dir $@)"
 	$(AR) rcs "$@" $(C_OBJECTS)
 
-$(YAID): daemon/main.c $(C_LIBRARY)
+$(YAID): daemon/main.c daemon/ipc.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
-	$(CC) $(CFLAGS) daemon/main.c $(C_LIBRARY) -o "$@"
+	$(CC) $(CFLAGS) daemon/main.c daemon/ipc.c $(C_LIBRARY) -o "$@"
 
 $(SMOKE_MINIMUM_LOOP): tests/smoke/minimum-loop/test_minimum_loop.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
@@ -174,7 +176,10 @@ smoke-new9: $(SMOKE_QUERY_BOUNDARY)
 smoke-new10: $(SMOKE_RUST_ENGINE_R1)
 	@$(SMOKE_RUST_ENGINE_R1)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10
+smoke-new11: $(YAID) build-rust
+	@$(SMOKE_DAEMON_IPC)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11
 
 check: check-layout check-docs build smoke
 

@@ -7,7 +7,8 @@ materializes policy into machine gates, emits control decisions, executes or
 observes effects through carriers, records receipts, derives operational memory,
 serves controlled projections and scans residue through a minimal query
 boundary. Rust can also consume the same residue through an internal engine R1
-path behind the C ABI.
+path behind the C ABI. `yaid` now exposes the first local daemon IPC status
+surface.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -21,7 +22,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.10 Rust operational data engine R1.
+Status: NEW.11 daemon IPC v0.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -130,6 +131,15 @@ projection summary JSON
 yaictl engine summary
 ```
 
+NEW.11 adds the first resident daemon IPC boundary:
+
+```text
+yaid --socket <path> --foreground
+yaictl daemon status
+yaictl daemon info
+yaictl daemon shutdown
+```
+
 Ownership:
 
 ```text
@@ -137,8 +147,8 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.10 adds
-the first C-callable Rust engine path, but there is no real daemon IPC, no
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.11 adds
+the first local daemon IPC path, but there is no case/op execution over IPC, no
 process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
 engine, no backend switch and no full secret redaction engine yet.
@@ -207,4 +217,11 @@ Inspect a journal through Rust engine summary:
 
 ```text
 crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+```
+
+Inspect NEW.11 daemon IPC manually:
+
+```text
+build/yaid --socket build/tmp/new11/manual/yaid.sock --foreground
+crates/target/debug/yaictl daemon status --socket build/tmp/new11/manual/yaid.sock
 ```

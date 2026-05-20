@@ -1,5 +1,7 @@
 use std::fs;
-use std::io::Write;
+use std::io::{Read, Write};
+#[cfg(unix)]
+use std::os::unix::net::UnixStream;
 use std::path::PathBuf;
 
 use yai_core_engine::graph::GraphSummary;
@@ -15,9 +17,9 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_info() {
     println!("yaictl: technical YAI Core control client");
-    println!("status: NEW.2");
+    println!("status: NEW.11");
     println!("ownership: Rust client over C-defined core primitives");
-    println!("daemon_ipc: not implemented");
+    println!("daemon_ipc: local Unix socket v0");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -46,6 +48,9 @@ fn print_usage() {
     println!("       yaictl query summary --journal <path>");
     println!("       yaictl query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
     println!("       yaictl engine summary --journal <path>");
+    println!("       yaictl daemon status --socket <path>");
+    println!("       yaictl daemon info --socket <path>");
+    println!("       yaictl daemon shutdown --socket <path>");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -420,6 +425,27 @@ fn engine_summary(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+#[cfg(unix)]
+fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
+    let socket = named_arg(args, "--socket")?;
+    let mut stream = UnixStream::connect(&socket)
+        .map_err(|error| format!("failed to connect {socket}: {error}"))?;
+    stream
+        .write_all(format!("{request}\n").as_bytes())
+        .map_err(|error| format!("failed to write request: {error}"))?;
+    let mut response = String::new();
+    stream
+        .read_to_string(&mut response)
+        .map_err(|error| format!("failed to read response: {error}"))?;
+    print!("{response}");
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn daemon_request(_args: &[String], _request: &str) -> Result<(), String> {
+    Err("daemon IPC is only implemented on Unix in NEW.11".to_string())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -500,6 +526,24 @@ fn main() {
         }
         Some("engine") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = engine_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("status") => {
+            if let Err(error) = daemon_request(&args[2..], "status") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("info") => {
+            if let Err(error) = daemon_request(&args[2..], "info") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("shutdown") => {
+            if let Err(error) = daemon_request(&args[2..], "shutdown") {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

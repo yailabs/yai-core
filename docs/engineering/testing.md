@@ -17,6 +17,7 @@ projection
 divergence
 query
 rust engine
+daemon ipc
 ```
 
 ## Primitive Coverage
@@ -35,6 +36,7 @@ rust engine
 | `reconcile` | receipt gaps and divergences are visible |
 | `query` | journal residue can be filtered without becoming a database |
 | `rust engine` | Rust can consume C journal residue through FFI |
+| `daemon ipc` | `yaictl` can reach resident `yaid` over local IPC |
 
 ## NEW.1 Minimum Loop
 
@@ -244,6 +246,21 @@ Rust engine only through an opaque handle and serialized record input.
 ```text
 crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 ```
+
+## NEW.11 Daemon IPC Loop
+
+```text
+start yaid on isolated Unix socket
+wait for socket
+yaictl daemon status
+yaictl daemon info
+yaictl daemon shutdown
+assert daemon exits
+```
+
+`tests/smoke/daemon-ipc/test_daemon_ipc.sh` proves that `yaid` is a local
+resident endpoint and that `yaictl` can talk to it without exposing core
+operation execution yet.
 
 ## Minimum Test Cases
 
