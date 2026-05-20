@@ -60,14 +60,14 @@ Projection is built from the reloaded journal, not from live process memory.
 NEW.2 proves that a process can write records, exit conceptually, reload those
 records and produce an operator projection.
 
-## yaictl
+## yai
 
-`yaictl` remains a Rust client and does not own core semantics. NEW.2 adds
+`yai` remains a Rust client and does not own core semantics. NEW.2 adds
 file-based debug commands:
 
 ```text
-yaictl store tail --journal build/tmp/new2/journal.jsonl
-yaictl projection summary --journal build/tmp/new2/journal.jsonl
+yai store tail --journal build/tmp/new2/journal.jsonl
+yai projection summary --journal build/tmp/new2/journal.jsonl
 ```
 
 ## Non-Goals

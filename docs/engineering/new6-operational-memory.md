@@ -128,7 +128,7 @@ build memory projection
 Debug command:
 
 ```text
-crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
+yai memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
 ```
 
 ## Out Of Scope

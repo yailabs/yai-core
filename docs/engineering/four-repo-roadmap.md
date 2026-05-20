@@ -88,6 +88,24 @@ Examples:
 | Projection waves | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` | Absorb projection and redaction posture into `projection`; externalize model/context-pack UX material. |
 | Workflow-related waves | `src/orchestrator/*` and workflow-specific recovery material | Mine scenarios and procedure records; do not recreate a workflow engine in `yai-core`. |
 
+## Stub And Stale Surface Rule
+
+If a wave touches code or docs that contain stubs, placeholder-only sections,
+TODO-only surfaces, half-implemented files or stale command/path language, the
+wave must either verticalize the material into the current doctrine or remove
+or quarantine it. Do not leave old command names or half-updated install paths
+beside the new canonical surface.
+
+## Policy Direction
+
+Policy is case material, not just text, a deterministic gate or model prompt.
+The CORE.NEW policy line must mature policy across source material, machine
+claims/rules/gates, binding to case/subject/op/carrier/projection, decision
+basis, projection to models/agents/operators, memory influence and hard
+enforcement. YAI does not claim to control a model provider's internal policy;
+it controls what the model sees, what operation is accepted, which carrier may
+execute, which receipt remains and which memory derives.
+
 ## CORE.NEW Roadmap
 
 | Wave | Name | Status |
@@ -99,21 +117,32 @@ Examples:
 | NEW.4 | Filesystem carrier v0 | done |
 | NEW.5 | Graph reconstruction v0 | done |
 | NEW.5A | Smoke isolation hardening | done |
-| NEW.6 | Operational Memory Candidate v0 | next |
-| NEW.7 | Reconcile / Divergence v0 | planned |
-| NEW.8 | Projection hardening and redaction posture v0 | planned |
-| NEW.9 | Store/index/query boundary v0 | planned |
-| NEW.10 | Rust operational data engine R1 integration | planned |
-| NEW.11 | Daemon IPC v0 | planned |
-| NEW.12 | yaictl over daemon | planned |
-| NEW.13 | Process carrier v0 | planned |
-| NEW.14 | Model carrier v0 | planned |
-| NEW.15 | Policy source/materialization v0 | planned |
-| NEW.16 | Subject adapter model: external/embedded v0 | planned |
-| NEW.17 | Interface projection handoff prep | planned |
-| NEW.18 | Packaging/local service install prep | planned |
-| NEW.19 | Core conformance harness v0 | planned |
-| NEW.20 | Core milestone freeze | planned |
+| SPINE.0 | Wave-coupled extraction rule | done |
+| NEW.6 | Operational Memory Candidate v0 | done |
+| NEW.7 | Reconcile / Divergence v0 | done |
+| NEW.8 | Projection hardening and redaction posture v0 | done |
+| NEW.9 | Store/index/query boundary v0 | done |
+| NEW.10 | Rust operational data engine R1 integration | done |
+| NEW.11 | Daemon IPC v0 | done |
+| NEW.12 | Daemon-backed core loop v0 | done |
+| NEW.13 | Local command + install layout v0 | current |
+| NEW.14 | YAI_HOME host layout + daemon run/store dirs | planned |
+| NEW.15 | Daemon lifecycle locks + pid/socket discipline | planned |
+| NEW.16 | Policy source/material/claim ingestion v0 | planned |
+| NEW.17 | Policy binding to case/subject/op/carrier/projection | planned |
+| NEW.18 | Policy projection to models/agents/operators v0 | planned |
+| NEW.19 | Policy test corpus + adversarial policy cases | planned |
+| NEW.20 | Filesystem carrier hardening | planned |
+| NEW.21 | Process carrier v0 with strict host-control safeguards | planned |
+| NEW.22 | Host observation/ingest probes v0 | planned |
+| NEW.23 | Recovery/compensation posture v0 | planned |
+| NEW.24 | Memory consolidation v0 in Rust engine | planned |
+| NEW.25 | Store/index/query Rust backend R2 | planned |
+| NEW.26 | Daemon op execution over IPC | planned |
+| NEW.27 | yai command grammar completion | planned |
+| NEW.28 | Local protocol fixtures from core smoke journals | planned |
+| NEW.29 | Interfaces handoff package prep | planned |
+| NEW.30 | Core conformance harness + milestone freeze | planned |
 
 ## ENV.CANON Roadmap
 
@@ -216,7 +245,7 @@ runtime/agent semantics.
 |---|---|
 | INTF.CANON.0 | Interface role reaffirmation |
 | INTF.CANON.1 | Primitive schema alignment: case, subject, op, decision, receipt, projection |
-| INTF.CANON.2 | Transport alignment to yaid/yaictl/local IPC future |
+| INTF.CANON.2 | Transport alignment to yaid/yai/local IPC future |
 | INTF.CANON.3 | Remove old root leakage from registry names |
 | INTF.CANON.4 | Operation registry rebase on op/effect/control |
 | INTF.CANON.5 | SDK boundary: clients consume projections, not core internals |

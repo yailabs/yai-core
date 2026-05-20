@@ -13,8 +13,8 @@ right later engine for operational data structures.
 
 ## Decision
 
-C owns core ABI and daemon/carrier/control bootstrap. Rust may own `yaictl`
-implementation and the operational data engine. `yaictl` remains a client over
+C owns core ABI and daemon/carrier/control bootstrap. Rust may own `yai`
+implementation and the operational data engine. `yai` remains a client over
 core primitives, not a semantic owner. Rust owns advanced
 store/index/graph/memory/projection/query behind C FFI.
 
@@ -26,7 +26,7 @@ Owner table:
 | carrier v0 | C |
 | control v0 | C |
 | public ABI | C |
-| `yaictl` | Rust allowed, client only |
+| `yai` | Rust allowed, client only |
 | advanced store engine | Rust |
 | graph/index/memory | Rust |
 | projection cache | Rust |

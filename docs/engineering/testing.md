@@ -37,7 +37,7 @@ daemon loop
 | `reconcile` | receipt gaps and divergences are visible |
 | `query` | journal residue can be filtered without becoming a database |
 | `rust engine` | Rust can consume C journal residue through FFI |
-| `daemon ipc` | `yaictl` can reach resident `yaid` over local IPC |
+| `daemon ipc` | `yai` can reach resident `yaid` over local IPC |
 | `daemon loop` | `yaid` can serve bounded core loops over local IPC |
 
 ## NEW.1 Minimum Loop
@@ -94,8 +94,8 @@ build control projection
 persisted and inspectable. The debug commands are:
 
 ```text
-crates/target/debug/yaictl control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
-crates/target/debug/yaictl decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
+yai control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
+yai decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
 ```
 
 ## NEW.4 Filesystem Carrier Loop
@@ -120,7 +120,7 @@ effect path while keeping all writes inside a per-run sandbox such as
 `build/tmp/new4/filesystem-carrier-<pid>/sandbox/`.
 
 ```text
-crates/target/debug/yaictl receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
+yai receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
 ```
 
 ## NEW.5 Graph Reconstruction Loop
@@ -141,7 +141,7 @@ build graph projection
 core can explain a receipt through case, operation, decision and subject refs.
 
 ```text
-crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
+yai graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
 
 ## NEW.6 Operational Memory Loop
@@ -164,7 +164,7 @@ build memory projection
 derived from scoped residue and persisted as a candidate.
 
 ```text
-crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
+yai memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
 ```
 
 ## NEW.7 Reconcile / Divergence Loop
@@ -184,7 +184,7 @@ build reconcile projection
 mismatch is persisted as explicit residue instead of hidden by projection.
 
 ```text
-crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
+yai reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
 ```
 
 ## NEW.8 Projection Hardening Loop
@@ -205,7 +205,7 @@ projection records are persisted with consumer, provenance, freshness and
 redaction posture.
 
 ```text
-crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+yai projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
 ```
 
 ## NEW.9 Query Boundary Loop
@@ -226,8 +226,8 @@ persisted journal records and filters by record kind and case without adding a
 database or graph traversal layer.
 
 ```text
-crates/target/debug/yaictl query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
-crates/target/debug/yaictl query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
+yai query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+yai query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
 ```
 
 ## NEW.10 Rust Engine R1 Loop
@@ -246,7 +246,7 @@ free engine
 Rust engine only through an opaque handle and serialized record input.
 
 ```text
-crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+yai engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 ```
 
 ## NEW.11 Daemon IPC Loop
@@ -254,25 +254,25 @@ crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundar
 ```text
 start yaid on isolated Unix socket
 wait for socket
-yaictl daemon status
-yaictl daemon info
-yaictl daemon shutdown
+yai daemon status
+yai daemon info
+yai daemon shutdown
 assert daemon exits
 ```
 
 `tests/smoke/daemon-ipc/test_daemon_ipc.sh` proves that `yaid` is a local
-resident endpoint and that `yaictl` can talk to it without exposing core
+resident endpoint and that `yai` can talk to it without exposing core
 operation execution yet.
 
 ## NEW.12 Daemon-Backed Core Loop
 
 ```text
 start yaid on isolated Unix socket
-yaictl daemon run-minimum-loop
+yai daemon run-minimum-loop
 capture daemon-created journal
-yaictl daemon journal-summary
-yaictl daemon projection-summary
-yaictl daemon run-filesystem-loop
+yai daemon journal-summary
+yai daemon projection-summary
+yai daemon run-filesystem-loop
 verify sandboxed filesystem loop response
 shutdown daemon
 ```
@@ -281,6 +281,21 @@ shutdown daemon
 case/subject/op/control/receipt/store/projection loop can cross the local
 daemon boundary. It still avoids public API, auth, HTTP, process carrier,
 model carrier and background runtime execution.
+
+## NEW.13 Local Command Install
+
+```text
+make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
+PATH=/tmp/yai-core-install-test/bin:$PATH yai --version
+PATH=/tmp/yai-core-install-test/bin:$PATH yai info
+PATH=/tmp/yai-core-install-test/bin:$PATH yai doctor
+PATH=/tmp/yai-core-install-test/bin:$PATH yaid --version
+PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock
+make uninstall-local PREFIX=/tmp/yai-core-install-test
+```
+
+NEW.13 proves that future manual and Codex commands can use `yai` and `yaid`
+from `PATH` instead of repository-relative build artifacts.
 
 ## Minimum Test Cases
 

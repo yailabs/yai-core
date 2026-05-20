@@ -7,8 +7,8 @@ materializes policy into machine gates, emits control decisions, executes or
 observes effects through carriers, records receipts, derives operational memory,
 serves controlled projections and scans residue through a minimal query
 boundary. Rust can also consume the same residue through an internal engine R1
-path behind the C ABI. `yaid` now exposes a local daemon IPC path that can run
-the first bounded core loops.
+path behind the C ABI. `yai` is the canonical local technical command and
+`yaid` is the local daemon.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -22,7 +22,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.12 daemon-backed core loop v0.
+Status: NEW.13 local command and install layout v0.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -82,7 +82,7 @@ decision and subject refs
 basis record / receipt / graph-edge counts
 memory_candidate record
 memory projection
-yaictl memory summary
+yai memory summary
 ```
 
 NEW.7 adds the first reconciliation layer:
@@ -93,7 +93,7 @@ denied_but_executed
 receipt_without_decision
 reconciliation records
 reconcile projection
-yaictl reconcile summary
+yai reconcile summary
 ```
 
 NEW.8 hardens projection into controlled read-model records:
@@ -106,7 +106,7 @@ projection kind
 provenance counts
 freshness
 redaction posture
-yaictl projection inspect
+yai projection inspect
 ```
 
 NEW.9 adds the first journal query boundary:
@@ -116,8 +116,8 @@ query filter
 journal scan
 query_result record
 kind/case filtering
-yaictl query summary
-yaictl query records
+yai query summary
+yai query records
 ```
 
 NEW.10 adds Rust engine R1 behind the C ABI:
@@ -128,37 +128,46 @@ JSON record append
 record/kind counts
 kind query
 projection summary JSON
-yaictl engine summary
+yai engine summary
 ```
 
 NEW.11 adds the first resident daemon IPC boundary:
 
 ```text
 yaid --socket <path> --foreground
-yaictl daemon status
-yaictl daemon info
-yaictl daemon shutdown
+yai daemon status
+yai daemon info
+yai daemon shutdown
 ```
 
 NEW.12 makes the first bounded loop pass through `yaid`:
 
 ```text
-yaictl daemon run-minimum-loop
-yaictl daemon run-filesystem-loop
-yaictl daemon journal-summary
-yaictl daemon projection-summary
+yai daemon run-minimum-loop
+yai daemon run-filesystem-loop
+yai daemon journal-summary
+yai daemon projection-summary
+```
+
+NEW.13 adds the local install layout:
+
+```text
+make install-local
+yai --version
+yai doctor
+yaid --version
 ```
 
 Ownership:
 
 ```text
 C    = public ABI, daemon bootstrap, carrier/control boundary v0
-Rust = yaictl and operational data engine skeleton
+Rust = yai and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.12 adds
-the first daemon-backed core loop path, but there is no public API, no HTTP, no
-auth, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
+`yai` is Rust. The operational data engine skeleton is Rust. NEW.13 adds
+canonical local command installation, but there is no public API, no HTTP, no
+auth, no service manager, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
 engine, no backend switch and no full secret redaction engine yet.
 
@@ -169,76 +178,84 @@ make info
 make check
 ```
 
+Install locally:
+
+```text
+make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai
+yai info
+yai doctor
+```
+
 Inspect the NEW.2 smoke journal after `make smoke-new2`:
 
 ```text
-crates/target/debug/yaictl store tail --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
-crates/target/debug/yaictl projection summary --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
+yai store tail --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
+yai projection summary --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
 ```
 
 Inspect the NEW.3 control journal after `make smoke-new3`:
 
 ```text
-crates/target/debug/yaictl control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
-crates/target/debug/yaictl decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
+yai control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
+yai decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
 ```
 
 Inspect the NEW.4 filesystem journal after `make smoke-new4`:
 
 ```text
-crates/target/debug/yaictl receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
-crates/target/debug/yaictl carrier fs-read --sandbox build/tmp/new4/filesystem-carrier-<pid>/sandbox --path build/tmp/new4/filesystem-carrier-<pid>/sandbox/input.txt
+yai receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
+yai carrier fs-read --sandbox build/tmp/new4/filesystem-carrier-<pid>/sandbox --path build/tmp/new4/filesystem-carrier-<pid>/sandbox/input.txt
 ```
 
 Inspect the NEW.5 graph journal after `make smoke-new5`:
 
 ```text
-crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
+yai graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
 
 Inspect the NEW.6 memory journal after `make smoke-new6`:
 
 ```text
-crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
+yai memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
 ```
 
 Inspect the NEW.7 reconcile journal after `make smoke-new7`:
 
 ```text
-crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
+yai reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
 ```
 
 Inspect the NEW.8 projection journal after `make smoke-new8`:
 
 ```text
-crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
-crates/target/debug/yaictl projection request --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl --consumer model --kind model_context
+yai projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+yai projection request --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl --consumer model --kind model_context
 ```
 
 Inspect the NEW.9 query journal after `make smoke-new9`:
 
 ```text
-crates/target/debug/yaictl query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
-crates/target/debug/yaictl query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
+yai query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+yai query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
 ```
 
 Inspect a journal through Rust engine summary:
 
 ```text
-crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
+yai engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 ```
 
 Inspect NEW.11 daemon IPC manually:
 
 ```text
 build/yaid --socket build/tmp/new11/manual/yaid.sock --foreground
-crates/target/debug/yaictl daemon status --socket build/tmp/new11/manual/yaid.sock
+yai daemon status --socket build/tmp/new11/manual/yaid.sock
 ```
 
 Inspect NEW.12 daemon-backed loops manually:
 
 ```text
 build/yaid --socket build/tmp/new12/manual/yaid.sock --foreground
-crates/target/debug/yaictl daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
-crates/target/debug/yaictl daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
+yai daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
+yai daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
 ```

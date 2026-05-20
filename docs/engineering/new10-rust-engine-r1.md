@@ -64,9 +64,9 @@ The existing C file-backed journal remains active and tested. Rust R1 consumes
 the same `yai.store.record.v0` JSONL residue as an internal backend/mirror path.
 It does not replace the C journal as default truth.
 
-## yaictl
+## yai
 
-`yaictl engine summary --journal <path>` loads an existing JSONL journal through
+`yai engine summary --journal <path>` loads an existing JSONL journal through
 the Rust engine path and prints:
 
 ```text

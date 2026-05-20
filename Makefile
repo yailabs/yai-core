@@ -1,11 +1,15 @@
-.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke check clean
 
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -std=c11 -Wall -Wextra -Werror -Iinclude
 RUST_FFI_LIBS ?= -lpthread -ldl -lm
+PREFIX ?= $(HOME)/.local
+YAI_HOME ?= $(HOME)/.yai
 BUILD_DIR := build
 RUST_ENGINE_STATIC := crates/target/debug/libyai_core_engine.a
+INSTALL_BINDIR := $(PREFIX)/bin
+YAI_BIN := crates/target/debug/yai
 
 C_SOURCES := \
 	lib/internal/string_util.c \
@@ -53,7 +57,7 @@ C_SOURCES := \
 	lib/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new12.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new13.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -69,10 +73,13 @@ SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
-	@printf "yai-core: daemon-backed core loop v0\n"
-	@printf "status: NEW.12\n"
-	@printf "ctl: Rust yaictl\n"
+	@printf "yai-core: local command and install layout v0\n"
+	@printf "status: NEW.13\n"
+	@printf "command: Rust yai\n"
+	@printf "daemon: C yaid\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
+	@printf "default_prefix: %s\n" "$(PREFIX)"
+	@printf "default_yai_home: %s\n" "$(YAI_HOME)"
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh
@@ -146,6 +153,44 @@ build-rust:
 	cargo test --manifest-path crates/Cargo.toml --workspace
 
 build: build-c build-rust
+
+print-install-paths:
+	@printf "PREFIX=%s\n" "$(PREFIX)"
+	@printf "YAI_HOME=%s\n" "$(YAI_HOME)"
+	@printf "yai=%s/yai\n" "$(INSTALL_BINDIR)"
+	@printf "yaid=%s/yaid\n" "$(INSTALL_BINDIR)"
+	@printf "run=%s/run\n" "$(YAI_HOME)"
+	@printf "store=%s/store\n" "$(YAI_HOME)"
+	@printf "log=%s/log\n" "$(YAI_HOME)"
+	@printf "tmp=%s/tmp\n" "$(YAI_HOME)"
+	@printf "socket=%s/run/yaid.sock\n" "$(YAI_HOME)"
+
+install-local: build
+	@mkdir -p "$(INSTALL_BINDIR)"
+	@mkdir -p "$(YAI_HOME)/run" "$(YAI_HOME)/store" "$(YAI_HOME)/log" "$(YAI_HOME)/tmp"
+	@cp "$(YAI_BIN)" "$(INSTALL_BINDIR)/yai"
+	@cp "$(YAID)" "$(INSTALL_BINDIR)/yaid"
+	@chmod +x "$(INSTALL_BINDIR)/yai" "$(INSTALL_BINDIR)/yaid"
+	@printf "installed: %s/yai\n" "$(INSTALL_BINDIR)"
+	@printf "installed: %s/yaid\n" "$(INSTALL_BINDIR)"
+	@$(MAKE) --no-print-directory doctor-local PREFIX="$(PREFIX)" YAI_HOME="$(YAI_HOME)"
+
+uninstall-local:
+	@rm -f "$(INSTALL_BINDIR)/yai" "$(INSTALL_BINDIR)/yaid"
+	@printf "uninstalled local yai binaries from %s\n" "$(INSTALL_BINDIR)"
+
+doctor-local:
+	@printf "yai local doctor\n"
+	@printf "PREFIX: %s\n" "$(PREFIX)"
+	@printf "YAI_HOME: %s\n" "$(YAI_HOME)"
+	@printf "yai: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yai" ]; then printf "%s/yai" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
+	@printf "yaid: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yaid" ]; then printf "%s/yaid" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
+	@printf "run_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/run" ]; then printf "%s/run" "$(YAI_HOME)"; else printf "missing"; fi)"
+	@printf "store_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/store" ]; then printf "%s/store" "$(YAI_HOME)"; else printf "missing"; fi)"
+	@printf "log_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/log" ]; then printf "%s/log" "$(YAI_HOME)"; else printf "missing"; fi)"
+	@printf "tmp_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/tmp" ]; then printf "%s/tmp" "$(YAI_HOME)"; else printf "missing"; fi)"
+	@printf "daemon_socket_default: %s/run/yaid.sock\n" "$(YAI_HOME)"
+	@case ":$$PATH:" in *:"$(INSTALL_BINDIR)":*) printf "PATH_status: ok\n" ;; *) printf "PATH_status: warning add %s to PATH\n" "$(INSTALL_BINDIR)" ;; esac
 
 smoke-new1: $(SMOKE_MINIMUM_LOOP)
 	@$(SMOKE_MINIMUM_LOOP)

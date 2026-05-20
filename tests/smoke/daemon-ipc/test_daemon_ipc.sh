@@ -29,9 +29,9 @@ while [ ! -S "$socket_path" ]; do
   sleep 0.1
 done
 
-status_output=$(crates/target/debug/yaictl daemon status --socket "$socket_path")
-info_output=$(crates/target/debug/yaictl daemon info --socket "$socket_path")
-shutdown_output=$(crates/target/debug/yaictl daemon shutdown --socket "$socket_path")
+status_output=$(crates/target/debug/yai daemon status --socket "$socket_path")
+info_output=$(crates/target/debug/yai daemon info --socket "$socket_path")
+shutdown_output=$(crates/target/debug/yai daemon shutdown --socket "$socket_path")
 
 printf '%s\n' "$status_output" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$status_output" | grep '"version":"' >/dev/null

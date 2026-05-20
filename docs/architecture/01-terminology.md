@@ -34,7 +34,7 @@ machine terms, not product labels.
 | `reconcile` | Divergence detection and recovery/compensation posture. |
 | `divergence` | Mismatch between claim, decision, expected effect, receipt, observation, policy or memory. |
 | `daemon` | Local resident process, `yaid`, for boot, loop, IPC, status and supervision. |
-| `ctl` | Technical control CLI, `yaictl`, over core primitives. It is not Console UX. |
+| `ctl` | Technical control CLI, `yai`, over core primitives. It is not Console UX. |
 
 ## Old-Term Mapping
 

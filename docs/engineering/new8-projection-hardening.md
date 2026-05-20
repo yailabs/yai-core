@@ -90,7 +90,7 @@ and proves that projection inspection sees request/result counts and limited
 redaction posture.
 
 ```text
-crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+yai projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
 ```
 
 ## Old-YAI Audit

@@ -4,13 +4,13 @@ NEW.12 moves the first controlled core loop behind `yaid`.
 
 The daemon is still local-only and minimal. It does not expose a public API,
 HTTP transport, auth, multi-client runtime, process carrier or model carrier.
-It proves that `yaictl` can ask a resident `yaid` process to run a bounded core
+It proves that `yai` can ask a resident `yaid` process to run a bounded core
 path and receive a structured response.
 
 ## Loop
 
 ```text
-yaictl
+yai
 -> Unix socket IPC
 -> yaid
 -> case open
@@ -70,7 +70,7 @@ Filesystem loop responses also report `fs_read`, `fs_write_blocked` and
 
 ## Boundaries
 
-`yaid` owns the daemon endpoint and invokes C core primitives. `yaictl` remains
+`yaid` owns the daemon endpoint and invokes C core primitives. `yai` remains
 a Rust client and does not own the loop semantics.
 
 The daemon-backed filesystem loop writes only inside an isolated
@@ -81,10 +81,10 @@ truth path for this wave.
 
 ```text
 build/yaid --socket build/tmp/new12/manual/yaid.sock --foreground
-crates/target/debug/yaictl daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
-crates/target/debug/yaictl daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
-crates/target/debug/yaictl daemon journal-summary --socket build/tmp/new12/manual/yaid.sock --journal <journal>
-crates/target/debug/yaictl daemon projection-summary --socket build/tmp/new12/manual/yaid.sock --journal <journal>
+yai daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
+yai daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
+yai daemon journal-summary --socket build/tmp/new12/manual/yaid.sock --journal <journal>
+yai daemon projection-summary --socket build/tmp/new12/manual/yaid.sock --journal <journal>
 ```
 
 `interfaces` and `console` are not touched in NEW.12. They will later consume

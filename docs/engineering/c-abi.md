@@ -18,7 +18,7 @@ serialization entry points
 ```
 
 The ABI owns public semantics. It does not require every implementation detail
-to stay in C forever. `yaictl` may later be Rust, but it remains a client over
+to stay in C forever. `yai` may later be Rust, but it remains a client over
 these primitives.
 
 ## 2. ABI Versioning

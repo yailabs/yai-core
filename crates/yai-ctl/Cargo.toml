@@ -4,7 +4,7 @@ version = "0.0.0-newcore"
 edition = "2021"
 
 [[bin]]
-name = "yaictl"
+name = "yai"
 path = "src/main.rs"
 
 [dependencies]

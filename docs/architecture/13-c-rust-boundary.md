@@ -5,7 +5,7 @@ Canonical decision:
 ```text
 C owns public ABI, daemon bootstrap, carrier boundary and control v0.
 Rust owns advanced operational data engine behind FFI.
-yaictl may be Rust, but it remains a client over primitives.
+yai may be Rust, but it remains a client over primitives.
 ```
 
 Rust is not the new semantic owner of the core. Public contracts stay in the C
@@ -19,7 +19,7 @@ ABI and protocol docs.
 | carrier v0 | C |
 | control v0 | C |
 | public ABI | C |
-| `yaictl` | Rust allowed, client only |
+| `yai` | Rust allowed, client only |
 | advanced store engine | Rust |
 | graph/index/memory | Rust |
 | projection cache | Rust |

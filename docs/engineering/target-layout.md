@@ -267,7 +267,7 @@ migrated folder-by-folder into `yai-core`.
 
 Core first. Interfaces second. Console later. Platform last.
 
-`yaictl` belongs in `yai-core` as technical control. Console belongs outside the
+`yai` belongs in `yai-core` as technical control. Console belongs outside the
 core as a human operator surface consuming projections and operations.
 
 The updated milestone roadmap is maintained in:

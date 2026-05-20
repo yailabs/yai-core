@@ -106,7 +106,7 @@ projection counts divergence and reconciliation residue
 Debug command:
 
 ```text
-crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
+yai reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
 ```
 
 ## Out Of Scope

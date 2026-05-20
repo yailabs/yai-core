@@ -16,47 +16,109 @@ use yai_core_engine::store::Store;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_info() {
-    println!("yaictl: technical YAI Core control client");
-    println!("status: NEW.12");
+    println!("yai: technical YAI Core control command");
+    println!("status: NEW.13");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
+    println!("canonical_daemon: yaid");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
 
 fn print_doctor() {
-    println!("yaictl doctor: ok");
+    let yai_home = yai_home();
+    let run_dir = yai_home.join("run");
+    let store_dir = yai_home.join("store");
+    let log_dir = yai_home.join("log");
+    let tmp_dir = yai_home.join("tmp");
+    let socket = run_dir.join("yaid.sock");
+    let yai_path = std::env::current_exe()
+        .map(|path| path.display().to_string())
+        .unwrap_or_else(|_| "unknown".to_string());
+    let yaid_path = find_on_path("yaid").unwrap_or_else(|| "not found on PATH".to_string());
+    let path_status = path_contains_current_bin().unwrap_or(false);
+
+    println!("yai doctor: ok");
     println!("public_semantics: C ABI + core docs");
-    println!("rust_role: ctl client and operational data engine skeleton");
+    println!("rust_role: yai client and operational data engine skeleton");
     println!("journal_mode: file debug only");
+    println!("binary_path: {yai_path}");
+    println!("yaid_path: {yaid_path}");
+    println!("yai_version: {VERSION}");
+    println!("YAI_HOME: {}", yai_home.display());
+    println!("run_dir: {}", run_dir.display());
+    println!("store_dir: {}", store_dir.display());
+    println!("log_dir: {}", log_dir.display());
+    println!("tmp_dir: {}", tmp_dir.display());
+    println!(
+        "PATH_status: {}",
+        if path_status {
+            "current binary dir present"
+        } else {
+            "warning current binary dir not on PATH"
+        }
+    );
+    println!("daemon_socket_default: {}", socket.display());
 }
 
 fn print_usage() {
-    println!("usage: yaictl [--version|info|doctor]");
-    println!("       yaictl store tail --journal <path>");
-    println!("       yaictl projection summary --journal <path>");
-    println!("       yaictl projection inspect --journal <path>");
-    println!(
-        "       yaictl projection request --journal <path> --consumer <consumer> --kind <kind>"
-    );
-    println!("       yaictl control summary --journal <path>");
-    println!("       yaictl decision inspect --journal <path>");
-    println!("       yaictl receipt summary --journal <path>");
-    println!("       yaictl graph summary --journal <path>");
-    println!("       yaictl memory summary --journal <path>");
-    println!("       yaictl reconcile summary --journal <path>");
-    println!("       yaictl query summary --journal <path>");
-    println!("       yaictl query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
-    println!("       yaictl engine summary --journal <path>");
-    println!("       yaictl daemon status --socket <path>");
-    println!("       yaictl daemon info --socket <path>");
-    println!("       yaictl daemon shutdown --socket <path>");
-    println!("       yaictl daemon run-minimum-loop --socket <path>");
-    println!("       yaictl daemon run-filesystem-loop --socket <path>");
-    println!("       yaictl daemon journal-summary --socket <path> --journal <path>");
-    println!("       yaictl daemon projection-summary --socket <path> --journal <path>");
-    println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
-    println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
+    println!("usage: yai [--version|info|doctor]");
+    println!("       yai store tail --journal <path>");
+    println!("       yai projection summary --journal <path>");
+    println!("       yai projection inspect --journal <path>");
+    println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
+    println!("       yai control summary --journal <path>");
+    println!("       yai decision inspect --journal <path>");
+    println!("       yai receipt summary --journal <path>");
+    println!("       yai graph summary --journal <path>");
+    println!("       yai memory summary --journal <path>");
+    println!("       yai reconcile summary --journal <path>");
+    println!("       yai query summary --journal <path>");
+    println!("       yai query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
+    println!("       yai engine summary --journal <path>");
+    println!("       yai daemon status --socket <path>");
+    println!("       yai daemon info --socket <path>");
+    println!("       yai daemon shutdown --socket <path>");
+    println!("       yai daemon run-minimum-loop --socket <path>");
+    println!("       yai daemon run-filesystem-loop --socket <path>");
+    println!("       yai daemon journal-summary --socket <path> --journal <path>");
+    println!("       yai daemon projection-summary --socket <path> --journal <path>");
+    println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
+    println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
+}
+
+fn yai_home() -> PathBuf {
+    std::env::var_os("YAI_HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| {
+            std::env::var_os("HOME")
+                .map(PathBuf::from)
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".yai")
+        })
+}
+
+fn find_on_path(name: &str) -> Option<String> {
+    let path = std::env::var_os("PATH")?;
+    for dir in std::env::split_paths(&path) {
+        let candidate = dir.join(name);
+        if candidate.is_file() {
+            return Some(candidate.display().to_string());
+        }
+    }
+    None
+}
+
+fn path_contains_current_bin() -> Result<bool, String> {
+    let current = std::env::current_exe()
+        .map_err(|error| format!("failed to resolve current executable: {error}"))?;
+    let Some(parent) = current.parent() else {
+        return Ok(false);
+    };
+    let Some(path) = std::env::var_os("PATH") else {
+        return Ok(false);
+    };
+    Ok(std::env::split_paths(&path).any(|entry| entry == parent))
 }
 
 fn journal_arg(args: &[String]) -> Result<PathBuf, String> {
@@ -449,7 +511,7 @@ fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
 fn daemon_request_with_journal(args: &[String], request: &str) -> Result<(), String> {
     let journal = journal_arg(args)?;
     let line = format!(
-        "{request} request_id=yaictl-{request} payload={}",
+        "{request} request_id=yai-{request} payload={}",
         journal.display()
     );
     daemon_request(args, &line)
@@ -462,13 +524,13 @@ fn daemon_request(_args: &[String], _request: &str) -> Result<(), String> {
 
 #[cfg(not(unix))]
 fn daemon_request_with_journal(_args: &[String], _request: &str) -> Result<(), String> {
-    Err("daemon IPC is only implemented on Unix in NEW.12".to_string())
+    Err("daemon IPC is only implemented on Unix in NEW.13".to_string())
 }
 
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
-        Some("--version") | Some("version") => println!("yaictl {}", VERSION),
+        Some("--version") | Some("version") => println!("yai {}", VERSION),
         Some("info") => print_info(),
         Some("doctor") => print_doctor(),
         Some("store") if args.get(1).map(String::as_str) == Some("tail") => {
@@ -570,7 +632,7 @@ fn main() {
         Some("daemon") if args.get(1).map(String::as_str) == Some("run-minimum-loop") => {
             if let Err(error) = daemon_request(
                 &args[2..],
-                "run_minimum_loop request_id=yaictl-minimum case_ref=case:new12-daemon subject_ref=subject:repo-test",
+                "run_minimum_loop request_id=yai-minimum case_ref=case:new12-daemon subject_ref=subject:repo-test",
             ) {
                 eprintln!("{error}");
                 std::process::exit(2);
@@ -579,7 +641,7 @@ fn main() {
         Some("daemon") if args.get(1).map(String::as_str) == Some("run-filesystem-loop") => {
             if let Err(error) = daemon_request(
                 &args[2..],
-                "run_filesystem_loop request_id=yaictl-filesystem case_ref=case:new12-filesystem subject_ref=subject:filesystem-sandbox",
+                "run_filesystem_loop request_id=yai-filesystem case_ref=case:new12-filesystem subject_ref=subject:filesystem-sandbox",
             ) {
                 eprintln!("{error}");
                 std::process::exit(2);

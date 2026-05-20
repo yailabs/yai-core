@@ -16,7 +16,7 @@ filesystem receipt fields
 journal persistence
 subject state update
 filesystem projection counts
-yaictl receipt inspection
+yai receipt inspection
 ```
 
 ## Sandbox Rule
@@ -83,9 +83,9 @@ effects
 ## Debug Commands
 
 ```text
-crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
-crates/target/debug/yaictl carrier fs-read --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/input.txt
-crates/target/debug/yaictl carrier fs-write --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/manual.txt --content "hello"
+yai receipt summary --journal build/tmp/new4/journal.jsonl
+yai carrier fs-read --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/input.txt
+yai carrier fs-write --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/manual.txt --content "hello"
 ```
 
 ## Out Of Scope

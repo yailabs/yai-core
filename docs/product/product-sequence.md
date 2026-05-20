@@ -11,7 +11,7 @@ operator surface over projections and review flows.
 
 | Stage | Product | Core Proof |
 |---|---|---|
-| 1 | Core Developer / Local | Local case, subject, attempt, decision, receipt, store, graph and projection. |
+| 1 | Core Developer / Local | Local `yai` command, `yaid` daemon, case, subject, attempt, decision, receipt, store, graph and projection. |
 | 2 | Integration Kit | Interfaces, SDK, conformance fixtures and adapters around core primitives. |
 | 3 | Operational Memory / Audit Pack | Memory candidates, receipt reconstruction, divergence and redaction posture. |
 | 4 | Professional / Team | Multi-case store, policy packs, team subject registry and audit export. |

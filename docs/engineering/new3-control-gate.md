@@ -15,7 +15,7 @@ receipt requirement v0
 failure mode enum
 control record persistence
 control projection counts
-yaictl control inspection
+yai control inspection
 ```
 
 ## Object Shapes
@@ -102,7 +102,7 @@ build/tmp/new3/journal.jsonl
 
 This is a generated dev/test path and is not a stable user store layout.
 
-## Projection And yaictl
+## Projection And yai
 
 Control projection summarizes:
 
@@ -118,8 +118,8 @@ receipt_requirements
 Debug commands:
 
 ```text
-crates/target/debug/yaictl control summary --journal build/tmp/new3/journal.jsonl
-crates/target/debug/yaictl decision inspect --journal build/tmp/new3/journal.jsonl
+yai control summary --journal build/tmp/new3/journal.jsonl
+yai decision inspect --journal build/tmp/new3/journal.jsonl
 ```
 
 ## Out Of Scope

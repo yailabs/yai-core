@@ -68,7 +68,7 @@ tests/smoke/minimum-loop/test_minimum_loop.c
 Rust owns:
 
 ```text
-yaictl implementation
+yai implementation
 operational data engine skeleton
 store/journal/record modules
 memory module
@@ -85,15 +85,15 @@ crates/yai-core-engine
 crates/yai-core-engine-sys
 ```
 
-`yaictl` commands:
+`yai` commands:
 
 ```text
-yaictl --version
-yaictl info
-yaictl doctor
+yai --version
+yai info
+yai doctor
 ```
 
-`yaictl` is a Rust client over core primitives. It does not own core semantics.
+`yai` is a Rust client over core primitives. It does not own core semantics.
 
 ## Deterministic Control V0
 

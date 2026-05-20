@@ -1,6 +1,6 @@
 # Daemon And Ctl
 
-`yaid` and `yaictl` are technical core surfaces.
+`yaid` and `yai` are technical core surfaces.
 
 ## `yaid`
 
@@ -20,11 +20,11 @@ supervision
 host integration
 ```
 
-## `yaictl`
+## `yai`
 
-`yaictl` is the embedded technical control CLI for the core.
+`yai` is the embedded technical control CLI for the core.
 
-In NEW.1 `yaictl` is implemented in Rust as a client over core primitives. It
+In NEW.1 `yai` is implemented in Rust as a client over core primitives. It
 does not own core semantics.
 
 Initial command families:
@@ -46,7 +46,7 @@ debug
 
 ## Console Boundary
 
-User-facing command UX belongs to Console. `yaictl` exists for technical inspection, smoke tests, local control and development diagnostics. It must not become the product CLI.
+User-facing command UX belongs to Console. `yai` exists for technical inspection, smoke tests, local control and development diagnostics. It must not become the product CLI.
 
 ## NEW.11 Local IPC V0
 
@@ -77,12 +77,12 @@ yaid --once status
 yaid --version
 ```
 
-`yaictl` can call:
+`yai` can call:
 
 ```text
-yaictl daemon status --socket <path>
-yaictl daemon info --socket <path>
-yaictl daemon shutdown --socket <path>
+yai daemon status --socket <path>
+yai daemon info --socket <path>
+yai daemon shutdown --socket <path>
 ```
 
 No case, operation, control, effect or store execution crosses IPC in NEW.11.
@@ -108,5 +108,34 @@ and appends graph, memory and projection residue. `run_filesystem_loop` proves
 the same daemon path with sandboxed filesystem residue.
 
 This is not public API, HTTP, auth, session management, service supervision or
-multi-client runtime. It is the first proof that `yaictl -> yaid -> core loop ->
+multi-client runtime. It is the first proof that `yai -> yaid -> core loop ->
 journal/projection -> response` works locally.
+
+## NEW.13 Local Command Layout
+
+NEW.13 makes `yai` the canonical local developer command and installs `yaid`
+beside it:
+
+```text
+$(PREFIX)/bin/yai
+$(PREFIX)/bin/yaid
+```
+
+The local host layout is:
+
+```text
+$(YAI_HOME)/run/
+$(YAI_HOME)/store/
+$(YAI_HOME)/log/
+$(YAI_HOME)/tmp/
+```
+
+Default daemon socket:
+
+```text
+$(YAI_HOME)/run/yaid.sock
+```
+
+This does not make Console the owner of the `yai` command. Console remains the
+operator UX surface. `yai` is the technical core command for local development,
+inspection and controlled daemon interaction.

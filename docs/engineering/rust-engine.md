@@ -7,8 +7,8 @@ new core owner.
 
 ```text
 C owns core ABI and daemon/carrier/control bootstrap.
-Rust may own yaictl implementation and operational data engine.
-yaictl remains a client over core primitives, not a semantic owner.
+Rust may own yai implementation and operational data engine.
+yai remains a client over core primitives, not a semantic owner.
 Rust owns advanced store/index/graph/memory/projection/query behind C FFI.
 ```
 
@@ -51,8 +51,8 @@ retention mechanics
 | control v0 | C |
 | public headers | C ABI |
 | serialized record schemas | C ABI + protocol docs |
-| `yaictl` | Rust allowed, client only |
-| ctl semantic authority | none; `yaictl` is client over primitives |
+| `yai` | Rust allowed, client only |
+| ctl semantic authority | none; `yai` is client over primitives |
 | journal backend advanced | Rust |
 | graph traversal | Rust |
 | memory consolidation | Rust |

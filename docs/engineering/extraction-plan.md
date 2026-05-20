@@ -221,7 +221,7 @@ src/agents/grounding/retrieval_strategy.c -> future ai-environment retrieval exp
 ```
 
 The implementation absorbs only journal scan/filter query, query result counts
-and `yaictl query` inspection. It does not port old query surfaces, backend
+and `yai query` inspection. It does not port old query surfaces, backend
 registries, vector indexes, feature stores or agent retrieval strategy.
 
 NEW.10 applied wave-coupled extraction for Rust engine R1:
@@ -287,6 +287,24 @@ The implementation absorbs only daemon request/response envelopes, two bounded
 daemon-served loops and journal/projection summary commands. It does not port
 old runtime roots, case surface UX, transport compatibility layers, HTTP,
 auth, service management, process/model carriers or interfaces/console code.
+
+NEW.13 applied wave-coupled extraction for local command and install layout:
+
+```text
+../yai/packaging/*                         -> install path roles and package adapter evidence
+../yai/tools/runtime/*                     -> local runtime tooling evidence
+../yai/Documentation/manuals/runtime-service-operations.md -> daemon operation posture
+../yai/Documentation/product/distribution.md -> local-first distribution posture
+../yai/Documentation/reference/repository/* -> repository ownership boundary
+../console/Documentation/commands/*        -> console command UX externalization
+../console/Documentation/runtime-attachment/* -> console runtime attachment externalization
+```
+
+The implementation absorbs only `make install-local`, `make uninstall-local`,
+`make doctor-local`, `yai` as canonical technical command, `yaid` as daemon
+binary and the local `YAI_HOME` directory contract. It does not port old
+packaging scripts, service managers, distro packages, console command UX,
+authorization, launchd/systemd, Homebrew or cloud distribution.
 
 ## 8. Old Root Non-Recreation Rule
 

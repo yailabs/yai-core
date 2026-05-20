@@ -3,7 +3,7 @@
 NEW.11 turns `yaid` from a bootstrap stub into the first local daemon endpoint.
 
 This is not the full daemon runtime. It is the first IPC contract between
-`yaictl` and `yaid`.
+`yai` and `yaid`.
 
 ## IPC Mode
 
@@ -56,21 +56,21 @@ build/yaid --socket <path> --foreground
 `--foreground` is accepted for the resident local process posture. NEW.11 does
 not implement background service management or persistence supervision.
 
-## yaictl
+## yai
 
 ```text
-yaictl daemon status --socket <path>
-yaictl daemon info --socket <path>
-yaictl daemon shutdown --socket <path>
+yai daemon status --socket <path>
+yai daemon info --socket <path>
+yai daemon shutdown --socket <path>
 ```
 
-`yaictl` remains the Rust technical client. Console remains a sibling product
-boundary and does not inherit protocol ownership from `yaictl`.
+`yai` remains the Rust technical client. Console remains a sibling product
+boundary and does not inherit protocol ownership from `yai`.
 
 ## Smoke Proof
 
 `tests/smoke/daemon-ipc/test_daemon_ipc.sh` starts `yaid`, waits for the socket,
-calls status/info/shutdown through `yaictl`, then asserts that the daemon exits.
+calls status/info/shutdown through `yai`, then asserts that the daemon exits.
 
 ## Old-YAI Audit
 

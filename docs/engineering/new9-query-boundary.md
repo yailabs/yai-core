@@ -59,11 +59,11 @@ limit          -> maximum returned count
 Records are returned in journal order. There are no boolean expressions,
 sorting rules, persistent index files, vector search or graph traversal.
 
-## yaictl
+## yai
 
 ```text
-yaictl query summary --journal <path>
-yaictl query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]
+yai query summary --journal <path>
+yai query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]
 ```
 
 Minimum output:

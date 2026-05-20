@@ -12,7 +12,7 @@ canonical edge kinds
 graph edges persisted through journal records
 receipt chain reconstruction
 projection graph counts
-yaictl graph summary
+yai graph summary
 ```
 
 ## Edge Kinds
@@ -64,7 +64,7 @@ This is a compact receipt-chain proof, not a general traversal engine.
 ## Debug Command
 
 ```text
-crates/target/debug/yaictl graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
+yai graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
 ```
 
 Smoke validation writes graph journals under a per-run directory so independent

@@ -1,8 +1,8 @@
 # Ctl / Console Split
 
-`yaictl` and Console are different products.
+`yai` and Console are different products.
 
-## `yaictl`
+## `yai`
 
 Technical core control CLI.
 
@@ -39,20 +39,20 @@ runtime attachment UX
 
 ## Rule
 
-Console consumes core operations and projections. `yaictl` inspects and controls core primitives. Neither should redefine protocol truth; that belongs to core plus `interfaces`.
+Console consumes core operations and projections. `yai` inspects and controls core primitives. Neither should redefine protocol truth; that belongs to core plus `interfaces`.
 
 ## NEW.11 Daemon IPC
 
-NEW.11 lets `yaictl` talk to `yaid` for technical daemon status, info and
+NEW.11 lets `yai` talk to `yaid` for technical daemon status, info and
 shutdown over a local Unix socket.
 
-This does not make `yaictl` the Console UX and does not expose case/op execution
+This does not make `yai` the Console UX and does not expose case/op execution
 over IPC. It proves the local service boundary that Console and interfaces can
 consume later.
 
 ## NEW.12 Daemon-Backed Loop
 
-NEW.12 lets `yaictl` request bounded daemon operations:
+NEW.12 lets `yai` request bounded daemon operations:
 
 ```text
 daemon run-minimum-loop
@@ -61,7 +61,22 @@ daemon journal-summary
 daemon projection-summary
 ```
 
-`yaictl` is still only the technical client. `yaid` invokes the C core path and
+`yai` is still only the technical client. `yaid` invokes the C core path and
 returns structured residue counts. Console remains a sibling repo concern and
 must consume future interfaces/projections instead of absorbing this technical
 CLI shape as product UX.
+
+## NEW.13 Local Command
+
+NEW.13 makes `yai` the installed technical command:
+
+```text
+make install-local
+yai info
+yai doctor
+yai daemon status --socket <path>
+```
+
+This is a local developer command surface, not Console. Console may later wrap
+or consume interfaces/projections, but it does not define core command truth in
+this wave.
