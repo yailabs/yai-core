@@ -18,6 +18,8 @@ pub struct ProjectionSummary {
     pub filesystem_receipt_count: usize,
     pub subject_state_count: usize,
     pub effect_count: usize,
+    pub graph_edge_count: usize,
+    pub reconstruction_count: usize,
 }
 
 impl ProjectionSummary {
@@ -80,6 +82,16 @@ impl ProjectionSummary {
                 )
             })
             .count();
+        let graph_edge_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::GraphEdge)
+            .count();
+        let reconstruction_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::Reconstruction)
+            .count();
         let subject_count = journal
             .records()
             .iter()
@@ -89,7 +101,7 @@ impl ProjectionSummary {
             .len();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count}"
             ),
             consumer,
             case_ref,
@@ -104,6 +116,8 @@ impl ProjectionSummary {
             filesystem_receipt_count,
             subject_state_count,
             effect_count,
+            graph_edge_count,
+            reconstruction_count,
         }
     }
 }

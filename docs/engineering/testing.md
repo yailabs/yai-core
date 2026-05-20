@@ -112,6 +112,27 @@ effect path while keeping all writes inside `build/tmp/new4/sandbox/`.
 crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
 ```
 
+## NEW.5 Graph Reconstruction Loop
+
+```text
+open case
+bind subject
+submit operation
+emit decision
+emit receipt
+append graph edges
+reload journal
+reconstruct receipt chain
+build graph projection
+```
+
+`tests/smoke/graph-reconstruction/test_graph_reconstruction.c` proves that the
+core can explain a receipt through case, operation, decision and subject refs.
+
+```text
+crates/target/debug/yaictl graph summary --journal build/tmp/new5/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

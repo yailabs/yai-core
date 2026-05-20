@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -25,6 +25,9 @@ C_SOURCES := \
 	lib/effect/effect_hash.c \
 	lib/effect/receipt.c \
 	lib/effect/carriers/filesystem_carrier.c \
+	lib/graph/edge.c \
+	lib/graph/graph.c \
+	lib/graph/reconstruct.c \
 	lib/store/record.c \
 	lib/store/journal.c \
 	lib/store/record_codec.c \
@@ -32,16 +35,17 @@ C_SOURCES := \
 	lib/projection/projection.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new4.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new5.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
 SMOKE_CONTROL_GATE := $(BUILD_DIR)/test_control_gate
 SMOKE_FILESYSTEM_CARRIER := $(BUILD_DIR)/test_filesystem_carrier
+SMOKE_GRAPH_RECONSTRUCTION := $(BUILD_DIR)/test_graph_reconstruction
 
 info:
-	@printf "yai-core: filesystem carrier and controlled effects\n"
-	@printf "status: NEW.4\n"
+	@printf "yai-core: graph edges and reconstruction\n"
+	@printf "status: NEW.5\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -83,7 +87,11 @@ $(SMOKE_FILESYSTEM_CARRIER): tests/smoke/filesystem-carrier/test_filesystem_carr
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/filesystem-carrier/test_filesystem_carrier.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER)
+$(SMOKE_GRAPH_RECONSTRUCTION): tests/smoke/graph-reconstruction/test_graph_reconstruction.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/graph-reconstruction/test_graph_reconstruction.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -103,7 +111,10 @@ smoke-new3: $(SMOKE_CONTROL_GATE)
 smoke-new4: $(SMOKE_FILESYSTEM_CARRIER)
 	@$(SMOKE_FILESYSTEM_CARRIER)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4
+smoke-new5: $(SMOKE_GRAPH_RECONSTRUCTION)
+	@$(SMOKE_GRAPH_RECONSTRUCTION)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5
 
 check: check-layout check-docs build smoke
 

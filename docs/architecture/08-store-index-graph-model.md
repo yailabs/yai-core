@@ -76,6 +76,40 @@ causal reconstruction
 
 Graph is the replacement for final `lineage` semantics.
 
+## NEW.5 Graph V0
+
+NEW.5 stores explicit graph edges as journal records:
+
+```text
+graph_edge
+reconstruction
+```
+
+Initial edge kinds:
+
+```text
+case_binds_subject
+op_targets_subject
+op_has_actor
+decision_controls_op
+gate_supports_decision
+obligation_attached_to_decision
+receipt_records_effect
+receipt_updates_subject
+carrier_acts_on_subject
+projection_derived_from_record
+```
+
+The first reconstruction path builds a receipt chain:
+
+```text
+case -> op -> decision -> receipt -> subject
+```
+
+This is not a graph database or traversal planner. It is a persisted
+relationship layer over store records so the core can explain why a receipt
+exists and which case, operation, decision and subject it belongs to.
+
 ## Split Rule
 
 Records are facts, store is persistence, graph is relation, index is retrieval, memory is continuity, projection is read model.

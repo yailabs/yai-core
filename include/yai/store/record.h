@@ -21,7 +21,9 @@ typedef enum yai_record_kind {
     YAI_RECORD_CARRIER_REQUEST = 11,
     YAI_RECORD_EFFECT_RECEIPT = 12,
     YAI_RECORD_FILESYSTEM_RECEIPT = 13,
-    YAI_RECORD_SUBJECT_STATE = 14
+    YAI_RECORD_SUBJECT_STATE = 14,
+    YAI_RECORD_GRAPH_EDGE = 15,
+    YAI_RECORD_RECONSTRUCTION = 16
 } yai_record_kind_t;
 
 typedef struct yai_store_record {

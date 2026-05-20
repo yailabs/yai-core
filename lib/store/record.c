@@ -83,6 +83,10 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "filesystem_receipt";
     case YAI_RECORD_SUBJECT_STATE:
         return "subject_state";
+    case YAI_RECORD_GRAPH_EDGE:
+        return "graph_edge";
+    case YAI_RECORD_RECONSTRUCTION:
+        return "reconstruction";
     default:
         return "unknown";
     }
@@ -124,6 +128,10 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_FILESYSTEM_RECEIPT;
     } else if (strcmp(value, "subject_state") == 0) {
         *kind = YAI_RECORD_SUBJECT_STATE;
+    } else if (strcmp(value, "graph_edge") == 0) {
+        *kind = YAI_RECORD_GRAPH_EDGE;
+    } else if (strcmp(value, "reconstruction") == 0) {
+        *kind = YAI_RECORD_RECONSTRUCTION;
     } else {
         return YAI_ERR_INVALID;
     }

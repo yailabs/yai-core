@@ -130,4 +130,42 @@ mod tests {
         assert_eq!(projection.subject_state_count, 1);
         assert_eq!(projection.effect_count, 1);
     }
+
+    #[test]
+    fn build_graph_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:edge-case-subject",
+            "case:new5-graph",
+            RecordKind::GraphEdge,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "edge:case_binds_subject from:case:new5-graph to:subject:repo-test",
+        ));
+        journal.append(Record::from_parts(
+            "record:edge-decision-op",
+            "case:new5-graph",
+            RecordKind::GraphEdge,
+            "subject:repo-test",
+            "op:fs-write",
+            "decision:new5",
+            "",
+            "edge:decision_controls_op from:decision:new5 to:op:fs-write",
+        ));
+
+        let graph = crate::graph::GraphSummary::from_summaries(
+            journal
+                .records()
+                .iter()
+                .map(|record| record.summary.as_str()),
+        );
+        let projection = ProjectionSummary::from_journal("graph", &journal);
+
+        assert_eq!(graph.graph_edges, 2);
+        assert_eq!(graph.case_binds_subject, 1);
+        assert_eq!(graph.decision_controls_op, 1);
+        assert_eq!(projection.graph_edge_count, 2);
+    }
 }

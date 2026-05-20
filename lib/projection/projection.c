@@ -26,6 +26,8 @@ yai_status_t yai_projection_build(const char *projection_id,
     projection->filesystem_receipt_count = 0;
     projection->subject_state_count = 0;
     projection->effect_count = 0;
+    projection->graph_edge_count = 0;
+    projection->reconstruction_count = 0;
 
     for (index = 0; index < yai_journal_count(journal); index += 1) {
         const yai_store_record_t *record = yai_journal_get(journal, index);
@@ -51,12 +53,16 @@ yai_status_t yai_projection_build(const char *projection_id,
             projection->subject_state_count += 1;
         } else if (record->record_kind == YAI_RECORD_RECEIPT) {
             projection->effect_count += 1;
+        } else if (record->record_kind == YAI_RECORD_GRAPH_EDGE) {
+            projection->graph_edge_count += 1;
+        } else if (record->record_kind == YAI_RECORD_RECONSTRUCTION) {
+            projection->reconstruction_count += 1;
         }
     }
 
     (void)snprintf(projection->summary,
                    sizeof(projection->summary),
-                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu",
+                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu",
                    yai_projection_consumer_string(consumer_kind),
                    projection->source_record_count,
                    projection->decision_count,
@@ -66,7 +72,9 @@ yai_status_t yai_projection_build(const char *projection_id,
                    projection->receipt_requirement_count,
                    projection->filesystem_receipt_count,
                    projection->subject_state_count,
-                   projection->effect_count);
+                   projection->effect_count,
+                   projection->graph_edge_count,
+                   projection->reconstruction_count);
     return YAI_OK;
 }
 

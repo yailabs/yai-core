@@ -19,7 +19,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.4 filesystem carrier and controlled effect path.
+Status: NEW.5 graph edges and reconstruction.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -62,6 +62,15 @@ subject state update
 filesystem projection
 ```
 
+NEW.5 adds the first operational graph layer:
+
+```text
+graph edge records
+case/subject/op/decision/receipt relationships
+receipt chain reconstruction
+graph projection
+```
+
 Ownership:
 
 ```text
@@ -69,10 +78,10 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.4 adds
-file-based receipt inspection and filesystem diagnostic commands, but there is
-no real daemon IPC, no process/network/model/database carrier, no full policy
-engine, no graph engine and no memory consolidation yet.
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.5 adds
+file-based graph summary inspection, but there is no real daemon IPC, no
+process/network/model/database carrier, no full policy engine, no graph
+database and no memory consolidation yet.
 
 Build and validate:
 
@@ -100,4 +109,10 @@ Inspect the NEW.4 filesystem journal after `make smoke-new4`:
 ```text
 crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
 crates/target/debug/yaictl carrier fs-read --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/input.txt
+```
+
+Inspect the NEW.5 graph journal after `make smoke-new5`:
+
+```text
+crates/target/debug/yaictl graph summary --journal build/tmp/new5/journal.jsonl
 ```

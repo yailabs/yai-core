@@ -13,6 +13,7 @@ for file in \
   docs/engineering/new2-persistent-journal.md \
   docs/engineering/new3-control-gate.md \
   docs/engineering/new4-filesystem-carrier.md \
+  docs/engineering/new5-graph-reconstruction.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

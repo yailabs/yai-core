@@ -15,6 +15,8 @@ pub enum RecordKind {
     EffectReceipt,
     FilesystemReceipt,
     SubjectState,
+    GraphEdge,
+    Reconstruction,
 }
 
 impl RecordKind {
@@ -35,6 +37,8 @@ impl RecordKind {
             Self::EffectReceipt => "effect_receipt",
             Self::FilesystemReceipt => "filesystem_receipt",
             Self::SubjectState => "subject_state",
+            Self::GraphEdge => "graph_edge",
+            Self::Reconstruction => "reconstruction",
         }
     }
 
@@ -55,6 +59,8 @@ impl RecordKind {
             "effect_receipt" => Some(Self::EffectReceipt),
             "filesystem_receipt" => Some(Self::FilesystemReceipt),
             "subject_state" => Some(Self::SubjectState),
+            "graph_edge" => Some(Self::GraphEdge),
+            "reconstruction" => Some(Self::Reconstruction),
             _ => None,
         }
     }

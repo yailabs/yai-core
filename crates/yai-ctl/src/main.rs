@@ -2,6 +2,7 @@ use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
 
+use yai_core_engine::graph::GraphSummary;
 use yai_core_engine::journal::Journal;
 use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::record::RecordKind;
@@ -31,6 +32,7 @@ fn print_usage() {
     println!("       yaictl control summary --journal <path>");
     println!("       yaictl decision inspect --journal <path>");
     println!("       yaictl receipt summary --journal <path>");
+    println!("       yaictl graph summary --journal <path>");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -218,6 +220,28 @@ fn carrier_fs_write(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn graph_summary(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let projection = ProjectionSummary::from_journal("graph", &journal);
+    let graph = GraphSummary::from_summaries(
+        journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::GraphEdge)
+            .map(|record| record.summary.as_str()),
+    );
+
+    println!("graph_edges: {}", projection.graph_edge_count);
+    println!("case_binds_subject: {}", graph.case_binds_subject);
+    println!("op_targets_subject: {}", graph.op_targets_subject);
+    println!("decision_controls_op: {}", graph.decision_controls_op);
+    println!("receipt_records_effect: {}", graph.receipt_records_effect);
+    println!("receipt_updates_subject: {}", graph.receipt_updates_subject);
+    Ok(())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -250,6 +274,12 @@ fn main() {
         }
         Some("receipt") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = receipt_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = graph_summary(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }
