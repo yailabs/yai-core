@@ -131,8 +131,81 @@ pretending it is still the core.
 | ENV.CANON.6 | Substrate material as store/graph/memory extraction evidence |
 | ENV.CANON.7 | Old tests converted to ai-environment scenarios |
 | ENV.CANON.8 | ai-environment harness against yai-core |
+| ENV.CANON.8A | Agentic QA / Release Rehearsal lab boundary |
 | ENV.CANON.9 | Rename/package decision |
 | ENV.CANON.10 | Environment milestone freeze |
+
+### ENV.CANON Agentic QA / Release Rehearsal
+
+Agentic QA is not built inside `yai-core` and should not become an internal
+`yai` self-test engine. It belongs in future `ai-environment` as an external
+lab that can put YAI systems, LidoPro and third-party software under test.
+
+Canonical ownership:
+
+```text
+ai-environment
+  qa/
+    doctrine/
+    scenarios/
+    agents/
+    harnesses/
+    simulators/
+    fake-systems/
+    runners/
+    reports/
+    adapters/
+      yai/
+      lidopro/
+      generic-web-app/
+```
+
+Product-oriented naming can also group the same capability as:
+
+```text
+ai-environment/
+  release-rehearsal/
+  agentic-qa/
+  test-case-engines/
+  evidence-lab/
+```
+
+Ownership split:
+
+| Owner | Owns |
+|---|---|
+| `ai-environment` | Agentic QA engines, release rehearsal, scenario generation, simulation runtime, fake systems, accelerated time, adversarial runs, QA reports, evidence bundles and adapters. |
+| YAI systems under test (`yai-core`, transition `yai`, later packaged YAI) | Invariants, contracts, protocol expectations, trace/evidence shape, conformance targets, smoke targets and release validation requirements. |
+| YaiLabs / site | Public and commercial methodology: Agentic QA, Release Simulation, Test Case Generation and Evidence-Based QA. |
+
+Rule:
+
+```text
+do not build QA inside YAI
+build an agentic environment that can test YAI
+```
+
+YAI exposes verifiable surfaces:
+
+```text
+Documentation/testing/
+  release-validation-contract.md
+  invariant-map.md
+  evidence-contract.md
+
+protocols/testing/
+  scenario-envelope.schema.json
+  evidence-report.schema.json
+
+make test
+make validate-contract
+make smoke
+```
+
+`ai-environment` executes scenarios against those surfaces, validates
+invariants, observes traces and produces evidence reports. This keeps QA at a
+healthy distance from the system it validates and makes the capability reusable
+for non-YAI products.
 
 ## INTF.CANON Roadmap
 

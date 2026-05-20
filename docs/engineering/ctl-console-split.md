@@ -49,3 +49,19 @@ shutdown over a local Unix socket.
 This does not make `yaictl` the Console UX and does not expose case/op execution
 over IPC. It proves the local service boundary that Console and interfaces can
 consume later.
+
+## NEW.12 Daemon-Backed Loop
+
+NEW.12 lets `yaictl` request bounded daemon operations:
+
+```text
+daemon run-minimum-loop
+daemon run-filesystem-loop
+daemon journal-summary
+daemon projection-summary
+```
+
+`yaictl` is still only the technical client. `yaid` invokes the C core path and
+returns structured residue counts. Console remains a sibling repo concern and
+must consume future interfaces/projections instead of absorbing this technical
+CLI shape as product UX.

@@ -17,9 +17,9 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_info() {
     println!("yaictl: technical YAI Core control client");
-    println!("status: NEW.11");
+    println!("status: NEW.12");
     println!("ownership: Rust client over C-defined core primitives");
-    println!("daemon_ipc: local Unix socket v0");
+    println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -51,6 +51,10 @@ fn print_usage() {
     println!("       yaictl daemon status --socket <path>");
     println!("       yaictl daemon info --socket <path>");
     println!("       yaictl daemon shutdown --socket <path>");
+    println!("       yaictl daemon run-minimum-loop --socket <path>");
+    println!("       yaictl daemon run-filesystem-loop --socket <path>");
+    println!("       yaictl daemon journal-summary --socket <path> --journal <path>");
+    println!("       yaictl daemon projection-summary --socket <path> --journal <path>");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -441,9 +445,24 @@ fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
     Ok(())
 }
 
+#[cfg(unix)]
+fn daemon_request_with_journal(args: &[String], request: &str) -> Result<(), String> {
+    let journal = journal_arg(args)?;
+    let line = format!(
+        "{request} request_id=yaictl-{request} payload={}",
+        journal.display()
+    );
+    daemon_request(args, &line)
+}
+
 #[cfg(not(unix))]
 fn daemon_request(_args: &[String], _request: &str) -> Result<(), String> {
     Err("daemon IPC is only implemented on Unix in NEW.11".to_string())
+}
+
+#[cfg(not(unix))]
+fn daemon_request_with_journal(_args: &[String], _request: &str) -> Result<(), String> {
+    Err("daemon IPC is only implemented on Unix in NEW.12".to_string())
 }
 
 fn main() {
@@ -544,6 +563,36 @@ fn main() {
         }
         Some("daemon") if args.get(1).map(String::as_str) == Some("shutdown") => {
             if let Err(error) = daemon_request(&args[2..], "shutdown") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("run-minimum-loop") => {
+            if let Err(error) = daemon_request(
+                &args[2..],
+                "run_minimum_loop request_id=yaictl-minimum case_ref=case:new12-daemon subject_ref=subject:repo-test",
+            ) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("run-filesystem-loop") => {
+            if let Err(error) = daemon_request(
+                &args[2..],
+                "run_filesystem_loop request_id=yaictl-filesystem case_ref=case:new12-filesystem subject_ref=subject:filesystem-sandbox",
+            ) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("journal-summary") => {
+            if let Err(error) = daemon_request_with_journal(&args[2..], "journal_summary") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("daemon") if args.get(1).map(String::as_str) == Some("projection-summary") => {
+            if let Err(error) = daemon_request_with_journal(&args[2..], "projection_summary") {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

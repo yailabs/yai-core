@@ -13,6 +13,7 @@
 #include "yai/control/obligation.h"
 #include "yai/control/policy_rule.h"
 #include "yai/control/receipt_requirement.h"
+#include "yai/daemon/daemon_loop.h"
 #include "yai/daemon/daemon_status.h"
 #include "yai/daemon/ipc.h"
 #include "yai/daemon/ipc_message.h"

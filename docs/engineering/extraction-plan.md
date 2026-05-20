@@ -259,6 +259,35 @@ messages and daemon status JSON. It does not port runtime loop, transport
 normalization/security, API dispatch, service manager integration or carrier
 execution.
 
+NEW.12 applied wave-coupled extraction for daemon-backed core execution:
+
+```text
+src/runtime/activation/*                         -> daemon startup posture
+src/runtime/lifecycle/*                          -> resident lifecycle evidence
+src/runtime/machine/*                            -> future loop/machine evidence
+src/runtime/connections/*                        -> local request/response boundary
+src/runtime/execution/request_envelope.c         -> request envelope concept
+src/runtime/execution/runtime_envelope_validation.c -> envelope validation posture
+src/runtime/execution/runtime_control_bridge.c   -> control/effect bridge concept
+src/runtime/execution/runtime_control_enforcement.c -> enforcement boundary concept
+src/runtime/execution/operational_receipt.c      -> receipt response evidence
+src/runtime/decision/*                           -> daemon decision context evidence
+src/runtime/observation/*                        -> observation posture evidence
+src/case/surface/*                               -> console/projection split evidence
+src/case/identity/*                              -> case identity evidence
+src/case/subjects/*                              -> subject binding evidence
+src/case/policy/*                                -> control policy evidence
+src/case/decision/*                              -> case decision evidence
+src/substrate/records/*                          -> append semantics evidence
+src/substrate/views/*                            -> projection/read-model posture
+src/substrate/query/*                            -> summary/query posture
+```
+
+The implementation absorbs only daemon request/response envelopes, two bounded
+daemon-served loops and journal/projection summary commands. It does not port
+old runtime roots, case surface UX, transport compatibility layers, HTTP,
+auth, service management, process/model carriers or interfaces/console code.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

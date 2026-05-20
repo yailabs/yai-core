@@ -20,6 +20,7 @@ for file in \
   docs/engineering/new9-query-boundary.md \
   docs/engineering/new10-rust-engine-r1.md \
   docs/engineering/new11-daemon-ipc.md \
+  docs/engineering/new12-daemon-backed-loop.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

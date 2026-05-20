@@ -7,8 +7,8 @@ materializes policy into machine gates, emits control decisions, executes or
 observes effects through carriers, records receipts, derives operational memory,
 serves controlled projections and scans residue through a minimal query
 boundary. Rust can also consume the same residue through an internal engine R1
-path behind the C ABI. `yaid` now exposes the first local daemon IPC status
-surface.
+path behind the C ABI. `yaid` now exposes a local daemon IPC path that can run
+the first bounded core loops.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -22,7 +22,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.11 daemon IPC v0.
+Status: NEW.12 daemon-backed core loop v0.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -140,6 +140,15 @@ yaictl daemon info
 yaictl daemon shutdown
 ```
 
+NEW.12 makes the first bounded loop pass through `yaid`:
+
+```text
+yaictl daemon run-minimum-loop
+yaictl daemon run-filesystem-loop
+yaictl daemon journal-summary
+yaictl daemon projection-summary
+```
+
 Ownership:
 
 ```text
@@ -147,9 +156,9 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.11 adds
-the first local daemon IPC path, but there is no case/op execution over IPC, no
-process/network/model/database carrier, no full policy engine, no graph
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.12 adds
+the first daemon-backed core loop path, but there is no public API, no HTTP, no
+auth, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
 engine, no backend switch and no full secret redaction engine yet.
 
@@ -224,4 +233,12 @@ Inspect NEW.11 daemon IPC manually:
 ```text
 build/yaid --socket build/tmp/new11/manual/yaid.sock --foreground
 crates/target/debug/yaictl daemon status --socket build/tmp/new11/manual/yaid.sock
+```
+
+Inspect NEW.12 daemon-backed loops manually:
+
+```text
+build/yaid --socket build/tmp/new12/manual/yaid.sock --foreground
+crates/target/debug/yaictl daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
+crates/target/debug/yaictl daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
 ```

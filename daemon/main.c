@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
             return print_status_json("ok", "yaid one-shot status ok");
         }
         if (request != 0 && strcmp(request, "info") == 0) {
-            return print_status_json("ok", "yaid NEW.11 local daemon ipc v0");
+            return print_status_json("ok", "yaid NEW.12 daemon-backed core loop v0");
         }
         fprintf(stderr, "unsupported --once request\n");
         return 2;

@@ -87,3 +87,26 @@ yaictl daemon shutdown --socket <path>
 
 No case, operation, control, effect or store execution crosses IPC in NEW.11.
 The daemon is alive and inspectable, but operational dispatch remains deferred.
+
+## NEW.12 Daemon-Backed Loop V0
+
+NEW.12 adds the first daemon-served core loop. The daemon can now serve:
+
+```text
+run_minimum_loop
+run_filesystem_loop
+journal_summary
+projection_summary
+```
+
+The transport remains a local Unix socket and the request format remains
+line-oriented. The daemon response is structured JSON with request id, status,
+journal path and residue counts.
+
+`run_minimum_loop` creates a bounded case/subject/op/control/receipt/store path
+and appends graph, memory and projection residue. `run_filesystem_loop` proves
+the same daemon path with sandboxed filesystem residue.
+
+This is not public API, HTTP, auth, session management, service supervision or
+multi-client runtime. It is the first proof that `yaictl -> yaid -> core loop ->
+journal/projection -> response` works locally.

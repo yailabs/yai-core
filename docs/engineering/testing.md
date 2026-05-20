@@ -18,6 +18,7 @@ divergence
 query
 rust engine
 daemon ipc
+daemon loop
 ```
 
 ## Primitive Coverage
@@ -37,6 +38,7 @@ daemon ipc
 | `query` | journal residue can be filtered without becoming a database |
 | `rust engine` | Rust can consume C journal residue through FFI |
 | `daemon ipc` | `yaictl` can reach resident `yaid` over local IPC |
+| `daemon loop` | `yaid` can serve bounded core loops over local IPC |
 
 ## NEW.1 Minimum Loop
 
@@ -261,6 +263,24 @@ assert daemon exits
 `tests/smoke/daemon-ipc/test_daemon_ipc.sh` proves that `yaid` is a local
 resident endpoint and that `yaictl` can talk to it without exposing core
 operation execution yet.
+
+## NEW.12 Daemon-Backed Core Loop
+
+```text
+start yaid on isolated Unix socket
+yaictl daemon run-minimum-loop
+capture daemon-created journal
+yaictl daemon journal-summary
+yaictl daemon projection-summary
+yaictl daemon run-filesystem-loop
+verify sandboxed filesystem loop response
+shutdown daemon
+```
+
+`tests/smoke/daemon-core-loop/test_daemon_core_loop.sh` proves that the first
+case/subject/op/control/receipt/store/projection loop can cross the local
+daemon boundary. It still avoids public API, auth, HTTP, process carrier,
+model carrier and background runtime execution.
 
 ## Minimum Test Cases
 
