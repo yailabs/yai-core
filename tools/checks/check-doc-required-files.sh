@@ -18,6 +18,7 @@ for file in \
   docs/engineering/new7-reconcile-divergence.md \
   docs/engineering/new8-projection-hardening.md \
   docs/engineering/new9-query-boundary.md \
+  docs/engineering/new10-rust-engine-r1.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

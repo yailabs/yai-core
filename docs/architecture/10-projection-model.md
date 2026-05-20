@@ -114,3 +114,9 @@ NEW.9 query can produce `query_result` residue. Projection may count those
 results and expose them in read models, but projection does not execute query
 planning or become query truth. Query remains a scan/filter boundary over store
 records; projection remains a controlled view over residue.
+
+## Rust Engine Interaction
+
+NEW.10 allows the Rust engine to build projection summary JSON from existing
+journal residue. This is backend mechanics only: projection semantics remain
+defined by the C contract and architecture docs.

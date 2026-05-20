@@ -40,6 +40,7 @@
 #include "yai/store/journal_file.h"
 #include "yai/store/record.h"
 #include "yai/store/record_codec.h"
+#include "yai/store/rust_engine_backend.h"
 #include "yai/subject/subject_binding.h"
 #include "yai/subject/subject_ref.h"
 #include "yai/subject/subject_state.h"

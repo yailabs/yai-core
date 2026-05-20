@@ -101,3 +101,7 @@ consumers receive limited summaries by default.
 ## Rust Direction
 
 Advanced recall, ranking, consolidation, decay, pinning and privacy filtering are Rust engine candidates behind C FFI.
+
+NEW.10 begins that direction only as residue consumption. Rust can count memory
+candidate records through the engine path, but it does not consolidate, rank,
+recall or widen memory scope.

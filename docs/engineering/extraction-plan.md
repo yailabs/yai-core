@@ -224,6 +224,24 @@ The implementation absorbs only journal scan/filter query, query result counts
 and `yaictl query` inspection. It does not port old query surfaces, backend
 registries, vector indexes, feature stores or agent retrieval strategy.
 
+NEW.10 applied wave-coupled extraction for Rust engine R1:
+
+```text
+src/substrate/store/*      -> store/backend posture evidence
+src/substrate/query/*      -> query/read posture evidence
+src/substrate/indexes/*    -> future index/retrieval evidence
+src/substrate/views/*      -> projection/freshness/confidence evidence
+src/substrate/records/*    -> record lifecycle and taxonomy evidence
+src/substrate/memory/*     -> future memory backend evidence
+vendor/cjson/*             -> compatibility codec evidence only
+include/yai/substrate/*    -> compatibility include material
+```
+
+The implementation absorbs only opaque-handle Rust engine FFI, JSONL append,
+counts, kind query and projection summary JSON. It does not port cJSON, old
+substrate headers, external DB backends, vector indexes, graph traversal or
+memory consolidation.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

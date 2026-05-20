@@ -9,6 +9,7 @@ use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::RecordKind;
+use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -44,6 +45,7 @@ fn print_usage() {
     println!("       yaictl reconcile summary --journal <path>");
     println!("       yaictl query summary --journal <path>");
     println!("       yaictl query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
+    println!("       yaictl engine summary --journal <path>");
     println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -403,6 +405,21 @@ fn query_records(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn engine_summary(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let store = Store::from_journal(journal);
+    let summary = store.engine_summary();
+    println!("records: {}", summary.records);
+    println!("receipts: {}", summary.receipts);
+    println!("graph_edges: {}", summary.graph_edges);
+    println!("memory_candidates: {}", summary.memory_candidates);
+    println!("projections: {}", summary.projections);
+    println!("divergences: {}", summary.divergences);
+    Ok(())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -477,6 +494,12 @@ fn main() {
         }
         Some("query") if args.get(1).map(String::as_str) == Some("records") => {
             if let Err(error) = query_records(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("engine") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = engine_summary(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

@@ -16,6 +16,7 @@ memory
 projection
 divergence
 query
+rust engine
 ```
 
 ## Primitive Coverage
@@ -33,6 +34,7 @@ query
 | `projection` | query returns controlled read model with provenance |
 | `reconcile` | receipt gaps and divergences are visible |
 | `query` | journal residue can be filtered without becoming a database |
+| `rust engine` | Rust can consume C journal residue through FFI |
 
 ## NEW.1 Minimum Loop
 
@@ -222,6 +224,25 @@ database or graph traversal layer.
 ```text
 crates/target/debug/yaictl query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 crates/target/debug/yaictl query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
+```
+
+## NEW.10 Rust Engine R1 Loop
+
+```text
+create Rust engine through C shim
+append JSON record lines
+count records
+count receipt records
+query memory candidates
+build projection summary JSON
+free engine
+```
+
+`tests/smoke/rust-engine-r1/test_rust_engine_r1.c` proves that C can call the
+Rust engine only through an opaque handle and serialized record input.
+
+```text
+crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 ```
 
 ## Minimum Test Cases

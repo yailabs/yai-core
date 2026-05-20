@@ -172,3 +172,31 @@ fallback behavior
 
 Rust is accepted only when it can make operational residue more reliable without
 moving core semantics out of the public ABI.
+
+## 11. NEW.10 R1 Integration
+
+NEW.10 starts the R1 path without replacing the C journal. The Rust engine can
+consume `yai.store.record.v0` JSONL residue and expose counts, kind queries and
+projection summary JSON behind FFI.
+
+R1 exports only:
+
+```text
+opaque handle
+JSON record append
+record count
+kind count
+kind query count
+projection summary JSON
+caller-owned output buffer
+```
+
+The C shim lives under the store boundary:
+
+```text
+include/yai/store/rust_engine_backend.h
+lib/store/rust_engine_backend.c
+```
+
+This is a mirror/backend path, not semantic promotion. C remains the public ABI
+owner and the C file-backed journal remains tested as the default path.

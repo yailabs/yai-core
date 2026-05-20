@@ -1,9 +1,11 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke check clean
 
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -std=c11 -Wall -Wextra -Werror -Iinclude
+RUST_FFI_LIBS ?= -lpthread -ldl -lm
 BUILD_DIR := build
+RUST_ENGINE_STATIC := crates/target/debug/libyai_core_engine.a
 
 C_SOURCES := \
 	lib/internal/string_util.c \
@@ -41,6 +43,7 @@ C_SOURCES := \
 	lib/store/journal.c \
 	lib/store/record_codec.c \
 	lib/store/journal_file.c \
+	lib/store/rust_engine_backend.c \
 	lib/projection/projection.c \
 	lib/projection/projection_kind.c \
 	lib/projection/redaction.c \
@@ -49,7 +52,7 @@ C_SOURCES := \
 	lib/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new9.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new10.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -60,10 +63,11 @@ SMOKE_OPERATIONAL_MEMORY := $(BUILD_DIR)/test_operational_memory
 SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
 SMOKE_PROJECTION_HARDENING := $(BUILD_DIR)/test_projection_hardening
 SMOKE_QUERY_BOUNDARY := $(BUILD_DIR)/test_query_boundary
+SMOKE_RUST_ENGINE_R1 := $(BUILD_DIR)/test_rust_engine_r1
 
 info:
-	@printf "yai-core: store index query boundary\n"
-	@printf "status: NEW.9\n"
+	@printf "yai-core: rust operational data engine r1\n"
+	@printf "status: NEW.10\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -125,7 +129,14 @@ $(SMOKE_QUERY_BOUNDARY): tests/smoke/query-boundary/test_query_boundary.c $(C_LI
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/query-boundary/test_query_boundary.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY)
+$(SMOKE_RUST_ENGINE_R1): tests/smoke/rust-engine-r1/test_rust_engine_r1.c $(C_LIBRARY) $(RUST_ENGINE_STATIC)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/rust-engine-r1/test_rust_engine_r1.c $(C_LIBRARY) $(RUST_ENGINE_STATIC) $(RUST_FFI_LIBS) -o "$@"
+
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1)
+
+build-rust-ffi:
+	cargo build --manifest-path crates/Cargo.toml -p yai-core-engine
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -160,7 +171,10 @@ smoke-new8: $(SMOKE_PROJECTION_HARDENING)
 smoke-new9: $(SMOKE_QUERY_BOUNDARY)
 	@$(SMOKE_QUERY_BOUNDARY)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9
+smoke-new10: $(SMOKE_RUST_ENGINE_R1)
+	@$(SMOKE_RUST_ENGINE_R1)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10
 
 check: check-layout check-docs build smoke
 

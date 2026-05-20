@@ -207,3 +207,16 @@ include/yai/store/record.h
 include/yai/store/journal.h
 include/yai/projection/projection.h
 ```
+
+## 12. NEW.10 Rust Engine Shim
+
+NEW.10 adds a public C shim for the Rust operational data engine R1:
+
+```text
+include/yai/store/rust_engine_backend.h
+```
+
+The shim uses an opaque `yai_rust_engine_t` handle and caller-owned output
+buffers. It does not expose Rust structs, Rust allocation ownership or database
+row layouts. The raw Rust symbols remain implementation detail behind the C
+wrapper.

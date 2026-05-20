@@ -129,6 +129,16 @@ traversal, vector search or retrieval ranking layer.
 persists the result artifact; query owns scan/filter posture; projection may
 summarize query results but does not become query truth.
 
+## NEW.10 Rust Engine R1
+
+NEW.10 adds a Rust operational data engine mirror behind the C ABI. It consumes
+the same `yai.store.record.v0` JSONL residue and can append records, count by
+kind, query by kind and build projection summary JSON.
+
+This is not a store backend switch. The C file-backed journal remains active
+and tested. Rust R1 is an internal backend path for operational data mechanics,
+not semantic ownership.
+
 ## Graph
 
 Graph owns causal reconstruction and relationship edges:

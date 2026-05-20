@@ -6,7 +6,8 @@ It binds operational subjects to cases, captures operation attempts,
 materializes policy into machine gates, emits control decisions, executes or
 observes effects through carriers, records receipts, derives operational memory,
 serves controlled projections and scans residue through a minimal query
-boundary.
+boundary. Rust can also consume the same residue through an internal engine R1
+path behind the C ABI.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -20,7 +21,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.9 store/index/query boundary.
+Status: NEW.10 Rust operational data engine R1.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -118,6 +119,17 @@ yaictl query summary
 yaictl query records
 ```
 
+NEW.10 adds Rust engine R1 behind the C ABI:
+
+```text
+opaque engine handle
+JSON record append
+record/kind counts
+kind query
+projection summary JSON
+yaictl engine summary
+```
+
 Ownership:
 
 ```text
@@ -125,11 +137,11 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.9 adds
-file-based query inspection, but there is no real daemon IPC, no
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.10 adds
+the first C-callable Rust engine path, but there is no real daemon IPC, no
 process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
-engine and no full secret redaction engine yet.
+engine, no backend switch and no full secret redaction engine yet.
 
 Build and validate:
 
@@ -189,4 +201,10 @@ Inspect the NEW.9 query journal after `make smoke-new9`:
 ```text
 crates/target/debug/yaictl query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 crates/target/debug/yaictl query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
+```
+
+Inspect a journal through Rust engine summary:
+
+```text
+crates/target/debug/yaictl engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
 ```
