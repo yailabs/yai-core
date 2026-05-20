@@ -79,6 +79,20 @@ The records keep the same `yai.store.record.v0` envelope. Divergence records
 link to attempt, decision and receipt refs where available. Reconciliation
 records record posture such as `requires_review`; they do not execute recovery.
 
+## NEW.8 Projection Request And Result Records
+
+NEW.8 adds controlled read-model record kinds:
+
+```text
+projection_request
+projection_result
+```
+
+They keep the same `yai.store.record.v0` envelope. The request records consumer
+and projection kind. The result records provenance counts and posture in the
+summary, including redaction and freshness. Store persists the view artifact;
+projection owns read-model shaping; records remain the source residue.
+
 ## Index
 
 Index owns technical retrieval structures:
@@ -147,4 +161,4 @@ exists and which case, operation, decision and subject it belongs to.
 
 ## Split Rule
 
-Records are facts, store is persistence, graph is relation, index is retrieval, memory is continuity, projection is read model.
+Records are facts, store is persistence, graph is relation, index is retrieval, memory is continuity, projection is controlled read model.

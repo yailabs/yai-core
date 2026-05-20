@@ -179,6 +179,27 @@ mismatch is persisted as explicit residue instead of hidden by projection.
 crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
 ```
 
+## NEW.8 Projection Hardening Loop
+
+```text
+create residue
+append memory candidate
+append divergence
+create operator projection request/result
+create model projection request/result
+reload journal
+inspect projection request/result counts
+verify redaction posture
+```
+
+`tests/smoke/projection-hardening/test_projection_hardening.c` proves that
+projection records are persisted with consumer, provenance, freshness and
+redaction posture.
+
+```text
+crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

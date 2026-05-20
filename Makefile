@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -38,10 +38,15 @@ C_SOURCES := \
 	lib/store/journal.c \
 	lib/store/record_codec.c \
 	lib/store/journal_file.c \
-	lib/projection/projection.c
+	lib/projection/projection.c \
+	lib/projection/projection_kind.c \
+	lib/projection/redaction.c \
+	lib/projection/freshness.c \
+	lib/projection/projection_request.c \
+	lib/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new7.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new8.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -50,10 +55,11 @@ SMOKE_FILESYSTEM_CARRIER := $(BUILD_DIR)/test_filesystem_carrier
 SMOKE_GRAPH_RECONSTRUCTION := $(BUILD_DIR)/test_graph_reconstruction
 SMOKE_OPERATIONAL_MEMORY := $(BUILD_DIR)/test_operational_memory
 SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
+SMOKE_PROJECTION_HARDENING := $(BUILD_DIR)/test_projection_hardening
 
 info:
-	@printf "yai-core: reconcile and divergence\n"
-	@printf "status: NEW.7\n"
+	@printf "yai-core: projection hardening\n"
+	@printf "status: NEW.8\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -107,7 +113,11 @@ $(SMOKE_RECONCILE_DIVERGENCE): tests/smoke/reconcile-divergence/test_reconcile_d
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/reconcile-divergence/test_reconcile_divergence.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE)
+$(SMOKE_PROJECTION_HARDENING): tests/smoke/projection-hardening/test_projection_hardening.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/projection-hardening/test_projection_hardening.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -136,7 +146,10 @@ smoke-new6: $(SMOKE_OPERATIONAL_MEMORY)
 smoke-new7: $(SMOKE_RECONCILE_DIVERGENCE)
 	@$(SMOKE_RECONCILE_DIVERGENCE)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7
+smoke-new8: $(SMOKE_PROJECTION_HARDENING)
+	@$(SMOKE_PROJECTION_HARDENING)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8
 
 check: check-layout check-docs build smoke
 

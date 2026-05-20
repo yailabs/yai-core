@@ -93,6 +93,10 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "divergence";
     case YAI_RECORD_RECONCILIATION:
         return "reconciliation";
+    case YAI_RECORD_PROJECTION_REQUEST:
+        return "projection_request";
+    case YAI_RECORD_PROJECTION_RESULT:
+        return "projection_result";
     default:
         return "unknown";
     }
@@ -144,6 +148,10 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_DIVERGENCE;
     } else if (strcmp(value, "reconciliation") == 0) {
         *kind = YAI_RECORD_RECONCILIATION;
+    } else if (strcmp(value, "projection_request") == 0) {
+        *kind = YAI_RECORD_PROJECTION_REQUEST;
+    } else if (strcmp(value, "projection_result") == 0) {
+        *kind = YAI_RECORD_PROJECTION_RESULT;
     } else {
         return YAI_ERR_INVALID;
     }

@@ -30,6 +30,12 @@ pub struct ProjectionSummary {
     pub reconciliation_count: usize,
     pub critical_divergence_count: usize,
     pub warning_divergence_count: usize,
+    pub projection_request_count: usize,
+    pub projection_result_count: usize,
+    pub operator_projection_count: usize,
+    pub model_projection_count: usize,
+    pub audit_projection_count: usize,
+    pub limited_projection_count: usize,
 }
 
 impl ProjectionSummary {
@@ -154,9 +160,44 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.summary.contains("severity:warning"))
             .count();
+        let projection_request_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ProjectionRequest)
+            .count();
+        let projection_result_records = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ProjectionResult)
+            .collect::<Vec<_>>();
+        let projection_result_count = projection_result_records.len();
+        let operator_projection_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.summary.contains("consumer:operator"))
+            .count();
+        let model_projection_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.summary.contains("consumer:model"))
+            .count();
+        let audit_projection_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.summary.contains("consumer:audit"))
+            .count();
+        let limited_projection_count = projection_result_records
+            .iter()
+            .filter(|record| {
+                record.summary.contains("redaction:summary_only")
+                    || record.summary.contains("redaction:refs_only")
+                    || record.summary.contains("redaction:redacted")
+                    || record.summary.contains("redaction:blocked")
+            })
+            .count();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count} projection_requests:{projection_request_count} projection_results:{projection_result_count}"
             ),
             consumer,
             case_ref,
@@ -183,6 +224,12 @@ impl ProjectionSummary {
             reconciliation_count,
             critical_divergence_count,
             warning_divergence_count,
+            projection_request_count,
+            projection_result_count,
+            operator_projection_count,
+            model_projection_count,
+            audit_projection_count,
+            limited_projection_count,
         }
     }
 }

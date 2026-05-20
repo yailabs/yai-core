@@ -50,6 +50,12 @@ yai_status_t yai_projection_build(const char *projection_id,
     projection->reconciliation_count = 0;
     projection->critical_divergence_count = 0;
     projection->warning_divergence_count = 0;
+    projection->projection_request_count = 0;
+    projection->projection_result_count = 0;
+    projection->operator_projection_count = 0;
+    projection->model_projection_count = 0;
+    projection->audit_projection_count = 0;
+    projection->limited_projection_count = 0;
 
     for (index = 0; index < yai_journal_count(journal); index += 1) {
         const yai_store_record_t *record = yai_journal_get(journal, index);
@@ -101,12 +107,36 @@ yai_status_t yai_projection_build(const char *projection_id,
             }
         } else if (record->record_kind == YAI_RECORD_RECONCILIATION) {
             projection->reconciliation_count += 1;
+        } else if (record->record_kind == YAI_RECORD_PROJECTION_REQUEST) {
+            projection->projection_request_count += 1;
+            if (strstr(record->summary, "consumer:operator") != 0) {
+                projection->operator_projection_count += 1;
+            } else if (strstr(record->summary, "consumer:model") != 0) {
+                projection->model_projection_count += 1;
+            } else if (strstr(record->summary, "consumer:audit") != 0) {
+                projection->audit_projection_count += 1;
+            }
+        } else if (record->record_kind == YAI_RECORD_PROJECTION_RESULT) {
+            projection->projection_result_count += 1;
+            if (strstr(record->summary, "consumer:operator") != 0) {
+                projection->operator_projection_count += 1;
+            } else if (strstr(record->summary, "consumer:model") != 0) {
+                projection->model_projection_count += 1;
+            } else if (strstr(record->summary, "consumer:audit") != 0) {
+                projection->audit_projection_count += 1;
+            }
+            if (strstr(record->summary, "redaction:summary_only") != 0 ||
+                strstr(record->summary, "redaction:refs_only") != 0 ||
+                strstr(record->summary, "redaction:redacted") != 0 ||
+                strstr(record->summary, "redaction:blocked") != 0) {
+                projection->limited_projection_count += 1;
+            }
         }
     }
 
     (void)snprintf(projection->summary,
                    sizeof(projection->summary),
-                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu divergences:%zu reconciliations:%zu",
+                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu divergences:%zu reconciliations:%zu projection_requests:%zu projection_results:%zu",
                    yai_projection_consumer_string(consumer_kind),
                    projection->source_record_count,
                    projection->decision_count,
@@ -121,7 +151,9 @@ yai_status_t yai_projection_build(const char *projection_id,
                    projection->reconstruction_count,
                    projection->memory_candidate_count,
                    projection->divergence_count,
-                   projection->reconciliation_count);
+                   projection->reconciliation_count,
+                   projection->projection_request_count,
+                   projection->projection_result_count);
     return YAI_OK;
 }
 

@@ -19,7 +19,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.7 reconcile and divergence.
+Status: NEW.8 projection hardening.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -93,6 +93,19 @@ reconcile projection
 yaictl reconcile summary
 ```
 
+NEW.8 hardens projection into controlled read-model records:
+
+```text
+projection_request
+projection_result
+consumer kind
+projection kind
+provenance counts
+freshness
+redaction posture
+yaictl projection inspect
+```
+
 Ownership:
 
 ```text
@@ -100,10 +113,11 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.7 adds
-file-based reconcile summary inspection, but there is no real daemon IPC, no
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.8 adds
+file-based projection inspection, but there is no real daemon IPC, no
 process/network/model/database carrier, no full policy engine, no graph
-database, no automatic repair and no memory consolidation engine yet.
+database, no automatic repair, no memory consolidation engine and no full
+secret redaction engine yet.
 
 Build and validate:
 
@@ -149,4 +163,11 @@ Inspect the NEW.7 reconcile journal after `make smoke-new7`:
 
 ```text
 crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
+```
+
+Inspect the NEW.8 projection journal after `make smoke-new8`:
+
+```text
+crates/target/debug/yaictl projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
+crates/target/debug/yaictl projection request --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl --consumer model --kind model_context
 ```

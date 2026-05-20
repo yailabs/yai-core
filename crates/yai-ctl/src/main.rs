@@ -31,6 +31,10 @@ fn print_usage() {
     println!("usage: yaictl [--version|info|doctor]");
     println!("       yaictl store tail --journal <path>");
     println!("       yaictl projection summary --journal <path>");
+    println!("       yaictl projection inspect --journal <path>");
+    println!(
+        "       yaictl projection request --journal <path> --consumer <consumer> --kind <kind>"
+    );
     println!("       yaictl control summary --journal <path>");
     println!("       yaictl decision inspect --journal <path>");
     println!("       yaictl receipt summary --journal <path>");
@@ -113,6 +117,57 @@ fn projection_summary(args: &[String]) -> Result<(), String> {
     }
     println!("receipts: {}", projection.receipt_count);
     println!("subjects: {}", projection.subject_count);
+    Ok(())
+}
+
+fn projection_inspect(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let projection = ProjectionSummary::from_journal("projection", &journal);
+    println!("records: {}", projection.source_record_count);
+    println!(
+        "projection_requests: {}",
+        projection.projection_request_count
+    );
+    println!("projection_results: {}", projection.projection_result_count);
+    println!("operator: {}", projection.operator_projection_count);
+    println!("model: {}", projection.model_projection_count);
+    println!("audit: {}", projection.audit_projection_count);
+    println!(
+        "redacted_or_limited: {}",
+        projection.limited_projection_count
+    );
+    Ok(())
+}
+
+fn default_redaction_for_consumer(consumer: &str) -> &'static str {
+    match consumer {
+        "model" | "agent" => "summary_only",
+        "debug" => "refs_only",
+        _ => "none",
+    }
+}
+
+fn projection_request(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let consumer = named_arg(args, "--consumer")?;
+    let kind = named_arg(args, "--kind")?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let projection = ProjectionSummary::from_journal(&consumer, &journal);
+    println!("projection_request: preview");
+    println!("consumer: {consumer}");
+    println!("kind: {kind}");
+    println!("redaction: {}", default_redaction_for_consumer(&consumer));
+    println!("freshness: fresh");
+    println!("source_records: {}", projection.source_record_count);
+    println!(
+        "source_receipts: {}",
+        projection.receipt_count + projection.filesystem_receipt_count
+    );
+    println!("source_memory: {}", projection.memory_candidate_count);
+    println!("source_divergences: {}", projection.divergence_count);
     Ok(())
 }
 
@@ -290,6 +345,18 @@ fn main() {
         }
         Some("projection") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = projection_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("projection") if args.get(1).map(String::as_str) == Some("inspect") => {
+            if let Err(error) = projection_inspect(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("projection") if args.get(1).map(String::as_str) == Some("request") => {
+            if let Err(error) = projection_request(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

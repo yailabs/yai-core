@@ -226,4 +226,57 @@ mod tests {
         assert_eq!(projection.divergence_count, 1);
         assert_eq!(projection.reconciliation_count, 1);
     }
+
+    #[test]
+    fn build_hardened_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "projection-request:operator",
+            "case:new8-projection",
+            RecordKind::ProjectionRequest,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "projection_request:projection-request:operator consumer:operator kind:operator_summary scope:case",
+        ));
+        journal.append(Record::from_parts(
+            "projection-result:operator",
+            "case:new8-projection",
+            RecordKind::ProjectionResult,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "projection_result:projection-result:operator consumer:operator kind:operator_summary redaction:none freshness:fresh source_records:4 source_receipts:1 source_memory:1 source_divergences:0",
+        ));
+        journal.append(Record::from_parts(
+            "projection-request:model",
+            "case:new8-projection",
+            RecordKind::ProjectionRequest,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "projection_request:projection-request:model consumer:model kind:model_context scope:case",
+        ));
+        journal.append(Record::from_parts(
+            "projection-result:model",
+            "case:new8-projection",
+            RecordKind::ProjectionResult,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "projection_result:projection-result:model consumer:model kind:model_context redaction:summary_only freshness:fresh source_records:4 source_receipts:1 source_memory:1 source_divergences:0",
+        ));
+
+        let projection = ProjectionSummary::from_journal("projection", &journal);
+
+        assert_eq!(projection.projection_request_count, 2);
+        assert_eq!(projection.projection_result_count, 2);
+        assert_eq!(projection.operator_projection_count, 2);
+        assert_eq!(projection.model_projection_count, 2);
+        assert_eq!(projection.limited_projection_count, 1);
+    }
 }

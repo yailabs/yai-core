@@ -89,3 +89,10 @@ compensated
 
 The first detector is residue-derived. It does not execute recovery or
 compensation. It only records mismatch for projection and operator review.
+
+## Projection Interaction
+
+NEW.8 makes divergence visibility explicit in projection results. A projection
+result carries `source_divergence_count` and a redaction posture, so audit and
+operator views can expose mismatch without allowing projection to rewrite or
+hide reconciliation truth.

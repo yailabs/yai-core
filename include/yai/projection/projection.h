@@ -21,7 +21,7 @@ typedef struct yai_projection {
     yai_id_t projection_id;
     yai_case_ref_t case_ref;
     yai_projection_consumer_t consumer_kind;
-    char summary[256];
+    char summary[512];
     size_t source_record_count;
     size_t decision_count;
     size_t policy_rule_count;
@@ -43,6 +43,12 @@ typedef struct yai_projection {
     size_t reconciliation_count;
     size_t critical_divergence_count;
     size_t warning_divergence_count;
+    size_t projection_request_count;
+    size_t projection_result_count;
+    size_t operator_projection_count;
+    size_t model_projection_count;
+    size_t audit_projection_count;
+    size_t limited_projection_count;
 } yai_projection_t;
 
 yai_status_t yai_projection_build(const char *projection_id,

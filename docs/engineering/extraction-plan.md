@@ -191,6 +191,22 @@ src/decision/conflict/*                           -> conflict posture and trace 
 The implementation absorbs divergence/reconciliation records only. Repair,
 compensation and workflow recovery remain outside NEW.7.
 
+NEW.8 applied wave-coupled extraction for projection hardening:
+
+```text
+src/substrate/views/*               -> projection materialization and provenance posture
+src/case/surface/*                  -> split between console surface and core projection shape
+src/decision/projection/*           -> control projection concepts
+src/decision/explanation/*          -> audit explanation and trace concepts
+src/models/frame/*                  -> model projection audience concepts
+src/agents/grounding/context_pack.c -> future ai-environment context experiments
+src/agents/grounding/live_context.c -> future ai-environment context experiments
+```
+
+The implementation absorbs projection request/result records, consumer kind,
+projection kind, freshness and redaction posture only. It does not port old
+views, model frames, agent context packs or console surfaces.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

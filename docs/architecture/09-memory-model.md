@@ -91,6 +91,13 @@ memory_without_basis
 
 This keeps memory as traceable continuity rather than hidden assertion.
 
+## Projection Interaction
+
+NEW.8 requires memory access to pass through controlled projection posture.
+A memory candidate can be counted in a projection result, but projection must
+report source memory counts, freshness and redaction posture. Model and agent
+consumers receive limited summaries by default.
+
 ## Rust Direction
 
 Advanced recall, ranking, consolidation, decay, pinning and privacy filtering are Rust engine candidates behind C FFI.

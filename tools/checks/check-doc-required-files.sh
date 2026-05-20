@@ -16,6 +16,7 @@ for file in \
   docs/engineering/new5-graph-reconstruction.md \
   docs/engineering/new6-operational-memory.md \
   docs/engineering/new7-reconcile-divergence.md \
+  docs/engineering/new8-projection-hardening.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

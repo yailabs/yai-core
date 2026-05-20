@@ -20,6 +20,8 @@ pub enum RecordKind {
     MemoryCandidate,
     Divergence,
     Reconciliation,
+    ProjectionRequest,
+    ProjectionResult,
 }
 
 impl RecordKind {
@@ -45,6 +47,8 @@ impl RecordKind {
             Self::MemoryCandidate => "memory_candidate",
             Self::Divergence => "divergence",
             Self::Reconciliation => "reconciliation",
+            Self::ProjectionRequest => "projection_request",
+            Self::ProjectionResult => "projection_result",
         }
     }
 
@@ -70,6 +74,8 @@ impl RecordKind {
             "memory_candidate" => Some(Self::MemoryCandidate),
             "divergence" => Some(Self::Divergence),
             "reconciliation" => Some(Self::Reconciliation),
+            "projection_request" => Some(Self::ProjectionRequest),
+            "projection_result" => Some(Self::ProjectionResult),
             _ => None,
         }
     }
