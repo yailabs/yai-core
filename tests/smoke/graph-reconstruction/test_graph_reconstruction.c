@@ -47,11 +47,11 @@ static void append_edge(const yai_journal_file_t *journal_file,
                         const yai_id_t *attempt_id,
                         const yai_id_t *decision_id,
                         const yai_id_t *receipt_id) {
-    char summary[128];
+    char summary[256];
 
     (void)snprintf(summary,
                    sizeof(summary),
-                   "edge:%s from:%s to:%s",
+                   "edge:%s from:%.64s to:%.64s",
                    yai_graph_edge_kind_string(edge->edge_kind),
                    edge->from_ref.value,
                    edge->to_ref.value);

@@ -139,7 +139,7 @@ yai_status_t yai_reconstruct_receipt_chain(const yai_journal_t *journal,
 
     (void)snprintf(reconstruction->summary,
                    sizeof(reconstruction->summary),
-                   "chain:%s->%s->%s->%s->%s",
+                   "chain:%.20s->%.20s->%.20s->%.20s->%.20s",
                    reconstruction->case_id.value,
                    reconstruction->attempt_id.value,
                    reconstruction->decision_id.value,

@@ -57,10 +57,10 @@ int main(void) {
     yai_journal_file_t journal_file;
     yai_journal_t reloaded_journal;
     yai_projection_t projection;
-    char basis_summary[128];
-    char decision_summary[128];
-    char obligation_summary[128];
-    char receipt_requirement_summary[128];
+    char basis_summary[256];
+    char decision_summary[256];
+    char obligation_summary[256];
+    char receipt_requirement_summary[256];
 
     make_tmp_dirs();
     (void)unlink(journal_path);
@@ -169,7 +169,7 @@ int main(void) {
                   "gate:operation result:require_review rule:mutative_operation_requires_review");
     (void)snprintf(basis_summary,
                    sizeof(basis_summary),
-                   "basis:mutative_operation_requires_review gate:%s rule:%s",
+                   "basis:mutative_operation_requires_review gate:%.20s rule:%.20s",
                    gate.gate_id.value,
                    rule.rule_id.value);
     append_record(&journal_file,
@@ -183,7 +183,7 @@ int main(void) {
                   basis_summary);
     (void)snprintf(decision_summary,
                    sizeof(decision_summary),
-                   "decision:%s basis:%s gate:%s rule:%s obligation:%s receipt_requirement:%s",
+                   "decision:%s basis:%.20s gate:%.20s rule:%.20s obligation:%.20s receipt_requirement:%.20s",
                    yai_decision_outcome_string(decision.outcome),
                    decision.basis_id.value,
                    decision.gate_id.value,
