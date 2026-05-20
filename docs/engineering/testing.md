@@ -159,6 +159,26 @@ derived from scoped residue and persisted as a candidate.
 crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
 ```
 
+## NEW.7 Reconcile / Divergence Loop
+
+```text
+create conflicting residue
+detect denied_but_executed
+append divergence record
+append reconciliation record
+create receipt_without_decision residue
+append second divergence and reconciliation records
+reload journal
+build reconcile projection
+```
+
+`tests/smoke/reconcile-divergence/test_reconcile_divergence.c` proves that
+mismatch is persisted as explicit residue instead of hidden by projection.
+
+```text
+crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

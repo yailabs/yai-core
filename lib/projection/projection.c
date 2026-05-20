@@ -46,6 +46,10 @@ yai_status_t yai_projection_build(const char *projection_id,
     projection->subject_memory_candidate_count = 0;
     projection->error_memory_candidate_count = 0;
     projection->recovery_memory_candidate_count = 0;
+    projection->divergence_count = 0;
+    projection->reconciliation_count = 0;
+    projection->critical_divergence_count = 0;
+    projection->warning_divergence_count = 0;
 
     for (index = 0; index < yai_journal_count(journal); index += 1) {
         const yai_store_record_t *record = yai_journal_get(journal, index);
@@ -88,12 +92,21 @@ yai_status_t yai_projection_build(const char *projection_id,
             } else if (summary_has_memory_kind(record, "recovery")) {
                 projection->recovery_memory_candidate_count += 1;
             }
+        } else if (record->record_kind == YAI_RECORD_DIVERGENCE) {
+            projection->divergence_count += 1;
+            if (strstr(record->summary, "severity:critical") != 0) {
+                projection->critical_divergence_count += 1;
+            } else if (strstr(record->summary, "severity:warning") != 0) {
+                projection->warning_divergence_count += 1;
+            }
+        } else if (record->record_kind == YAI_RECORD_RECONCILIATION) {
+            projection->reconciliation_count += 1;
         }
     }
 
     (void)snprintf(projection->summary,
                    sizeof(projection->summary),
-                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu",
+                   "projection:%s records:%zu decisions:%zu rules:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu divergences:%zu reconciliations:%zu",
                    yai_projection_consumer_string(consumer_kind),
                    projection->source_record_count,
                    projection->decision_count,
@@ -106,7 +119,9 @@ yai_status_t yai_projection_build(const char *projection_id,
                    projection->effect_count,
                    projection->graph_edge_count,
                    projection->reconstruction_count,
-                   projection->memory_candidate_count);
+                   projection->memory_candidate_count,
+                   projection->divergence_count,
+                   projection->reconciliation_count);
     return YAI_OK;
 }
 

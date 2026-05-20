@@ -18,6 +18,8 @@ pub enum RecordKind {
     GraphEdge,
     Reconstruction,
     MemoryCandidate,
+    Divergence,
+    Reconciliation,
 }
 
 impl RecordKind {
@@ -41,6 +43,8 @@ impl RecordKind {
             Self::GraphEdge => "graph_edge",
             Self::Reconstruction => "reconstruction",
             Self::MemoryCandidate => "memory_candidate",
+            Self::Divergence => "divergence",
+            Self::Reconciliation => "reconciliation",
         }
     }
 
@@ -64,6 +68,8 @@ impl RecordKind {
             "graph_edge" => Some(Self::GraphEdge),
             "reconstruction" => Some(Self::Reconstruction),
             "memory_candidate" => Some(Self::MemoryCandidate),
+            "divergence" => Some(Self::Divergence),
+            "reconciliation" => Some(Self::Reconciliation),
             _ => None,
         }
     }

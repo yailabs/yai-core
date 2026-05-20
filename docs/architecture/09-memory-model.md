@@ -80,6 +80,17 @@ write that required review and was blocked. This proves traceable operational
 experience without adding prompt memory, RAG, vector storage or model-owned
 continuity.
 
+## Reconcile Interaction
+
+Memory candidates can themselves be checked by reconciliation. NEW.7 treats a
+candidate with missing basis counts as divergence:
+
+```text
+memory_without_basis
+```
+
+This keeps memory as traceable continuity rather than hidden assertion.
+
 ## Rust Direction
 
 Advanced recall, ranking, consolidation, decay, pinning and privacy filtering are Rust engine candidates behind C FFI.

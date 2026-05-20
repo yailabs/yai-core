@@ -5,6 +5,7 @@ pub mod journal;
 pub mod memory;
 pub mod projection;
 pub mod query;
+pub mod reconcile;
 pub mod record;
 pub mod store;
 
@@ -190,5 +191,39 @@ mod tests {
         assert_eq!(memory.decision, 1);
         assert_eq!(projection.memory_candidate_count, 1);
         assert_eq!(projection.decision_memory_candidate_count, 1);
+    }
+
+    #[test]
+    fn build_reconcile_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "divergence:denied-but-executed",
+            "case:new7-reconcile",
+            RecordKind::Divergence,
+            "subject:repo-test",
+            "op:dangerous-write",
+            "decision:deny-write",
+            "receipt:executed-conflict",
+            "divergence:denied_but_executed severity:critical",
+        ));
+        journal.append(Record::from_parts(
+            "reconciliation:denied-but-executed",
+            "case:new7-reconcile",
+            RecordKind::Reconciliation,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "reconcile:requires_review divergence:divergence:denied-but-executed",
+        ));
+
+        let reconcile = crate::reconcile::ReconcileSummary::from_journal(&journal);
+        let projection = ProjectionSummary::from_journal("reconcile", &journal);
+
+        assert_eq!(reconcile.divergences, 1);
+        assert_eq!(reconcile.reconciliations, 1);
+        assert_eq!(reconcile.critical, 1);
+        assert_eq!(projection.divergence_count, 1);
+        assert_eq!(projection.reconciliation_count, 1);
     }
 }

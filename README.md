@@ -19,7 +19,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.6 operational memory candidate.
+Status: NEW.7 reconcile and divergence.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -82,6 +82,17 @@ memory projection
 yaictl memory summary
 ```
 
+NEW.7 adds the first reconciliation layer:
+
+```text
+divergence detection
+denied_but_executed
+receipt_without_decision
+reconciliation records
+reconcile projection
+yaictl reconcile summary
+```
+
 Ownership:
 
 ```text
@@ -89,10 +100,10 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.6 adds
-file-based memory summary inspection, but there is no real daemon IPC, no
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.7 adds
+file-based reconcile summary inspection, but there is no real daemon IPC, no
 process/network/model/database carrier, no full policy engine, no graph
-database and no memory consolidation engine yet.
+database, no automatic repair and no memory consolidation engine yet.
 
 Build and validate:
 
@@ -132,4 +143,10 @@ Inspect the NEW.6 memory journal after `make smoke-new6`:
 
 ```text
 crates/target/debug/yaictl memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
+```
+
+Inspect the NEW.7 reconcile journal after `make smoke-new7`:
+
+```text
+crates/target/debug/yaictl reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
 ```

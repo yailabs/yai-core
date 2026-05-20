@@ -26,6 +26,10 @@ pub struct ProjectionSummary {
     pub subject_memory_candidate_count: usize,
     pub error_memory_candidate_count: usize,
     pub recovery_memory_candidate_count: usize,
+    pub divergence_count: usize,
+    pub reconciliation_count: usize,
+    pub critical_divergence_count: usize,
+    pub warning_divergence_count: usize,
 }
 
 impl ProjectionSummary {
@@ -131,9 +135,28 @@ impl ProjectionSummary {
             .map(|record| record.subject_ref.as_str())
             .collect::<BTreeSet<_>>()
             .len();
+        let divergence_records = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::Divergence)
+            .collect::<Vec<_>>();
+        let divergence_count = divergence_records.len();
+        let reconciliation_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::Reconciliation)
+            .count();
+        let critical_divergence_count = divergence_records
+            .iter()
+            .filter(|record| record.summary.contains("severity:critical"))
+            .count();
+        let warning_divergence_count = divergence_records
+            .iter()
+            .filter(|record| record.summary.contains("severity:warning"))
+            .count();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count}"
             ),
             consumer,
             case_ref,
@@ -156,6 +179,10 @@ impl ProjectionSummary {
             subject_memory_candidate_count,
             error_memory_candidate_count,
             recovery_memory_candidate_count,
+            divergence_count,
+            reconciliation_count,
+            critical_divergence_count,
+            warning_divergence_count,
         }
     }
 }

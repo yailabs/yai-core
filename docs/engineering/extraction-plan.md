@@ -178,6 +178,19 @@ src/agents/grounding/*strategy.c -> future ai-environment memory experiments
 
 The inventory records which material was absorbed, mined or externalized.
 
+NEW.7 applied wave-coupled extraction for reconciliation:
+
+```text
+src/orchestrator/recovery/*                       -> recovery and review posture evidence
+src/runtime/execution/recovery_hint.c             -> operator recovery hint concepts
+src/runtime/execution/runtime_enforcement_recovery.c -> enforcement recovery posture
+src/substrate/signals/*                           -> contradiction and missingness signals
+src/decision/conflict/*                           -> conflict posture and trace requirements
+```
+
+The implementation absorbs divergence/reconciliation records only. Repair,
+compensation and workflow recovery remain outside NEW.7.
+
 ## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:

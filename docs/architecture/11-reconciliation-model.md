@@ -46,3 +46,46 @@ subject update edge
 ```
 
 Later reconciliation can turn those gaps into explicit divergence artifacts.
+
+## NEW.7 Divergence V0
+
+NEW.7 adds two store record kinds:
+
+```text
+divergence
+reconciliation
+```
+
+Initial divergence kinds:
+
+```text
+denied_but_executed
+receipt_without_decision
+claim_without_receipt
+missing_target_subject
+stale_subject_state
+memory_without_basis
+graph_chain_missing
+```
+
+Initial severity:
+
+```text
+info
+warning
+error
+critical
+```
+
+Initial reconcile posture:
+
+```text
+observed
+requires_review
+recoverable
+unrecoverable
+compensated
+```
+
+The first detector is residue-derived. It does not execute recovery or
+compensation. It only records mismatch for projection and operator review.

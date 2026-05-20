@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -28,6 +28,9 @@ C_SOURCES := \
 	lib/memory/memory_kind.c \
 	lib/memory/memory_scope.c \
 	lib/memory/memory_candidate.c \
+	lib/reconcile/divergence.c \
+	lib/reconcile/reconcile.c \
+	lib/reconcile/recovery.c \
 	lib/graph/edge.c \
 	lib/graph/graph.c \
 	lib/graph/reconstruct.c \
@@ -38,7 +41,7 @@ C_SOURCES := \
 	lib/projection/projection.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new6.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new7.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
@@ -46,10 +49,11 @@ SMOKE_CONTROL_GATE := $(BUILD_DIR)/test_control_gate
 SMOKE_FILESYSTEM_CARRIER := $(BUILD_DIR)/test_filesystem_carrier
 SMOKE_GRAPH_RECONSTRUCTION := $(BUILD_DIR)/test_graph_reconstruction
 SMOKE_OPERATIONAL_MEMORY := $(BUILD_DIR)/test_operational_memory
+SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
 
 info:
-	@printf "yai-core: operational memory candidate\n"
-	@printf "status: NEW.6\n"
+	@printf "yai-core: reconcile and divergence\n"
+	@printf "status: NEW.7\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -99,7 +103,11 @@ $(SMOKE_OPERATIONAL_MEMORY): tests/smoke/operational-memory/test_operational_mem
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/operational-memory/test_operational_memory.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY)
+$(SMOKE_RECONCILE_DIVERGENCE): tests/smoke/reconcile-divergence/test_reconcile_divergence.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/reconcile-divergence/test_reconcile_divergence.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -125,7 +133,10 @@ smoke-new5: $(SMOKE_GRAPH_RECONSTRUCTION)
 smoke-new6: $(SMOKE_OPERATIONAL_MEMORY)
 	@$(SMOKE_OPERATIONAL_MEMORY)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6
+smoke-new7: $(SMOKE_RECONCILE_DIVERGENCE)
+	@$(SMOKE_RECONCILE_DIVERGENCE)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7
 
 check: check-layout check-docs build smoke
 

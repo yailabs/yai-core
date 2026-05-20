@@ -89,6 +89,10 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "reconstruction";
     case YAI_RECORD_MEMORY_CANDIDATE:
         return "memory_candidate";
+    case YAI_RECORD_DIVERGENCE:
+        return "divergence";
+    case YAI_RECORD_RECONCILIATION:
+        return "reconciliation";
     default:
         return "unknown";
     }
@@ -136,6 +140,10 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_RECONSTRUCTION;
     } else if (strcmp(value, "memory_candidate") == 0) {
         *kind = YAI_RECORD_MEMORY_CANDIDATE;
+    } else if (strcmp(value, "divergence") == 0) {
+        *kind = YAI_RECORD_DIVERGENCE;
+    } else if (strcmp(value, "reconciliation") == 0) {
+        *kind = YAI_RECORD_RECONCILIATION;
     } else {
         return YAI_ERR_INVALID;
     }

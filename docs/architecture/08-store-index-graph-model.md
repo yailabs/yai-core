@@ -66,6 +66,19 @@ summary
 The summary carries candidate posture and basis counts. Store persists the fact;
 memory owns continuity semantics; projection owns read-model counts.
 
+## NEW.7 Divergence And Reconciliation Records
+
+NEW.7 adds residue-derived record kinds:
+
+```text
+divergence
+reconciliation
+```
+
+The records keep the same `yai.store.record.v0` envelope. Divergence records
+link to attempt, decision and receipt refs where available. Reconciliation
+records record posture such as `requires_review`; they do not execute recovery.
+
 ## Index
 
 Index owns technical retrieval structures:
