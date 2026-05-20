@@ -65,6 +65,16 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "receipt";
     case YAI_RECORD_PROJECTION:
         return "projection";
+    case YAI_RECORD_POLICY_RULE:
+        return "policy_rule";
+    case YAI_RECORD_GATE_RESULT:
+        return "gate_result";
+    case YAI_RECORD_DECISION_BASIS:
+        return "decision_basis";
+    case YAI_RECORD_OBLIGATION:
+        return "obligation";
+    case YAI_RECORD_RECEIPT_REQUIREMENT:
+        return "receipt_requirement";
     default:
         return "unknown";
     }
@@ -88,6 +98,16 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_RECEIPT;
     } else if (strcmp(value, "projection") == 0) {
         *kind = YAI_RECORD_PROJECTION;
+    } else if (strcmp(value, "policy_rule") == 0) {
+        *kind = YAI_RECORD_POLICY_RULE;
+    } else if (strcmp(value, "gate_result") == 0) {
+        *kind = YAI_RECORD_GATE_RESULT;
+    } else if (strcmp(value, "decision_basis") == 0) {
+        *kind = YAI_RECORD_DECISION_BASIS;
+    } else if (strcmp(value, "obligation") == 0) {
+        *kind = YAI_RECORD_OBLIGATION;
+    } else if (strcmp(value, "receipt_requirement") == 0) {
+        *kind = YAI_RECORD_RECEIPT_REQUIREMENT;
     } else {
         return YAI_ERR_INVALID;
     }

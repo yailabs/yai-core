@@ -42,5 +42,6 @@ require_file "crates/yai-core-engine/Cargo.toml"
 require_file "crates/yai-core-engine-sys/Cargo.toml"
 require_file "tests/smoke/minimum-loop/test_minimum_loop.c"
 require_file "tests/smoke/persistent-journal/test_persistent_journal.c"
+require_file "tests/smoke/control-gate/test_control_gate.c"
 
 printf 'check-required-layout: ok\n'

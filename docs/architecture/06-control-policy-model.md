@@ -218,6 +218,44 @@ require compensation attempt
 require incident marker
 ```
 
+## NEW.3 Control Gate V0
+
+NEW.3 implements the first C control gate skeleton. It is intentionally smaller
+than the full model above.
+
+Implemented objects:
+
+```text
+policy_rule
+gate_result
+decision_basis
+obligation
+receipt_requirement
+failure_mode
+```
+
+Implemented decision logic:
+
+```text
+case missing          -> deny
+target subject missing -> deny
+mutative operation    -> require_review
+read-like operation   -> allow
+```
+
+The mutative path uses:
+
+```text
+policy rule: mutative_operation_requires_review
+gate result: operation require_review
+obligation: operator_review
+receipt requirement: blocked_receipt
+```
+
+NEW.3 does not ingest policy text, resolve policy conflicts, run operator review
+flows or enforce real carriers. It only creates machine-shaped control residue
+that can be persisted, reloaded, projected and inspected.
+
 Minimum obligation fields:
 
 ```text

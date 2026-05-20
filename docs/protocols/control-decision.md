@@ -78,3 +78,21 @@ deny_without_receipt_path
 
 A decision record must not claim execution. Execution, observation or imported
 external effect truth belongs to receipts.
+
+## NEW.3 Compact Record
+
+NEW.3 persists decision linkage through the existing store record envelope. The
+decision summary carries compact refs until a richer record schema exists:
+
+```text
+decision:<outcome>
+basis:<basis_id>
+gate:<gate_id>
+rule:<rule_id>
+obligation:<obligation_id>
+receipt_requirement:<requirement_id>
+```
+
+The decision is produced from a gate result and a decision basis. It can require
+an obligation and receipt requirement, but it still does not claim that an effect
+ran.

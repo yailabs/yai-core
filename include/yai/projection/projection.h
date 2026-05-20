@@ -23,6 +23,11 @@ typedef struct yai_projection {
     yai_projection_consumer_t consumer_kind;
     char summary[256];
     size_t source_record_count;
+    size_t decision_count;
+    size_t policy_rule_count;
+    size_t gate_count;
+    size_t obligation_count;
+    size_t receipt_requirement_count;
 } yai_projection_t;
 
 yai_status_t yai_projection_build(const char *projection_id,

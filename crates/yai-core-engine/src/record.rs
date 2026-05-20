@@ -6,6 +6,11 @@ pub enum RecordKind {
     Decision,
     Receipt,
     Projection,
+    PolicyRule,
+    GateResult,
+    DecisionBasis,
+    Obligation,
+    ReceiptRequirement,
 }
 
 impl RecordKind {
@@ -17,6 +22,11 @@ impl RecordKind {
             Self::Decision => "decision",
             Self::Receipt => "receipt",
             Self::Projection => "projection",
+            Self::PolicyRule => "policy_rule",
+            Self::GateResult => "gate_result",
+            Self::DecisionBasis => "decision_basis",
+            Self::Obligation => "obligation",
+            Self::ReceiptRequirement => "receipt_requirement",
         }
     }
 
@@ -28,6 +38,11 @@ impl RecordKind {
             "decision" => Some(Self::Decision),
             "receipt" => Some(Self::Receipt),
             "projection" => Some(Self::Projection),
+            "policy_rule" => Some(Self::PolicyRule),
+            "gate_result" => Some(Self::GateResult),
+            "decision_basis" => Some(Self::DecisionBasis),
+            "obligation" => Some(Self::Obligation),
+            "receipt_requirement" => Some(Self::ReceiptRequirement),
             _ => None,
         }
     }

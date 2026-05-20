@@ -59,3 +59,18 @@ valid_until
 failure_mode
 evidence_refs
 ```
+
+## NEW.3 Rule Candidate V0
+
+NEW.3 does not ingest external policy sources. It creates a local policy rule
+candidate directly from an operation attempt:
+
+```text
+mutative_operation -> require_review
+read_like_operation -> allow
+missing_subject -> deny
+```
+
+The rule candidate feeds a gate result and decision basis. It is persisted as a
+`policy_rule` store record so later waves can replace the candidate generator
+with real policy materialization without changing the journal proof.

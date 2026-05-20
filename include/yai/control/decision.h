@@ -4,6 +4,8 @@
 #include "yai/base/error.h"
 #include "yai/base/id.h"
 #include "yai/case/case_ref.h"
+#include "yai/control/decision_basis.h"
+#include "yai/control/gate.h"
 #include "yai/op/attempt.h"
 
 typedef enum yai_decision_outcome {
@@ -21,6 +23,11 @@ typedef struct yai_control_decision {
     yai_id_t decision_id;
     yai_case_ref_t case_ref;
     yai_id_t attempt_id;
+    yai_id_t basis_id;
+    yai_id_t gate_id;
+    yai_id_t rule_id;
+    yai_id_t obligation_id;
+    yai_id_t receipt_requirement_id;
     yai_decision_outcome_t outcome;
     char reason[128];
     int receipt_required;
@@ -28,6 +35,9 @@ typedef struct yai_control_decision {
 
 yai_status_t yai_control_decide(const yai_op_attempt_t *attempt,
                                 yai_control_decision_t *decision);
+yai_status_t yai_control_decide_from_gate(const yai_gate_result_t *gate,
+                                          const yai_decision_basis_t *basis,
+                                          yai_control_decision_t *decision);
 const char *yai_decision_outcome_string(yai_decision_outcome_t outcome);
 
 #endif

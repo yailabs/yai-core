@@ -10,6 +10,11 @@ pub struct ProjectionSummary {
     pub source_record_count: usize,
     pub receipt_count: usize,
     pub subject_count: usize,
+    pub decision_count: usize,
+    pub policy_rule_count: usize,
+    pub gate_count: usize,
+    pub obligation_count: usize,
+    pub receipt_requirement_count: usize,
 }
 
 impl ProjectionSummary {
@@ -27,6 +32,31 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.kind == RecordKind::Receipt)
             .count();
+        let decision_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::Decision)
+            .count();
+        let policy_rule_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::PolicyRule)
+            .count();
+        let gate_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::GateResult)
+            .count();
+        let obligation_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::Obligation)
+            .count();
+        let receipt_requirement_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ReceiptRequirement)
+            .count();
         let subject_count = journal
             .records()
             .iter()
@@ -36,13 +66,18 @@ impl ProjectionSummary {
             .len();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} receipts:{receipt_count} subjects:{subject_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count}"
             ),
             consumer,
             case_ref,
             source_record_count,
             receipt_count,
             subject_count,
+            decision_count,
+            policy_rule_count,
+            gate_count,
+            obligation_count,
+            receipt_requirement_count,
         }
     }
 }

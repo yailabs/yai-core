@@ -63,6 +63,31 @@ build projection from reloaded records
 minimum loop survives outside the process. Generated journal files live under
 `build/tmp/` and must remain ignored build artifacts.
 
+## NEW.3 Control Gate Loop
+
+```text
+open case
+bind subject
+submit mutative op attempt
+materialize policy rule candidate
+evaluate operation gate
+build decision basis
+emit require_review decision
+emit operator_review obligation
+emit blocked_receipt requirement
+append JSONL records
+reload journal records
+build control projection
+```
+
+`tests/smoke/control-gate/test_control_gate.c` proves that control residue is
+persisted and inspectable. The debug commands are:
+
+```text
+crates/target/debug/yaictl control summary --journal build/tmp/new3/journal.jsonl
+crates/target/debug/yaictl decision inspect --journal build/tmp/new3/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

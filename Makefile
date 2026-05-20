@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build smoke-new1 smoke-new2 smoke-new3 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -14,7 +14,13 @@ C_SOURCES := \
 	lib/subject/subject_binding.c \
 	lib/subject/subject_state.c \
 	lib/op/attempt.c \
+	lib/control/failure_mode.c \
+	lib/control/policy_rule.c \
+	lib/control/gate.c \
+	lib/control/decision_basis.c \
 	lib/control/decision.c \
+	lib/control/obligation.c \
+	lib/control/receipt_requirement.c \
 	lib/effect/receipt.c \
 	lib/store/record.c \
 	lib/store/journal.c \
@@ -23,14 +29,15 @@ C_SOURCES := \
 	lib/projection/projection.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-C_LIBRARY := $(BUILD_DIR)/libyai_core_new2.a
+C_LIBRARY := $(BUILD_DIR)/libyai_core_new3.a
 YAID := $(BUILD_DIR)/yaid
 SMOKE_MINIMUM_LOOP := $(BUILD_DIR)/test_minimum_loop
 SMOKE_PERSISTENT_JOURNAL := $(BUILD_DIR)/test_persistent_journal
+SMOKE_CONTROL_GATE := $(BUILD_DIR)/test_control_gate
 
 info:
-	@printf "yai-core: persistent journal and subject state\n"
-	@printf "status: NEW.2\n"
+	@printf "yai-core: control gate and persistent journal\n"
+	@printf "status: NEW.3\n"
 	@printf "ctl: Rust yaictl\n"
 	@printf "engine: Rust operational data skeleton, C file journal path\n"
 
@@ -64,7 +71,11 @@ $(SMOKE_PERSISTENT_JOURNAL): tests/smoke/persistent-journal/test_persistent_jour
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/persistent-journal/test_persistent_journal.c $(C_LIBRARY) -o "$@"
 
-build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL)
+$(SMOKE_CONTROL_GATE): tests/smoke/control-gate/test_control_gate.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/control-gate/test_control_gate.c $(C_LIBRARY) -o "$@"
+
+build-c: $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE)
 
 build-rust:
 	cargo build --manifest-path crates/Cargo.toml --workspace
@@ -78,7 +89,10 @@ smoke-new1: $(SMOKE_MINIMUM_LOOP)
 smoke-new2: $(SMOKE_PERSISTENT_JOURNAL)
 	@$(SMOKE_PERSISTENT_JOURNAL)
 
-smoke: smoke-new1 smoke-new2
+smoke-new3: $(SMOKE_CONTROL_GATE)
+	@$(SMOKE_CONTROL_GATE)
+
+smoke: smoke-new1 smoke-new2 smoke-new3
 
 check: check-layout check-docs build smoke
 

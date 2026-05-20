@@ -55,4 +55,47 @@ mod tests {
         assert_eq!(projection.receipt_count, 1);
         assert_eq!(projection.subject_count, 1);
     }
+
+    #[test]
+    fn build_control_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:rule",
+            "case:new3-control",
+            RecordKind::PolicyRule,
+            "subject:repo-test",
+            "",
+            "",
+            "",
+            "rule:mutative_operation_requires_review",
+        ));
+        journal.append(Record::from_parts(
+            "record:gate",
+            "case:new3-control",
+            RecordKind::GateResult,
+            "subject:repo-test",
+            "op:file-write-test",
+            "",
+            "",
+            "gate:operation require_review",
+        ));
+        journal.append(Record::from_parts(
+            "record:decision",
+            "case:new3-control",
+            RecordKind::Decision,
+            "subject:repo-test",
+            "op:file-write-test",
+            "decision:new3",
+            "",
+            "decision:require_review",
+        ));
+
+        let projection = ProjectionSummary::from_journal("control", &journal);
+
+        assert_eq!(projection.source_record_count, 3);
+        assert_eq!(projection.policy_rule_count, 1);
+        assert_eq!(projection.gate_count, 1);
+        assert_eq!(projection.decision_count, 1);
+        assert!(projection.summary.contains("rules:1"));
+    }
 }

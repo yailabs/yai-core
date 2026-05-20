@@ -12,7 +12,12 @@ typedef enum yai_record_kind {
     YAI_RECORD_ATTEMPT = 2,
     YAI_RECORD_DECISION = 3,
     YAI_RECORD_RECEIPT = 4,
-    YAI_RECORD_PROJECTION = 5
+    YAI_RECORD_PROJECTION = 5,
+    YAI_RECORD_POLICY_RULE = 6,
+    YAI_RECORD_GATE_RESULT = 7,
+    YAI_RECORD_DECISION_BASIS = 8,
+    YAI_RECORD_OBLIGATION = 9,
+    YAI_RECORD_RECEIPT_REQUIREMENT = 10
 } yai_record_kind_t;
 
 typedef struct yai_store_record {
