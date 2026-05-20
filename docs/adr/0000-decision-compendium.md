@@ -23,6 +23,12 @@ old `yai` is transition concept mine and future `ai-environment` material,
 `interfaces` projects primitive truth through API/SDK/conformance, and `console`
 is an operator client over projections and interfaces.
 
+SPINE.0 also adopts wave-coupled extraction. Old `yai` is not ignored until a
+final cleanup wave. Each `yai-core` implementation wave that overlaps an old
+concept must audit the corresponding old material, extract concepts only,
+implement the new primitive in the new grammar, update the extraction inventory
+and classify residue.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -77,6 +83,10 @@ CONSOLE.CANON.*
 PLATFORM.LATER.*
 ```
 
+Wave-coupled extraction keeps old `yai` useful without allowing old roots to
+re-grow inside `yai-core`. Useful non-core material is assigned to future
+`ai-environment` with `future_repo=ai-environment` and `action=externalize`.
+
 ## Consequences
 
 Readers can understand the decision set quickly without losing atomic ADR
@@ -91,6 +101,7 @@ do not implement NEW.1 from this file alone
 do not treat the old src roots as migration targets
 do not rename yai during SPINE.0
 do not let interfaces or console define core semantics independently
+do not postpone all old-yai residue handling to a final cleanup pass
 ```
 
 ## Supersedes

@@ -44,7 +44,46 @@ notes
 If a concept is not in the inventory, it is not ready for extraction. If a row
 does not name a future primitive, the work is still mining, not migration.
 
-## 3. Action Enum
+## 3. Wave-Coupled Extraction
+
+The old `yai` repo is not cleaned in one final pass. It is mined continuously.
+Every `yai-core` implementation wave that overlaps an old-`yai` concept must
+include:
+
+```text
+Old-yai audit
+Residue handling
+```
+
+Required sequence:
+
+```text
+inspect relevant old-yai files
+extract concepts only, not folders
+implement in yai-core using new primitives
+update extraction inventory
+classify old residue
+assign useful non-core material to future ai-environment
+```
+
+Residue classification uses the existing action enum. Material that remains
+useful outside the core should use:
+
+```text
+future_repo=ai-environment
+action=externalize
+```
+
+Example audit scopes:
+
+| Core wave type | Old-yai material to inspect |
+|---|---|
+| Memory | `src/substrate/memory/*`, `src/lineage/episodic_summary.c`, `src/lineage/semantic_summary.c`, `src/analytics/signals/*`, `src/agents/grounding/memory_strategy.c` |
+| Carrier/enforcement | `src/runtime/execution/*`, `src/runtime/carriers/*`, `src/runtime/decision/*`, `src/runtime/observation/*` |
+| Projection | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` |
+| Workflow-related | `src/orchestrator/*`, especially recovery and workflow material, without recreating a workflow engine in `yai-core` |
+
+## 4. Action Enum
 
 ```text
 absorb
@@ -68,7 +107,7 @@ Action meanings:
 | `mine_concept` | read for ideas, do not migrate shape |
 | `split` | old root decomposes into multiple primitives |
 
-## 4. Root Mapping
+## 5. Root Mapping
 
 | Old root | Future destination | Action |
 |---|---|---|
@@ -85,7 +124,7 @@ Action meanings:
 
 This map is not permission to copy folders. It is a routing table for concepts.
 
-## 5. Compatibility Rule
+## 6. Compatibility Rule
 
 Existing include compatibility surfaces may remain in the current repo until
 consumers are drained. The future `yai-core` must not recreate old root names.
@@ -102,7 +141,7 @@ test proving behavior
 
 Compatibility wrappers cannot become semantic owners.
 
-## 6. First-Wave Extraction Order
+## 7. First-Wave Extraction Order
 
 The completed CORE.NEW line has already moved past the first executable loops:
 
@@ -127,7 +166,7 @@ CONSOLE.CANON.*  console over interfaces and projections
 
 The full roadmap lives in `docs/engineering/four-repo-roadmap.md`.
 
-## 7. Old Root Non-Recreation Rule
+## 8. Old Root Non-Recreation Rule
 
 Forbidden future core roots:
 
@@ -152,7 +191,7 @@ The concept can survive only under the new primitive owner. The old root name
 must not become a directory, include root, package namespace or subsystem owner
 inside future `yai-core`.
 
-## 8. Inventory Quality Gates
+## 9. Inventory Quality Gates
 
 Before extracting a file or symbol:
 

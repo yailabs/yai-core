@@ -49,6 +49,45 @@ future `ai-environment` source material. The physical rename to
 | CONSOLE.CANON.* | `console` | Align operator UX to projections and interfaces. |
 | PLATFORM.LATER.* | Future platform repos/services | Defer cloud, team and managed-platform concerns. |
 
+## Wave-Coupled Extraction
+
+The old `yai` repo is not cleaned in one final pass. It is mined continuously.
+Every `yai-core` implementation wave that overlaps with an existing old-`yai`
+concept must inspect the corresponding old-`yai` material, extract only what is
+needed, implement the new primitive in `yai-core` using the new grammar, and
+record what old material is kept, quarantined, externalized or assigned to
+future `ai-environment`.
+
+Each relevant `yai-core` delivery must include:
+
+```text
+Old-yai audit
+Residue handling
+```
+
+Required work:
+
+```text
+inspect relevant old-yai files
+extract concepts only, not folders
+implement in yai-core using new primitives
+update extraction inventory
+classify old residue as absorb/quarantine/externalize/delete_later/compat_only/mine_concept/split
+assign useful non-core material to future ai-environment with future_repo=ai-environment and action=externalize
+```
+
+This avoids both blind migration and blind rewrite. `yai-core` gets the useful
+semantics, while old material is normalized as soon as its concept is touched.
+
+Examples:
+
+| Future wave family | Old-yai audit examples | Expected handling |
+|---|---|---|
+| Memory waves | `src/substrate/memory/*`, `src/lineage/episodic_summary.c`, `src/lineage/semantic_summary.c`, `src/analytics/signals/*`, `src/agents/grounding/memory_strategy.c` | Absorb reusable memory semantics into `yai-core/memory`; externalize agent-specific strategy to future `ai-environment`; classify old substrate memory residue. |
+| Carrier/enforcement waves | `src/runtime/execution/*`, `src/runtime/carriers/*`, `src/runtime/decision/*`, `src/runtime/observation/*` | Absorb carrier, enforcement and receipt concepts into `effect`, `control` and `store`; quarantine operator shell UX; externalize old runtime loop to an environment harness. |
+| Projection waves | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` | Absorb projection and redaction posture into `projection`; externalize model/context-pack UX material. |
+| Workflow-related waves | `src/orchestrator/*` and workflow-specific recovery material | Mine scenarios and procedure records; do not recreate a workflow engine in `yai-core`. |
+
 ## CORE.NEW Roadmap
 
 | Wave | Name | Status |
