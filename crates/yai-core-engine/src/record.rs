@@ -11,6 +11,10 @@ pub enum RecordKind {
     DecisionBasis,
     Obligation,
     ReceiptRequirement,
+    CarrierRequest,
+    EffectReceipt,
+    FilesystemReceipt,
+    SubjectState,
 }
 
 impl RecordKind {
@@ -27,6 +31,10 @@ impl RecordKind {
             Self::DecisionBasis => "decision_basis",
             Self::Obligation => "obligation",
             Self::ReceiptRequirement => "receipt_requirement",
+            Self::CarrierRequest => "carrier_request",
+            Self::EffectReceipt => "effect_receipt",
+            Self::FilesystemReceipt => "filesystem_receipt",
+            Self::SubjectState => "subject_state",
         }
     }
 
@@ -43,6 +51,10 @@ impl RecordKind {
             "decision_basis" => Some(Self::DecisionBasis),
             "obligation" => Some(Self::Obligation),
             "receipt_requirement" => Some(Self::ReceiptRequirement),
+            "carrier_request" => Some(Self::CarrierRequest),
+            "effect_receipt" => Some(Self::EffectReceipt),
+            "filesystem_receipt" => Some(Self::FilesystemReceipt),
+            "subject_state" => Some(Self::SubjectState),
             _ => None,
         }
     }

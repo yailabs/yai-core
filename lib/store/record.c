@@ -75,6 +75,14 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "obligation";
     case YAI_RECORD_RECEIPT_REQUIREMENT:
         return "receipt_requirement";
+    case YAI_RECORD_CARRIER_REQUEST:
+        return "carrier_request";
+    case YAI_RECORD_EFFECT_RECEIPT:
+        return "effect_receipt";
+    case YAI_RECORD_FILESYSTEM_RECEIPT:
+        return "filesystem_receipt";
+    case YAI_RECORD_SUBJECT_STATE:
+        return "subject_state";
     default:
         return "unknown";
     }
@@ -108,6 +116,14 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_OBLIGATION;
     } else if (strcmp(value, "receipt_requirement") == 0) {
         *kind = YAI_RECORD_RECEIPT_REQUIREMENT;
+    } else if (strcmp(value, "carrier_request") == 0) {
+        *kind = YAI_RECORD_CARRIER_REQUEST;
+    } else if (strcmp(value, "effect_receipt") == 0) {
+        *kind = YAI_RECORD_EFFECT_RECEIPT;
+    } else if (strcmp(value, "filesystem_receipt") == 0) {
+        *kind = YAI_RECORD_FILESYSTEM_RECEIPT;
+    } else if (strcmp(value, "subject_state") == 0) {
+        *kind = YAI_RECORD_SUBJECT_STATE;
     } else {
         return YAI_ERR_INVALID;
     }

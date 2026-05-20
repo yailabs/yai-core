@@ -1,6 +1,7 @@
 #include "yai/effect/receipt.h"
 
 #include <stddef.h>
+#include <stdio.h>
 
 void yai_copy_string(char *dst, size_t dst_size, const char *src);
 
@@ -17,6 +18,12 @@ yai_status_t yai_effect_receipt_from_decision(const char *receipt_id,
     receipt->attempt_id = attempt->attempt_id;
     receipt->decision_id = decision->decision_id;
     receipt->target_subject_ref = attempt->target_subject_ref;
+    receipt->carrier_kind = YAI_CARRIER_UNKNOWN;
+    receipt->effect_kind = YAI_EFFECT_UNKNOWN;
+    yai_copy_string(receipt->path_or_locator, sizeof(receipt->path_or_locator), "");
+    receipt->bytes_affected = 0;
+    yai_copy_string(receipt->before_hash, sizeof(receipt->before_hash), "");
+    yai_copy_string(receipt->after_hash, sizeof(receipt->after_hash), "");
 
     if (decision->outcome == YAI_DECISION_ALLOW ||
         decision->outcome == YAI_DECISION_OBSERVE_ONLY ||

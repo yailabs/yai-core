@@ -98,4 +98,36 @@ mod tests {
         assert_eq!(projection.decision_count, 1);
         assert!(projection.summary.contains("rules:1"));
     }
+
+    #[test]
+    fn build_filesystem_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:fs-receipt",
+            "case:new4-filesystem",
+            RecordKind::FilesystemReceipt,
+            "subject:file-input",
+            "op:fs-read",
+            "decision:allow",
+            "receipt:fs-read",
+            "effect:fs.read status:observed hash:abc",
+        ));
+        journal.append(Record::from_parts(
+            "record:subject-state",
+            "case:new4-filesystem",
+            RecordKind::SubjectState,
+            "subject:file-input",
+            "",
+            "",
+            "receipt:fs-read",
+            "state:observed hash:abc",
+        ));
+
+        let projection = ProjectionSummary::from_journal("filesystem", &journal);
+
+        assert_eq!(projection.source_record_count, 2);
+        assert_eq!(projection.filesystem_receipt_count, 1);
+        assert_eq!(projection.subject_state_count, 1);
+        assert_eq!(projection.effect_count, 1);
+    }
 }

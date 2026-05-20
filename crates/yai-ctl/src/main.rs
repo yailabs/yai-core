@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
 
 use yai_core_engine::journal::Journal;
@@ -29,6 +30,9 @@ fn print_usage() {
     println!("       yaictl projection summary --journal <path>");
     println!("       yaictl control summary --journal <path>");
     println!("       yaictl decision inspect --journal <path>");
+    println!("       yaictl receipt summary --journal <path>");
+    println!("       yaictl carrier fs-read --sandbox <sandbox> --path <path>");
+    println!("       yaictl carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
 
 fn journal_arg(args: &[String]) -> Result<PathBuf, String> {
@@ -43,6 +47,40 @@ fn journal_arg(args: &[String]) -> Result<PathBuf, String> {
         index += 1;
     }
     Err("--journal <path> is required".to_string())
+}
+
+fn named_arg(args: &[String], name: &str) -> Result<String, String> {
+    let mut index = 0;
+    while index < args.len() {
+        if args[index] == name {
+            return args
+                .get(index + 1)
+                .cloned()
+                .ok_or_else(|| format!("{name} requires a value"));
+        }
+        index += 1;
+    }
+    Err(format!("{name} is required"))
+}
+
+fn path_inside_sandbox(sandbox: &str, path: &str) -> bool {
+    if sandbox.is_empty()
+        || path.is_empty()
+        || sandbox.split('/').any(|part| part == "..")
+        || path.split('/').any(|part| part == "..")
+    {
+        return false;
+    }
+    path == sandbox || path.starts_with(&format!("{sandbox}/"))
+}
+
+fn fnv_hash(bytes: &[u8]) -> String {
+    let mut value = 0xcbf29ce484222325u64;
+    for byte in bytes {
+        value ^= u64::from(*byte);
+        value = value.wrapping_mul(0x100000001b3);
+    }
+    format!("{value:016x}")
 }
 
 fn store_tail(args: &[String]) -> Result<(), String> {
@@ -130,6 +168,56 @@ fn decision_inspect(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn receipt_summary(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    let projection = ProjectionSummary::from_journal("receipt", &journal);
+    println!("records: {}", projection.source_record_count);
+    println!("receipts: {}", projection.receipt_count);
+    println!(
+        "filesystem_receipts: {}",
+        projection.filesystem_receipt_count
+    );
+    println!("subject_states: {}", projection.subject_state_count);
+    println!("effects: {}", projection.effect_count);
+    Ok(())
+}
+
+fn carrier_fs_read(args: &[String]) -> Result<(), String> {
+    let sandbox = named_arg(args, "--sandbox")?;
+    let path = named_arg(args, "--path")?;
+    if !path_inside_sandbox(&sandbox, &path) {
+        return Err("path is outside sandbox".to_string());
+    }
+    let bytes = fs::read(&path).map_err(|error| format!("failed to read {path}: {error}"))?;
+    println!("carrier: filesystem");
+    println!("effect: fs.read");
+    println!("status: observed");
+    println!("bytes: {}", bytes.len());
+    println!("hash: {}", fnv_hash(&bytes));
+    Ok(())
+}
+
+fn carrier_fs_write(args: &[String]) -> Result<(), String> {
+    let sandbox = named_arg(args, "--sandbox")?;
+    let path = named_arg(args, "--path")?;
+    let content = named_arg(args, "--content")?;
+    if !path_inside_sandbox(&sandbox, &path) {
+        return Err("path is outside sandbox".to_string());
+    }
+    let mut file =
+        fs::File::create(&path).map_err(|error| format!("failed to open {path}: {error}"))?;
+    file.write_all(content.as_bytes())
+        .map_err(|error| format!("failed to write {path}: {error}"))?;
+    println!("carrier: filesystem");
+    println!("effect: fs.write");
+    println!("status: executed");
+    println!("bytes: {}", content.len());
+    println!("hash: {}", fnv_hash(content.as_bytes()));
+    Ok(())
+}
+
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
@@ -156,6 +244,24 @@ fn main() {
         }
         Some("decision") if args.get(1).map(String::as_str) == Some("inspect") => {
             if let Err(error) = decision_inspect(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("receipt") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = receipt_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("fs-read") => {
+            if let Err(error) = carrier_fs_read(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("fs-write") => {
+            if let Err(error) = carrier_fs_write(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

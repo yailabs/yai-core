@@ -24,6 +24,7 @@ typedef struct yai_subject_state {
     yai_id_t last_receipt_id;
     yai_id_t last_decision_id;
     char last_observed_at[32];
+    char content_or_status_hash[32];
     char summary[128];
 } yai_subject_state_t;
 

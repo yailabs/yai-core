@@ -28,6 +28,9 @@ typedef struct yai_projection {
     size_t gate_count;
     size_t obligation_count;
     size_t receipt_requirement_count;
+    size_t filesystem_receipt_count;
+    size_t subject_state_count;
+    size_t effect_count;
 } yai_projection_t;
 
 yai_status_t yai_projection_build(const char *projection_id,

@@ -15,6 +15,9 @@ pub struct ProjectionSummary {
     pub gate_count: usize,
     pub obligation_count: usize,
     pub receipt_requirement_count: usize,
+    pub filesystem_receipt_count: usize,
+    pub subject_state_count: usize,
+    pub effect_count: usize,
 }
 
 impl ProjectionSummary {
@@ -57,6 +60,26 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.kind == RecordKind::ReceiptRequirement)
             .count();
+        let filesystem_receipt_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::FilesystemReceipt)
+            .count();
+        let subject_state_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::SubjectState)
+            .count();
+        let effect_count = journal
+            .records()
+            .iter()
+            .filter(|record| {
+                matches!(
+                    record.kind,
+                    RecordKind::Receipt | RecordKind::EffectReceipt | RecordKind::FilesystemReceipt
+                )
+            })
+            .count();
         let subject_count = journal
             .records()
             .iter()
@@ -66,7 +89,7 @@ impl ProjectionSummary {
             .len();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count}"
             ),
             consumer,
             case_ref,
@@ -78,6 +101,9 @@ impl ProjectionSummary {
             gate_count,
             obligation_count,
             receipt_requirement_count,
+            filesystem_receipt_count,
+            subject_state_count,
+            effect_count,
         }
     }
 }

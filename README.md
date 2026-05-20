@@ -19,7 +19,7 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 ```
 
-Status: NEW.3 control gate and policy rule skeleton.
+Status: NEW.4 filesystem carrier and controlled effect path.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -50,6 +50,18 @@ persisted control records
 control projection
 ```
 
+NEW.4 adds the first real carrier effect, confined to a test sandbox:
+
+```text
+control decision
+filesystem carrier
+fs.read / fs.write
+hash posture before and after
+effect receipt
+subject state update
+filesystem projection
+```
+
 Ownership:
 
 ```text
@@ -57,10 +69,10 @@ C    = public ABI, daemon bootstrap, carrier/control boundary v0
 Rust = yaictl and operational data engine skeleton
 ```
 
-`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.3 adds
-file-based control and decision inspection commands, but there is no real daemon
-IPC, no carrier-owned filesystem/process/model effect, no full policy engine, no
-graph engine and no memory consolidation yet.
+`yaictl` is Rust. The operational data engine skeleton is Rust. NEW.4 adds
+file-based receipt inspection and filesystem diagnostic commands, but there is
+no real daemon IPC, no process/network/model/database carrier, no full policy
+engine, no graph engine and no memory consolidation yet.
 
 Build and validate:
 
@@ -81,4 +93,11 @@ Inspect the NEW.3 control journal after `make smoke-new3`:
 ```text
 crates/target/debug/yaictl control summary --journal build/tmp/new3/journal.jsonl
 crates/target/debug/yaictl decision inspect --journal build/tmp/new3/journal.jsonl
+```
+
+Inspect the NEW.4 filesystem journal after `make smoke-new4`:
+
+```text
+crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
+crates/target/debug/yaictl carrier fs-read --sandbox build/tmp/new4/sandbox --path build/tmp/new4/sandbox/input.txt
 ```

@@ -12,6 +12,7 @@ for file in \
   docs/engineering/new1-minimum-loop.md \
   docs/engineering/new2-persistent-journal.md \
   docs/engineering/new3-control-gate.md \
+  docs/engineering/new4-filesystem-carrier.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

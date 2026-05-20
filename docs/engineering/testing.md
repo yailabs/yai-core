@@ -88,6 +88,30 @@ crates/target/debug/yaictl control summary --journal build/tmp/new3/journal.json
 crates/target/debug/yaictl decision inspect --journal build/tmp/new3/journal.jsonl
 ```
 
+## NEW.4 Filesystem Carrier Loop
+
+```text
+create sandbox
+bind filesystem subject
+fs.read read-like attempt
+allow decision
+filesystem read receipt with hash
+fs.write mutative attempt
+require_review decision
+blocked receipt and no file mutation
+manual allow_with_constraints decision
+filesystem write receipt with before/after hash
+subject state update
+filesystem projection
+```
+
+`tests/smoke/filesystem-carrier/test_filesystem_carrier.c` proves the first real
+effect path while keeping all writes inside `build/tmp/new4/sandbox/`.
+
+```text
+crates/target/debug/yaictl receipt summary --journal build/tmp/new4/journal.jsonl
+```
+
 ## Minimum Test Cases
 
 | ID | Scenario | Required Proof |

@@ -1,10 +1,13 @@
 #ifndef YAI_EFFECT_RECEIPT_H
 #define YAI_EFFECT_RECEIPT_H
 
+#include <stddef.h>
+
 #include "yai/base/error.h"
 #include "yai/base/id.h"
 #include "yai/case/case_ref.h"
 #include "yai/control/decision.h"
+#include "yai/effect/carrier.h"
 #include "yai/op/attempt.h"
 #include "yai/subject/subject_ref.h"
 
@@ -24,6 +27,12 @@ typedef struct yai_effect_receipt {
     yai_id_t decision_id;
     yai_subject_ref_t target_subject_ref;
     yai_receipt_status_t status;
+    yai_carrier_kind_t carrier_kind;
+    yai_effect_kind_t effect_kind;
+    char path_or_locator[128];
+    size_t bytes_affected;
+    char before_hash[32];
+    char after_hash[32];
     char summary[128];
 } yai_effect_receipt_t;
 
