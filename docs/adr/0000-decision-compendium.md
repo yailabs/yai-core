@@ -29,6 +29,11 @@ concept must audit the corresponding old material, extract concepts only,
 implement the new primitive in the new grammar, update the extraction inventory
 and classify residue.
 
+SPINE.1 adopts filesystem / data-spine refoundation as the next phase. The
+target layout is `include/`, `system/`, `engine/` and `cmd/`; Rust owns the
+operational data spine; `lib/`, `crates/`, `ctl/` and top-level `daemon/` are
+transitional bootstrap roots.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -41,6 +46,9 @@ and classify residue.
 | 0006 | No agent framework in core | Agents integrate with core; they do not define core architecture. |
 | 0007 | No workflow engine in core | Workflows are subjects/events/procedure records, not a core engine. |
 | 0008 | C first, Rust operational data engine | C owns public contracts; Rust later owns advanced operational data. |
+| 0009 | System engine cmd layout | `include/`, `system/`, `engine/` and `cmd/` are the target layout. |
+| 0010 | Rust data spine ownership | Rust owns store, journal, record, graph, index/query, memory, projection, reconcile, retention and integrity. |
+| 0011 | Lib is transitional | `lib/`, `crates/`, `ctl/` and top-level `daemon/` are bootstrap roots. |
 
 ## Combined Doctrine
 
@@ -87,6 +95,27 @@ Wave-coupled extraction keeps old `yai` useful without allowing old roots to
 re-grow inside `yai-core`. Useful non-core material is assigned to future
 `ai-environment` with `future_repo=ai-environment` and `action=externalize`.
 
+Data-spine doctrine:
+
+```text
+YAI Core is residue-first.
+Store is not memory.
+Graph is not lineage.
+Index/query is not RAG.
+Memory is not chat history.
+Projection is not UI state.
+Reconcile is not recovery execution.
+```
+
+C/Rust target:
+
+```text
+C owns public ABI, daemon bootstrap, host carriers, control enforcement
+boundary, system bridge and FFI shims.
+Rust owns store, journal, record codec, graph, index/query, memory, projection,
+reconcile, retention and integrity.
+```
+
 ## Consequences
 
 Readers can understand the decision set quickly without losing atomic ADR
@@ -117,4 +146,6 @@ No atomic ADR. This file supersedes ad hoc reading order notes for the ADR set.
 ../engineering/target-layout.md
 ../engineering/extraction-plan.md
 ../engineering/four-repo-roadmap.md
+../engineering/filesystem-target-v2.md
+../engineering/data-spine-refactor-roadmap.md
 ```

@@ -73,13 +73,12 @@ SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
-	@printf "yai-core: local command and install layout v0\n"
-	@printf "status: NEW.13\n"
-	@printf "command: Rust yai\n"
-	@printf "daemon: C yaid\n"
-	@printf "engine: Rust operational data skeleton, C file journal path\n"
-	@printf "default_prefix: %s\n" "$(PREFIX)"
-	@printf "default_yai_home: %s\n" "$(YAI_HOME)"
+	@printf "yai-core: local AI operational control core\n"
+	@printf "status: NEW.13 target filesystem doctrine / refactor plan\n"
+	@printf "next: NEW.14 move Rust workspace crates/ -> engine/\n"
+	@printf "target-layout: include/ system/ engine/ cmd/\n"
+	@printf "transitional: lib/ crates/ ctl/ daemon/\n"
+	@printf "install-local: delayed to NEW.20\n"
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh

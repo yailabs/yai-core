@@ -3,6 +3,8 @@
 Projection serves controlled read models over core residue.
 
 Projection replaces the old final `views` wording in the new core. Console views are UX; core projections are data products.
+Projection is not UI state and not source-of-truth state. It is the controlled
+read model for model, agent, operator, API, audit and debug consumers.
 
 ## Projection Audiences
 
@@ -118,5 +120,16 @@ records; projection remains a controlled view over residue.
 ## Rust Engine Interaction
 
 NEW.10 allows the Rust engine to build projection summary JSON from existing
-journal residue. This is backend mechanics only: projection semantics remain
-defined by the C contract and architecture docs.
+journal residue. SPINE.1 clarifies the target: projection materialization
+belongs to the Rust operational data spine, exposed through C ABI and system
+bridges without turning projection into UI state.
+
+## NEW.13 Route
+
+```text
+lib/projection -> split: system/engine_bridge + engine/yai-engine/src/projection
+../yai/src/substrate/views/* -> engine/projection concept evidence
+../yai/src/case/surface/* -> projection/console future, not system UX
+```
+
+No projection implementation moves in NEW.13.

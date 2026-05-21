@@ -8,6 +8,24 @@ It must stay technical and operational. Commercial positioning belongs in
 
 ## Canonical Roots
 
+SPINE.1 filesystem target roots:
+
+```text
+include
+system
+engine
+cmd
+proto
+tests
+docs
+tools
+packaging
+examples
+vendor
+```
+
+Primitive responsibilities inside `system/`, `engine/` and `include/`:
+
 ```text
 base
 ingest
@@ -25,6 +43,9 @@ reconcile
 daemon
 ctl
 ```
+
+`lib/`, `crates/`, `ctl/` and top-level `daemon/` are transitional bootstrap
+roots, not the final filesystem doctrine.
 
 ## First Read
 

@@ -12,7 +12,9 @@ public headers
 opaque refs
 status and error codes
 daemon bootstrap ABI
-carrier request/receipt structs
+host carrier request/receipt structs
+control enforcement boundary
+system bridge
 FFI boundary shims
 serialization entry points
 ```
@@ -20,6 +22,15 @@ serialization entry points
 The ABI owns public semantics. It does not require every implementation detail
 to stay in C forever. `yai` may later be Rust, but it remains a client over
 these primitives.
+
+SPINE.1 target:
+
+```text
+C owns public ABI, daemon bootstrap, host carriers, control enforcement
+boundary, system bridge and FFI shims.
+Rust owns store, journal, record codec, graph, index/query, memory, projection,
+reconcile, retention and integrity.
+```
 
 ## 2. ABI Versioning
 
@@ -191,6 +202,9 @@ ownership rules stay stable
 struct_size checks preserve old callers
 test fixtures compare old and new backend behavior
 ```
+
+C wrappers become thin as Rust data-spine parity matures. C duplicate data
+logic is transitional and should be quarantined before removal.
 
 ## 11. First Headers
 

@@ -7,29 +7,41 @@ Accepted for DOC.NEW.1.
 ## Context
 
 The future core needs a stable local ABI and daemon/carrier/control bootstrap,
-but advanced store, graph, memory, projection and query behavior will become
-complex. C is the right first shell for ABI and machine boundary. Rust is the
-right later engine for operational data structures.
+but store, journal, record, graph, index/query, memory, projection, reconcile,
+retention and integrity behavior will become complex. C is the right shell for
+ABI and machine boundary. Rust is the right engine for the operational data
+spine.
 
 ## Decision
 
-C owns core ABI and daemon/carrier/control bootstrap. Rust may own `yai`
-implementation and the operational data engine. `yai` remains a client over
-core primitives, not a semantic owner. Rust owns advanced
-store/index/graph/memory/projection/query behind C FFI.
+C owns public ABI, daemon bootstrap, host carriers, control enforcement
+boundary, system bridge and FFI shims. Rust may own `yai` implementation and
+the operational data spine. `yai` remains a client over core primitives, not a
+semantic owner. Rust owns store, journal, record codec, graph, index/query,
+memory, projection, reconcile, retention and integrity behind C FFI.
 
 Owner table:
 
 | Concern | Owner |
 |---|---|
 | daemon lifecycle | C |
-| carrier v0 | C |
-| control v0 | C |
+| daemon bootstrap | C |
+| host carriers | C |
+| control enforcement boundary | C |
+| system bridge | C |
 | public ABI | C |
+| FFI shims | C |
 | `yai` | Rust allowed, client only |
-| advanced store engine | Rust |
-| graph/index/memory | Rust |
-| projection cache | Rust |
+| store | Rust |
+| journal | Rust |
+| record codec | Rust |
+| graph | Rust |
+| index/query | Rust |
+| memory | Rust |
+| projection | Rust |
+| reconcile | Rust |
+| retention | Rust |
+| integrity | Rust |
 
 ## Consequences
 
@@ -37,6 +49,9 @@ NEW.0 and NEW.1 can remain small and ABI-stable. Rust can later own data
 structures, persistence, retrieval, graph traversal, memory consolidation and
 projection caches without changing public C contracts. C keeps fallback store
 behavior until dual-write parity is proven.
+
+SPINE.1 clarifies that fallback C data logic is transitional. C wrappers should
+become thin as Rust data-spine parity matures.
 
 ## Non-goals
 

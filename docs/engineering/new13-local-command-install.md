@@ -1,6 +1,12 @@
-# NEW.13 Local Command And Install Layout
+# NEW.13 Superseded: Local Command And Install Layout
 
-NEW.13 makes the local developer command surface canonical.
+SPINE.1 supersedes this wave assignment. Local command and install layout is no
+longer NEW.13; it is delayed to NEW.20. NEW.13 is now target filesystem
+doctrine/refactor planning for `system/engine/cmd/include`.
+
+This file remains as historical planning material until the NEW.20 docs are
+written. Do not implement install layout from this file before the filesystem /
+data-spine refoundation waves.
 
 ## Commands
 
@@ -12,7 +18,7 @@ yaid = C local daemon
 `yai` is the command used by docs and future delivery boxes. `yaid` is installed
 beside it as the local daemon binary.
 
-## Local Install
+## Planned Local Install
 
 ```text
 make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai
@@ -48,7 +54,7 @@ runtime directories, `PATH` posture and default daemon socket.
 
 ## Boundaries
 
-NEW.13 does not add service manager integration, package signing, Homebrew,
+NEW.20 should not add service manager integration, package signing, Homebrew,
 systemd, launchd, auth, cloud, console ownership or interfaces ownership.
 
 Console remains the future operator UX. `interfaces` remains the downstream

@@ -2,6 +2,21 @@
 
 `yaid` and `yai` are technical core surfaces.
 
+SPINE.1 classifies top-level `daemon/`, `ctl/` and `crates/yai-ctl` as
+transitional bootstrap locations. The target command shape is:
+
+```text
+cmd/
+├── yai/
+│   ├── Cargo.toml
+│   └── src/main.rs
+└── yaid/
+    └── main.c
+```
+
+The target system plane keeps daemon implementation and host/control boundary
+code under `system/`.
+
 ## `yaid`
 
 `yaid` is the resident local process.
@@ -111,10 +126,13 @@ This is not public API, HTTP, auth, session management, service supervision or
 multi-client runtime. It is the first proof that `yai -> yaid -> core loop ->
 journal/projection -> response` works locally.
 
-## NEW.13 Local Command Layout
+## Local Command Layout Timing
 
-NEW.13 makes `yai` the canonical local developer command and installs `yaid`
-beside it:
+Local install layout is no longer NEW.13. It is delayed to NEW.20 so the repo
+does not install a filesystem shape already known to be transitional.
+
+NEW.20 is expected to make `yai` the canonical local developer command and
+install `yaid` beside it:
 
 ```text
 $(PREFIX)/bin/yai
@@ -136,6 +154,6 @@ Default daemon socket:
 $(YAI_HOME)/run/yaid.sock
 ```
 
-This does not make Console the owner of the `yai` command. Console remains the
-operator UX surface. `yai` is the technical core command for local development,
-inspection and controlled daemon interaction.
+This will not make Console the owner of the `yai` command. Console remains the
+operator UX surface. `yai` remains the technical core command for local
+development, inspection and controlled daemon interaction.

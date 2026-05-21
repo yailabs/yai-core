@@ -9,6 +9,10 @@ materializes policy into machine gates, emits control decisions, executes or
 observes effects through carriers, records receipts, derives operational memory
 and serves controlled projections.
 
+SPINE.1 sets the next implementation phase as filesystem / data-spine
+refoundation. The next wave is NEW.13 target filesystem doctrine:
+`system/engine/cmd/include`. Local install layout is delayed to NEW.20.
+
 Core truth is residue-based. YAI Core owns operational truth only through
 case-bound records, subject bindings, attempts, decisions, receipts, graph
 relations, memory and projections. It does not own external system truth unless
@@ -31,6 +35,8 @@ the external system binds or reports through YAI protocols.
 | Reconciliation | [11-reconciliation-model.md](11-reconciliation-model.md) |
 | Daemon and ctl | [12-daemon-and-ctl.md](12-daemon-and-ctl.md) |
 | C/Rust boundary | [13-c-rust-boundary.md](13-c-rust-boundary.md) |
+| Target filesystem V2 | [../engineering/filesystem-target-v2.md](../engineering/filesystem-target-v2.md) |
+| Data spine refactor | [../engineering/data-spine-refactor-roadmap.md](../engineering/data-spine-refactor-roadmap.md) |
 
 ## Machine Spine
 
@@ -116,6 +122,29 @@ Imported receipts keep external provenance and weaker guarantee labels.
 Memory is scoped operational experience derived from records, receipts, graph
 paths and decisions. It is not raw storage and not a context pack.
 
+## Data Spine Doctrine
+
+```text
+YAI Core is residue-first.
+Store is not memory.
+Graph is not lineage.
+Index/query is not RAG.
+Memory is not chat history.
+Projection is not UI state.
+Reconcile is not recovery execution.
+```
+
+Definitions:
+
+| Primitive | Definition |
+|---|---|
+| store | durable residue persistence |
+| graph | causality and reconstruction over residue |
+| index/query | operational access over case-bound residue |
+| memory | receipt-backed, graph-derived, policy-aware operational experience |
+| projection | controlled read model for model, agent, operator, API, audit and debug |
+| reconcile | expected-vs-observed mismatch detection and recovery posture |
+
 ## Control Guarantee Model
 
 YAI Core must never overclaim control.
@@ -148,8 +177,9 @@ console    = operator terminal/client UX
 ```text
 DOC.CORE.0: canonical docs freeze
 NEW.1: minimum loop implementation
-integration adapters
-Rust operational data engine behind C FFI
+NEW.13: target filesystem doctrine: system/engine/cmd/include
+NEW.20: local install layout
+Rust operational data spine behind C FFI
 ```
 
 NEW.1 proves:

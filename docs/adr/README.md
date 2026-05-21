@@ -23,6 +23,9 @@ Then read the atomic records:
 0006-no-agent-framework-in-core.md
 0007-no-workflow-engine-in-core.md
 0008-c-first-rust-operational-data-engine.md
+0009-system-engine-cmd-layout.md
+0010-rust-data-spine-ownership.md
+0011-lib-is-transitional.md
 ```
 
 Atomic ADR structure:

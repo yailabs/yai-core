@@ -2,7 +2,18 @@
 
 Memory is scoped consolidated operational continuity.
 
-Memory is not prompt history, chat transcript, hidden model state, generic knowledge, record truth or UI state.
+Memory is not prompt history, chat transcript, hidden model state, generic
+knowledge, record truth or UI state. YAI does not sell memory as chat history.
+YAI memory is operational memory: decisions, receipts, subject state, policy,
+graph paths and divergences.
+
+Comparison:
+
+| Term | Meaning |
+|---|---|
+| RAG | retrieves documents or knowledge |
+| Agent memory | remembers textual or task experience |
+| YAI memory | remembers decisions, receipts, subject state, policy, graph paths and divergences |
 
 ## Memory Kinds
 
@@ -28,6 +39,14 @@ privacy boundary
 retention or forgetting posture
 traceability
 projection permissions
+case-bound
+subject-aware
+policy-aware
+receipt-backed
+graph-derived
+scoped
+freshness-aware
+projection-controlled
 ```
 
 ## Consolidation Rule
@@ -100,8 +119,20 @@ consumers receive limited summaries by default.
 
 ## Rust Direction
 
-Advanced recall, ranking, consolidation, decay, pinning and privacy filtering are Rust engine candidates behind C FFI.
+Advanced recall, ranking, consolidation, decay, pinning and privacy filtering
+belong to the Rust operational data spine behind C FFI.
 
 NEW.10 begins that direction only as residue consumption. Rust can count memory
 candidate records through the engine path, but it does not consolidate, rank,
 recall or widen memory scope.
+
+## NEW.13 Route
+
+```text
+lib/memory -> split: system/engine_bridge + engine/yai-engine/src/memory
+../yai/src/substrate/memory/* -> concept evidence only
+../yai/src/lineage/* -> graph-derived memory evidence only
+../yai/src/analytics/* -> memory/reconcile/index evidence or ai-environment
+```
+
+No memory implementation moves in NEW.13.

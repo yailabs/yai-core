@@ -11,52 +11,122 @@ NEW.0 creates only doctrine, guards and tracked skeleton roots.
 NEW.1 creates only files needed for the first executable loop.
 ```
 
-## 1. Final Target Layout
+## 1. Target Layout V2
 
-The future `yai-core` repository should eventually have this root shape:
+SPINE.1 rebases the filesystem doctrine. The future `yai-core` repository
+should eventually have this root shape:
 
 ```text
 yai-core/
-├── docs/
 ├── include/
-│   └── yai/
-├── lib/
-├── daemon/
-├── ctl/
-├── crates/
+├── system/
+├── engine/
+├── cmd/
 ├── proto/
 ├── tests/
-├── tools/
 ├── packaging/
+├── docs/
+├── tools/
 ├── examples/
 ├── vendor/
+├── Cargo.toml
 ├── Makefile
 ├── README.md
 ├── LICENSE
 └── VERSION
 ```
 
-Final internal roots:
+Meaning:
 
-```text
-base
-ingest
-subject
-case
-op
-control
-effect
-store
-index
-graph
-memory
-projection
-reconcile
-daemon
-ctl
-```
+| Root | Meaning |
+|---|---|
+| `include/` | public C ABI contracts |
+| `system/` | C system plane: daemon, host, carriers, control boundary, FFI bridges |
+| `engine/` | Rust operational data engine |
+| `cmd/` | binaries: `yai` and `yaid` |
+| `proto/` | schemas and fixtures |
+| `tests/` | smoke, unit, integration and adversarial tests |
 
 These roots are stable machine responsibilities, not feature areas.
+
+Target system shape:
+
+```text
+system/
+├── base/
+├── case/
+├── subject/
+├── op/
+├── control/
+├── effect/
+│   └── carriers/
+├── daemon/
+├── host/
+├── engine_bridge/
+├── internal/
+└── README.md
+```
+
+Target engine shape:
+
+```text
+engine/
+├── Cargo.toml
+├── yai-engine/
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs
+│       ├── residue/
+│       ├── store/
+│       ├── journal/
+│       ├── record/
+│       ├── graph/
+│       ├── index/
+│       ├── query/
+│       ├── memory/
+│       ├── projection/
+│       ├── reconcile/
+│       ├── retention/
+│       ├── integrity/
+│       └── ffi/
+├── yai-engine-ffi/
+│   ├── Cargo.toml
+│   └── src/lib.rs
+└── README.md
+```
+
+Target command shape:
+
+```text
+cmd/
+├── yai/
+│   ├── Cargo.toml
+│   └── src/main.rs
+└── yaid/
+    └── main.c
+```
+
+Current bootstrap roots are transitional:
+
+| Current root | Target destination | Status |
+|---|---|---|
+| `lib/` | `system/` plus Rust-owned data logic in `engine/` | transitional |
+| `crates/` | `engine/` and `cmd/yai/` | transitional |
+| `ctl/` | `cmd/yai/` or removed after drain | transitional |
+| top-level `daemon/` | `cmd/yaid/` and `system/daemon/` | transitional |
+
+The target does not keep `lib/` as the long-term implementation root. NEW.13
+is target filesystem doctrine/refactor planning. Local install layout is
+delayed to NEW.20.
+
+NEW.13 adds the executable move plan in:
+
+```text
+new13-filesystem-refactor-plan.md
+filesystem-move-matrix.md
+engine-ownership-map.md
+system-ownership-map.md
+```
 
 ## 2. NEW.0 Minimal Skeleton
 
@@ -126,8 +196,9 @@ daemon
 ctl
 ```
 
-NEW.0 should not create large empty file forests. Skeleton directories are
-tracked with README placeholders and guard scripts only.
+NEW.0 did not create large empty file forests. Bootstrap directories were
+tracked with transitional README markers and guard scripts only; NEW.13 maps
+those markers to target roles and owning refactor waves.
 
 ## 3. NEW.1 Minimum Loop Files
 
@@ -194,6 +265,12 @@ crates/yai-core-engine/src/ffi.rs
 crates/yai-core-engine-sys/Cargo.toml
 crates/yai-core-engine-sys/src/lib.rs
 ```
+
+These paths describe bootstrap implementation history. They are not target V2
+paths.
+
+The planned NEW.14 through NEW.21 sequence moves these bootstrap paths without
+changing smoke behavior.
 
 Minimum tests:
 

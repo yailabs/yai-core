@@ -282,7 +282,7 @@ case/subject/op/control/receipt/store/projection loop can cross the local
 daemon boundary. It still avoids public API, auth, HTTP, process carrier,
 model carrier and background runtime execution.
 
-## NEW.13 Local Command Install
+## NEW.20 Local Command Install
 
 ```text
 make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
@@ -294,8 +294,9 @@ PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon status --socket /tmp/yai-co
 make uninstall-local PREFIX=/tmp/yai-core-install-test
 ```
 
-NEW.13 proves that future manual and Codex commands can use `yai` and `yaid`
-from `PATH` instead of repository-relative build artifacts.
+SPINE.1 delays local command install validation to NEW.20. NEW.13 now validates
+target filesystem doctrine/refactor planning rather than installed command
+layout.
 
 ## Minimum Test Cases
 

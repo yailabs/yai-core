@@ -1,14 +1,15 @@
 # Four-Repo Roadmap
 
-SPINE.0 makes the multi-repo spine explicit before CORE.NEW.6 adds operational
-memory. The goal is to keep `yai-core` correct without letting sibling repos
-drift around older runtime and agent assumptions.
+SPINE.1 rebases the multi-repo roadmap after NEW.12. The next `yai-core` phase
+is filesystem / data-spine refoundation, not local install layout. The goal is
+to keep `yai-core` correct without letting sibling repos drift around older
+runtime, agent or bootstrap filesystem assumptions.
 
 ## Current Status
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical new core. | Completed NEW.0, NEW.1, NEW.2, NEW.3, NEW.4, NEW.5 and NEW.5A. | NEW.6 Operational Memory Candidate v0. |
+| `yai-core` | Canonical new core. | Completed NEW.0 through NEW.12, plus SPINE.0. | NEW.13 target filesystem doctrine: system/engine/cmd/include. |
 | `yai` | Old/current repo. | Not the future core; transition concept mine and future ai-environment material. Must not be migrated folder-by-folder into `yai-core`. | ENV.CANON.0. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Must become a consumer of `yai-core` primitive truth. Must not define core semantics independently. | INTF.CANON.0. |
 | `console` | Operator client / TUI / human UX. | Must consume projections and interfaces. Must not own daemon, store, control, memory or carrier semantics. | CONSOLE.CANON.0. |
@@ -79,6 +80,26 @@ assign useful non-core material to future ai-environment with future_repo=ai-env
 This avoids both blind migration and blind rewrite. `yai-core` gets the useful
 semantics, while old material is normalized as soon as its concept is touched.
 
+Filesystem / data-spine refactor waves must inspect:
+
+```text
+../yai/src/substrate/store/*
+../yai/src/substrate/records/*
+../yai/src/substrate/graph/*
+../yai/src/substrate/indexes/*
+../yai/src/substrate/query/*
+../yai/src/substrate/memory/*
+../yai/src/substrate/views/*
+../yai/src/substrate/signals/*
+../yai/src/lineage/*
+../yai/src/analytics/*
+../yai/src/agents/grounding/*
+../yai/src/runtime/execution/*
+../yai/src/runtime/carriers/*
+```
+
+In SPINE.1 there is no code extraction, source movement or file migration.
+
 Examples:
 
 | Future wave family | Old-yai audit examples | Expected handling |
@@ -90,11 +111,11 @@ Examples:
 
 ## Stub And Stale Surface Rule
 
-If a wave touches code or docs that contain stubs, placeholder-only sections,
-TODO-only surfaces, half-implemented files or stale command/path language, the
-wave must either verticalize the material into the current doctrine or remove
-or quarantine it. Do not leave old command names or half-updated install paths
-beside the new canonical surface.
+If a wave touches code or docs that contain stubs, TODO-only files,
+placeholder-only sections, bootstrap bridges, half-implemented files or stale
+command/path language, the wave must verticalize the material into the current
+doctrine, quarantine it or mark it `delete_later`. Do not leave stale bootstrap
+language alive beside the new canonical surface.
 
 ## Policy Direction
 
@@ -125,24 +146,65 @@ execute, which receipt remains and which memory derives.
 | NEW.10 | Rust operational data engine R1 integration | done |
 | NEW.11 | Daemon IPC v0 | done |
 | NEW.12 | Daemon-backed core loop v0 | done |
-| NEW.13 | Local command + install layout v0 | current |
-| NEW.14 | YAI_HOME host layout + daemon run/store dirs | planned |
-| NEW.15 | Daemon lifecycle locks + pid/socket discipline | planned |
-| NEW.16 | Policy source/material/claim ingestion v0 | planned |
-| NEW.17 | Policy binding to case/subject/op/carrier/projection | planned |
-| NEW.18 | Policy projection to models/agents/operators v0 | planned |
-| NEW.19 | Policy test corpus + adversarial policy cases | planned |
-| NEW.20 | Filesystem carrier hardening | planned |
-| NEW.21 | Process carrier v0 with strict host-control safeguards | planned |
-| NEW.22 | Host observation/ingest probes v0 | planned |
-| NEW.23 | Recovery/compensation posture v0 | planned |
-| NEW.24 | Memory consolidation v0 in Rust engine | planned |
-| NEW.25 | Store/index/query Rust backend R2 | planned |
-| NEW.26 | Daemon op execution over IPC | planned |
-| NEW.27 | yai command grammar completion | planned |
-| NEW.28 | Local protocol fixtures from core smoke journals | planned |
-| NEW.29 | Interfaces handoff package prep | planned |
-| NEW.30 | Core conformance harness + milestone freeze | planned |
+| NEW.13 | Target filesystem doctrine: system/engine/cmd/include | current |
+| NEW.14 | Move Rust workspace: crates/ -> engine/ | planned |
+| NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | planned |
+| NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | planned |
+| NEW.17 | Move C implementation: lib/ -> system/ | planned |
+| NEW.18 | Split C data logic: system bridge vs engine ownership | planned |
+| NEW.19 | Makefile/build/guards realignment | planned |
+| NEW.20 | Local install layout: yai + yaid | planned |
+| NEW.21 | Filesystem refactor milestone freeze | planned |
+| NEW.22 | Rust store backend R2 | planned |
+| NEW.23 | Rust record codec / journal R2 | planned |
+| NEW.24 | Rust query/index R2 | planned |
+| NEW.25 | Rust graph reconstruction R2 | planned |
+| NEW.26 | Rust memory consolidation R2 | planned |
+| NEW.27 | Rust projection materialization R2 | planned |
+| NEW.28 | Rust reconcile detection R2 | planned |
+| NEW.29 | C wrapper thinning | planned |
+| NEW.30 | Data spine milestone freeze | planned |
+| NEW.31 | Ingest material model v0 | planned |
+| NEW.32 | Policy source/material ingest v0 | planned |
+| NEW.33 | Policy claim/rule normalization v0 | planned |
+| NEW.34 | Policy binding: case/subject/op/carrier/projection | planned |
+| NEW.35 | Provider/model policy posture v0 | planned |
+| NEW.36 | Policy projection to model/agent/operator v0 | planned |
+| NEW.37 | Model behavior trace v0 | planned |
+| NEW.38 | Agent trace/tool call import v0 | planned |
+| NEW.39 | Policy compliance experiment harness v0 | planned |
+| NEW.40 | Legal/accounting/business-admin domain packs v0 | planned |
+| NEW.41 | Policy memory v0 | planned |
+| NEW.42 | Unknown provider policy handling v0 | planned |
+| NEW.43 | Multi-model comparative case test v0 | planned |
+| NEW.44 | Human review / authority binding v0 | planned |
+| NEW.45 | Case audit packet v0 | planned |
+| NEW.46 | Policy-control milestone freeze | planned |
+| NEW.47 | Filesystem carrier hardening | planned |
+| NEW.48 | Process carrier v0 with host safeguards | planned |
+| NEW.49 | Host observation probes v0 | planned |
+| NEW.50 | Network/http carrier v0 | planned |
+| NEW.51 | Model carrier v0 | planned |
+| NEW.52 | Database carrier v0 | planned |
+| NEW.53 | Repository/git carrier v0 | planned |
+| NEW.54 | Carrier receipts hardening | planned |
+| NEW.55 | Recovery/compensation posture v0 | planned |
+| NEW.56 | Daemon op execution over IPC | planned |
+| NEW.57 | Host-control milestone freeze | planned |
+| NEW.58 | Protocol fixtures from smoke journals | planned |
+| NEW.59 | Interfaces handoff prep | planned |
+| NEW.60 | Core conformance harness | planned |
+| NEW.61 | Console projection handoff prep | planned |
+| NEW.62 | ai-environment harness prep | planned |
+| NEW.63 | Local core milestone freeze | planned |
+
+Roadmap correction:
+
+```text
+The next implementation wave is NEW.13 target filesystem doctrine/refactor plan.
+Local install layout is delayed to NEW.20.
+Do not install a filesystem shape that is already known to be transitional.
+```
 
 ## ENV.CANON Roadmap
 

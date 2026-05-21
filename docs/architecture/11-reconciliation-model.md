@@ -1,6 +1,10 @@
 # Reconciliation Model
 
-Reconciliation handles mismatch between expected, decided, executed, observed and remembered reality.
+Reconciliation handles mismatch between expected, decided, executed, observed
+and remembered reality.
+
+Reconcile is not recovery execution. It is expected-vs-observed mismatch
+detection and recovery posture.
 
 ## Divergence Classes
 
@@ -89,6 +93,20 @@ compensated
 
 The first detector is residue-derived. It does not execute recovery or
 compensation. It only records mismatch for projection and operator review.
+
+SPINE.1 target owner: Rust data spine detects and materializes reconcile
+records; C system code may enforce or carry later recovery decisions only
+through explicit control and carrier boundaries.
+
+## NEW.13 Route
+
+```text
+lib/reconcile -> split: system/engine_bridge + engine/yai-engine/src/reconcile
+../yai/src/substrate/signals/* -> reconcile or memory concept evidence
+../yai/src/analytics/* -> reconcile/index/memory evidence or ai-environment
+```
+
+No reconciliation implementation moves in NEW.13.
 
 ## Projection Interaction
 

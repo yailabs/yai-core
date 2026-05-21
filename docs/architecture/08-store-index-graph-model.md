@@ -1,6 +1,21 @@
 # Store, Index And Graph Model
 
-The data plane is split into separate roots because persistence, retrieval and reconstruction are different responsibilities.
+The data plane is split because persistence, retrieval and reconstruction are
+different responsibilities. SPINE.1 makes the mature owner explicit: Rust owns
+the operational data spine under target `engine/`, while C keeps the host,
+daemon, carrier, control and ABI boundary under target `system/`.
+
+Doctrine:
+
+```text
+YAI Core is residue-first.
+Store is not memory.
+Graph is not lineage.
+Index/query is not RAG.
+Memory is not chat history.
+Projection is not UI state.
+Reconcile is not recovery execution.
+```
 
 ## Store
 
@@ -18,6 +33,14 @@ backend abstraction
 ```
 
 Store does not own semantic truth.
+
+Target owner: Rust engine.
+
+NEW.13 route:
+
+```text
+lib/store -> split: system/engine_bridge + engine/yai-engine/src/store
+```
 
 ## NEW.2 Store V0
 
@@ -109,6 +132,14 @@ query safety
 
 Index does not own memory or projection truth.
 
+Target owner: Rust engine.
+
+NEW.13 route:
+
+```text
+lib/index -> split: system/engine_bridge + engine/yai-engine/src/index/query
+```
+
 ## NEW.9 Query Boundary V0
 
 NEW.9 adds a minimal query boundary under `index`:
@@ -155,6 +186,14 @@ causal reconstruction
 
 Graph is the replacement for final `lineage` semantics.
 
+Target owner: Rust engine.
+
+NEW.13 route:
+
+```text
+lib/graph -> split: system/engine_bridge + engine/yai-engine/src/graph
+```
+
 ## NEW.5 Graph V0
 
 NEW.5 stores explicit graph edges as journal records:
@@ -191,4 +230,7 @@ exists and which case, operation, decision and subject it belongs to.
 
 ## Split Rule
 
-Records are facts, store is persistence, graph is relation, index/query is retrieval posture, memory is continuity, projection is controlled read model.
+Records are facts, store is persistence, graph is relation, index/query is
+operational access, memory is receipt-backed continuity, projection is a
+controlled read model and reconcile is mismatch posture. C bootstrap data logic
+is transitional and will be thinned as Rust data-spine ownership matures.

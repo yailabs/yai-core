@@ -66,6 +66,31 @@ classify old residue
 assign useful non-core material to future ai-environment
 ```
 
+Filesystem / data-spine refactor waves must inspect:
+
+```text
+../yai/src/substrate/store/*
+../yai/src/substrate/records/*
+../yai/src/substrate/graph/*
+../yai/src/substrate/indexes/*
+../yai/src/substrate/query/*
+../yai/src/substrate/memory/*
+../yai/src/substrate/views/*
+../yai/src/substrate/signals/*
+../yai/src/lineage/*
+../yai/src/analytics/*
+../yai/src/agents/grounding/*
+../yai/src/runtime/execution/*
+../yai/src/runtime/carriers/*
+../yai/src/runtime/machine/*
+../yai/src/runtime/lifecycle/*
+../yai/src/case/subjects/*
+../yai/src/case/materialization/*
+../yai/src/case/surface/*
+```
+
+In NEW.13 there is no code extraction, source movement or file migration.
+
 Residue classification uses the existing action enum. Material that remains
 useful outside the core should use:
 
@@ -141,7 +166,20 @@ test proving behavior
 
 Compatibility wrappers cannot become semantic owners.
 
-## 7. First-Wave Extraction Order
+## 7. Stub And Incomplete Rule
+
+When a refactor wave touches a stub, TODO-only file, placeholder, bootstrap
+bridge or half-implemented surface, it must:
+
+```text
+verticalize it into the new doctrine
+or quarantine it
+or mark delete_later
+```
+
+It must not leave stale bootstrap language alive.
+
+## 8. Refoundation Extraction Order
 
 The completed CORE.NEW line has already moved past the first executable loops:
 
@@ -155,8 +193,9 @@ NEW.5  Graph reconstruction v0
 NEW.5A Smoke isolation hardening
 ```
 
-Next core work starts at NEW.6 Operational Memory Candidate v0, but sibling repo
-canonicalization must be tracked separately:
+Next core work is NEW.13 target filesystem doctrine/refactor plan. Local
+install layout is delayed to NEW.20. Sibling repo canonicalization remains
+tracked separately:
 
 ```text
 ENV.CANON.*      old yai to ai-environment concept mine and lab
@@ -165,6 +204,30 @@ CONSOLE.CANON.*  console over interfaces and projections
 ```
 
 The full roadmap lives in `docs/engineering/four-repo-roadmap.md`.
+
+NEW.13 applies wave-coupled extraction only as audit and inventory planning:
+
+```text
+src/substrate/store/*          -> engine/store or system/engine_bridge
+src/substrate/records/*        -> engine/record
+src/substrate/graph/*          -> engine/graph
+src/substrate/indexes/*        -> engine/index
+src/substrate/query/*          -> engine/query
+src/substrate/memory/*         -> engine/memory
+src/substrate/views/*          -> engine/projection
+src/substrate/signals/*        -> engine/reconcile or engine/memory
+src/runtime/execution/*        -> system/effect + system/control + system/daemon
+src/runtime/carriers/*         -> system/effect/carriers
+src/runtime/machine/*          -> system/daemon
+src/runtime/lifecycle/*        -> system/daemon
+src/case/subjects/*            -> system/subject + engine residue refs
+src/case/materialization/*     -> system/case + engine residue
+src/case/surface/*             -> projection/console future, not system UX
+src/lineage/*                  -> engine/graph + engine/memory
+src/analytics/*                -> engine/index/memory/reconcile or ai-environment
+```
+
+The inventory records these routes. No old-yai source is copied.
 
 NEW.6 applied wave-coupled extraction for operational memory:
 
@@ -288,7 +351,7 @@ daemon-served loops and journal/projection summary commands. It does not port
 old runtime roots, case surface UX, transport compatibility layers, HTTP,
 auth, service management, process/model carriers or interfaces/console code.
 
-NEW.13 applied wave-coupled extraction for local command and install layout:
+NEW.20 will apply wave-coupled extraction for local command and install layout:
 
 ```text
 ../yai/packaging/*                         -> install path roles and package adapter evidence
@@ -300,11 +363,10 @@ NEW.13 applied wave-coupled extraction for local command and install layout:
 ../console/Documentation/runtime-attachment/* -> console runtime attachment externalization
 ```
 
-The implementation absorbs only `make install-local`, `make uninstall-local`,
-`make doctor-local`, `yai` as canonical technical command, `yaid` as daemon
-binary and the local `YAI_HOME` directory contract. It does not port old
-packaging scripts, service managers, distro packages, console command UX,
-authorization, launchd/systemd, Homebrew or cloud distribution.
+That implementation should absorb only local command, daemon binary and local
+`YAI_HOME` directory concepts after filesystem / data-spine refoundation. It
+must not port old packaging scripts, service managers, distro packages, console
+command UX, authorization, launchd/systemd, Homebrew or cloud distribution.
 
 ## 8. Old Root Non-Recreation Rule
 

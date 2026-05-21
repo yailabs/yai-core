@@ -66,9 +66,12 @@ returns structured residue counts. Console remains a sibling repo concern and
 must consume future interfaces/projections instead of absorbing this technical
 CLI shape as product UX.
 
-## NEW.13 Local Command
+## NEW.20 Local Command
 
-NEW.13 makes `yai` the installed technical command:
+SPINE.1 delays installed local command layout to NEW.20. NEW.13 is now target
+filesystem doctrine/refactor planning for `system/engine/cmd/include`.
+
+NEW.20 is expected to make `yai` the installed technical command:
 
 ```text
 make install-local

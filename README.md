@@ -10,6 +10,11 @@ boundary. Rust can also consume the same residue through an internal engine R1
 path behind the C ABI. `yai` is the canonical local technical command and
 `yaid` is the local daemon.
 
+SPINE.1 rebases the next phase: the repository is moving toward filesystem /
+data-spine refoundation before local install layout. The current
+`lib/`, `crates/`, `ctl/` and top-level `daemon/` roots are bootstrap-era
+implementation locations, not the final filesystem doctrine.
+
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
 
@@ -20,9 +25,17 @@ docs/architecture/00-spine.md
 docs/architecture/01-terminology.md
 docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
+docs/engineering/filesystem-target-v2.md
+docs/engineering/data-spine-refactor-roadmap.md
+docs/engineering/new13-filesystem-refactor-plan.md
 ```
 
-Status: NEW.13 local command and install layout v0.
+Status: NEW.13 target filesystem doctrine / refactor plan. The next move wave
+is NEW.14 Rust workspace `crates/` -> `engine/`. Local install layout is
+delayed to NEW.20.
+
+NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
+NEW.21 and does not move source files.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -149,24 +162,25 @@ yai daemon journal-summary
 yai daemon projection-summary
 ```
 
-NEW.13 adds the local install layout:
+NEW.13 no longer adds the local install layout. NEW.13 is the target
+filesystem doctrine/refactor plan:
 
 ```text
-make install-local
-yai --version
-yai doctor
-yaid --version
+include/ = public C ABI contracts
+system/  = C system plane: daemon, host, carriers, control boundary, FFI bridges
+engine/  = Rust operational data spine
+cmd/     = binaries: yai and yaid
 ```
 
 Ownership:
 
 ```text
-C    = public ABI, daemon bootstrap, carrier/control boundary v0
-Rust = yai and operational data engine skeleton
+C    = system / host boundary / ABI / daemon / carrier / control enforcement shell
+Rust = engine / operational data spine
 ```
 
-`yai` is Rust. The operational data engine skeleton is Rust. NEW.13 adds
-canonical local command installation, but there is no public API, no HTTP, no
+`yai` is Rust. The bootstrap operational data engine is Rust. Local command
+installation is delayed to NEW.20, and there is no public API, no HTTP, no
 auth, no service manager, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
 engine, no backend switch and no full secret redaction engine yet.
@@ -178,7 +192,7 @@ make info
 make check
 ```
 
-Install locally:
+Planned local install layout (NEW.20, not current doctrine):
 
 ```text
 make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai

@@ -1,15 +1,17 @@
 # Rust Operational Data Engine
 
-Rust is the advanced operational data engine behind the C ABI. Rust is not the
-new core owner.
+Rust is the operational data spine behind the C ABI. Rust is not the new core
+owner and does not own host enforcement.
 
 ## 1. Canonical Decision
 
 ```text
-C owns core ABI and daemon/carrier/control bootstrap.
-Rust may own yai implementation and operational data engine.
+C owns the system / host boundary / ABI / daemon / carrier / control
+enforcement shell.
+Rust may own yai implementation and operational data spine.
 yai remains a client over core primitives, not a semantic owner.
-Rust owns advanced store/index/graph/memory/projection/query behind C FFI.
+Rust owns store, journal, record codec, graph, index/query, memory, projection,
+reconcile, retention and integrity behind C FFI.
 ```
 
 C ABI owns public semantics. Rust can own data structures and algorithms behind
@@ -32,11 +34,14 @@ Rust engine owns or can later own:
 
 ```text
 append-only record storage
+journal mechanics
+record codec
 journal indexing
 graph edge storage and traversal
 memory recall and consolidation
 projection materialization caches
 query planning
+reconcile detection
 integrity checks
 retention mechanics
 ```
@@ -53,14 +58,54 @@ retention mechanics
 | serialized record schemas | C ABI + protocol docs |
 | `yai` | Rust allowed, client only |
 | ctl semantic authority | none; `yai` is client over primitives |
+| store | Rust |
+| journal | Rust |
+| record codec | Rust |
 | journal backend advanced | Rust |
 | graph traversal | Rust |
+| index/query | Rust |
 | memory consolidation | Rust |
 | projection cache | Rust |
+| reconcile detection | Rust |
+| retention | Rust |
+| integrity | Rust |
 | query planning | Rust |
-| fallback store backend | C |
+| fallback store backend | C, transitional |
 
-## 4. First Crate Shape
+## 4. Target Engine Shape
+
+SPINE.1 target shape:
+
+```text
+engine/
+├── Cargo.toml
+├── yai-engine/
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs
+│       ├── residue/
+│       ├── store/
+│       ├── journal/
+│       ├── record/
+│       ├── graph/
+│       ├── index/
+│       ├── query/
+│       ├── memory/
+│       ├── projection/
+│       ├── reconcile/
+│       ├── retention/
+│       ├── integrity/
+│       └── ffi/
+├── yai-engine-ffi/
+│   ├── Cargo.toml
+│   └── src/lib.rs
+└── README.md
+```
+
+The current `crates/` root is transitional and will move during the
+filesystem / engine refoundation waves.
+
+## 5. Bootstrap Crate Shape
 
 ```text
 crates/
@@ -83,7 +128,7 @@ crates/
 The crate can exist in R0 without being production path. It should first prove
 that it can round-trip schema-versioned records behind the C ABI.
 
-## 5. First Backend
+## 6. First Backend
 
 The first Rust backend should be append-only and boring:
 
@@ -98,7 +143,7 @@ integrity hash check
 No graph optimization, semantic memory or projection cache should block the
 first backend.
 
-## 6. C Fallback
+## 7. C Fallback
 
 C keeps a simple fallback store backend until Rust has proven:
 
@@ -114,7 +159,10 @@ crash recovery posture
 Fallback does not mean C owns the advanced data future. It means NEW.1 remains
 small, debuggable and ABI-stable while Rust matures.
 
-## 7. Dual-Write Sequence
+SPINE.1 clarifies that C duplicate data logic is transitional. It should be
+quarantined and thinned once the Rust engine proves parity.
+
+## 8. Dual-Write Sequence
 
 ```text
 C jsonl journal append
@@ -129,21 +177,22 @@ fail back to C backend when configured
 Dual-write is temporary. Its purpose is proving parity, not becoming a permanent
 architecture.
 
-## 8. Adoption Sequence
+## 9. Adoption Sequence
 
 ```text
 R0: crate exists, not production path
-R1: append-only store backend
-R2: dual-write C jsonl + Rust store
-R3: compare tail/count/integrity
-R4: graph edge storage
-R5: memory recall/consolidation
-R6: index/query planning
-R7: projection materialization caches
-R8: C store backend fallback only
+R1: append-only residue mirror
+R2: Rust store backend
+R3: Rust record codec / journal
+R4: Rust query/index
+R5: Rust graph reconstruction
+R6: Rust memory consolidation
+R7: Rust projection materialization
+R8: Rust reconcile detection
+R9: C wrapper thinning
 ```
 
-## 9. FFI Rules
+## 10. FFI Rules
 
 ```text
 opaque handles
@@ -155,7 +204,7 @@ deterministic error strings
 no Rust types across public ABI
 ```
 
-## 10. Test Requirements
+## 11. Test Requirements
 
 Each Rust adoption step must add fixtures that compare:
 
@@ -173,7 +222,7 @@ fallback behavior
 Rust is accepted only when it can make operational residue more reliable without
 moving core semantics out of the public ABI.
 
-## 11. NEW.10 R1 Integration
+## 12. NEW.10 R1 Integration
 
 NEW.10 starts the R1 path without replacing the C journal. The Rust engine can
 consume `yai.store.record.v0` JSONL residue and expose counts, kind queries and

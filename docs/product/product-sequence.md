@@ -23,3 +23,16 @@ operator surface over projections and review flows.
 Do not sell the platform before the local core proves the loop.
 Do not make interfaces or console the product root before `yai-core` reaches a
 core milestone freeze.
+
+YAI does not sell memory as chat history. YAI produces operational memory:
+
+```text
+governance
+audit
+model behavior evaluation
+human review
+policy refinement
+carrier safety
+case continuity
+legal/accounting traceability
+```
