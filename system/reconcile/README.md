@@ -6,7 +6,7 @@ posture records.
 Target role:
 
 ```text
-lib/reconcile -> system/engine_bridge + engine/yai-engine/src/reconcile
+system/reconcile -> system/engine_bridge + engine/yai-engine/src/reconcile
 ```
 
 Owning wave: NEW.18 moves reconcile detection toward Rust. Recovery execution

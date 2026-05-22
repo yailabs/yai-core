@@ -245,8 +245,10 @@ The C shim lives under the store boundary:
 
 ```text
 include/yai/store/rust_engine_backend.h
-lib/store/rust_engine_backend.c
+system/store/rust_engine_backend.c
 ```
 
-This is a mirror/backend path, not semantic promotion. C remains the public ABI
-owner and the C file-backed journal remains tested as the default path.
+This is a mirror/backend path, not semantic promotion. NEW.17 moved it under
+`system/store`; NEW.18 decides whether it stays as bridge code or moves to
+`system/engine_bridge`. C remains the public ABI owner and the C file-backed
+journal remains tested as the default path.

@@ -73,9 +73,10 @@ engine/  = Rust operational data spine
 cmd/     = yai and yaid entrypoints
 ```
 
-The current C data logic in `lib/store`, `lib/graph`, `lib/index`,
-`lib/memory`, `lib/projection` and `lib/reconcile` is transitional. NEW.18 must
-split it into `system/engine_bridge` versus Rust `engine/yai-engine` ownership.
+The current C data logic in `system/store`, `system/graph`, `system/index`,
+`system/memory`, `system/projection` and `system/reconcile` is transitional.
+NEW.18 must split it into `system/engine_bridge` versus Rust
+`engine/yai-engine` ownership.
 
 ## NEW.14 Engine Move
 
@@ -89,3 +90,7 @@ crates/yai-core-engine-sys -> engine/yai-engine-ffi
 NEW.15 then moved the command to `cmd/yai` and removed `crates/`. The C ABI, C
 sources, daemon entrypoint and smoke semantics are unchanged across NEW.14 and
 NEW.15.
+
+NEW.16 moved `yaid` into `cmd/yaid` and daemon support into `system/daemon`.
+NEW.17 moved the remaining C implementation into `system/` without changing the
+public C ABI or daemon protocol.

@@ -90,6 +90,10 @@ under `include/yai/`. The bridge may own handles, allocation adapters and
 status-code translation. It must not reimplement durable data logic once Rust
 has parity.
 
+NEW.17 moved the C implementation root to `system/`. The C data folders
+`system/{store,graph,index,memory,projection,reconcile}` remain transitional
+until NEW.18 splits bridge responsibilities from Rust engine ownership.
+
 ## Acceptance Target
 
 By NEW.21 the repository layout can still have C bridge code, but duplicated C

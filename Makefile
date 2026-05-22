@@ -13,49 +13,49 @@ INSTALL_BINDIR := $(PREFIX)/bin
 YAI_BIN := $(RUST_TARGET_DIR)/debug/yai
 
 C_SOURCES := \
-	lib/internal/string_util.c \
-	lib/base/id.c \
-	lib/base/error.c \
-	lib/case/case_ref.c \
-	lib/subject/subject_ref.c \
-	lib/subject/subject_binding.c \
-	lib/subject/subject_state.c \
-	lib/op/attempt.c \
-	lib/control/failure_mode.c \
-	lib/control/policy_rule.c \
-	lib/control/gate.c \
-	lib/control/decision_basis.c \
-	lib/control/decision.c \
-	lib/control/obligation.c \
-	lib/control/receipt_requirement.c \
+	system/internal/string_util.c \
+	system/base/id.c \
+	system/base/error.c \
+	system/case/case_ref.c \
+	system/subject/subject_ref.c \
+	system/subject/subject_binding.c \
+	system/subject/subject_state.c \
+	system/op/attempt.c \
+	system/control/failure_mode.c \
+	system/control/policy_rule.c \
+	system/control/gate.c \
+	system/control/decision_basis.c \
+	system/control/decision.c \
+	system/control/obligation.c \
+	system/control/receipt_requirement.c \
 	system/daemon/daemon_status.c \
-	lib/effect/carrier.c \
-	lib/effect/effect_hash.c \
-	lib/effect/receipt.c \
-	lib/effect/carriers/filesystem_carrier.c \
-	lib/memory/memory_kind.c \
-	lib/memory/memory_scope.c \
-	lib/memory/memory_candidate.c \
-	lib/reconcile/divergence.c \
-	lib/reconcile/reconcile.c \
-	lib/reconcile/recovery.c \
-	lib/index/query.c \
-	lib/index/query_filter.c \
-	lib/index/query_result.c \
-	lib/graph/edge.c \
-	lib/graph/graph.c \
-	lib/graph/reconstruct.c \
-	lib/store/record.c \
-	lib/store/journal.c \
-	lib/store/record_codec.c \
-	lib/store/journal_file.c \
-	lib/store/rust_engine_backend.c \
-	lib/projection/projection.c \
-	lib/projection/projection_kind.c \
-	lib/projection/redaction.c \
-	lib/projection/freshness.c \
-	lib/projection/projection_request.c \
-	lib/projection/projection_result.c
+	system/effect/carrier.c \
+	system/effect/effect_hash.c \
+	system/effect/receipt.c \
+	system/effect/carriers/filesystem_carrier.c \
+	system/memory/memory_kind.c \
+	system/memory/memory_scope.c \
+	system/memory/memory_candidate.c \
+	system/reconcile/divergence.c \
+	system/reconcile/reconcile.c \
+	system/reconcile/recovery.c \
+	system/index/query.c \
+	system/index/query_filter.c \
+	system/index/query_result.c \
+	system/graph/edge.c \
+	system/graph/graph.c \
+	system/graph/reconstruct.c \
+	system/store/record.c \
+	system/store/journal.c \
+	system/store/record_codec.c \
+	system/store/journal_file.c \
+	system/store/rust_engine_backend.c \
+	system/projection/projection.c \
+	system/projection/projection_kind.c \
+	system/projection/redaction.c \
+	system/projection/freshness.c \
+	system/projection/projection_request.c \
+	system/projection/projection_result.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
 C_LIBRARY := $(BUILD_DIR)/libyai_core_new13.a
@@ -75,13 +75,14 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.16 yaid entrypoint moved to cmd/yaid\n"
-	@printf "next: NEW.17 move C implementation lib/ -> system/\n"
+	@printf "status: NEW.17 C implementation moved to system/\n"
+	@printf "next: NEW.18 split C data logic into engine_bridge vs engine ownership\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
-	@printf "transitional: lib/\n"
+	@printf "transitional: system/{store,graph,index,memory,projection,reconcile} data logic awaiting thinning\n"
+	@printf "lib: removed\n"
 	@printf "daemon: moved to cmd/yaid + system/daemon\n"
 	@printf "crates: removed\n"
-	@printf "ctl: retired\n"
+	@printf "ctl: removed\n"
 	@printf "install-local: delayed to NEW.20\n"
 
 check-layout:

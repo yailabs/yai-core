@@ -157,7 +157,7 @@ bridges without turning projection into UI state.
 ## NEW.13 Route
 
 ```text
-lib/projection -> split: system/engine_bridge + engine/yai-engine/src/projection
+system/projection -> split: system/engine_bridge + engine/yai-engine/src/projection
 ../yai/src/substrate/views/* -> engine/projection concept evidence
 ../yai/src/case/surface/* -> projection/console future, not system UX
 ```
@@ -166,4 +166,4 @@ No projection implementation moves in NEW.13.
 
 NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future projection mechanics. C projection code remains under
-`lib/projection` until the NEW.18 bridge split.
+`system/projection` until the NEW.18 bridge split.

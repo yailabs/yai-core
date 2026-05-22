@@ -1,6 +1,6 @@
 # System Ownership Map
 
-Status: NEW.16 active daemon support location, planning artifact for the rest of system.
+Status: NEW.17 active C implementation root.
 
 `system/` is the C host, daemon, carrier, control and FFI-boundary plane. It
 keeps the machine boundary explicit while Rust owns the operational data spine.
@@ -43,18 +43,18 @@ system/
 
 | Current source | Target system area | Wave |
 |---|---|---|
-| `lib/base/*` | `system/base/` | NEW.17 |
-| `lib/case/*` | `system/case/` | NEW.17 |
-| `lib/subject/*` | `system/subject/` | NEW.17 |
-| `lib/op/*` | `system/op/` | NEW.17 |
-| `lib/control/*` | `system/control/` | NEW.17 |
-| `lib/effect/*` | `system/effect/` | NEW.17 |
-| `lib/effect/carriers/*` | `system/effect/carriers/` | NEW.17 |
+| `system/base/*` | `system/base/` | NEW.17 done |
+| `system/case/*` | `system/case/` | NEW.17 done |
+| `system/subject/*` | `system/subject/` | NEW.17 done |
+| `system/op/*` | `system/op/` | NEW.17 done |
+| `system/control/*` | `system/control/` | NEW.17 done |
+| `system/effect/*` | `system/effect/` | NEW.17 done |
+| `system/effect/carriers/*` | `system/effect/carriers/` | NEW.17 done |
 | `lib/daemon/daemon_status.c` | `system/daemon/daemon_status.c` | NEW.16 done |
-| `lib/internal/*` | `system/internal/` | NEW.17 |
+| `system/internal/*` | `system/internal/` | NEW.17 done |
 | `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 done |
 | `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 done |
-| `lib/store/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | NEW.18 |
+| `system/store/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | NEW.18 |
 
 ## Command Boundary
 
@@ -90,6 +90,10 @@ System code can ask the engine to persist, reconstruct, query, project or
 detect mismatch. System code must not become the long-term owner of store,
 journal, record codec, graph, index, query, memory, projection, reconcile,
 retention or integrity logic.
+
+After NEW.17, `system/{store,graph,index,memory,projection,reconcile}` are
+physical C system paths but still transitional data-spine logic. NEW.18 must
+classify each file into bridge, Rust replacement or deletion.
 
 ## Acceptance Target
 

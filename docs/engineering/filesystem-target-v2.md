@@ -1,10 +1,8 @@
 # Filesystem Target V2
 
-Status: SPINE.1 canonical target doctrine, refined by NEW.13 planning.
+Status: NEW.17 active target filesystem layout.
 
-The current repository tree is a working bootstrap shape, not the mature
-filesystem doctrine. NEW.0 through NEW.12 proved the local loop with a hybrid
-layout:
+NEW.0 through NEW.12 proved the local loop with a hybrid layout:
 
 ```text
 include/
@@ -14,9 +12,9 @@ ctl/      # retired pointer only after NEW.15
 cmd/
 ```
 
-That shape remains valid as implementation evidence, but it is transitional.
-The next implementation phase is filesystem / data-spine refoundation, not
-local install layout.
+That shape remains historical implementation evidence. NEW.14 through NEW.17
+moved the active implementation into `engine/`, `cmd/` and `system/`; local
+install layout remains delayed until NEW.20.
 
 ## Target Top-Level Shape
 
@@ -110,20 +108,21 @@ system/
 
 ## Transitional Roots
 
-Do not move these roots in SPINE.1. They are implementation facts from the
-bootstrap era and will be moved only by later refactor waves.
+Bootstrap roots are now retired except for transitional data logic that remains
+under `system/` until NEW.18.
 
 | Current root | Target destination | Status |
 |---|---|---|
-| `lib/` | `system/` plus Rust-owned data logic in `engine/` | transitional |
+| `lib/` | `system/` plus Rust-owned data logic in `engine/` | removed after NEW.17 |
 | `crates/` | removed after NEW.15 | retired |
-| `ctl/` | retired pointer only | transitional docs pointer |
+| `ctl/` | removed after NEW.17 | retired |
 | `cmd/yai/` | Rust technical command | active after NEW.15 |
 | top-level `daemon/` | removed after NEW.16 | retired |
 | `cmd/yaid/` | C daemon entrypoint | active after NEW.16 |
 | `system/daemon/` | C daemon support | active after NEW.16 |
+| `system/{store,graph,index,memory,projection,reconcile}` | transitional data logic pending bridge split | NEW.18 target |
 
-The target does not keep `lib/` as the long-term implementation root.
+The target does not keep `lib/` as an implementation root.
 
 NEW.13 turns this doctrine into an executable refactor plan:
 
@@ -180,17 +179,20 @@ Rust engine becomes the operational data spine.
 The current implementation wave state is:
 
 ```text
-NEW.16 yaid entrypoint moved to cmd/yaid
+NEW.17 C implementation moved to system/
 ```
 
 NEW.14 moved only the Rust data engine crates into `engine/`. NEW.15 moved the
 Rust technical command into `cmd/yai` and removed `crates/`. Local install
 NEW.16 moved `yaid` into `cmd/yaid` and daemon support into `system/daemon`.
+NEW.17 moved remaining C implementation into `system/` and removed `lib/` and
+the retired `ctl/` root.
 Local install layout is delayed to NEW.20. Do not install a filesystem shape
 that is already known to be transitional.
 
 NEW.13 is retained as the planning wave. NEW.14 is the first physical move
-wave; NEW.15 is the command move wave; NEW.16 is the daemon move wave.
+wave; NEW.15 is the command move wave; NEW.16 is the daemon move wave; NEW.17
+is the C system move wave.
 
 ## Model Provider Experiment Boundary
 
@@ -220,6 +222,6 @@ After NEW.21:
 .rs allowed under engine/ and cmd/yai/
 ```
 
-`lib/` and retired `ctl/` are temporary exceptions only until the staged
-refactor waves complete. `crates/` is removed after NEW.15, and top-level
-`daemon/` is removed after NEW.16.
+`lib/`, `ctl/`, `crates/` and top-level `daemon/` are retired roots. The
+remaining temporary exception is duplicated data logic under
+`system/{store,graph,index,memory,projection,reconcile}` until NEW.18.

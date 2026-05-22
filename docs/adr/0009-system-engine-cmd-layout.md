@@ -24,9 +24,10 @@ proto/   = schemas and fixtures
 tests/   = smoke, unit, integration and adversarial tests
 ```
 
-`lib/` and retired `ctl/` are transitional bootstrap roots. `crates/` is
-removed after NEW.15, and top-level `daemon/` is removed after NEW.16. They
-must not be treated as final layout doctrine.
+`crates/`, top-level `daemon/`, `lib/` and retired `ctl/` are bootstrap roots.
+`crates/` is removed after NEW.15, top-level `daemon/` after NEW.16, and
+`lib/` plus `ctl/` after NEW.17. They must not be treated as final layout
+doctrine.
 
 ## Consequences
 
@@ -51,6 +52,9 @@ NEW.15 makes `cmd/yai` the canonical Rust technical command location. It does
 not make `yai-core` own Console UX.
 NEW.16 makes `cmd/yaid` the canonical C daemon entrypoint location and
 `system/daemon` the daemon support location.
+NEW.17 makes `system/` the active C implementation root. Data-spine C folders
+under `system/{store,graph,index,memory,projection,reconcile}` remain
+transitional until NEW.18 splits bridge code from Rust engine ownership.
 
 ## Non-goals
 

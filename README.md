@@ -14,9 +14,9 @@ SPINE.1 rebases the next phase: the repository is moving toward filesystem /
 data-spine refoundation before local install layout. NEW.14 moved the Rust
 operational data engine into `engine/`. NEW.15 moved the Rust technical command
 into `cmd/yai` and removed `crates/`. NEW.16 moved the C daemon entrypoint to
-`cmd/yaid` and daemon support to `system/daemon`. The current `lib/` and retired
-`ctl/` pointer are still bootstrap-era surfaces, not the final filesystem
-doctrine.
+`cmd/yaid` and daemon support to `system/daemon`. NEW.17 moved the remaining C
+implementation into `system/` and removed the bootstrap `lib/` and `ctl/`
+roots.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -33,9 +33,9 @@ docs/engineering/data-spine-refactor-roadmap.md
 docs/engineering/new13-filesystem-refactor-plan.md
 ```
 
-Status: NEW.16 `yaid` entrypoint moved to `cmd/yaid`. The next move wave is
-NEW.17 C implementation move from `lib/` to `system/`. Local install layout is
-delayed to NEW.20.
+Status: NEW.17 C implementation moved to `system/`. The next wave is NEW.18
+data-logic thinning into `system/engine_bridge` versus Rust `engine/`
+ownership. Local install layout is delayed to NEW.20.
 
 NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
 NEW.21 and does not move source files.
@@ -70,6 +70,16 @@ lib/daemon/daemon_status.c -> system/daemon/daemon_status.c
 
 The top-level `daemon/` root is removed after NEW.16. `yaid` remains C, and
 `yai` remains Rust in `cmd/yai`.
+
+NEW.17 moves the remaining C implementation:
+
+```text
+lib/* -> system/*
+```
+
+`lib/` and the retired `ctl/` root are removed after NEW.17. The data-spine C
+folders now under `system/{store,graph,index,memory,projection,reconcile}` are
+transitional and scheduled for NEW.18 thinning/splitting.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:

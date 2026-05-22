@@ -17,7 +17,7 @@ require_file() {
   fi
 }
 
-for dir in docs include/yai lib system/daemon ctl cmd/yai cmd/yaid proto/schemas proto/fixtures tests tools/checks packaging examples vendor; do
+for dir in docs include/yai system system/daemon cmd/yai cmd/yaid proto/schemas proto/fixtures tests tools/checks packaging examples vendor; do
   require_dir "$dir"
 done
 
@@ -27,11 +27,11 @@ done
 
 for root in base ingest subject case op control effect store index graph memory projection reconcile; do
   require_dir "include/yai/$root"
-  require_dir "lib/$root"
+  require_dir "system/$root"
 done
 
 require_dir "include/yai/daemon"
-require_dir "lib/internal"
+require_dir "system/internal"
 require_file "include/yai/yai.h"
 require_file "README.md"
 require_file "VERSION"

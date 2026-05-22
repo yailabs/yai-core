@@ -110,16 +110,18 @@ Current bootstrap roots are transitional:
 
 | Current root | Target destination | Status |
 |---|---|---|
-| `lib/` | `system/` plus Rust-owned data logic in `engine/` | transitional |
+| `lib/` | `system/` plus Rust-owned data logic in `engine/` | removed after NEW.17 |
 | `crates/` | removed after NEW.15 | retired |
-| `ctl/` | retired pointer only | transitional docs pointer |
+| `ctl/` | removed after NEW.17 | retired |
 | `cmd/yai/` | Rust technical command | active after NEW.15 |
 | top-level `daemon/` | removed after NEW.16 | retired |
 | `cmd/yaid/` | C daemon entrypoint | active after NEW.16 |
 | `system/daemon/` | C daemon support | active after NEW.16 |
+| `system/{store,graph,index,memory,projection,reconcile}` | transitional data logic pending bridge split | NEW.18 target |
 
-The target does not keep `lib/` as the long-term implementation root. NEW.13
-is target filesystem doctrine/refactor planning. Local install layout is
+The target does not keep `lib/` as an implementation root. NEW.17 moved C
+implementation into `system/`; NEW.18 thins the transitional data-spine C
+folders into bridge code versus Rust engine ownership. Local install layout is
 delayed to NEW.20.
 
 NEW.13 adds the executable move plan in:
@@ -237,16 +239,16 @@ include/yai/projection/projection.h
 Minimum C implementation files:
 
 ```text
-lib/base/id.c
-lib/base/error.c
-lib/case/case_ref.c
-lib/subject/subject_binding.c
-lib/op/attempt.c
-lib/control/decision.c
-lib/effect/receipt.c
-lib/store/record.c
-lib/store/journal.c
-lib/projection/projection.c
+system/base/id.c
+system/base/error.c
+system/case/case_ref.c
+system/subject/subject_binding.c
+system/op/attempt.c
+system/control/decision.c
+system/effect/receipt.c
+system/store/record.c
+system/store/journal.c
+system/projection/projection.c
 cmd/yaid/main.c
 system/daemon/ipc.c
 system/daemon/core_loop.c

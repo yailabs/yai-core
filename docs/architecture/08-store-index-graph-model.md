@@ -39,11 +39,12 @@ Target owner: Rust engine.
 NEW.13 route:
 
 ```text
-lib/store -> split: system/engine_bridge + engine/yai-engine/src/store
+system/store -> split: system/engine_bridge + engine/yai-engine/src/store
 ```
 
 NEW.14 moved the Rust engine crate that owns the future store path to
-`engine/yai-engine`. C store code remains under `lib/store` until NEW.18.
+`engine/yai-engine`. NEW.17 moved C store code to `system/store`; it remains
+transitional there until NEW.18.
 
 ## NEW.2 Store V0
 
@@ -140,12 +141,12 @@ Target owner: Rust engine.
 NEW.13 route:
 
 ```text
-lib/index -> split: system/engine_bridge + engine/yai-engine/src/index/query
+system/index -> split: system/engine_bridge + engine/yai-engine/src/index/query
 ```
 
 NEW.14 moved the Rust engine crate that owns the future index/query path to
-`engine/yai-engine`. C index/query code remains under `lib/index` until
-NEW.18.
+`engine/yai-engine`. NEW.17 moved C index/query code to `system/index`; it
+remains transitional there until NEW.18.
 
 ## NEW.9 Query Boundary V0
 
@@ -198,11 +199,12 @@ Target owner: Rust engine.
 NEW.13 route:
 
 ```text
-lib/graph -> split: system/engine_bridge + engine/yai-engine/src/graph
+system/graph -> split: system/engine_bridge + engine/yai-engine/src/graph
 ```
 
 NEW.14 moved the Rust engine crate that owns the future graph path to
-`engine/yai-engine`. C graph code remains under `lib/graph` until NEW.18.
+`engine/yai-engine`. NEW.17 moved C graph code to `system/graph`; it remains
+transitional there until NEW.18.
 
 ## NEW.5 Graph V0
 

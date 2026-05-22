@@ -41,11 +41,11 @@ memory
 projection
 reconcile
 daemon
-ctl
+cmd
 ```
 
-`lib/` and retired `ctl/` are transitional bootstrap
-roots, not the final filesystem doctrine.
+`lib/`, top-level `daemon/`, `crates/` and retired `ctl/` are bootstrap roots
+removed by the NEW.14 through NEW.17 filesystem waves.
 
 ## First Read
 

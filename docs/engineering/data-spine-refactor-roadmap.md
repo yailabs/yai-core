@@ -134,6 +134,12 @@ NEW.16 status: completed as the daemon move wave. It moved `daemon/main.c` to
 `cmd/yaid/main.c`, daemon support to `system/daemon`, and removed the top-level
 `daemon/` source root.
 
+NEW.17 status: completed as the C system move wave. It moved the remaining C
+implementation from `lib/` to `system/`, removed `lib/` and removed the retired
+`ctl/` pointer root. The data-spine C folders under
+`system/{store,graph,index,memory,projection,reconcile}` remain transitional
+until NEW.18.
+
 NEW.13 planning artifacts:
 
 ```text
@@ -143,6 +149,7 @@ engine-ownership-map.md
 system-ownership-map.md
 new15-command-layout.md
 new16-daemon-layout.md
+new17-system-layout.md
 ```
 
 Model/provider experiment runway:

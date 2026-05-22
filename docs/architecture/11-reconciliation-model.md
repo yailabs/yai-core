@@ -101,7 +101,7 @@ through explicit control and carrier boundaries.
 ## NEW.13 Route
 
 ```text
-lib/reconcile -> split: system/engine_bridge + engine/yai-engine/src/reconcile
+system/reconcile -> split: system/engine_bridge + engine/yai-engine/src/reconcile
 ../yai/src/substrate/signals/* -> reconcile or memory concept evidence
 ../yai/src/analytics/* -> reconcile/index/memory evidence or ai-environment
 ```
@@ -110,7 +110,7 @@ No reconciliation implementation moves in NEW.13.
 
 NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future reconcile mechanics. C reconcile code remains under
-`lib/reconcile` until the NEW.18 bridge split.
+`system/reconcile` until the NEW.18 bridge split.
 
 ## Projection Interaction
 

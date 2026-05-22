@@ -6,7 +6,7 @@ reconstruction hooks.
 Target role:
 
 ```text
-lib/graph -> system/engine_bridge + engine/yai-engine/src/graph
+system/graph -> system/engine_bridge + engine/yai-engine/src/graph
 ```
 
 Owning wave: NEW.18 replaces duplicated graph data logic with Rust engine

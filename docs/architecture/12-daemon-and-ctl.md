@@ -6,7 +6,8 @@ SPINE.1 classifies top-level `daemon/`, retired `ctl/` and the former
 `crates/yai-ctl` as transitional bootstrap locations. NEW.15 moved the Rust
 technical command to `cmd/yai` and removed `crates/`. NEW.16 moved the daemon
 entrypoint to `cmd/yaid`, daemon support to `system/daemon` and removed the
-top-level `daemon/` source root. The command shape is:
+top-level `daemon/` source root. NEW.17 removed the retired `ctl/` pointer
+root. The command shape is:
 
 ```text
 cmd/

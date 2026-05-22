@@ -73,6 +73,8 @@ filesystem doctrine/refactor planning for `system/engine/cmd/include`; NEW.15
 moved the technical command to `cmd/yai`.
 NEW.16 moved the C daemon entrypoint to `cmd/yaid` and daemon support to
 `system/daemon`.
+NEW.17 removed the retired `ctl/` pointer root and moved C implementation to
+`system/`.
 
 `cmd/yai` is not Console. It remains a technical control command over core and
 daemon surfaces. Console command UX, slash commands and operator flows remain

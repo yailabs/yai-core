@@ -176,9 +176,9 @@ for future fixtures, but it is not canonical core validation.
 | NEW.13 | Target filesystem doctrine: system/engine/cmd/include | done |
 | NEW.14 | Move Rust workspace: crates/ -> engine/ | done |
 | NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | done |
-| NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | current |
-| NEW.17 | Move C implementation: lib/ -> system/ | planned |
-| NEW.18 | Split C data logic: system bridge vs engine ownership | planned |
+| NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | done |
+| NEW.17 | Move C implementation: lib/ -> system/ | done |
+| NEW.18 | Split C data logic: system bridge vs engine ownership | current |
 | NEW.19 | Makefile/build/guards realignment | planned |
 | NEW.20 | Local install layout: yai + yaid | planned |
 | NEW.21 | Filesystem refactor milestone freeze | planned |

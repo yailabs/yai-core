@@ -6,22 +6,23 @@ Accepted for SPINE.1.
 
 ## Context
 
-The current `lib/` root contains the C implementation for the bootstrap loop
-and still includes store, graph, index, memory, projection and reconcile
-surfaces. That helped NEW.0 through NEW.12 converge, but it should not be read
-as the mature implementation root.
+The historical `lib/` root contained the C implementation for the bootstrap
+loop and still included store, graph, index, memory, projection and reconcile
+surfaces. That helped NEW.0 through NEW.12 converge, but it is not the mature
+implementation root.
 
 ## Decision
 
-`lib/` is transitional. The long-term C implementation root is `system/`, and
-Rust-owned data logic belongs under `engine/`.
+`lib/` was transitional and is removed after NEW.17. The active C
+implementation root is `system/`, and Rust-owned data logic belongs under
+`engine/`.
 
 Current bootstrap roots are classified as:
 
 ```text
-lib/              transitional
+lib/              removed after NEW.17
 crates/           retired after NEW.15
-ctl/              retired pointer
+ctl/              removed after NEW.17
 top-level daemon/ retired after NEW.16
 ```
 
@@ -54,8 +55,9 @@ lib/reconcile   -> system/engine_bridge + engine/yai-engine/src/reconcile
 
 ## Non-goals
 
-Do not delete or move `lib/` in SPINE.1. Do not use this decision as permission
-to rewrite C data code before the scheduled refactor waves.
+Do not rewrite C data code before the scheduled NEW.18 bridge split. NEW.17 is
+only the physical move from `lib/` to `system/`; data ownership cleanup remains
+separate.
 
 ## Related docs
 
