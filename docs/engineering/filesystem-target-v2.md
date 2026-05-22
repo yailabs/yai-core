@@ -174,16 +174,37 @@ Rust engine becomes the operational data spine.
 
 ## Next Wave
 
-The next implementation wave is:
+The current implementation wave state is:
 
 ```text
-NEW.13 target filesystem doctrine: system/engine/cmd/include
+NEW.14 Rust engine workspace moved to engine/
 ```
 
-Local install layout is delayed to NEW.20. Do not install a filesystem shape
-that is already known to be transitional.
+NEW.14 moved only the Rust data engine crates into `engine/`. `crates/`
+remains transitional for `yai-ctl` until NEW.15. Local install layout is delayed
+to NEW.20. Do not install a filesystem shape that is already known to be
+transitional.
 
-NEW.13 is a planning wave only. The first move wave is NEW.14.
+NEW.13 is retained as the planning wave. NEW.14 is the first physical move
+wave.
+
+## Model Provider Experiment Boundary
+
+Filesystem refoundation comes before canonical model/provider experiments.
+Provider scouting may begin immediately at L0 outside the core, but it is not
+canonical validation and does not change the target filesystem.
+
+The first core roadmap positions are:
+
+```text
+NEW.26 naked local model case experiment v0
+NEW.28 model carrier v0
+NEW.29 agent trace/tool call import v0
+NEW.30 policy compliance experiment harness v0
+```
+
+SPINE.2 must not create a model runner, provider registry, model carrier,
+policy packs, `ai-environment` repo, interface surface or console surface.
 
 ## Final Source Placement
 

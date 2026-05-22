@@ -404,7 +404,50 @@ operational worlds across time.
 | kubernetes object | uid + namespace/kind/name | API object ref | apply, patch, rollout | admission/event receipt |
 | external system | system id + adapter | adapter endpoint | import, observe, request | external receipt |
 
-## 15. Subject Non-Goals
+## 15. Model Subject Doctrine
+
+A model is not inside the core. A model becomes meaningful to YAI as a
+case-bound subject with locality, provider, posture and observed behavior.
+
+Model subject posture includes:
+
+```text
+model identity
+provider/runtime
+locality
+declared provider policy
+observed behavior
+projection posture
+redaction posture
+review posture
+receipt posture
+```
+
+Local model:
+
+```text
+more controllable runtime
+better privacy
+not automatically reliable
+```
+
+Remote closed model:
+
+```text
+unknown internal policy
+provider-declared policy
+observed behavior only
+projection should default stricter
+```
+
+L0 provider scouting can begin immediately outside the core. It can produce
+notes and fixtures, but the first canonical naked model case experiment is
+NEW.26. Core-owned invocation waits for NEW.28 model carrier v0.
+
+Agent frameworks are later subjects, actors or sources. They do not own the
+core subject model.
+
+## 16. Subject Non-Goals
 
 ```text
 subject is not a universal object database

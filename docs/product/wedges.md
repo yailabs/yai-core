@@ -20,6 +20,20 @@ model
 
 Value: control file writes, process execution, model calls and memory use in a case-bound local environment.
 
+Model/provider maturity:
+
+```text
+L0 provider scouting can start immediately outside the core.
+NEW.26 proves naked local model behavior inside a case.
+NEW.28 introduces core-owned model invocation through a carrier.
+Agent frameworks come later as external subjects/actors/sources.
+```
+
+Local models offer a more controllable runtime and better privacy, but they are
+not automatically reliable. Remote closed models have unknown internal policy
+and only provider-declared policy plus observed behavior; projections should
+default stricter.
+
 ## AI Workflow Governance
 
 Subjects:

@@ -36,8 +36,8 @@ YAI/
 └── console/
 ```
 
-`yai` is not renamed in SPINE.0. It is declared transition concept mine and
-future `ai-environment` source material. The physical rename to
+`yai` is not renamed in SPINE.0 or SPINE.2. It is declared transition concept
+mine and future `ai-environment` source material. The physical rename to
 `ai-environment` is a later dedicated wave.
 
 ## Wave Families
@@ -98,7 +98,22 @@ Filesystem / data-spine refactor waves must inspect:
 ../yai/src/runtime/carriers/*
 ```
 
-In SPINE.1 there is no code extraction, source movement or file migration.
+Future model/provider waves must also inspect:
+
+```text
+../yai/src/models/*
+../yai/src/agents/grounding/*
+../yai/src/capabilities/mcp/*
+../yai/src/capabilities/external/*
+../yai/src/runtime/provider/*
+../yai/src/runtime/execution/*
+../yai/src/case/policy/*
+../yai/src/substrate/memory/*
+../yai/src/substrate/views/*
+```
+
+In SPINE.1 and SPINE.2 there is no code extraction, source movement or file
+migration.
 
 Examples:
 
@@ -108,6 +123,8 @@ Examples:
 | Carrier/enforcement waves | `src/runtime/execution/*`, `src/runtime/carriers/*`, `src/runtime/decision/*`, `src/runtime/observation/*` | Absorb carrier, enforcement and receipt concepts into `effect`, `control` and `store`; quarantine operator shell UX; externalize old runtime loop to an environment harness. |
 | Projection waves | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` | Absorb projection and redaction posture into `projection`; externalize model/context-pack UX material. |
 | Workflow-related waves | `src/orchestrator/*` and workflow-specific recovery material | Mine scenarios and procedure records; do not recreate a workflow engine in `yai-core`. |
+| Model/provider waves | `src/models/*`, `src/runtime/provider/*`, `src/case/policy/*`, `src/substrate/views/*`, `src/substrate/memory/*` | Mine model subject posture, provider posture, projection, policy and memory concepts; do not create a provider registry or model runner in SPINE.2. |
+| Agent/tool waves | `src/agents/grounding/*`, `src/capabilities/mcp/*`, `src/capabilities/external/*`, `src/runtime/execution/*` | Externalize agent framework and tool adapter behavior to future `ai-environment`; import traces and controlled attempts only after naked model behavior is measurable. |
 
 ## Stub And Stale Surface Rule
 
@@ -126,6 +143,16 @@ basis, projection to models/agents/operators, memory influence and hard
 enforcement. YAI does not claim to control a model provider's internal policy;
 it controls what the model sees, what operation is accepted, which carrier may
 execute, which receipt remains and which memory derives.
+
+Policy is materialized twice for model work:
+
+```text
+cognitively through projection
+operationally through gates, decision and carrier
+```
+
+L0 provider scouting may begin immediately outside the core. It is useful input
+for future fixtures, but it is not canonical core validation.
 
 ## CORE.NEW Roadmap
 
@@ -155,48 +182,38 @@ execute, which receipt remains and which memory derives.
 | NEW.19 | Makefile/build/guards realignment | planned |
 | NEW.20 | Local install layout: yai + yaid | planned |
 | NEW.21 | Filesystem refactor milestone freeze | planned |
-| NEW.22 | Rust store backend R2 | planned |
-| NEW.23 | Rust record codec / journal R2 | planned |
-| NEW.24 | Rust query/index R2 | planned |
-| NEW.25 | Rust graph reconstruction R2 | planned |
-| NEW.26 | Rust memory consolidation R2 | planned |
-| NEW.27 | Rust projection materialization R2 | planned |
-| NEW.28 | Rust reconcile detection R2 | planned |
-| NEW.29 | C wrapper thinning | planned |
-| NEW.30 | Data spine milestone freeze | planned |
-| NEW.31 | Ingest material model v0 | planned |
-| NEW.32 | Policy source/material ingest v0 | planned |
-| NEW.33 | Policy claim/rule normalization v0 | planned |
-| NEW.34 | Policy binding: case/subject/op/carrier/projection | planned |
-| NEW.35 | Provider/model policy posture v0 | planned |
-| NEW.36 | Policy projection to model/agent/operator v0 | planned |
-| NEW.37 | Model behavior trace v0 | planned |
-| NEW.38 | Agent trace/tool call import v0 | planned |
-| NEW.39 | Policy compliance experiment harness v0 | planned |
-| NEW.40 | Legal/accounting/business-admin domain packs v0 | planned |
-| NEW.41 | Policy memory v0 | planned |
-| NEW.42 | Unknown provider policy handling v0 | planned |
-| NEW.43 | Multi-model comparative case test v0 | planned |
-| NEW.44 | Human review / authority binding v0 | planned |
-| NEW.45 | Case audit packet v0 | planned |
-| NEW.46 | Policy-control milestone freeze | planned |
-| NEW.47 | Filesystem carrier hardening | planned |
-| NEW.48 | Process carrier v0 with host safeguards | planned |
-| NEW.49 | Host observation probes v0 | planned |
-| NEW.50 | Network/http carrier v0 | planned |
-| NEW.51 | Model carrier v0 | planned |
-| NEW.52 | Database carrier v0 | planned |
-| NEW.53 | Repository/git carrier v0 | planned |
-| NEW.54 | Carrier receipts hardening | planned |
-| NEW.55 | Recovery/compensation posture v0 | planned |
-| NEW.56 | Daemon op execution over IPC | planned |
-| NEW.57 | Host-control milestone freeze | planned |
-| NEW.58 | Protocol fixtures from smoke journals | planned |
-| NEW.59 | Interfaces handoff prep | planned |
-| NEW.60 | Core conformance harness | planned |
-| NEW.61 | Console projection handoff prep | planned |
-| NEW.62 | ai-environment harness prep | planned |
-| NEW.63 | Local core milestone freeze | planned |
+| NEW.22 | Ingest material model v0 | planned |
+| NEW.23 | Model/provider subject posture v0 | planned |
+| NEW.24 | Model output claim import v0 | planned |
+| NEW.25 | Policy pack skeleton + model projection v0 | planned |
+| NEW.26 | Naked local model case experiment v0 | planned |
+| NEW.27 | Model behavior trace v0 | planned |
+| NEW.28 | Model carrier v0 | planned |
+| NEW.29 | Agent trace/tool call import v0 | planned |
+| NEW.30 | Policy compliance experiment harness v0 | planned |
+| NEW.31 | Legal/accounting/business-admin domain packs v0 | planned |
+| NEW.32 | Policy memory v0 | planned |
+| NEW.33 | Unknown provider policy handling v0 | planned |
+| NEW.34 | Multi-model comparative case test v0 | planned |
+| NEW.35 | Human review / authority binding v0 | planned |
+| NEW.36 | Case audit packet v0 | planned |
+| NEW.37 | Policy-control milestone freeze | planned |
+| NEW.38 | Filesystem carrier hardening | planned |
+| NEW.39 | Process carrier v0 with host safeguards | planned |
+| NEW.40 | Host observation probes v0 | planned |
+| NEW.41 | Network/http carrier v0 | planned |
+| NEW.42 | Database carrier v0 | planned |
+| NEW.43 | Repository/git carrier v0 | planned |
+| NEW.44 | Carrier receipts hardening | planned |
+| NEW.45 | Recovery/compensation posture v0 | planned |
+| NEW.46 | Daemon op execution over IPC | planned |
+| NEW.47 | Host-control milestone freeze | planned |
+| NEW.48 | Protocol fixtures from smoke journals | planned |
+| NEW.49 | Interfaces handoff prep | planned |
+| NEW.50 | Core conformance harness | planned |
+| NEW.51 | Console projection handoff prep | planned |
+| NEW.52 | ai-environment harness prep | planned |
+| NEW.53 | Local core milestone freeze | planned |
 
 Roadmap correction:
 
@@ -204,6 +221,16 @@ Roadmap correction:
 The next implementation wave is NEW.13 target filesystem doctrine/refactor plan.
 Local install layout is delayed to NEW.20.
 Do not install a filesystem shape that is already known to be transitional.
+```
+
+Model/provider correction:
+
+```text
+L0 provider scouting can start immediately outside the core.
+NEW.26 is the first real naked model case experiment.
+NEW.28 is the first core-owned model invocation through model carrier v0.
+NEW.29/NEW.30 are the first agent-framework/tool-call test path.
+Agent frameworks are not first.
 ```
 
 ## ENV.CANON Roadmap

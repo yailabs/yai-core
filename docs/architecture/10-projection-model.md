@@ -110,6 +110,36 @@ The model and agent defaults are `summary_only`. Debug defaults to `refs_only`.
 This is not a full sensitive-data redaction engine; it is the first metadata
 and posture boundary for controlled read models.
 
+## Model Projection Doctrine
+
+For model/provider experiments, policy is materialized twice:
+
+```text
+cognitively through projection
+operationally through gates, decision and carrier
+```
+
+Model projection can include:
+
+```text
+allowed actions
+forbidden actions
+review requirements
+evidence requirements
+policy summaries
+memory candidates
+redaction posture
+```
+
+Projection is not enforcement. It shapes what the model sees and how the task
+is framed. Control still evaluates proposed operations, obligations, evidence
+requirements and receipt requirements.
+
+L0 provider scouting can start immediately outside the core and can produce
+projection fixtures. The first canonical naked model case experiment is NEW.26.
+The first core-owned model invocation is NEW.28. Agent-framework projection
+work follows after naked model behavior is measurable.
+
 ## Query Interaction
 
 NEW.9 query can produce `query_result` residue. Projection may count those
@@ -133,3 +163,7 @@ lib/projection -> split: system/engine_bridge + engine/yai-engine/src/projection
 ```
 
 No projection implementation moves in NEW.13.
+
+NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
+physical owner for future projection mechanics. C projection code remains under
+`lib/projection` until the NEW.18 bridge split.

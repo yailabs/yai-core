@@ -37,6 +37,8 @@ the external system binds or reports through YAI protocols.
 | C/Rust boundary | [13-c-rust-boundary.md](13-c-rust-boundary.md) |
 | Target filesystem V2 | [../engineering/filesystem-target-v2.md](../engineering/filesystem-target-v2.md) |
 | Data spine refactor | [../engineering/data-spine-refactor-roadmap.md](../engineering/data-spine-refactor-roadmap.md) |
+| Model/provider experiment ladder | [../engineering/model-provider-experiment-ladder.md](../engineering/model-provider-experiment-ladder.md) |
+| Naked model case test plan | [../engineering/naked-model-case-test-plan.md](../engineering/naked-model-case-test-plan.md) |
 
 ## Machine Spine
 
@@ -59,6 +61,41 @@ world material
 The system starts from subjects, attempts, policy, effects, receipts,
 operational memory and controlled projections. It does not start from agents,
 workflows, prompts, UI or model providers.
+
+## Model Provider Experiment Doctrine
+
+SPINE.2 defines when model/provider experiments become canonical:
+
+```text
+L0 provider scouting can start immediately outside the core
+NEW.26 is the first real naked model case experiment
+NEW.28 is the first core-owned model invocation
+NEW.29/NEW.30 are the first agent-framework/tool-call test path
+```
+
+A model is not inside the core. A model is a case-bound subject with locality,
+provider, posture and observed behavior. The first AI behavior experiment is a
+naked model inside a case, not agent framework integration.
+
+Model invocation and output enter core truth through:
+
+```text
+projection
+claim or observation
+control decision
+receipt
+memory
+```
+
+Policy is materialized twice:
+
+```text
+cognitively through projection
+operationally through gates, decision and carrier
+```
+
+Agent frameworks are not first. Agents become later subjects, actors or sources
+through external environment/adapters after naked model behavior is measurable.
 
 ## Core Invariants
 
@@ -179,6 +216,8 @@ DOC.CORE.0: canonical docs freeze
 NEW.1: minimum loop implementation
 NEW.13: target filesystem doctrine: system/engine/cmd/include
 NEW.20: local install layout
+NEW.26: naked local model case experiment
+NEW.28: model carrier v0
 Rust operational data spine behind C FFI
 ```
 
@@ -202,3 +241,7 @@ or dashboard.
 
 Do not migrate old roots as folders. Do not make Console or Interfaces the
 product root for core truth.
+
+SPINE.2 must not implement a model runner, provider registry, model carrier,
+policy packs or `ai-environment` repo. It must not touch old `yai`,
+`interfaces` or `console`.

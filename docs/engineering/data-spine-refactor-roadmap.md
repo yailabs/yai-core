@@ -113,7 +113,7 @@ Filesystem / engine refoundation:
 
 ```text
 NEW.13  target filesystem doctrine: system/engine/cmd/include
-NEW.14  move Rust workspace: crates/ -> engine/
+NEW.14  move Rust engine workspace: crates/yai-core-engine* -> engine/
 NEW.15  move yai command: crates/yai-ctl -> cmd/yai
 NEW.16  move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c
 NEW.17  move C implementation: lib/ -> system/
@@ -122,6 +122,11 @@ NEW.19  Makefile/build/guards realignment
 NEW.20  local install layout: yai + yaid
 NEW.21  filesystem refactor milestone freeze
 ```
+
+NEW.14 status: completed as the first physical refactor wave. It moved
+`crates/yai-core-engine` to `engine/yai-engine` and
+`crates/yai-core-engine-sys` to `engine/yai-engine-ffi`. `crates/` remains only
+for `yai-ctl` until NEW.15.
 
 NEW.13 planning artifacts:
 
@@ -132,22 +137,30 @@ engine-ownership-map.md
 system-ownership-map.md
 ```
 
-Data spine Rust maturation:
+Model/provider experiment runway:
 
 ```text
-NEW.22  Rust store backend R2
-NEW.23  Rust record codec / journal R2
-NEW.24  Rust query/index R2
-NEW.25  Rust graph reconstruction R2
-NEW.26  Rust memory consolidation R2
-NEW.27  Rust projection materialization R2
-NEW.28  Rust reconcile detection R2
-NEW.29  C wrapper thinning
-NEW.30  data spine milestone freeze
+NEW.22  ingest material model v0
+NEW.23  model/provider subject posture v0
+NEW.24  model output claim import v0
+NEW.25  policy pack skeleton + model projection v0
+NEW.26  naked local model case experiment v0
+NEW.27  model behavior trace v0
+NEW.28  model carrier v0
+NEW.29  agent trace/tool call import v0
+NEW.30  policy compliance experiment harness v0
 ```
 
-The later NEW.31 through NEW.63 roadmap is maintained in
-`four-repo-roadmap.md`.
+The first real naked model test is NEW.26. The first core-owned model
+invocation is NEW.28. The first agent-framework test is NEW.29/NEW.30.
+Provider scouting may begin immediately at L0, outside the core, but it is not
+canonical core validation.
+
+The experiment maturity doctrine is maintained in
+`model-provider-experiment-ladder.md`. The NEW.26 test shape is maintained in
+`naked-model-case-test-plan.md`.
+
+The later roadmap is maintained in `four-repo-roadmap.md`.
 
 ## Old-YAI Audit Scope
 
@@ -165,17 +178,50 @@ mine when their concepts overlap:
 ../yai/src/substrate/signals/*
 ../yai/src/lineage/*
 ../yai/src/analytics/*
+../yai/src/models/*
 ../yai/src/agents/grounding/*
+../yai/src/capabilities/mcp/*
+../yai/src/capabilities/external/*
+../yai/src/runtime/provider/*
 ../yai/src/runtime/execution/*
 ../yai/src/runtime/carriers/*
 ../yai/src/runtime/machine/*
 ../yai/src/runtime/lifecycle/*
+../yai/src/case/policy/*
 ../yai/src/case/subjects/*
 ../yai/src/case/materialization/*
 ../yai/src/case/surface/*
 ```
 
+Future model waves classify the additional old-yai material as:
+
+| Old-yai path | Classification |
+|---|---|
+| `src/models/*` | future model subject/provider posture, ai-environment and model carrier concepts |
+| `src/agents/grounding/*` | future ai-environment and model projection experiments |
+| `src/runtime/provider/*` | future model carrier/provider subject concepts |
+| `src/capabilities/mcp/*` | future agent/tool adapter tests |
+| `src/capabilities/external/*` | future external tool/provider adapter tests |
+| `src/substrate/views/*` | projection concepts |
+| `src/substrate/memory/*` | memory concepts |
+| `src/case/policy/*` | policy materialization and model projection evidence |
+
 In NEW.13 there is no code extraction, source movement or file migration.
+
+## SPINE.2 Non-Goals
+
+SPINE.2 must not:
+
+```text
+implement model runner
+implement provider registry
+create model carrier
+create policy packs
+create ai-environment repo
+touch old yai
+touch interfaces
+touch console
+```
 
 ## Stub And Incomplete Rule
 

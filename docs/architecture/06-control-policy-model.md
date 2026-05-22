@@ -123,6 +123,29 @@ observe_only
 Policy text is evidence, not enforcement. Enforcement begins only at the rule,
 gate, constraint, obligation or requirement layer.
 
+## 3A. Model Policy Materialization
+
+For model/provider work, policy is materialized twice:
+
+```text
+cognitively through projection
+operationally through gates, decision and carrier
+```
+
+The model projection may include allowed actions, forbidden actions, review
+requirements, evidence requirements, policy summaries, memory candidates and
+redaction posture. This helps shape model behavior but does not replace gate
+evaluation.
+
+Model output is imported as a claim, observation or proposed operation. Control
+evaluates proposed operations before any carrier path can execute. L0 provider
+scouting can begin immediately outside the core, but the first canonical naked
+model case experiment is NEW.26 and the first core-owned model invocation is
+NEW.28.
+
+Agent frameworks are not first. They enter later as external subjects, actors
+or sources after naked model behavior is measurable.
+
 ## 4. Policy Applicability
 
 Applicability answers whether a rule should participate in a gate evaluation.

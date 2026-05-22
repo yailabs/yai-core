@@ -34,6 +34,12 @@ target layout is `include/`, `system/`, `engine/` and `cmd/`; Rust owns the
 operational data spine; `lib/`, `crates/`, `ctl/` and top-level `daemon/` are
 transitional bootstrap roots.
 
+SPINE.2 adopts the model/provider experiment maturity ladder. L0 provider
+scouting can start immediately outside the core. The first canonical AI
+behavior test is a naked model inside a case at NEW.26, not agent framework
+integration. Core-owned model invocation waits for NEW.28 model carrier v0.
+Agent framework/tool-call traces begin after that at NEW.29/NEW.30.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -49,6 +55,7 @@ transitional bootstrap roots.
 | 0009 | System engine cmd layout | `include/`, `system/`, `engine/` and `cmd/` are the target layout. |
 | 0010 | Rust data spine ownership | Rust owns store, journal, record, graph, index/query, memory, projection, reconcile, retention and integrity. |
 | 0011 | Lib is transitional | `lib/`, `crates/`, `ctl/` and top-level `daemon/` are bootstrap roots. |
+| 0012 | Naked model before agent framework | First AI behavior experiment is a naked model inside a case; agent frameworks are later adapters. |
 
 ## Combined Doctrine
 
@@ -107,6 +114,21 @@ Projection is not UI state.
 Reconcile is not recovery execution.
 ```
 
+Model/provider experiment doctrine:
+
+```text
+L0 provider scouting can start immediately outside the core
+NEW.26 is the first real naked model case experiment
+NEW.28 is the first core-owned model invocation
+NEW.29/NEW.30 are the first agent-framework/tool-call test path
+```
+
+A model is not inside the core. It is a case-bound subject with locality,
+provider, posture and observed behavior. Model output enters through projection,
+claim or observation, control decision, receipt and memory. Policy is
+materialized cognitively through projection and operationally through gates,
+decision and carrier.
+
 C/Rust target:
 
 ```text
@@ -131,6 +153,8 @@ do not treat the old src roots as migration targets
 do not rename yai during SPINE.0
 do not let interfaces or console define core semantics independently
 do not postpone all old-yai residue handling to a final cleanup pass
+do not begin core AI behavior validation with an agent framework
+do not turn L0 provider scouting into canonical core validation
 ```
 
 ## Supersedes
@@ -148,4 +172,6 @@ No atomic ADR. This file supersedes ad hoc reading order notes for the ADR set.
 ../engineering/four-repo-roadmap.md
 ../engineering/filesystem-target-v2.md
 ../engineering/data-spine-refactor-roadmap.md
+../engineering/model-provider-experiment-ladder.md
+../engineering/naked-model-case-test-plan.md
 ```

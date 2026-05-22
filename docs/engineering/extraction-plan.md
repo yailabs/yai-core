@@ -79,11 +79,16 @@ Filesystem / data-spine refactor waves must inspect:
 ../yai/src/substrate/signals/*
 ../yai/src/lineage/*
 ../yai/src/analytics/*
+../yai/src/models/*
 ../yai/src/agents/grounding/*
+../yai/src/capabilities/mcp/*
+../yai/src/capabilities/external/*
+../yai/src/runtime/provider/*
 ../yai/src/runtime/execution/*
 ../yai/src/runtime/carriers/*
 ../yai/src/runtime/machine/*
 ../yai/src/runtime/lifecycle/*
+../yai/src/case/policy/*
 ../yai/src/case/subjects/*
 ../yai/src/case/materialization/*
 ../yai/src/case/surface/*
@@ -107,6 +112,8 @@ Example audit scopes:
 | Carrier/enforcement | `src/runtime/execution/*`, `src/runtime/carriers/*`, `src/runtime/decision/*`, `src/runtime/observation/*` |
 | Projection | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` |
 | Workflow-related | `src/orchestrator/*`, especially recovery and workflow material, without recreating a workflow engine in `yai-core` |
+| Model/provider | `src/models/*`, `src/runtime/provider/*`, `src/case/policy/*`, `src/substrate/views/*`, `src/substrate/memory/*` |
+| Agent/tool | `src/agents/grounding/*`, `src/capabilities/mcp/*`, `src/capabilities/external/*`, `src/runtime/execution/*` |
 
 ## 4. Action Enum
 
@@ -228,6 +235,24 @@ src/analytics/*                -> engine/index/memory/reconcile or ai-environmen
 ```
 
 The inventory records these routes. No old-yai source is copied.
+
+Future model/provider waves must audit and classify:
+
+```text
+src/models/*                  -> future model subject/provider posture, ai-environment, model carrier concepts
+src/agents/grounding/*        -> future ai-environment, model projection experiments
+src/runtime/provider/*        -> future model carrier/provider subject
+src/capabilities/mcp/*        -> future agent/tool adapter tests
+src/capabilities/external/*   -> future external adapter tests
+src/substrate/views/*         -> projection concepts
+src/substrate/memory/*        -> memory concepts
+src/case/policy/*             -> policy materialization and model projection evidence
+```
+
+SPINE.2 is documentation only. It defines L0 provider scouting and the NEW.26
+through NEW.30 model/provider experiment sequence, but it does not touch old
+`yai`, copy source, create a model carrier, create a provider registry, create
+policy packs or create `ai-environment`.
 
 NEW.6 applied wave-coupled extraction for operational memory:
 
