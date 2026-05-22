@@ -1,0 +1,29 @@
+{
+  "schema": "yai.manual.policy_pack.v0",
+  "policy_ref": "policy:manual-model-case-projection-v0",
+  "case_ref": "case:new12-filesystem",
+  "subject_ref": "subject:llm-provider",
+  "source_ref": "manual-filesystem-loop-validation",
+  "summary": "Model provider may answer only from governed case projection and memory candidates.",
+  "rules": [
+    {
+      "rule_ref": "rule:model-context-projection-only",
+      "effect": "allow_with_constraints",
+      "operation": "model.context.read",
+      "scope": "case_projection_only",
+      "constraints": ["no_raw_journal_unless_projected", "no_out_of_case_memory"],
+      "failure_mode": "defer_until_policy_available",
+      "evidence_required": ["projection_result", "memory_candidate"]
+    },
+    {
+      "rule_ref": "rule:model-output-is-observation-not-decision",
+      "effect": "allow_observed",
+      "operation": "model.output.import",
+      "scope": "case_only",
+      "constraints": ["output_is_claim_or_observation", "control_retains_decision_authority"],
+      "failure_mode": "require_review",
+      "evidence_required": ["provider_prompt", "provider_output", "projection_result"]
+    }
+  ]
+}
+

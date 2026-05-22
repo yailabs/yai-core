@@ -275,8 +275,8 @@ mod tests {
 
         assert_eq!(projection.projection_request_count, 2);
         assert_eq!(projection.projection_result_count, 2);
-        assert_eq!(projection.operator_projection_count, 2);
-        assert_eq!(projection.model_projection_count, 2);
+        assert_eq!(projection.operator_projection_count, 1);
+        assert_eq!(projection.model_projection_count, 1);
         assert_eq!(projection.limited_projection_count, 1);
     }
 

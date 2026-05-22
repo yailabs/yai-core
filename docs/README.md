@@ -43,11 +43,13 @@ final spine compression before NEW.1 implementation.
 11. `product/positioning.md`
 12. `engineering/testing.md`
 13. `adr/0000-decision-compendium.md`
+14. `manuals/manual-filesystem-loop-validation.md`
 
 ## Ownership Rule
 
 `architecture/` owns core doctrine.
 `protocols/` owns first protocol shapes.
 `engineering/` owns extraction, target layout, validation and implementation order.
+`manuals/` owns operator-facing runbooks for local validation.
 `product/` owns positioning and commercial wedges.
 `adr/` owns decisions and consequences.

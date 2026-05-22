@@ -1,4 +1,4 @@
-use std::fs;
+use std::fs::{self, OpenOptions};
 use std::io::{Read, Write};
 #[cfg(unix)]
 use std::os::unix::net::UnixStream;
@@ -10,7 +10,7 @@ use yai_core_engine::memory::MemorySummary;
 use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
-use yai_core_engine::record::RecordKind;
+use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -67,6 +67,8 @@ fn print_usage() {
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path>");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
+    println!("       yai projection model-context --journal <path> [--case <case_ref>]");
+    println!("       yai case enter --journal <path> --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
     println!("       yai control summary --journal <path>");
     println!("       yai decision inspect --journal <path>");
     println!("       yai receipt summary --journal <path>");
@@ -272,6 +274,282 @@ fn control_summary(args: &[String]) -> Result<(), String> {
         "receipt_requirements: {}",
         projection.receipt_requirement_count
     );
+    Ok(())
+}
+
+fn record_in_case(record: &Record, case_ref: Option<&str>) -> bool {
+    case_ref
+        .map(|expected| record.case_ref == expected)
+        .unwrap_or(true)
+}
+
+fn display_field<'a>(value: &'a str, fallback: &'static str) -> &'a str {
+    if value.is_empty() {
+        fallback
+    } else {
+        value
+    }
+}
+
+fn print_model_context_records(
+    title: &str,
+    journal: &Journal,
+    case_ref: Option<&str>,
+    kinds: &[RecordKind],
+) {
+    println!("## {title}");
+    let mut count = 0usize;
+    for record in journal
+        .records()
+        .iter()
+        .filter(|record| record_in_case(record, case_ref) && kinds.contains(&record.kind))
+    {
+        println!(
+            "- {} kind:{} subject_ref:{} attempt_id:{} decision_id:{} receipt_id:{} summary:{}",
+            record.id,
+            record.kind.as_str(),
+            display_field(&record.subject_ref, "subject:none"),
+            display_field(&record.attempt_id, "none"),
+            display_field(&record.decision_id, "none"),
+            display_field(&record.receipt_id, "none"),
+            record.summary
+        );
+        count += 1;
+    }
+    if count == 0 {
+        println!("- none");
+    }
+    println!();
+}
+
+fn print_model_context_view(journal: &Journal, case_ref: Option<&str>) {
+    let projection = ProjectionSummary::from_journal("model", &journal);
+    let case_ref = case_ref
+        .or_else(|| (!projection.case_ref.is_empty()).then_some(projection.case_ref.as_str()));
+
+    println!("case_ref: {}", case_ref.unwrap_or("unknown"));
+    println!("consumer: model");
+    println!("projection_kind: model_context");
+    println!("redaction: summary_only");
+    println!("source: case_projection_graph_memory");
+    println!("raw_journal_access: not_provided");
+    println!("filesystem_access: not_provided");
+    println!("records: {}", projection.source_record_count);
+    println!(
+        "model_projection_records: {}",
+        projection.model_projection_count
+    );
+    println!(
+        "operator_projection_records: {}",
+        projection.operator_projection_count
+    );
+    println!(
+        "filesystem_receipts: {}",
+        projection.filesystem_receipt_count
+    );
+    println!("memory_candidates: {}", projection.memory_candidate_count);
+    println!("graph_edges: {}", projection.graph_edge_count);
+    println!();
+
+    print_model_context_records(
+        "Subjects",
+        &journal,
+        case_ref,
+        &[RecordKind::SubjectBinding],
+    );
+    print_model_context_records("Policy", &journal, case_ref, &[RecordKind::PolicyRule]);
+    print_model_context_records("Decisions", &journal, case_ref, &[RecordKind::Decision]);
+    print_model_context_records(
+        "Filesystem Receipts",
+        &journal,
+        case_ref,
+        &[RecordKind::FilesystemReceipt],
+    );
+    print_model_context_records("Memory", &journal, case_ref, &[RecordKind::MemoryCandidate]);
+    print_model_context_records("Graph", &journal, case_ref, &[RecordKind::GraphEdge]);
+    print_model_context_records(
+        "Projection Records",
+        &journal,
+        case_ref,
+        &[RecordKind::ProjectionRequest, RecordKind::ProjectionResult],
+    );
+}
+
+fn projection_model_context(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let requested_case = optional_arg(args, "--case");
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+    print_model_context_view(&journal, requested_case.as_deref());
+    Ok(())
+}
+
+fn append_case_entry_record(
+    path: &PathBuf,
+    journal: &Journal,
+    case_ref: &str,
+    subject_ref: &str,
+    consumer: &str,
+    kind: &str,
+) -> Result<(), String> {
+    let record_id = format!(
+        "case-entry:{}:{}",
+        subject_ref.replace(':', "-"),
+        journal.count() + 1
+    );
+    let record = Record::from_parts(
+        record_id,
+        case_ref,
+        RecordKind::SubjectState,
+        subject_ref,
+        "",
+        "",
+        "",
+        format!(
+            "case_entry:admitted consumer:{consumer} kind:{kind} redaction:summary_only raw_journal_access:not_provided filesystem_access:not_provided"
+        ),
+    );
+    let mut file = OpenOptions::new()
+        .append(true)
+        .open(path)
+        .map_err(|error| format!("failed to append {}: {error}", path.display()))?;
+    file.write_all(record.to_jsonl().as_bytes())
+        .map_err(|error| format!("failed to write {}: {error}", path.display()))?;
+    Ok(())
+}
+
+fn shell_quote(value: &str) -> String {
+    let mut quoted = String::from("'");
+    for ch in value.chars() {
+        if ch == '\'' {
+            quoted.push_str("'\\''");
+        } else {
+            quoted.push(ch);
+        }
+    }
+    quoted.push('\'');
+    quoted
+}
+
+fn print_case_enter_shell(path: &PathBuf, case_ref: &str, subject_ref: &str) {
+    let prompt_flag = format!("[yai:{case_ref}]");
+    println!("printf '%s\\n' {}", shell_quote("case_entry: accepted"));
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("case_entry_status: shell_scoped")
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("case_ref: {case_ref}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("subject_ref: {subject_ref}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("participant_view: model_context")
+    );
+    println!("printf '%s\\n' {}", shell_quote("consumer: model"));
+    println!("printf '%s\\n' {}", shell_quote("redaction: summary_only"));
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("raw_journal_access: not_provided")
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("filesystem_access: not_provided")
+    );
+    println!(
+        "export YAI_JOURNAL={}",
+        shell_quote(&path.display().to_string())
+    );
+    println!("export YAI_CASE_REF={}", shell_quote(case_ref));
+    println!("export YAI_SUBJECT_REF={}", shell_quote(subject_ref));
+    println!("export YAI_CASE_PROMPT_FLAG={}", shell_quote(&prompt_flag));
+    println!("if [ -z \"${{YAI_PROMPT_BASE+x}}\" ]; then export YAI_PROMPT_BASE=\"${{PROMPT:-${{PS1:-}}}}\"; fi");
+    println!("if [ -z \"${{YAI_RPROMPT_BASE+x}}\" ]; then export YAI_RPROMPT_BASE=\"${{RPROMPT:-}}\"; fi");
+    println!("export PROMPT=\"$YAI_CASE_PROMPT_FLAG $YAI_PROMPT_BASE\"");
+    println!("export PS1=\"$PROMPT\"");
+    println!("export RPROMPT=\"$YAI_RPROMPT_BASE\"");
+}
+
+fn case_enter(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let case_ref = named_arg(args, "--case")?;
+    let subject_ref = named_arg(args, "--subject")?;
+    let consumer = optional_arg(args, "--consumer").unwrap_or_else(|| "model".to_string());
+    let kind = optional_arg(args, "--kind").unwrap_or_else(|| "model_context".to_string());
+    let shell = optional_arg(args, "--shell");
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+
+    let subject_bound = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectBinding
+            && record.subject_ref == subject_ref
+    });
+    if !subject_bound {
+        return Err(format!(
+            "subject {subject_ref} is not bound to case {case_ref}"
+        ));
+    }
+
+    let projection_available = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::ProjectionResult
+            && record.summary.contains(&format!("consumer:{consumer}"))
+            && record.summary.contains(&format!("kind:{kind}"))
+            && record.summary.contains("redaction:summary_only")
+    });
+    if !projection_available {
+        return Err(format!(
+            "no governed {consumer}/{kind} projection is available for case {case_ref}"
+        ));
+    }
+
+    let already_admitted = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectState
+            && record.subject_ref == subject_ref
+            && record.summary.contains("case_entry:admitted")
+            && record.summary.contains(&format!("consumer:{consumer}"))
+            && record.summary.contains(&format!("kind:{kind}"))
+    });
+
+    if !already_admitted {
+        append_case_entry_record(&path, &journal, &case_ref, &subject_ref, &consumer, &kind)?;
+    }
+
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to reload {}: {error}", path.display()))?;
+
+    if let Some(shell) = shell.as_deref() {
+        if shell != "zsh" && shell != "sh" {
+            return Err(format!("unsupported shell: {shell}"));
+        }
+        print_case_enter_shell(&path, &case_ref, &subject_ref);
+        return Ok(());
+    }
+
+    println!("case_entry: accepted");
+    println!(
+        "case_entry_status: {}",
+        if already_admitted {
+            "already_admitted"
+        } else {
+            "admitted"
+        }
+    );
+    println!("case_ref: {case_ref}");
+    println!("subject_ref: {subject_ref}");
+    println!("participant_view: {kind}");
+    println!("consumer: {consumer}");
+    println!("redaction: summary_only");
+    println!("raw_journal_access: not_provided");
+    println!("filesystem_access: not_provided");
+    println!();
+    print_model_context_view(&journal, Some(&case_ref));
     Ok(())
 }
 
@@ -553,6 +831,18 @@ fn main() {
         }
         Some("projection") if args.get(1).map(String::as_str) == Some("request") => {
             if let Err(error) = projection_request(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("projection") if args.get(1).map(String::as_str) == Some("model-context") => {
+            if let Err(error) = projection_model_context(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("case") if args.get(1).map(String::as_str) == Some("enter") => {
+            if let Err(error) = case_enter(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

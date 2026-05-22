@@ -172,18 +172,15 @@ impl ProjectionSummary {
             .filter(|record| record.kind == RecordKind::ProjectionResult)
             .collect::<Vec<_>>();
         let projection_result_count = projection_result_records.len();
-        let operator_projection_count = journal
-            .records()
+        let operator_projection_count = projection_result_records
             .iter()
             .filter(|record| record.summary.contains("consumer:operator"))
             .count();
-        let model_projection_count = journal
-            .records()
+        let model_projection_count = projection_result_records
             .iter()
             .filter(|record| record.summary.contains("consumer:model"))
             .count();
-        let audit_projection_count = journal
-            .records()
+        let audit_projection_count = projection_result_records
             .iter()
             .filter(|record| record.summary.contains("consumer:audit"))
             .count();

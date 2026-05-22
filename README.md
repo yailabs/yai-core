@@ -1,25 +1,313 @@
-# YAI Core
+<!--
+YAI Core
+
+Copyright (c) 2026 Francesco Maiomascio.
+All rights reserved.
+
+This file is part of the YAI Community Source Tree.
+Use, copying, modification, distribution, and production operation
+are governed by the repository licensing documents, including LICENSE and the
+reference documents under docs/.
+
+Development and non-production use is permitted under the applicable
+YAI license terms. Production, organizational, persistent,
+collaborative, customer-affecting, or business-critical use requires
+a commercial license.
+-->
+
+<div align="center">
+  <img src="docs/reference/figures/brand/yai-transp.png" alt="YAI" width="220" />
+
+  <h1>YAI Core</h1>
+  <strong>local AI operational control core</strong>
+  <br />
+  <span>Cases, subjects, control gates, receipts, and operational memory for local AI systems.</span>
+
+  <br />
+
+  ![Runtime](https://img.shields.io/badge/runtime-local-0f766e?style=flat&labelColor=1f2937)
+  ![Core](https://img.shields.io/badge/core-operational%20control-475569?style=flat&labelColor=1f2937)
+  ![License](https://img.shields.io/badge/license-community%20source-374151?style=flat&labelColor=1f2937)
+</div>
 
 YAI Core is a local AI operational control core.
 
-It binds operational subjects to cases, captures operation attempts,
-materializes policy into machine gates, emits control decisions, executes or
-observes effects through carriers, records receipts, derives operational memory,
-serves controlled projections and scans residue through a minimal query
-boundary. Rust can also consume the same residue through an internal engine R1
-path behind the C ABI. `yai` is the canonical local technical command and
-`yaid` is the local daemon.
+It binds operational subjects into cases, governs attempted operations through
+machine policy gates, records receipts for effects, derives operational memory,
+and serves controlled projections back to models, agents, operators, and
+systems.
 
-SPINE.1 rebases the next phase: the repository is moving toward filesystem /
-data-spine refoundation before local install layout. NEW.14 moved the Rust
-operational data engine into `engine/`. NEW.15 moved the Rust technical command
-into `cmd/yai` and removed `crates/`. NEW.16 moved the C daemon entrypoint to
-`cmd/yaid` and daemon support to `system/daemon`. NEW.17 moved the remaining C
-implementation into `system/` and removed the bootstrap `lib/` and `ctl/`
-roots.
+YAI is not another intelligence layer.
+YAI is the operational control layer around intelligence.
 
-This repository is not an agent framework, workflow engine, runtime monitor,
-TUI, cloud platform or model provider.
+## What YAI Core Is
+
+YAI Core owns the local machine-level control and operational-memory engine for
+AI-mediated work.
+
+It treats work as a bounded operational domain, called a case. Inside a case,
+observable or controllable subjects can be named, related, governed, affected,
+observed, and remembered. An attempted operation against those subjects becomes
+an `op`: material that must be bound to a case, evaluated against policy,
+passed through gates, executed or observed through carriers, and recorded with
+receipts.
+
+The core spine is:
+
+```text
+case -> subject -> op -> control -> effect -> receipt -> store -> graph -> memory -> projection
+```
+
+This gives local AI systems a durable operational layer for case-bound
+subjects, operation attempts, policy gates, control decisions, effect carriers,
+structured receipts, durable records, graph-backed reconstruction, operational
+memory, controlled projections, and divergence reconciliation.
+
+## What YAI Core Is Not
+
+YAI Core is not:
+
+* an agent framework;
+* a workflow engine;
+* a model provider;
+* a cloud platform;
+* a TUI;
+* a replacement for existing systems.
+
+It does not own external agents, business workflows, model providers, cloud
+platform behavior, public SDK surfaces, business systems, or client
+applications. Those systems may integrate with YAI Core, but the repository's
+identity remains the local control engine.
+
+YAI Core is also not a generic policy engine, generic audit logger, or runtime
+monitor. Policy, auditability, and observation matter because they are part of
+operational control, not because the core is reducible to any one of them.
+
+## Architectural Thesis
+
+Most AI systems begin with a model loop:
+
+```text
+context -> model -> tool -> observation -> memory
+```
+
+That loop is useful, but it makes the model conversation look like the system
+boundary. YAI Core moves the boundary to operational control:
+
+```text
+case -> subject -> op -> control -> effect -> receipt -> store -> graph -> memory -> projection
+```
+
+Model output is candidate material, not authority. A model can propose,
+classify, summarize, estimate, route, explain, or generate evidence candidates.
+The core decides what an attempted operation means, what policy applies, which
+gates must fire, whether an effect is executed or blocked, what receipt proves
+the result, and how the operation changes memory and future projections.
+
+Authority, execution, receipts, memory, and continuity remain outside the model.
+
+## Computational Model
+
+`case`
+: A bounded operational control domain. A case gives subjects, operations,
+policies, receipts, records, graph edges, memory, projections, and divergence a
+shared operational frame.
+
+`subject`
+: An observable or controllable entity bound to a case. A subject may be a file,
+process, repository, service, model, agent, operator, external system, document,
+resource, or domain object.
+
+`op`
+: An attempted operation against one or more subjects. An op is not trusted
+because it came from a model, agent, tool, operator, script, or remote system;
+it becomes operationally meaningful only after case binding and control.
+
+`control`
+: Policy materialization, gates, decisions, constraints, and obligations for an
+op. Control translates applicable policy and case state into machine decisions.
+
+`effect`
+: Execution or observation of an operation through a carrier. An effect may
+write, read, call, invoke, import, classify, block, observe, or reconcile.
+
+`carrier`
+: The mechanism that executes or observes an effect at a boundary. Carriers may
+be local process, filesystem, provider, model, IPC, shell, adapter, or imported
+receipt boundaries.
+
+`receipt`
+: Structured proof of execution, observation, block, failure, constraint,
+imported result, or recovery posture. A receipt is not a generic log line; it
+connects an effect to case state, subjects, policy, decision, records, and
+graph.
+
+`store`
+: Durable operational records, sources, receipts, policy snapshots, journals,
+and reconstruction material.
+
+`graph`
+: Relationships between subjects, operations, decisions, receipts, policies,
+records, projections, memory, and divergence. The graph preserves operational
+structure for reconstruction and controlled query.
+
+`memory`
+: Operational memory derived from records, decisions, receipts, effects,
+policies, projections, divergences, and graph structure.
+
+`projection`
+: A controlled view served to models, agents, operators, APIs, audit surfaces,
+or external systems. A projection is scoped material, not ownership of truth.
+
+`reconcile`
+: Divergence detection, recovery, and compensation when expected state and
+observed state differ.
+
+`daemon`
+: The local resident service. `yaid` is the local daemon.
+
+`ctl`
+: The local technical command surface. `yai` is the canonical local technical
+command.
+
+## Integration Modes
+
+YAI Core integrates with surrounding systems through four control postures.
+
+`observed`
+: YAI sees an operation after, alongside, or around execution. It can bind the
+event to a case, classify returned material, import or produce receipts, update
+records, derive memory, and detect divergence. It cannot claim full enforcement
+over a boundary it did not control.
+
+`interposed`
+: YAI sits on the local path before an effect is executed. It can apply gates,
+decisions, constraints, obligations, blocks, and receipt requirements at that
+local boundary.
+
+`carrier-owned`
+: YAI owns the carrier that executes or observes the effect. This gives the
+core the strongest local enforcement posture because execution and receipt
+production share a controlled boundary.
+
+`embedded`
+: YAI control logic runs inside a host system, adapter, service, or runtime
+boundary. Enforcement strength depends on the host integration contract and the
+material returned as receipts.
+
+If YAI does not own the carrier or run on the remote side, it cannot claim full
+enforcement. It can still control the local boundary, classify returned
+material, import receipts, preserve records, update graph and memory, and
+reconcile divergence.
+
+## Models Boundary
+
+Models are central, but not sovereign.
+
+Model invocation is itself an operation. A model receives a controlled
+projection, produces candidate material, and returns claims that may become
+proposals, summaries, classifications, routes, explanations, or evidence
+candidates.
+
+The model does not own authority, execution, receipts, operational memory,
+continuity, policy enforcement, or case truth.
+
+Stronger models make YAI Core more useful, not obsolete. Better inference
+improves classification, planning, summarization, projection, review, and
+recovery, but operational authority remains in the control layer around
+intelligence.
+
+## Memory Model
+
+YAI operational memory is distinct from other AI memory forms.
+
+`model parametric memory`
+: Information encoded in model weights. It is broad, opaque, and not
+case-bound operational state.
+
+`prompt/context memory`
+: Material placed into a model invocation. It is a projection for a task, not
+durable authority or continuity.
+
+`retrieval memory`
+: Retrieved documents, chunks, embeddings, or indexes. It helps assemble
+context, but retrieval alone does not prove what happened.
+
+`agent memory`
+: Notes, summaries, plans, preferences, or task-local history held by an agent.
+It may support behavior, but it does not define operational truth.
+
+`YAI operational memory`
+: The case-bound memory of subjects, operations, decisions, receipts, effects,
+policies, records, projections, divergences, and graph structure.
+
+YAI operational memory is not another knowledge base. It is memory derived from
+controlled operation and structured residue.
+
+## Policy And Control
+
+Policy in a prompt is not enforcement.
+
+YAI Core materializes policy into machine control through policy sources,
+policy material, policy claims, policy rules, case bindings, gates, decisions,
+obligations, receipts, and policy memory.
+
+A prompt can describe policy. It cannot enforce policy. Enforcement requires a
+machine boundary that can bind the attempted operation, evaluate applicable
+rules, emit a control decision, constrain or block the effect, and record a
+receipt.
+
+## Repository Shape
+
+The filesystem doctrine separates ABI, system boundary, operational data, local
+binaries, schemas, documentation, validation, and developer tools.
+
+```text
+include/  public and system ABI contracts
+system/   C and system plane: daemon, host boundary, carriers, control shell, FFI bridges
+engine/   Rust operational data spine: store, graph, index, memory, query
+cmd/      local binaries: yai and yaid
+proto/    schemas, fixtures, and protocol material
+docs/     architecture, protocols, engineering notes, and ADRs
+tests/    unit, integration, conformance, smoke, and adversarial tests
+tools/    checks, probes, validation, and developer utilities
+```
+
+### Absorbed Concepts
+
+Earlier or adjacent concepts are absorbed into the control spine:
+
+* agents -> external subjects and AI-environment participants;
+* capabilities -> op effect classes and control gates;
+* models -> model subjects, model carriers, projections, and model output claims;
+* runtime -> daemon and effect carriers;
+* substrate -> store, graph, index, memory, and projection;
+* lineage -> graph, receipts, and reconstruction;
+* workflow -> external procedure and case progress, not the core engine.
+
+## Local Operation
+
+`yaid`
+: The local daemon. It is the resident service boundary for local control,
+carrier coordination, records, receipts, and operational memory.
+
+`yai`
+: The canonical local technical command. It is the local control and inspection
+surface for operators and developer workflows.
+
+The README is not a command reference. Operational manuals and reference
+documents own detailed command behavior.
+
+## Validation
+
+Stable repository validation entrypoints:
+
+```text
+make info
+make check
+```
+
+## Documentation Pointers
 
 Start with:
 
@@ -30,291 +318,8 @@ docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
 docs/engineering/filesystem-target-v2.md
 docs/engineering/data-spine-refactor-roadmap.md
-docs/engineering/new13-filesystem-refactor-plan.md
+docs/status/implementation-status.md
 ```
 
-Status: NEW.17 C implementation moved to `system/`. The next wave is NEW.18
-data-logic thinning into `system/engine_bridge` versus Rust `engine/`
-ownership. Local install layout is delayed to NEW.20.
-
-NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
-NEW.21 and does not move source files.
-
-NEW.14 is the first physical filesystem refactor wave. It moves only the Rust
-engine crates:
-
-```text
-crates/yai-core-engine     -> engine/yai-engine
-crates/yai-core-engine-sys -> engine/yai-engine-ffi
-```
-
-That old `crates/` path is now historical; `crates/` is removed after NEW.15.
-
-NEW.15 moves the technical command:
-
-```text
-crates/yai-ctl -> cmd/yai
-```
-
-`crates/` is removed after NEW.15. `cmd/yai` is the core technical command, not
-Console or operator UX.
-
-NEW.16 moves the daemon entrypoint and daemon support:
-
-```text
-daemon/main.c             -> cmd/yaid/main.c
-daemon/ipc.c              -> system/daemon/ipc.c
-daemon/core_loop.c        -> system/daemon/core_loop.c
-lib/daemon/daemon_status.c -> system/daemon/daemon_status.c
-```
-
-The top-level `daemon/` root is removed after NEW.16. `yaid` remains C, and
-`yai` remains Rust in `cmd/yai`.
-
-NEW.17 moves the remaining C implementation:
-
-```text
-lib/* -> system/*
-```
-
-`lib/` and the retired `ctl/` root are removed after NEW.17. The data-spine C
-folders now under `system/{store,graph,index,memory,projection,reconcile}` are
-transitional and scheduled for NEW.18 thinning/splitting.
-
-NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
-persistent and reconstructable through a file-backed JSONL journal:
-
-```text
-open case
-bind subject
-submit op attempt
-emit control decision
-emit effect receipt
-append store record
-write journal file
-reload journal records
-reconstruct subject state
-build projection from persisted records
-```
-
-NEW.3 adds the first structured control machine over that persistence:
-
-```text
-policy rule
-gate evaluation
-decision basis
-decision outcome
-obligation
-receipt requirement
-persisted control records
-control projection
-```
-
-NEW.4 adds the first real carrier effect, confined to a test sandbox:
-
-```text
-control decision
-filesystem carrier
-fs.read / fs.write
-hash posture before and after
-effect receipt
-subject state update
-filesystem projection
-```
-
-NEW.5 adds the first operational graph layer:
-
-```text
-graph edge records
-case/subject/op/decision/receipt relationships
-receipt chain reconstruction
-graph projection
-```
-
-NEW.6 adds the first residue-derived memory candidate:
-
-```text
-receipt reconstruction
-decision and subject refs
-basis record / receipt / graph-edge counts
-memory_candidate record
-memory projection
-yai memory summary
-```
-
-NEW.7 adds the first reconciliation layer:
-
-```text
-divergence detection
-denied_but_executed
-receipt_without_decision
-reconciliation records
-reconcile projection
-yai reconcile summary
-```
-
-NEW.8 hardens projection into controlled read-model records:
-
-```text
-projection_request
-projection_result
-consumer kind
-projection kind
-provenance counts
-freshness
-redaction posture
-yai projection inspect
-```
-
-NEW.9 adds the first journal query boundary:
-
-```text
-query filter
-journal scan
-query_result record
-kind/case filtering
-yai query summary
-yai query records
-```
-
-NEW.10 adds Rust engine R1 behind the C ABI:
-
-```text
-opaque engine handle
-JSON record append
-record/kind counts
-kind query
-projection summary JSON
-yai engine summary
-```
-
-NEW.11 adds the first resident daemon IPC boundary:
-
-```text
-yaid --socket <path> --foreground
-yai daemon status
-yai daemon info
-yai daemon shutdown
-```
-
-NEW.12 makes the first bounded loop pass through `yaid`:
-
-```text
-yai daemon run-minimum-loop
-yai daemon run-filesystem-loop
-yai daemon journal-summary
-yai daemon projection-summary
-```
-
-NEW.13 no longer adds the local install layout. NEW.13 is the target
-filesystem doctrine/refactor plan:
-
-```text
-include/ = public C ABI contracts
-system/  = C system plane: daemon, host, carriers, control boundary, FFI bridges
-engine/  = Rust operational data spine
-cmd/     = binaries: yai and yaid
-```
-
-Ownership:
-
-```text
-C    = system / host boundary / ABI / daemon / carrier / control enforcement shell
-Rust = engine / operational data spine
-```
-
-`yai` is Rust and now lives under `cmd/yai`. The bootstrap operational data
-engine is Rust and now lives under `engine/`. Local command installation is
-delayed to NEW.20, and there is no public API, no HTTP, no
-auth, no service manager, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
-database, no vector/RAG retrieval, no automatic repair, no memory consolidation
-engine, no backend switch and no full secret redaction engine yet.
-
-Build and validate:
-
-```text
-make info
-make check
-```
-
-Planned local install layout (NEW.20, not current doctrine):
-
-```text
-make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai
-yai info
-yai doctor
-```
-
-Inspect the NEW.2 smoke journal after `make smoke-new2`:
-
-```text
-yai store tail --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
-yai projection summary --journal build/tmp/new2/persistent-journal-<pid>/journal.jsonl
-```
-
-Inspect the NEW.3 control journal after `make smoke-new3`:
-
-```text
-yai control summary --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
-yai decision inspect --journal build/tmp/new3/control-gate-<pid>/journal.jsonl
-```
-
-Inspect the NEW.4 filesystem journal after `make smoke-new4`:
-
-```text
-yai receipt summary --journal build/tmp/new4/filesystem-carrier-<pid>/journal.jsonl
-yai carrier fs-read --sandbox build/tmp/new4/filesystem-carrier-<pid>/sandbox --path build/tmp/new4/filesystem-carrier-<pid>/sandbox/input.txt
-```
-
-Inspect the NEW.5 graph journal after `make smoke-new5`:
-
-```text
-yai graph summary --journal build/tmp/new5/graph-reconstruction-<pid>/journal.jsonl
-```
-
-Inspect the NEW.6 memory journal after `make smoke-new6`:
-
-```text
-yai memory summary --journal build/tmp/new6/operational-memory-<pid>/journal.jsonl
-```
-
-Inspect the NEW.7 reconcile journal after `make smoke-new7`:
-
-```text
-yai reconcile summary --journal build/tmp/new7/reconcile-divergence-<pid>/journal.jsonl
-```
-
-Inspect the NEW.8 projection journal after `make smoke-new8`:
-
-```text
-yai projection inspect --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl
-yai projection request --journal build/tmp/new8/projection-hardening-<pid>/journal.jsonl --consumer model --kind model_context
-```
-
-Inspect the NEW.9 query journal after `make smoke-new9`:
-
-```text
-yai query summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
-yai query records --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl --kind receipt --limit 10
-```
-
-Inspect a journal through Rust engine summary:
-
-```text
-yai engine summary --journal build/tmp/new9/query-boundary-<pid>/journal.jsonl
-```
-
-Inspect NEW.11 daemon IPC manually:
-
-```text
-build/yaid --socket build/tmp/new11/manual/yaid.sock --foreground
-yai daemon status --socket build/tmp/new11/manual/yaid.sock
-```
-
-Inspect NEW.12 daemon-backed loops manually:
-
-```text
-build/yaid --socket build/tmp/new12/manual/yaid.sock --foreground
-yai daemon run-minimum-loop --socket build/tmp/new12/manual/yaid.sock
-yai daemon run-filesystem-loop --socket build/tmp/new12/manual/yaid.sock
-```
+Implementation status and roadmap material belong in status or roadmap
+documents, not in this README.

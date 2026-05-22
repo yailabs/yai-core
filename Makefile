@@ -49,7 +49,7 @@ C_SOURCES := \
 	system/store/journal.c \
 	system/store/record_codec.c \
 	system/store/journal_file.c \
-	system/store/rust_engine_backend.c \
+	system/engine_bridge/rust_engine_backend.c \
 	system/projection/projection.c \
 	system/projection/projection_kind.c \
 	system/projection/redaction.c \
@@ -75,10 +75,11 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.17 C implementation moved to system/\n"
-	@printf "next: NEW.18 split C data logic into engine_bridge vs engine ownership\n"
+	@printf "status: NEW.18 engine bridge split\n"
+	@printf "next: NEW.19 Makefile/build/guards realignment\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
-	@printf "transitional: system/{store,graph,index,memory,projection,reconcile} data logic awaiting thinning\n"
+	@printf "data-spine-c: transitional keep_temporarily\n"
+	@printf "engine-bridge: active\n"
 	@printf "lib: removed\n"
 	@printf "daemon: moved to cmd/yaid + system/daemon\n"
 	@printf "crates: removed\n"
