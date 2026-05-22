@@ -234,6 +234,20 @@ src/lineage/*                  -> engine/graph + engine/memory
 src/analytics/*                -> engine/index/memory/reconcile or ai-environment
 ```
 
+NEW.15 applies wave-coupled extraction only as command-boundary audit:
+
+```text
+../yai/src/runtime/operator/*                   -> split: cmd/yai diagnostics or console future
+../yai/tools/runtime/*                          -> cmd/yai or system/daemon tooling concepts
+../yai/Documentation/manuals/operator-manual.md -> console future
+../yai/Documentation/manuals/runtime-service-operations.md -> daemon docs
+../console/Documentation/commands/*             -> console future
+../console/Documentation/runtime-attachment/*   -> console/interfaces future
+```
+
+No old source is copied. `cmd/yai` remains the technical core command, not
+operator Console.
+
 The inventory records these routes. No old-yai source is copied.
 
 Future model/provider waves must audit and classify:

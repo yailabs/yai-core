@@ -10,8 +10,8 @@ layout:
 include/
 lib/
 daemon/
-ctl/
-crates/
+ctl/      # retired pointer only after NEW.15
+cmd/
 ```
 
 That shape remains valid as implementation evidence, but it is transitional.
@@ -116,8 +116,9 @@ bootstrap era and will be moved only by later refactor waves.
 | Current root | Target destination | Status |
 |---|---|---|
 | `lib/` | `system/` plus Rust-owned data logic in `engine/` | transitional |
-| `crates/` | `engine/` and `cmd/yai/` | transitional |
-| `ctl/` | `cmd/yai/` or removed after drain | transitional |
+| `crates/` | removed after NEW.15 | retired |
+| `ctl/` | retired pointer only | transitional docs pointer |
+| `cmd/yai/` | Rust technical command | active after NEW.15 |
 | top-level `daemon/` | `cmd/yaid/` and `system/daemon/` | transitional |
 
 The target does not keep `lib/` as the long-term implementation root.
@@ -177,16 +178,16 @@ Rust engine becomes the operational data spine.
 The current implementation wave state is:
 
 ```text
-NEW.14 Rust engine workspace moved to engine/
+NEW.15 yai command moved to cmd/yai
 ```
 
-NEW.14 moved only the Rust data engine crates into `engine/`. `crates/`
-remains transitional for `yai-ctl` until NEW.15. Local install layout is delayed
-to NEW.20. Do not install a filesystem shape that is already known to be
-transitional.
+NEW.14 moved only the Rust data engine crates into `engine/`. NEW.15 moved the
+Rust technical command into `cmd/yai` and removed `crates/`. Local install
+layout is delayed to NEW.20. Do not install a filesystem shape that is already
+known to be transitional.
 
 NEW.13 is retained as the planning wave. NEW.14 is the first physical move
-wave.
+wave; NEW.15 is the command move wave.
 
 ## Model Provider Experiment Boundary
 
@@ -216,5 +217,5 @@ After NEW.21:
 .rs allowed under engine/ and cmd/yai/
 ```
 
-`crates/`, `lib/`, top-level `daemon/` and `ctl/` are temporary exceptions
-only until the staged refactor waves complete.
+`lib/`, top-level `daemon/` and retired `ctl/` are temporary exceptions only
+until the staged refactor waves complete. `crates/` is removed after NEW.15.

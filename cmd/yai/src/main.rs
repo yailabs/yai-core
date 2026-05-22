@@ -17,7 +17,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: NEW.13");
+    println!("status: NEW.15");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");

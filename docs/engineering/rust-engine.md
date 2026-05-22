@@ -103,8 +103,7 @@ engine/
 ```
 
 NEW.14 moved the Rust operational data engine out of `crates/` and into
-`engine/`. The remaining `crates/` root is transitional only for `yai-ctl`
-until NEW.15.
+`engine/`. NEW.15 moved the command to `cmd/yai` and removed `crates/`.
 
 ## 5. Current Engine Crate Shape
 

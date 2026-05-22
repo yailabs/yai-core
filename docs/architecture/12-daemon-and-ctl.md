@@ -2,8 +2,9 @@
 
 `yaid` and `yai` are technical core surfaces.
 
-SPINE.1 classifies top-level `daemon/`, `ctl/` and `crates/yai-ctl` as
-transitional bootstrap locations. The target command shape is:
+SPINE.1 classifies top-level `daemon/`, retired `ctl/` and the former
+`crates/yai-ctl` as transitional bootstrap locations. NEW.15 moved the Rust
+technical command to `cmd/yai` and removed `crates/`. The target command shape is:
 
 ```text
 cmd/
@@ -37,7 +38,8 @@ host integration
 
 ## `yai`
 
-`yai` is the embedded technical control CLI for the core.
+`yai` is the embedded technical control CLI for the core. It now lives in
+`cmd/yai`.
 
 In NEW.1 `yai` is implemented in Rust as a client over core primitives. It
 does not own core semantics.

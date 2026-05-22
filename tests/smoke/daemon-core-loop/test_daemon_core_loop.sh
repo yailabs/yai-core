@@ -29,8 +29,8 @@ while [ ! -S "$socket_path" ]; do
   sleep 0.1
 done
 
-status_output=$(crates/target/debug/yai daemon status --socket "$socket_path")
-minimum_output=$(crates/target/debug/yai daemon run-minimum-loop --socket "$socket_path")
+status_output=$(target/debug/yai daemon status --socket "$socket_path")
+minimum_output=$(target/debug/yai daemon run-minimum-loop --socket "$socket_path")
 minimum_journal=$(printf '%s\n' "$minimum_output" | sed -n 's/.*"journal_path":"\([^"]*\)".*/\1/p')
 
 if [ -z "$minimum_journal" ]; then
@@ -38,9 +38,9 @@ if [ -z "$minimum_journal" ]; then
   exit 1
 fi
 
-journal_output=$(crates/target/debug/yai daemon journal-summary --socket "$socket_path" --journal "$minimum_journal")
-projection_output=$(crates/target/debug/yai daemon projection-summary --socket "$socket_path" --journal "$minimum_journal")
-filesystem_output=$(crates/target/debug/yai daemon run-filesystem-loop --socket "$socket_path")
+journal_output=$(target/debug/yai daemon journal-summary --socket "$socket_path" --journal "$minimum_journal")
+projection_output=$(target/debug/yai daemon projection-summary --socket "$socket_path" --journal "$minimum_journal")
+filesystem_output=$(target/debug/yai daemon run-filesystem-loop --socket "$socket_path")
 filesystem_journal=$(printf '%s\n' "$filesystem_output" | sed -n 's/.*"journal_path":"\([^"]*\)".*/\1/p')
 
 if [ -z "$filesystem_journal" ]; then
@@ -48,8 +48,8 @@ if [ -z "$filesystem_journal" ]; then
   exit 1
 fi
 
-filesystem_summary=$(crates/target/debug/yai daemon journal-summary --socket "$socket_path" --journal "$filesystem_journal")
-shutdown_output=$(crates/target/debug/yai daemon shutdown --socket "$socket_path")
+filesystem_summary=$(target/debug/yai daemon journal-summary --socket "$socket_path" --journal "$filesystem_journal")
+shutdown_output=$(target/debug/yai daemon shutdown --socket "$socket_path")
 
 printf '%s\n' "$status_output" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$minimum_output" | grep '"status":"completed"' >/dev/null

@@ -111,8 +111,9 @@ Current bootstrap roots are transitional:
 | Current root | Target destination | Status |
 |---|---|---|
 | `lib/` | `system/` plus Rust-owned data logic in `engine/` | transitional |
-| `crates/` | `engine/` and `cmd/yai/` | transitional |
-| `ctl/` | `cmd/yai/` or removed after drain | transitional |
+| `crates/` | removed after NEW.15 | retired |
+| `ctl/` | retired pointer only | transitional docs pointer |
+| `cmd/yai/` | Rust technical command | active after NEW.15 |
 | top-level `daemon/` | `cmd/yaid/` and `system/daemon/` | transitional |
 
 The target does not keep `lib/` as the long-term implementation root. NEW.13
@@ -140,6 +141,7 @@ include/yai/
 lib/
 daemon/
 ctl/
+cmd/
 proto/
 tests/
 tools/checks/
@@ -262,13 +264,12 @@ engine/yai-engine/src/query.rs
 engine/yai-engine/src/ffi.rs
 engine/yai-engine-ffi/Cargo.toml
 engine/yai-engine-ffi/src/lib.rs
-crates/Cargo.toml
-crates/yai-ctl/Cargo.toml
-crates/yai-ctl/src/main.rs
+cmd/yai/Cargo.toml
+cmd/yai/src/main.rs
 ```
 
-The `engine/` paths are the NEW.14 engine target. The `crates/yai-ctl` paths
-remain transitional until NEW.15 moves the command to `cmd/yai`.
+The `engine/` paths are the NEW.14 engine target. The `cmd/yai` paths are the
+NEW.15 technical command target. `crates/` is removed after NEW.15.
 
 The planned NEW.14 through NEW.21 sequence moves these bootstrap paths without
 changing smoke behavior.

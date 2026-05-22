@@ -31,8 +31,8 @@ and classify residue.
 
 SPINE.1 adopts filesystem / data-spine refoundation as the next phase. The
 target layout is `include/`, `system/`, `engine/` and `cmd/`; Rust owns the
-operational data spine; `lib/`, `crates/`, `ctl/` and top-level `daemon/` are
-transitional bootstrap roots.
+operational data spine; `lib/`, retired `ctl/` and top-level `daemon/` are
+transitional bootstrap roots. `crates/` is removed after NEW.15.
 
 SPINE.2 adopts the model/provider experiment maturity ladder. L0 provider
 scouting can start immediately outside the core. The first canonical AI
@@ -54,7 +54,7 @@ Agent framework/tool-call traces begin after that at NEW.29/NEW.30.
 | 0008 | C first, Rust operational data engine | C owns public contracts; Rust later owns advanced operational data. |
 | 0009 | System engine cmd layout | `include/`, `system/`, `engine/` and `cmd/` are the target layout. |
 | 0010 | Rust data spine ownership | Rust owns store, journal, record, graph, index/query, memory, projection, reconcile, retention and integrity. |
-| 0011 | Lib is transitional | `lib/`, `crates/`, `ctl/` and top-level `daemon/` are bootstrap roots. |
+| 0011 | Lib is transitional | `lib/`, retired `ctl/` and top-level `daemon/` are bootstrap roots; `crates/` is removed after NEW.15. |
 | 0012 | Naked model before agent framework | First AI behavior experiment is a naked model inside a case; agent frameworks are later adapters. |
 
 ## Combined Doctrine

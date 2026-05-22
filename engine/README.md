@@ -9,5 +9,4 @@ engine/yai-engine
 engine/yai-engine-ffi
 ```
 
-`crates/` remains transitional only for `yai-ctl` until NEW.15 moves the
-command to `cmd/yai`.
+NEW.15 moved the command to `cmd/yai` and removed `crates/`.

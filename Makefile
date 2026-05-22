@@ -75,10 +75,12 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.14 rust engine workspace moved to engine/\n"
-	@printf "next: NEW.15 move yai command crates/yai-ctl -> cmd/yai\n"
+	@printf "status: NEW.15 yai command moved to cmd/yai\n"
+	@printf "next: NEW.16 move yaid entrypoint daemon/main.c -> cmd/yaid/main.c\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
-	@printf "transitional: lib/ crates/yai-ctl ctl/ daemon/\n"
+	@printf "transitional: lib/ daemon/\n"
+	@printf "crates: removed\n"
+	@printf "ctl: retired\n"
 	@printf "install-local: delayed to NEW.20\n"
 
 check-layout:
@@ -151,8 +153,8 @@ build-rust-ffi:
 build-rust:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml --workspace
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo test --manifest-path engine/Cargo.toml --workspace
-	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path crates/Cargo.toml --workspace
-	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo test --manifest-path crates/Cargo.toml --workspace
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path cmd/yai/Cargo.toml
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo test --manifest-path cmd/yai/Cargo.toml
 
 build: build-c build-rust
 
@@ -235,4 +237,4 @@ smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-n
 check: check-layout check-docs build smoke
 
 clean:
-	rm -rf "$(BUILD_DIR)" "$(RUST_TARGET_DIR)" crates/target engine/target
+	rm -rf "$(BUILD_DIR)" "$(RUST_TARGET_DIR)" engine/target cmd/yai/target

@@ -1,5 +1,5 @@
 [package]
-name = "yai-ctl"
+name = "yai"
 version = "0.0.0-newcore"
 edition = "2021"
 

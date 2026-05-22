@@ -125,8 +125,11 @@ NEW.21  filesystem refactor milestone freeze
 
 NEW.14 status: completed as the first physical refactor wave. It moved
 `crates/yai-core-engine` to `engine/yai-engine` and
-`crates/yai-core-engine-sys` to `engine/yai-engine-ffi`. `crates/` remains only
-for `yai-ctl` until NEW.15.
+`crates/yai-core-engine-sys` to `engine/yai-engine-ffi`.
+
+NEW.15 status: completed as the command move wave. It moved `crates/yai-ctl` to
+`cmd/yai`, removed `crates/`, and left `yaid` in the top-level `daemon/` source
+root until NEW.16.
 
 NEW.13 planning artifacts:
 
@@ -135,6 +138,7 @@ new13-filesystem-refactor-plan.md
 filesystem-move-matrix.md
 engine-ownership-map.md
 system-ownership-map.md
+new15-command-layout.md
 ```
 
 Model/provider experiment runway:

@@ -68,8 +68,13 @@ CLI shape as product UX.
 
 ## NEW.20 Local Command
 
-SPINE.1 delays installed local command layout to NEW.20. NEW.13 is now target
-filesystem doctrine/refactor planning for `system/engine/cmd/include`.
+SPINE.1 delays installed local command layout to NEW.20. NEW.13 is target
+filesystem doctrine/refactor planning for `system/engine/cmd/include`; NEW.15
+moved the technical command to `cmd/yai`.
+
+`cmd/yai` is not Console. It remains a technical control command over core and
+daemon surfaces. Console command UX, slash commands and operator flows remain
+outside this repository.
 
 NEW.20 is expected to make `yai` the installed technical command:
 

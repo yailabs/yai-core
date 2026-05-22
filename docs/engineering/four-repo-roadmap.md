@@ -173,9 +173,9 @@ for future fixtures, but it is not canonical core validation.
 | NEW.10 | Rust operational data engine R1 integration | done |
 | NEW.11 | Daemon IPC v0 | done |
 | NEW.12 | Daemon-backed core loop v0 | done |
-| NEW.13 | Target filesystem doctrine: system/engine/cmd/include | current |
-| NEW.14 | Move Rust workspace: crates/ -> engine/ | planned |
-| NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | planned |
+| NEW.13 | Target filesystem doctrine: system/engine/cmd/include | done |
+| NEW.14 | Move Rust workspace: crates/ -> engine/ | done |
+| NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | current |
 | NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | planned |
 | NEW.17 | Move C implementation: lib/ -> system/ | planned |
 | NEW.18 | Split C data logic: system bridge vs engine ownership | planned |

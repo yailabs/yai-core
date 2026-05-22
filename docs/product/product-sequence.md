@@ -7,6 +7,10 @@ The product begins as `yai-core`: a local AI operational control core.
 around the core: interfaces project primitive truth, and console gives humans an
 operator surface over projections and review flows.
 
+NEW.15 places the technical command at `cmd/yai`. That command is a core
+control surface for development, diagnostics and daemon interaction. It is not
+the Console product UX, and it must not absorb operator command surfaces.
+
 ## Sequence
 
 | Stage | Product | Core Proof |

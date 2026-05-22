@@ -12,9 +12,10 @@ path behind the C ABI. `yai` is the canonical local technical command and
 
 SPINE.1 rebases the next phase: the repository is moving toward filesystem /
 data-spine refoundation before local install layout. NEW.14 moved the Rust
-operational data engine into `engine/`. The current `lib/`, `crates/yai-ctl`,
-`ctl/` and top-level `daemon/` roots are still bootstrap-era implementation
-locations, not the final filesystem doctrine.
+operational data engine into `engine/`. NEW.15 moved the Rust technical command
+into `cmd/yai` and removed `crates/`. The current `lib/`, retired `ctl/` pointer
+and top-level `daemon/` roots are still bootstrap-era surfaces, not the final
+filesystem doctrine.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -31,8 +32,8 @@ docs/engineering/data-spine-refactor-roadmap.md
 docs/engineering/new13-filesystem-refactor-plan.md
 ```
 
-Status: NEW.14 Rust engine workspace moved to `engine/`. The next move wave is
-NEW.15 `yai` command move from `crates/yai-ctl` to `cmd/yai`. Local install
+Status: NEW.15 `yai` command moved to `cmd/yai`. The next move wave is NEW.16
+`yaid` entrypoint move from `daemon/main.c` to `cmd/yaid/main.c`. Local install
 layout is delayed to NEW.20.
 
 NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
@@ -46,8 +47,17 @@ crates/yai-core-engine     -> engine/yai-engine
 crates/yai-core-engine-sys -> engine/yai-engine-ffi
 ```
 
-`crates/` remains transitional only because `yai-ctl` is not moved until
-NEW.15.
+That old `crates/` path is now historical; `crates/` is removed after NEW.15.
+
+NEW.15 moves the technical command:
+
+```text
+crates/yai-ctl -> cmd/yai
+```
+
+`crates/` is removed after NEW.15. `cmd/yai` is the core technical command, not
+Console or operator UX. `yaid` still uses the top-level `daemon/` source root
+until NEW.16.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:
@@ -191,9 +201,9 @@ C    = system / host boundary / ABI / daemon / carrier / control enforcement she
 Rust = engine / operational data spine
 ```
 
-`yai` is Rust and still lives under `crates/yai-ctl` until NEW.15. The
-bootstrap operational data engine is Rust and now lives under `engine/`. Local
-command installation is delayed to NEW.20, and there is no public API, no HTTP, no
+`yai` is Rust and now lives under `cmd/yai`. The bootstrap operational data
+engine is Rust and now lives under `engine/`. Local command installation is
+delayed to NEW.20, and there is no public API, no HTTP, no
 auth, no service manager, no multi-client runtime, no process/network/model/database carrier, no full policy engine, no graph
 database, no vector/RAG retrieval, no automatic repair, no memory consolidation
 engine, no backend switch and no full secret redaction engine yet.

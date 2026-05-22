@@ -86,5 +86,6 @@ crates/yai-core-engine     -> engine/yai-engine
 crates/yai-core-engine-sys -> engine/yai-engine-ffi
 ```
 
-`yai-ctl` remains under `crates/` until NEW.15. The C ABI, C sources, daemon
-entrypoint and smoke semantics are unchanged in NEW.14.
+NEW.15 then moved the command to `cmd/yai` and removed `crates/`. The C ABI, C
+sources, daemon entrypoint and smoke semantics are unchanged across NEW.14 and
+NEW.15.

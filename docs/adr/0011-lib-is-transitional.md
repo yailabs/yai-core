@@ -20,8 +20,8 @@ Current bootstrap roots are classified as:
 
 ```text
 lib/              transitional
-crates/           transitional
-ctl/              transitional
+crates/           retired after NEW.15
+ctl/              retired pointer
 top-level daemon/ transitional
 ```
 

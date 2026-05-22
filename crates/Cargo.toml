@@ -1,5 +1,0 @@
-[workspace]
-members = [
-    "yai-ctl",
-]
-resolver = "2"
