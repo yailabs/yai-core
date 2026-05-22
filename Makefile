@@ -28,7 +28,7 @@ C_SOURCES := \
 	lib/control/decision.c \
 	lib/control/obligation.c \
 	lib/control/receipt_requirement.c \
-	lib/daemon/daemon_status.c \
+	system/daemon/daemon_status.c \
 	lib/effect/carrier.c \
 	lib/effect/effect_hash.c \
 	lib/effect/receipt.c \
@@ -75,10 +75,11 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.15 yai command moved to cmd/yai\n"
-	@printf "next: NEW.16 move yaid entrypoint daemon/main.c -> cmd/yaid/main.c\n"
+	@printf "status: NEW.16 yaid entrypoint moved to cmd/yaid\n"
+	@printf "next: NEW.17 move C implementation lib/ -> system/\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
-	@printf "transitional: lib/ daemon/\n"
+	@printf "transitional: lib/\n"
+	@printf "daemon: moved to cmd/yaid + system/daemon\n"
 	@printf "crates: removed\n"
 	@printf "ctl: retired\n"
 	@printf "install-local: delayed to NEW.20\n"
@@ -101,9 +102,9 @@ $(C_LIBRARY): $(C_OBJECTS)
 	@mkdir -p "$(dir $@)"
 	$(AR) rcs "$@" $(C_OBJECTS)
 
-$(YAID): daemon/main.c daemon/ipc.c daemon/core_loop.c $(C_LIBRARY)
+$(YAID): cmd/yaid/main.c system/daemon/ipc.c system/daemon/core_loop.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
-	$(CC) $(CFLAGS) daemon/main.c daemon/ipc.c daemon/core_loop.c $(C_LIBRARY) -o "$@"
+	$(CC) $(CFLAGS) cmd/yaid/main.c system/daemon/ipc.c system/daemon/core_loop.c $(C_LIBRARY) -o "$@"
 
 $(SMOKE_MINIMUM_LOOP): tests/smoke/minimum-loop/test_minimum_loop.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"

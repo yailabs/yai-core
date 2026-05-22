@@ -17,7 +17,7 @@ require_file() {
   fi
 }
 
-for dir in docs include/yai lib daemon ctl cmd/yai proto/schemas proto/fixtures tests tools/checks packaging examples vendor; do
+for dir in docs include/yai lib system/daemon ctl cmd/yai cmd/yaid proto/schemas proto/fixtures tests tools/checks packaging examples vendor; do
   require_dir "$dir"
 done
 
@@ -38,10 +38,14 @@ require_file "VERSION"
 require_file "Makefile"
 require_file "cmd/yai/Cargo.toml"
 require_file "cmd/yai/src/main.rs"
+require_file "cmd/yaid/main.c"
 require_file "engine/Cargo.toml"
 require_file "engine/README.md"
 require_file "engine/yai-engine/Cargo.toml"
 require_file "engine/yai-engine-ffi/Cargo.toml"
+require_file "system/daemon/ipc.c"
+require_file "system/daemon/core_loop.c"
+require_file "system/daemon/daemon_status.c"
 require_file "tests/smoke/minimum-loop/test_minimum_loop.c"
 require_file "tests/smoke/persistent-journal/test_persistent_journal.c"
 require_file "tests/smoke/control-gate/test_control_gate.c"

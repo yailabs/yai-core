@@ -4,7 +4,9 @@
 
 SPINE.1 classifies top-level `daemon/`, retired `ctl/` and the former
 `crates/yai-ctl` as transitional bootstrap locations. NEW.15 moved the Rust
-technical command to `cmd/yai` and removed `crates/`. The target command shape is:
+technical command to `cmd/yai` and removed `crates/`. NEW.16 moved the daemon
+entrypoint to `cmd/yaid`, daemon support to `system/daemon` and removed the
+top-level `daemon/` source root. The command shape is:
 
 ```text
 cmd/
@@ -16,11 +18,18 @@ cmd/
 ```
 
 The target system plane keeps daemon implementation and host/control boundary
-code under `system/`.
+code under `system/`. After NEW.16, `system/daemon` owns daemon support:
+
+```text
+system/daemon/ipc.c
+system/daemon/core_loop.c
+system/daemon/daemon_status.c
+```
 
 ## `yaid`
 
 `yaid` is the resident local process.
+It is C and its entrypoint lives in `cmd/yaid/main.c`.
 
 Owns:
 

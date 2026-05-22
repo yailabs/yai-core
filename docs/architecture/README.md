@@ -44,7 +44,7 @@ daemon
 ctl
 ```
 
-`lib/`, retired `ctl/` and top-level `daemon/` are transitional bootstrap
+`lib/` and retired `ctl/` are transitional bootstrap
 roots, not the final filesystem doctrine.
 
 ## First Read

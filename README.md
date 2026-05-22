@@ -13,9 +13,10 @@ path behind the C ABI. `yai` is the canonical local technical command and
 SPINE.1 rebases the next phase: the repository is moving toward filesystem /
 data-spine refoundation before local install layout. NEW.14 moved the Rust
 operational data engine into `engine/`. NEW.15 moved the Rust technical command
-into `cmd/yai` and removed `crates/`. The current `lib/`, retired `ctl/` pointer
-and top-level `daemon/` roots are still bootstrap-era surfaces, not the final
-filesystem doctrine.
+into `cmd/yai` and removed `crates/`. NEW.16 moved the C daemon entrypoint to
+`cmd/yaid` and daemon support to `system/daemon`. The current `lib/` and retired
+`ctl/` pointer are still bootstrap-era surfaces, not the final filesystem
+doctrine.
 
 This repository is not an agent framework, workflow engine, runtime monitor,
 TUI, cloud platform or model provider.
@@ -32,9 +33,9 @@ docs/engineering/data-spine-refactor-roadmap.md
 docs/engineering/new13-filesystem-refactor-plan.md
 ```
 
-Status: NEW.15 `yai` command moved to `cmd/yai`. The next move wave is NEW.16
-`yaid` entrypoint move from `daemon/main.c` to `cmd/yaid/main.c`. Local install
-layout is delayed to NEW.20.
+Status: NEW.16 `yaid` entrypoint moved to `cmd/yaid`. The next move wave is
+NEW.17 C implementation move from `lib/` to `system/`. Local install layout is
+delayed to NEW.20.
 
 NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
 NEW.21 and does not move source files.
@@ -56,8 +57,19 @@ crates/yai-ctl -> cmd/yai
 ```
 
 `crates/` is removed after NEW.15. `cmd/yai` is the core technical command, not
-Console or operator UX. `yaid` still uses the top-level `daemon/` source root
-until NEW.16.
+Console or operator UX.
+
+NEW.16 moves the daemon entrypoint and daemon support:
+
+```text
+daemon/main.c             -> cmd/yaid/main.c
+daemon/ipc.c              -> system/daemon/ipc.c
+daemon/core_loop.c        -> system/daemon/core_loop.c
+lib/daemon/daemon_status.c -> system/daemon/daemon_status.c
+```
+
+The top-level `daemon/` root is removed after NEW.16. `yaid` remains C, and
+`yai` remains Rust in `cmd/yai`.
 
 NEW.1 implemented the first in-process minimum loop. NEW.2 makes that loop
 persistent and reconstructable through a file-backed JSONL journal:

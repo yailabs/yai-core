@@ -119,7 +119,9 @@ bootstrap era and will be moved only by later refactor waves.
 | `crates/` | removed after NEW.15 | retired |
 | `ctl/` | retired pointer only | transitional docs pointer |
 | `cmd/yai/` | Rust technical command | active after NEW.15 |
-| top-level `daemon/` | `cmd/yaid/` and `system/daemon/` | transitional |
+| top-level `daemon/` | removed after NEW.16 | retired |
+| `cmd/yaid/` | C daemon entrypoint | active after NEW.16 |
+| `system/daemon/` | C daemon support | active after NEW.16 |
 
 The target does not keep `lib/` as the long-term implementation root.
 
@@ -178,16 +180,17 @@ Rust engine becomes the operational data spine.
 The current implementation wave state is:
 
 ```text
-NEW.15 yai command moved to cmd/yai
+NEW.16 yaid entrypoint moved to cmd/yaid
 ```
 
 NEW.14 moved only the Rust data engine crates into `engine/`. NEW.15 moved the
 Rust technical command into `cmd/yai` and removed `crates/`. Local install
-layout is delayed to NEW.20. Do not install a filesystem shape that is already
-known to be transitional.
+NEW.16 moved `yaid` into `cmd/yaid` and daemon support into `system/daemon`.
+Local install layout is delayed to NEW.20. Do not install a filesystem shape
+that is already known to be transitional.
 
 NEW.13 is retained as the planning wave. NEW.14 is the first physical move
-wave; NEW.15 is the command move wave.
+wave; NEW.15 is the command move wave; NEW.16 is the daemon move wave.
 
 ## Model Provider Experiment Boundary
 
@@ -217,5 +220,6 @@ After NEW.21:
 .rs allowed under engine/ and cmd/yai/
 ```
 
-`lib/`, top-level `daemon/` and retired `ctl/` are temporary exceptions only
-until the staged refactor waves complete. `crates/` is removed after NEW.15.
+`lib/` and retired `ctl/` are temporary exceptions only until the staged
+refactor waves complete. `crates/` is removed after NEW.15, and top-level
+`daemon/` is removed after NEW.16.

@@ -248,6 +248,20 @@ NEW.15 applies wave-coupled extraction only as command-boundary audit:
 No old source is copied. `cmd/yai` remains the technical core command, not
 operator Console.
 
+NEW.16 applies wave-coupled extraction only as daemon-boundary audit:
+
+```text
+../yai/src/runtime/activation/*      -> system/daemon
+../yai/src/runtime/lifecycle/*       -> system/daemon
+../yai/src/runtime/machine/*         -> system/daemon
+../yai/src/runtime/connections/*     -> system/daemon/ipc
+../yai/tools/runtime/*               -> system/daemon/tooling
+../yai/Documentation/manuals/runtime-service-operations.md -> daemon docs
+```
+
+No old source is copied. `cmd/yaid` remains the C daemon entrypoint and
+`system/daemon` owns daemon support.
+
 The inventory records these routes. No old-yai source is copied.
 
 Future model/provider waves must audit and classify:

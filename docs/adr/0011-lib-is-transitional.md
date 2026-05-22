@@ -22,7 +22,7 @@ Current bootstrap roots are classified as:
 lib/              transitional
 crates/           retired after NEW.15
 ctl/              retired pointer
-top-level daemon/ transitional
+top-level daemon/ retired after NEW.16
 ```
 
 ## Consequences

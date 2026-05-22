@@ -1,17 +1,17 @@
 # Filesystem Move Matrix
 
-Status: NEW.15 partially applied move matrix.
+Status: NEW.16 partially applied move matrix.
 
 This matrix is the operational checklist for NEW.14 through NEW.21. NEW.14
-moved the Rust engine crates and NEW.15 moved the Rust command; later rows
-remain planned.
+moved the Rust engine crates, NEW.15 moved the Rust command and NEW.16 moved
+the daemon entrypoint/support; later rows remain planned.
 
 ## Root Moves
 
 | Current | Target | Wave | Notes |
 |---|---|---|---|
 | `crates/` | `engine/` plus `cmd/yai/` | NEW.14, NEW.15 | Completed; `crates/` removed after NEW.15. |
-| `daemon/` | `cmd/yaid/` plus `system/daemon/` | NEW.16 | Split entrypoint from daemon implementation. |
+| `daemon/` | `cmd/yaid/` plus `system/daemon/` | NEW.16 | Completed; top-level `daemon/` removed. |
 | `lib/` | `system/` plus `system/engine_bridge` | NEW.17, NEW.18 | System C first, data bridge split second. |
 | `ctl/` | retired pointer README | NEW.15 | No implementation root after `cmd/yai` exists. |
 | `include/` | `include/` | unchanged | Remains public ABI root. |
@@ -26,7 +26,7 @@ remain planned.
 | `lib/op` | `system/op` | NEW.17 |
 | `lib/control` | `system/control` | NEW.17 |
 | `lib/effect` | `system/effect` | NEW.17 |
-| `lib/daemon` | `system/daemon` | NEW.17 |
+| `lib/daemon` | `system/daemon` | NEW.16 done |
 | `lib/internal` | `system/internal` | NEW.17 |
 | `lib/store` | split: `system/engine_bridge` + `engine/yai-engine/src/store` | NEW.18 |
 | `lib/graph` | split: `system/engine_bridge` + `engine/yai-engine/src/graph` | NEW.18 |
@@ -37,9 +37,9 @@ remain planned.
 | `crates/yai-core-engine` | `engine/yai-engine` | NEW.14 done |
 | `crates/yai-core-engine-sys` | `engine/yai-engine-ffi` | NEW.14 done |
 | `crates/yai-ctl` | `cmd/yai` | NEW.15 done |
-| `daemon/main.c` | `cmd/yaid/main.c` | NEW.16 |
-| `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 |
-| `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 |
+| `daemon/main.c` | `cmd/yaid/main.c` | NEW.16 done |
+| `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 done |
+| `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 done |
 | `ctl/` | retired pointer README after `cmd/yai` exists | NEW.15 done |
 
 ## C System Files
@@ -58,7 +58,7 @@ remain planned.
 | `lib/effect/effect_hash.c` | `system/effect/effect_hash.c` | move |
 | `lib/effect/receipt.c` | `system/effect/receipt.c` | move |
 | `lib/effect/carriers/filesystem_carrier.c` | `system/effect/carriers/filesystem_carrier.c` | move |
-| `lib/daemon/daemon_status.c` | `system/daemon/daemon_status.c` | move |
+| `lib/daemon/daemon_status.c` | `system/daemon/daemon_status.c` | moved in NEW.16 |
 | `lib/internal/string_util.c` | `system/internal/string_util.c` | move |
 
 ## Duplicate Data Logic Classification
@@ -109,10 +109,10 @@ guard wave can remove bootstrap assumptions.
 
 | Current file | Target file | Wave |
 |---|---|---|
-| `daemon/main.c` | `cmd/yaid/main.c` | NEW.16 |
-| `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 |
-| `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 |
-| `daemon/README.md` | `cmd/yaid/README.md` or `system/daemon/README.md` | NEW.16 |
+| `cmd/yaid/main.c` | `cmd/yaid/main.c` | NEW.16 done |
+| `system/daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 done |
+| `system/daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 done |
+| `system/daemon/daemon_status.c` | `system/daemon/daemon_status.c` | NEW.16 done |
 
 ## Final Placement Gate
 
@@ -124,6 +124,7 @@ After NEW.21:
 .rs -> engine/, cmd/yai/
 ```
 
-After NEW.15, `.rs` is allowed under `engine/` and `cmd/yai/`. No
-implementation source remains under `crates/`. After NEW.21, no implementation
-source remains under `lib/`, top-level `daemon/` or `ctl/`.
+After NEW.16, `.rs` is allowed under `engine/` and `cmd/yai/`; `.c` is allowed
+under `lib/`, `system/`, `cmd/yaid/` and `tests/`. No implementation source
+remains under `crates/` or top-level `daemon/`. After NEW.21, no implementation
+source remains under `lib/` or `ctl/`.

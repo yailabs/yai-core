@@ -128,8 +128,11 @@ NEW.14 status: completed as the first physical refactor wave. It moved
 `crates/yai-core-engine-sys` to `engine/yai-engine-ffi`.
 
 NEW.15 status: completed as the command move wave. It moved `crates/yai-ctl` to
-`cmd/yai`, removed `crates/`, and left `yaid` in the top-level `daemon/` source
-root until NEW.16.
+`cmd/yai` and removed `crates/`.
+
+NEW.16 status: completed as the daemon move wave. It moved `daemon/main.c` to
+`cmd/yaid/main.c`, daemon support to `system/daemon`, and removed the top-level
+`daemon/` source root.
 
 NEW.13 planning artifacts:
 
@@ -139,6 +142,7 @@ filesystem-move-matrix.md
 engine-ownership-map.md
 system-ownership-map.md
 new15-command-layout.md
+new16-daemon-layout.md
 ```
 
 Model/provider experiment runway:

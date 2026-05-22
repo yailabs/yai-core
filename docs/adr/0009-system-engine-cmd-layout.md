@@ -24,9 +24,9 @@ proto/   = schemas and fixtures
 tests/   = smoke, unit, integration and adversarial tests
 ```
 
-`lib/`, retired `ctl/` and top-level `daemon/` are transitional bootstrap
-roots. `crates/` is removed after NEW.15. They must not be treated as final
-layout doctrine.
+`lib/` and retired `ctl/` are transitional bootstrap roots. `crates/` is
+removed after NEW.15, and top-level `daemon/` is removed after NEW.16. They
+must not be treated as final layout doctrine.
 
 ## Consequences
 
@@ -49,6 +49,8 @@ NEW.21  filesystem refactor milestone freeze
 
 NEW.15 makes `cmd/yai` the canonical Rust technical command location. It does
 not make `yai-core` own Console UX.
+NEW.16 makes `cmd/yaid` the canonical C daemon entrypoint location and
+`system/daemon` the daemon support location.
 
 ## Non-goals
 

@@ -114,7 +114,9 @@ Current bootstrap roots are transitional:
 | `crates/` | removed after NEW.15 | retired |
 | `ctl/` | retired pointer only | transitional docs pointer |
 | `cmd/yai/` | Rust technical command | active after NEW.15 |
-| top-level `daemon/` | `cmd/yaid/` and `system/daemon/` | transitional |
+| top-level `daemon/` | removed after NEW.16 | retired |
+| `cmd/yaid/` | C daemon entrypoint | active after NEW.16 |
+| `system/daemon/` | C daemon support | active after NEW.16 |
 
 The target does not keep `lib/` as the long-term implementation root. NEW.13
 is target filesystem doctrine/refactor planning. Local install layout is
@@ -139,7 +141,8 @@ Allowed NEW.0 content:
 docs/
 include/yai/
 lib/
-daemon/
+cmd/
+system/
 ctl/
 cmd/
 proto/
@@ -244,7 +247,10 @@ lib/effect/receipt.c
 lib/store/record.c
 lib/store/journal.c
 lib/projection/projection.c
-daemon/main.c
+cmd/yaid/main.c
+system/daemon/ipc.c
+system/daemon/core_loop.c
+system/daemon/daemon_status.c
 ```
 
 Minimum Rust files:

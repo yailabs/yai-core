@@ -1,6 +1,6 @@
 # System Ownership Map
 
-Status: NEW.13 planning artifact.
+Status: NEW.16 active daemon support location, planning artifact for the rest of system.
 
 `system/` is the C host, daemon, carrier, control and FFI-boundary plane. It
 keeps the machine boundary explicit while Rust owns the operational data spine.
@@ -50,10 +50,10 @@ system/
 | `lib/control/*` | `system/control/` | NEW.17 |
 | `lib/effect/*` | `system/effect/` | NEW.17 |
 | `lib/effect/carriers/*` | `system/effect/carriers/` | NEW.17 |
-| `lib/daemon/*` | `system/daemon/` | NEW.17 |
+| `lib/daemon/daemon_status.c` | `system/daemon/daemon_status.c` | NEW.16 done |
 | `lib/internal/*` | `system/internal/` | NEW.17 |
-| `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 |
-| `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 |
+| `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 done |
+| `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 done |
 | `lib/store/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | NEW.18 |
 
 ## Command Boundary
@@ -74,9 +74,12 @@ parse process-level arguments, initialize daemon configuration and call into
 | Old-yai material | System route | Classification |
 |---|---|---|
 | `../yai/src/runtime/execution/*` | `system/effect`, `system/control`, `system/daemon` | mine envelopes, control bridge and receipt posture |
+| `../yai/src/runtime/activation/*` | `system/daemon` | mine boot, mode selection and startup evidence |
+| `../yai/src/runtime/connections/*` | `system/daemon/ipc` | mine local client connection evidence |
 | `../yai/src/runtime/carriers/*` | `system/effect/carriers` | mine host-mediated carrier posture |
 | `../yai/src/runtime/machine/*` | `system/daemon` | mine resident loop evidence |
 | `../yai/src/runtime/lifecycle/*` | `system/daemon` | mine status/readiness/fail-closed posture |
+| `../yai/tools/runtime/*` | `system/daemon/tooling` | mine tooling posture only |
 | `../yai/src/case/subjects/*` | `system/subject` plus engine residue refs | mine subject binding and evidence trace |
 | `../yai/src/case/materialization/*` | `system/case` plus engine residue | mine materialization contracts |
 | `../yai/src/case/surface/*` | projection/console future | do not absorb as system UX |

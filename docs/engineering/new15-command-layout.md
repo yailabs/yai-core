@@ -46,8 +46,8 @@ target/debug/yai
 
 ## Boundaries
 
-`yai` is Rust. `yaid` is still built from top-level `daemon/` C sources until
-NEW.16 moves the daemon entrypoint to `cmd/yaid`.
+`yai` is Rust. NEW.16 moves `yaid` to `cmd/yaid` and daemon support to
+`system/daemon`.
 
 No daemon protocol, C ABI, C source, engine source or smoke behavior changes in
 NEW.15.
