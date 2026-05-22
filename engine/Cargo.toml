@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "yai-ctl",
+    "yai-engine",
+    "yai-engine-ffi",
 ]
 resolver = "2"

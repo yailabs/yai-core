@@ -248,26 +248,27 @@ daemon/main.c
 Minimum Rust files:
 
 ```text
+engine/Cargo.toml
+engine/yai-engine/Cargo.toml
+engine/yai-engine/src/lib.rs
+engine/yai-engine/src/store.rs
+engine/yai-engine/src/journal.rs
+engine/yai-engine/src/record.rs
+engine/yai-engine/src/graph.rs
+engine/yai-engine/src/index.rs
+engine/yai-engine/src/memory.rs
+engine/yai-engine/src/projection.rs
+engine/yai-engine/src/query.rs
+engine/yai-engine/src/ffi.rs
+engine/yai-engine-ffi/Cargo.toml
+engine/yai-engine-ffi/src/lib.rs
 crates/Cargo.toml
 crates/yai-ctl/Cargo.toml
 crates/yai-ctl/src/main.rs
-crates/yai-core-engine/Cargo.toml
-crates/yai-core-engine/src/lib.rs
-crates/yai-core-engine/src/store.rs
-crates/yai-core-engine/src/journal.rs
-crates/yai-core-engine/src/record.rs
-crates/yai-core-engine/src/graph.rs
-crates/yai-core-engine/src/index.rs
-crates/yai-core-engine/src/memory.rs
-crates/yai-core-engine/src/projection.rs
-crates/yai-core-engine/src/query.rs
-crates/yai-core-engine/src/ffi.rs
-crates/yai-core-engine-sys/Cargo.toml
-crates/yai-core-engine-sys/src/lib.rs
 ```
 
-These paths describe bootstrap implementation history. They are not target V2
-paths.
+The `engine/` paths are the NEW.14 engine target. The `crates/yai-ctl` paths
+remain transitional until NEW.15 moves the command to `cmd/yai`.
 
 The planned NEW.14 through NEW.21 sequence moves these bootstrap paths without
 changing smoke behavior.

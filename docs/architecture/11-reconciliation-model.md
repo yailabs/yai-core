@@ -108,6 +108,10 @@ lib/reconcile -> split: system/engine_bridge + engine/yai-engine/src/reconcile
 
 No reconciliation implementation moves in NEW.13.
 
+NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
+physical owner for future reconcile mechanics. C reconcile code remains under
+`lib/reconcile` until the NEW.18 bridge split.
+
 ## Projection Interaction
 
 NEW.8 makes divergence visibility explicit in projection results. A projection

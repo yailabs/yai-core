@@ -8,4 +8,4 @@ name = "yai"
 path = "src/main.rs"
 
 [dependencies]
-yai-core-engine = { path = "../yai-core-engine" }
+yai-engine = { path = "../../engine/yai-engine" }

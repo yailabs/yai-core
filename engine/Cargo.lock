@@ -3,12 +3,9 @@
 version = 4
 
 [[package]]
-name = "yai-ctl"
+name = "yai-engine"
 version = "0.0.0-newcore"
-dependencies = [
- "yai-engine",
-]
 
 [[package]]
-name = "yai-engine"
+name = "yai-engine-ffi"
 version = "0.0.0-newcore"

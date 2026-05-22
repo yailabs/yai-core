@@ -7,9 +7,10 @@ RUST_FFI_LIBS ?= -lpthread -ldl -lm
 PREFIX ?= $(HOME)/.local
 YAI_HOME ?= $(HOME)/.yai
 BUILD_DIR := build
-RUST_ENGINE_STATIC := crates/target/debug/libyai_core_engine.a
+RUST_TARGET_DIR := target
+RUST_ENGINE_STATIC := $(RUST_TARGET_DIR)/debug/libyai_core_engine.a
 INSTALL_BINDIR := $(PREFIX)/bin
-YAI_BIN := crates/target/debug/yai
+YAI_BIN := $(RUST_TARGET_DIR)/debug/yai
 
 C_SOURCES := \
 	lib/internal/string_util.c \
@@ -74,10 +75,10 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.13 target filesystem doctrine / refactor plan\n"
-	@printf "next: NEW.14 move Rust workspace crates/ -> engine/\n"
+	@printf "status: NEW.14 rust engine workspace moved to engine/\n"
+	@printf "next: NEW.15 move yai command crates/yai-ctl -> cmd/yai\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
-	@printf "transitional: lib/ crates/ ctl/ daemon/\n"
+	@printf "transitional: lib/ crates/yai-ctl ctl/ daemon/\n"
 	@printf "install-local: delayed to NEW.20\n"
 
 check-layout:
@@ -145,11 +146,13 @@ $(SMOKE_RUST_ENGINE_R1): tests/smoke/rust-engine-r1/test_rust_engine_r1.c $(C_LI
 build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1)
 
 build-rust-ffi:
-	cargo build --manifest-path crates/Cargo.toml -p yai-core-engine
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
 
 build-rust:
-	cargo build --manifest-path crates/Cargo.toml --workspace
-	cargo test --manifest-path crates/Cargo.toml --workspace
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml --workspace
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo test --manifest-path engine/Cargo.toml --workspace
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path crates/Cargo.toml --workspace
+	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo test --manifest-path crates/Cargo.toml --workspace
 
 build: build-c build-rust
 
@@ -232,4 +235,4 @@ smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-n
 check: check-layout check-docs build smoke
 
 clean:
-	rm -rf "$(BUILD_DIR)" crates/target
+	rm -rf "$(BUILD_DIR)" "$(RUST_TARGET_DIR)" crates/target engine/target

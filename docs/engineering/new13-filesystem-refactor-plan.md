@@ -87,7 +87,7 @@ ownership moves behind the ABI.
 
 | Wave | Work |
 |---|---|
-| NEW.14 | Move Rust workspace: `crates/` -> `engine/` |
+| NEW.14 | Move Rust engine workspace: `crates/yai-core-engine*` -> `engine/` |
 | NEW.15 | Move `yai` command: `crates/yai-ctl` -> `cmd/yai` |
 | NEW.16 | Move `yaid` entrypoint: `daemon/main.c` -> `cmd/yaid/main.c` |
 | NEW.17 | Move C system implementation: `lib/` -> `system/` |
@@ -128,8 +128,10 @@ No ctl/ implementation root
 ```
 
 Temporary exception: NEW.14 through NEW.18 may leave bootstrap paths alive while
-the staged moves are in progress. NEW.19 must update guards to reflect the
-current stage, and NEW.21 must freeze the target placement.
+the staged moves are in progress. NEW.14 allows Rust under both `engine/` and
+`crates/` because `yai-ctl` remains under `crates/` until NEW.15. NEW.19 must
+update guards to reflect the current stage, and NEW.21 must freeze the target
+placement.
 
 ## Build Target Plan
 
@@ -153,6 +155,10 @@ NEW.14 and NEW.15 should keep Rust workspace behavior stable while changing
 paths. NEW.16 and NEW.17 should keep the C build graph stable while moving
 entrypoints and implementation files. NEW.18 should keep ABI behavior stable
 while moving ownership from duplicated C data logic toward Rust engine paths.
+
+NEW.14 uses the transitional split form: `engine/Cargo.toml` builds
+`yai-engine` and `yai-engine-ffi`, while `crates/Cargo.toml` builds only
+`yai-ctl` until NEW.15 moves the command.
 
 ## Guard Plan
 

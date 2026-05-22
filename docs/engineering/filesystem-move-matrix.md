@@ -1,15 +1,15 @@
 # Filesystem Move Matrix
 
-Status: NEW.13 planning artifact.
+Status: NEW.14 partially applied move matrix.
 
-This matrix is the operational checklist for NEW.14 through NEW.21. It is not
-permission to move files during NEW.13.
+This matrix is the operational checklist for NEW.14 through NEW.21. NEW.14 has
+moved the Rust engine crates; later rows remain planned.
 
 ## Root Moves
 
 | Current | Target | Wave | Notes |
 |---|---|---|---|
-| `crates/` | `engine/` plus `cmd/yai/` | NEW.14, NEW.15 | Move workspace first, command second. |
+| `crates/` | `engine/` plus `cmd/yai/` | NEW.14, NEW.15 | Engine crates moved in NEW.14; command remains for NEW.15. |
 | `daemon/` | `cmd/yaid/` plus `system/daemon/` | NEW.16 | Split entrypoint from daemon implementation. |
 | `lib/` | `system/` plus `system/engine_bridge` | NEW.17, NEW.18 | System C first, data bridge split second. |
 | `ctl/` | removed or pointer README | NEW.15 | No implementation root after `cmd/yai` exists. |
@@ -33,8 +33,8 @@ permission to move files during NEW.13.
 | `lib/memory` | split: `system/engine_bridge` + `engine/yai-engine/src/memory` | NEW.18 |
 | `lib/projection` | split: `system/engine_bridge` + `engine/yai-engine/src/projection` | NEW.18 |
 | `lib/reconcile` | split: `system/engine_bridge` + `engine/yai-engine/src/reconcile` | NEW.18 |
-| `crates/yai-core-engine` | `engine/yai-engine` | NEW.14 |
-| `crates/yai-core-engine-sys` | `engine/yai-engine-ffi` | NEW.14 |
+| `crates/yai-core-engine` | `engine/yai-engine` | NEW.14 done |
+| `crates/yai-core-engine-sys` | `engine/yai-engine-ffi` | NEW.14 done |
 | `crates/yai-ctl` | `cmd/yai` | NEW.15 |
 | `daemon/main.c` | `cmd/yaid/main.c` | NEW.16 |
 | `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 |
@@ -96,11 +96,12 @@ guard wave can remove bootstrap assumptions.
 
 | Current file | Target file | Wave |
 |---|---|---|
-| `crates/Cargo.toml` | `engine/Cargo.toml` | NEW.14 |
-| `crates/yai-core-engine/Cargo.toml` | `engine/yai-engine/Cargo.toml` | NEW.14 |
-| `crates/yai-core-engine/src/*.rs` | `engine/yai-engine/src/` | NEW.14 |
-| `crates/yai-core-engine-sys/Cargo.toml` | `engine/yai-engine-ffi/Cargo.toml` | NEW.14 |
-| `crates/yai-core-engine-sys/src/lib.rs` | `engine/yai-engine-ffi/src/lib.rs` | NEW.14 |
+| `engine/Cargo.toml` | `engine/Cargo.toml` | NEW.14 done |
+| `engine/yai-engine/Cargo.toml` | `engine/yai-engine/Cargo.toml` | NEW.14 done |
+| `engine/yai-engine/src/*.rs` | `engine/yai-engine/src/` | NEW.14 done |
+| `engine/yai-engine-ffi/Cargo.toml` | `engine/yai-engine-ffi/Cargo.toml` | NEW.14 done |
+| `engine/yai-engine-ffi/src/lib.rs` | `engine/yai-engine-ffi/src/lib.rs` | NEW.14 done |
+| `crates/Cargo.toml` | transitional command workspace until NEW.15 | NEW.14 temporary |
 | `crates/yai-ctl/Cargo.toml` | `cmd/yai/Cargo.toml` | NEW.15 |
 | `crates/yai-ctl/src/main.rs` | `cmd/yai/src/main.rs` | NEW.15 |
 
@@ -123,5 +124,6 @@ After NEW.21:
 .rs -> engine/, cmd/yai/
 ```
 
-No implementation source remains under `lib/`, `crates/`, top-level `daemon/`
-or `ctl/`.
+During NEW.14, `.rs` is allowed under `engine/` and under `crates/yai-ctl/`.
+After NEW.21, no implementation source remains under `lib/`, `crates/`,
+top-level `daemon/` or `ctl/`.

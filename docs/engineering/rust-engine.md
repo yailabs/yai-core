@@ -102,14 +102,16 @@ engine/
 └── README.md
 ```
 
-The current `crates/` root is transitional and will move during the
-filesystem / engine refoundation waves.
+NEW.14 moved the Rust operational data engine out of `crates/` and into
+`engine/`. The remaining `crates/` root is transitional only for `yai-ctl`
+until NEW.15.
 
-## 5. Bootstrap Crate Shape
+## 5. Current Engine Crate Shape
 
 ```text
-crates/
-├── yai-core-engine/
+engine/
+├── Cargo.toml
+├── yai-engine/
 │   └── src/
 │       ├── ffi.rs
 │       ├── store.rs
@@ -120,9 +122,9 @@ crates/
 │       ├── memory.rs
 │       ├── projection.rs
 │       ├── query.rs
-│       ├── retention.rs
-│       └── integrity.rs
-└── yai-core-engine-sys/
+│       ├── query.rs
+│       └── reconcile.rs
+└── yai-engine-ffi/
 ```
 
 The crate can exist in R0 without being production path. It should first prove

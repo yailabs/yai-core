@@ -42,6 +42,9 @@ NEW.13 route:
 lib/store -> split: system/engine_bridge + engine/yai-engine/src/store
 ```
 
+NEW.14 moved the Rust engine crate that owns the future store path to
+`engine/yai-engine`. C store code remains under `lib/store` until NEW.18.
+
 ## NEW.2 Store V0
 
 The first persistent store path is intentionally narrow:
@@ -140,6 +143,10 @@ NEW.13 route:
 lib/index -> split: system/engine_bridge + engine/yai-engine/src/index/query
 ```
 
+NEW.14 moved the Rust engine crate that owns the future index/query path to
+`engine/yai-engine`. C index/query code remains under `lib/index` until
+NEW.18.
+
 ## NEW.9 Query Boundary V0
 
 NEW.9 adds a minimal query boundary under `index`:
@@ -193,6 +200,9 @@ NEW.13 route:
 ```text
 lib/graph -> split: system/engine_bridge + engine/yai-engine/src/graph
 ```
+
+NEW.14 moved the Rust engine crate that owns the future graph path to
+`engine/yai-engine`. C graph code remains under `lib/graph` until NEW.18.
 
 ## NEW.5 Graph V0
 

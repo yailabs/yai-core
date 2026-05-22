@@ -76,3 +76,15 @@ cmd/     = yai and yaid entrypoints
 The current C data logic in `lib/store`, `lib/graph`, `lib/index`,
 `lib/memory`, `lib/projection` and `lib/reconcile` is transitional. NEW.18 must
 split it into `system/engine_bridge` versus Rust `engine/yai-engine` ownership.
+
+## NEW.14 Engine Move
+
+NEW.14 moved only the Rust engine crates:
+
+```text
+crates/yai-core-engine     -> engine/yai-engine
+crates/yai-core-engine-sys -> engine/yai-engine-ffi
+```
+
+`yai-ctl` remains under `crates/` until NEW.15. The C ABI, C sources, daemon
+entrypoint and smoke semantics are unchanged in NEW.14.

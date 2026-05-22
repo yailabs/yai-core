@@ -1,6 +1,6 @@
 # Engine Ownership Map
 
-Status: NEW.13 planning artifact.
+Status: NEW.14 active engine location.
 
 `engine/` is the Rust operational data spine. It owns residue mechanics behind
 the public C ABI and system bridge. It does not own daemon bootstrap, host
@@ -56,17 +56,17 @@ engine/
 
 | Current source | Target engine area | Notes |
 |---|---|---|
-| `crates/yai-core-engine/src/store.rs` | `engine/yai-engine/src/store/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/journal.rs` | `engine/yai-engine/src/journal/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/record.rs` | `engine/yai-engine/src/record/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/graph.rs` | `engine/yai-engine/src/graph/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/index.rs` | `engine/yai-engine/src/index/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/query.rs` | `engine/yai-engine/src/query/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/memory.rs` | `engine/yai-engine/src/memory/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/projection.rs` | `engine/yai-engine/src/projection/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/reconcile.rs` | `engine/yai-engine/src/reconcile/` | NEW.14 path move. |
-| `crates/yai-core-engine/src/ffi.rs` | `engine/yai-engine/src/ffi/` | NEW.14 path move. |
-| `crates/yai-core-engine-sys/src/lib.rs` | `engine/yai-engine-ffi/src/lib.rs` | Rust FFI crate, not public C ABI owner. |
+| `engine/yai-engine/src/store.rs` | `engine/yai-engine/src/store/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/journal.rs` | `engine/yai-engine/src/journal/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/record.rs` | `engine/yai-engine/src/record/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/graph.rs` | `engine/yai-engine/src/graph/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/index.rs` | `engine/yai-engine/src/index/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/query.rs` | `engine/yai-engine/src/query/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/memory.rs` | `engine/yai-engine/src/memory/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/projection.rs` | `engine/yai-engine/src/projection/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/reconcile.rs` | `engine/yai-engine/src/reconcile/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine/src/ffi.rs` | `engine/yai-engine/src/ffi/` | NEW.14 moved from `crates/yai-core-engine`. |
+| `engine/yai-engine-ffi/src/lib.rs` | `engine/yai-engine-ffi/src/lib.rs` | Rust FFI crate, not public C ABI owner. |
 
 ## Old-YAI Evidence Routes
 

@@ -8,10 +8,10 @@ if [ -e "$ROOT/src" ]; then
   exit 1
 fi
 
-bad_rs=$(find "$ROOT" -name '*.rs' ! -path "$ROOT/crates/*" -print)
+bad_rs=$(find "$ROOT" -name '*.rs' ! -path "$ROOT/engine/*" ! -path "$ROOT/crates/*" -print)
 if [ -n "$bad_rs" ]; then
   printf '%s\n' "$bad_rs" >&2
-  printf 'Rust files are only allowed under crates/\n' >&2
+  printf 'Rust files are only allowed under engine/ or crates/\n' >&2
   exit 1
 fi
 
