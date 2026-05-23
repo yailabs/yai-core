@@ -139,7 +139,7 @@ without record, receipt, graph, policy or divergence basis.
 ## Rust Direction
 
 Advanced recall, ranking, consolidation, decay, pinning and privacy filtering
-belong to the Rust operational data spine behind C FFI. NEW.28 is the planned
+belong to the Rust operational data spine behind C FFI. SPINE.28 is the planned
 memory consolidation wave over record, graph and fact planes.
 
 NEW.10 begins that direction only as residue consumption. Rust can count memory

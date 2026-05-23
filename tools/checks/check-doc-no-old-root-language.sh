@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
-FILES="$ROOT/docs/architecture/00-spine.md $ROOT/docs/engineering/target-layout.md"
+FILES="$ROOT/docs/architecture/00-spine.md $ROOT/docs/engineering/filesystem-target.md"
 
 for term in agents analytics capabilities decision lineage models orchestrator runtime substrate governance knowledge state providers workflow; do
   if grep -n "$term/" $FILES >/tmp/yai-core-doc-old-root-hit 2>/dev/null; then

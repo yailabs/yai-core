@@ -460,7 +460,7 @@ projection should default stricter
 
 L0 provider scouting can begin immediately outside the core. It can produce
 notes and fixtures, but the first canonical naked model case experiment is
-NEW.26. Core-owned invocation waits for NEW.28 model carrier v0.
+SPINE.35. Core-owned invocation waits for SPINE.37 model carrier.
 
 Agent frameworks are later subjects, actors or sources. They do not own the
 core subject model.

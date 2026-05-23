@@ -5,16 +5,16 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-NEW.18C rebases the prompt/session boundary before NEW.19: the journal remains
-replay/audit, while active model context is selected interaction thread plus
-participant view frame over the current case projection.
+SPINE.6A compresses active engineering docs. `docs/engineering/` now keeps one
+operational roadmap and a small active canon; historical wave records, maps and
+superseded plans live under `docs/archive/engineering/`.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
-`case_session` semantics while preserving durable refs. SPINE.3R and SPINE.4
-are complete. NEW.18C is complete; NEW.19 follows it. Local install
-layout is delayed to NEW.20.
+`case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
+NEW.18C and NEW.19 are complete foundation history. Future work is now numbered
+linearly as SPINE.20 onward. Next: SPINE.20 Local Runtime Layout.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -49,11 +49,15 @@ NEW.18C adds `interaction_thread`, `interaction_turn` and
 `participant_view_frame` records. The prompt surface supports `/thread status`,
 `/thread new`, `/thread list`, `/thread use` and `/thread archive`; a new
 thread resets the conversational lane without deleting journal/audit history.
+SPINE.6A removes active parallel scheduling from engineering docs. Macro labels
+such as `WORLD`, `DATA`, `VIEW` and `OBSERVABILITY` remain impact labels inside
+one linear SPINE.N roadmap. `docs/engineering/four-repo-roadmap.md` is the
+primary operator reference.
 
 ## Filesystem Refoundation History
 
-NEW.13 is a planning wave only. It creates the surgical map for NEW.14 through
-NEW.21 and does not move source files.
+NEW.13 is a planning wave only. It created the surgical map for the completed
+filesystem refactor waves and did not move source files.
 
 NEW.14 is the first physical filesystem refactor wave. It moves only the Rust
 engine crates:
@@ -114,6 +118,16 @@ plane doctrine.
 
 SPINE.4 follows NEW.18B before NEW.19. It is the documentation rebase for
 operational observability/evaluation and Case View Quality.
+
+NEW.18C is the interaction thread / participant view boundary wave. It
+separates audit transcript, active interaction thread, participant view frame,
+case projection and journal residue.
+
+NEW.19 is complete as the Makefile/build/guards realignment wave.
+
+SPINE.6A is the engineering docs compression wave. It makes
+`docs/engineering/four-repo-roadmap.md` the only active roadmap, archives wave
+records/maps/superseded plans, and starts future scheduling at SPINE.20.
 
 ## Minimum Loop History
 
@@ -264,8 +278,8 @@ Rust = engine / operational data spine
 ```
 
 `yai` is Rust and now lives under `cmd/yai`. The bootstrap operational data
-engine is Rust and now lives under `engine/`. Local command installation is
-delayed to NEW.20, and there is no public API, no HTTP, no auth, no service
+engine is Rust and now lives under `engine/`. Local command installation is now
+SPINE.20, and there is no public API, no HTTP, no auth, no service
 manager, no multi-client runtime, no process/network/model/database carrier, no
 full policy engine, no graph database, no vector/RAG retrieval, no automatic
 repair, no memory consolidation engine, no backend switch, and no full secret
@@ -280,7 +294,7 @@ make check
 
 ## Planned Local Install Layout
 
-Planned local install layout for NEW.20:
+Planned local install layout for SPINE.20:
 
 ```text
 make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai

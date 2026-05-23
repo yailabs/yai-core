@@ -82,8 +82,8 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.18C interaction thread participant view boundary done\n"
-	@printf "next: NEW.19 Makefile/build/guards realignment after NEW.18C\n"
+	@printf "status: SPINE.6A engineering docs compression done; NEW.19 foundation done\n"
+	@printf "next: SPINE.20 Local Runtime Layout\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
 	@printf "engine-bridge: active\n"
@@ -91,7 +91,7 @@ info:
 	@printf "daemon: moved to cmd/yaid + system/daemon\n"
 	@printf "crates: removed\n"
 	@printf "ctl: removed\n"
-	@printf "install-local: delayed to NEW.20\n"
+	@printf "install-local: next in SPINE.20\n"
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh

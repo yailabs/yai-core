@@ -145,10 +145,10 @@ journal/projection -> response` works locally.
 
 ## Local Command Layout Timing
 
-Local install layout is no longer NEW.13. It is delayed to NEW.20 so the repo
-does not install a filesystem shape already known to be transitional.
+Local install layout is no longer NEW.13. It is scheduled as SPINE.20 so the
+repo does not install a filesystem shape already known to be transitional.
 
-NEW.20 is expected to make `yai` the canonical local developer command and
+SPINE.20 is expected to make `yai` the canonical local developer command and
 install `yaid` beside it:
 
 ```text

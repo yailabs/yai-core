@@ -140,8 +140,8 @@ evaluation.
 Model output is imported as a claim, observation or proposed operation. Control
 evaluates proposed operations before any carrier path can execute. L0 provider
 scouting can begin immediately outside the core, but the first canonical naked
-model case experiment is NEW.26 and the first core-owned model invocation is
-NEW.28.
+model case experiment is SPINE.35 and the first core-owned model invocation is
+SPINE.37.
 
 Agent frameworks are not first. They enter later as external subjects, actors
 or sources after naked model behavior is measurable.

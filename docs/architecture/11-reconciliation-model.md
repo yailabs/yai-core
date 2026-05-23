@@ -102,7 +102,7 @@ records; C system code may enforce or carry later recovery decisions only
 through explicit control and carrier boundaries.
 
 SPINE.3R target owner: Rust engine reconciles across hot, journal, record,
-graph, fact, memory and projection planes. NEW.29 is the planned wave for
+graph, fact, memory and projection planes. SPINE.29 is the planned wave for
 reconcile over hot/store/graph consistency. SPINE.3R does not implement that
 backend.
 

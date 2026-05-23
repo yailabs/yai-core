@@ -51,16 +51,17 @@ an `op`: material that must be bound to a case, evaluated against policy,
 passed through gates, executed or observed through carriers, and recorded with
 receipts.
 
-The core spine is:
+The mature operational spine is:
 
 ```text
-case -> subject -> op -> control -> effect -> receipt -> store -> graph -> memory -> projection
+world formation -> operational residue -> live/durable data planes -> controlled projection -> model/operator/carrier behavior -> receipt/evidence -> graph/memory/reconcile -> observability/evaluation -> next projection/action
 ```
 
 This gives local AI systems a durable operational layer for case-bound
-subjects, operation attempts, policy gates, control decisions, effect carriers,
-structured receipts, durable records, graph-backed reconstruction, operational
-memory, controlled projections, and divergence reconciliation.
+worlds, subjects, operation attempts, policy gates, control decisions, effect
+carriers, structured receipts, durable records, graph-backed reconstruction,
+operational memory, controlled projections, divergence reconciliation and case
+view quality.
 
 ## What YAI Core Is Not
 
@@ -94,7 +95,7 @@ That loop is useful, but it makes the model conversation look like the system
 boundary. YAI Core moves the boundary to operational control:
 
 ```text
-case -> subject -> op -> control -> effect -> receipt -> store -> graph -> memory -> projection
+case world -> residue -> data planes -> live projection -> control -> receipt -> graph/memory/reconcile -> observability -> next action
 ```
 
 Model output is candidate material, not authority. A model can propose,
@@ -103,7 +104,9 @@ The core decides what an attempted operation means, what policy applies, which
 gates must fire, whether an effect is executed or blocked, what receipt proves
 the result, and how the operation changes memory and future projections.
 
-Authority, execution, receipts, memory, and continuity remain outside the model.
+Authority, execution, receipts, memory, and continuity remain outside the
+model. Future work is scheduled only through the linear SPINE.20+ roadmap in
+`docs/engineering/four-repo-roadmap.md`.
 
 ## Computational Model
 
@@ -281,8 +284,8 @@ Current refactor state: NEW.18 has centralized the Rust engine C shim under
 store, journal, record codec, graph, index/query, memory, projection,
 reconcile, retention, and integrity logic.
 
-SPINE.3R adds the case-world and live data-plane doctrine before NEW.19 guard
-realignment. Case-world material precedes subject behavior:
+SPINE.3R adds the case-world and live data-plane doctrine. NEW.19 guard
+realignment is done. Case-world material precedes subject behavior:
 
 ```text
 case_world -> case_domain -> case_attachment -> case_binding -> case_session -> case_context -> subject
@@ -307,6 +310,11 @@ NEW.18C separates journal replay/audit from active model context. The prompt
 surface now uses an active interaction thread plus participant view frame over
 the current case projection; transcript records remain audit material, not raw
 chat memory.
+
+SPINE.6A compresses active engineering docs. Future waves use one linear
+SPINE.N number and declare macro impact, old-yai audit when relevant, residue
+handling and observability/freshness impact. SPINE.20 Local Runtime Layout is
+next.
 
 ### Absorbed Concepts
 
@@ -351,8 +359,10 @@ docs/architecture/00-spine.md
 docs/architecture/01-terminology.md
 docs/architecture/04-subject-model.md
 docs/architecture/06-control-policy-model.md
-docs/engineering/filesystem-target-v2.md
-docs/engineering/data-spine-refactor-roadmap.md
+docs/engineering/four-repo-roadmap.md
+docs/engineering/filesystem-target.md
+docs/engineering/data-plane-roadmap.md
+docs/engineering/current-status.md
 docs/status/implementation-status.md
 ```
 

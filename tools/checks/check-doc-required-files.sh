@@ -8,20 +8,14 @@ for file in \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
-  docs/engineering/target-layout.md \
-  docs/engineering/new1-minimum-loop.md \
-  docs/engineering/new2-persistent-journal.md \
-  docs/engineering/new3-control-gate.md \
-  docs/engineering/new4-filesystem-carrier.md \
-  docs/engineering/new5-graph-reconstruction.md \
-  docs/engineering/new6-operational-memory.md \
-  docs/engineering/new7-reconcile-divergence.md \
-  docs/engineering/new8-projection-hardening.md \
-  docs/engineering/new9-query-boundary.md \
-  docs/engineering/new10-rust-engine-r1.md \
-  docs/engineering/new11-daemon-ipc.md \
-  docs/engineering/new12-daemon-backed-loop.md \
-  docs/engineering/new13-local-command-install.md \
+  docs/engineering/README.md \
+  docs/engineering/current-status.md \
+  docs/engineering/data-plane-roadmap.md \
+  docs/engineering/extraction-plan.md \
+  docs/engineering/filesystem-target.md \
+  docs/engineering/four-repo-roadmap.md \
+  docs/engineering/testing.md \
+  docs/engineering/wave-template.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

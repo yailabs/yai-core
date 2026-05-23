@@ -40,14 +40,11 @@ system truth unless the external system binds or reports through YAI protocols.
 | Daemon and ctl | [12-daemon-and-ctl.md](12-daemon-and-ctl.md) |
 | C/Rust boundary | [13-c-rust-boundary.md](13-c-rust-boundary.md) |
 | Observability and evaluation | [14-operational-observability-evaluation.md](14-operational-observability-evaluation.md) |
-| Case-world verticalization | [../engineering/case-world-verticalization.md](../engineering/case-world-verticalization.md) |
-| Operational data planes | [../engineering/operational-data-plane-doctrine.md](../engineering/operational-data-plane-doctrine.md) |
-| Live projection | [../engineering/live-projection-model.md](../engineering/live-projection-model.md) |
-| Case View Quality | [../engineering/case-view-quality.md](../engineering/case-view-quality.md) |
-| Target filesystem V2 | [../engineering/filesystem-target-v2.md](../engineering/filesystem-target-v2.md) |
-| Data spine refactor | [../engineering/data-spine-refactor-roadmap.md](../engineering/data-spine-refactor-roadmap.md) |
-| Model/provider experiment ladder | [../engineering/model-provider-experiment-ladder.md](../engineering/model-provider-experiment-ladder.md) |
-| Naked model case test plan | [../engineering/naked-model-case-test-plan.md](../engineering/naked-model-case-test-plan.md) |
+| Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
+| Current status | [../engineering/current-status.md](../engineering/current-status.md) |
+| Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
+| Data plane roadmap | [../engineering/data-plane-roadmap.md](../engineering/data-plane-roadmap.md) |
+| Wave template | [../engineering/wave-template.md](../engineering/wave-template.md) |
 
 ## Machine Spine
 
@@ -108,7 +105,7 @@ SPINE.2 defines when model/provider experiments become canonical:
 
 ```text
 L0 provider scouting can start immediately outside the core
-model/provider implementation follows the NEW.22-NEW.30 data-plane foundation
+model/provider implementation follows the SPINE.22-SPINE.30 data-plane foundation
 ```
 
 A model is not inside the core. A model is a case-bound subject with locality,
@@ -308,8 +305,8 @@ NEW.18A: case world binding records
 NEW.18B: live case context / ref boundary
 SPINE.3R: case world + live data plane rebase
 NEW.19: Makefile/build/guards realignment
-NEW.20: local install layout
-NEW.22-NEW.30: hot, record, graph, fact, projection, memory and reconcile data planes
+SPINE.20: local runtime layout
+SPINE.22-SPINE.30: hot, record, graph, fact, projection, memory and reconcile data planes
 Rust operational data spine behind C FFI
 ```
 

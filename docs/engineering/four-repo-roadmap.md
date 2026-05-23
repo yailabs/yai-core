@@ -1,406 +1,707 @@
 # Four-Repo Roadmap
 
-SPINE.1 rebases the multi-repo roadmap after NEW.12. The next `yai-core` phase
-is filesystem / data-spine refoundation, not local install layout. The goal is
-to keep `yai-core` correct without letting sibling repos drift around older
-runtime, agent or bootstrap filesystem assumptions.
+This is the only active engineering roadmap.
+
+From SPINE.20 onward, YAI Core uses one linear progression. Macro names are
+labels inside a wave, not a second calendar.
+
+```text
+SPINE.N = main delivery number
+Macro = affected system areas
+Subdeliveries = nested work inside that one delivery
+```
 
 ## Current Status
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical new core. | Completed NEW.0 through NEW.12, plus SPINE.0. | NEW.13 target filesystem doctrine: system/engine/cmd/include. |
-| `yai` | Old/current repo. | Not the future core; transition concept mine and future ai-environment material. Must not be migrated folder-by-folder into `yai-core`. | ENV.CANON.0. |
-| `interfaces` | Projection/API/SDK/conformance repo. | Must become a consumer of `yai-core` primitive truth. Must not define core semantics independently. | INTF.CANON.0. |
-| `console` | Operator client / TUI / human UX. | Must consume projections and interfaces. Must not own daemon, store, control, memory or carrier semantics. | CONSOLE.CANON.0. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through NEW.19 and SPINE.6A document compression. | SPINE.20 Local Runtime Layout. |
+| `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
+| `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
+| `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
-## Rename And Role Doctrine
+## Completed Foundation
 
-Canonical future workspace:
+Foundation waves NEW.0 through NEW.19 are complete prehistory for the linear
+SPINE.20+ roadmap. They established skeleton guards, persistent journal,
+control gate, filesystem carrier, graph, memory candidate, reconcile,
+projection, query, Rust engine integration, daemon IPC, daemon-backed loop,
+target layout, Rust/C source movement, engine bridge split, case-world records,
+live case context, observability doctrine, interaction threads and build/guard
+realignment.
 
-```text
-YAI/
-├── yai-core/
-├── ai-environment/
-├── interfaces/
-└── console/
-```
+Do not schedule future work with the old NEW numbering. The next active
+delivery is SPINE.20.
 
-Current transition workspace:
-
-```text
-YAI/
-├── yai-core/
-├── yai/
-├── interfaces/
-└── console/
-```
-
-`yai` is not renamed in SPINE.0 or SPINE.2. It is declared transition concept
-mine and future `ai-environment` source material. The physical rename to
-`ai-environment` is a later dedicated wave.
-
-## Wave Families
-
-| Family | Owning repo | Purpose |
-|---|---|---|
-| CORE.NEW.* | `yai-core` | Implementation of the local AI operational control core. |
-| ENV.CANON.* | `yai`, later `ai-environment` | Canonicalize the old repo as environment, lab and scenario material. |
-| INTF.CANON.* | `interfaces` | Align schemas, transports, SDK and conformance to `yai-core` truth. |
-| CONSOLE.CANON.* | `console` | Align operator UX to projections and interfaces. |
-| PLATFORM.LATER.* | Future platform repos/services | Defer cloud, team and managed-platform concerns. |
-
-## Wave-Coupled Extraction
-
-The old `yai` repo is not cleaned in one final pass. It is mined continuously.
-Every `yai-core` implementation wave that overlaps with an existing old-`yai`
-concept must inspect the corresponding old-`yai` material, extract only what is
-needed, implement the new primitive in `yai-core` using the new grammar, and
-record what old material is kept, quarantined, externalized or assigned to
-future `ai-environment`.
-
-Each relevant `yai-core` delivery must include:
+## Canonical Macro Labels
 
 ```text
-Old-yai audit
-Residue handling
+WORLD
+RESIDUE
+DATA
+VIEW
+CONTROL
+MEMORY
+RECONCILE
+HOST
+MODEL
+OBSERVABILITY
+EXTERNAL
 ```
 
-Required work:
+These labels describe impact. They are not numbered workstreams.
 
-```text
-inspect relevant old-yai files
-extract concepts only, not folders
-implement in yai-core using new primitives
-update extraction inventory
-classify old residue as absorb/quarantine/externalize/delete_later/compat_only/mine_concept/split
-assign useful non-core material to future ai-environment with future_repo=ai-environment and action=externalize
-```
+## SPINE.20-SPINE.62 Linear Roadmap
 
-This avoids both blind migration and blind rewrite. `yai-core` gets the useful
-semantics, while old material is normalized as soon as its concept is touched.
+### SPINE.20 - Local Runtime Layout
 
-Filesystem / data-spine refactor waves must inspect:
+Macro: HOST / DATA / WORLD / OBSERVABILITY
 
-```text
-../yai/src/substrate/store/*
-../yai/src/substrate/records/*
-../yai/src/substrate/graph/*
-../yai/src/substrate/indexes/*
-../yai/src/substrate/query/*
-../yai/src/substrate/memory/*
-../yai/src/substrate/views/*
-../yai/src/substrate/signals/*
-../yai/src/lineage/*
-../yai/src/analytics/*
-../yai/src/agents/grounding/*
-../yai/src/runtime/execution/*
-../yai/src/runtime/carriers/*
-```
+Purpose: stop using `build/tmp` as the normal operating environment.
 
-Future model/provider waves must also inspect:
+Subdeliveries: define `YAI_HOME`; install local binaries `yai` and `yaid`;
+define run/store/log/tmp dirs; default socket path; local doctor output; local
+cleanup/uninstall; manual daemon start/stop/status; validation with installed
+`yai`/`yaid`; docs and freeze.
 
-```text
-../yai/src/models/*
-../yai/src/agents/grounding/*
-../yai/src/capabilities/mcp/*
-../yai/src/capabilities/external/*
-../yai/src/runtime/provider/*
-../yai/src/runtime/execution/*
-../yai/src/case/policy/*
-../yai/src/substrate/memory/*
-../yai/src/substrate/views/*
-```
+Old-yai audit focus: local runtime, launcher, daemon, environment and install
+scripts.
 
-In SPINE.1 and SPINE.2 there is no code extraction, source movement or file
-migration.
+Quality gate: installed `yai` and `yaid` run the existing smoke path without
+depending on transient build paths.
 
-Examples:
+### SPINE.21 - Filesystem Refactor Freeze
 
-| Future wave family | Old-yai audit examples | Expected handling |
-|---|---|---|
-| Memory waves | `src/substrate/memory/*`, `src/lineage/episodic_summary.c`, `src/lineage/semantic_summary.c`, `src/analytics/signals/*`, `src/agents/grounding/memory_strategy.c` | Absorb reusable memory semantics into `yai-core/memory`; externalize agent-specific strategy to future `ai-environment`; classify old substrate memory residue. |
-| Carrier/enforcement waves | `src/runtime/execution/*`, `src/runtime/carriers/*`, `src/runtime/decision/*`, `src/runtime/observation/*` | Absorb carrier, enforcement and receipt concepts into `effect`, `control` and `store`; quarantine operator shell UX; externalize old runtime loop to an environment harness. |
-| Projection waves | `src/substrate/views/*`, `src/case/surface/*`, `src/decision/projection/*`, `src/models/frame/*`, `src/agents/grounding/context_pack.c` | Absorb projection and redaction posture into `projection`; externalize model/context-pack UX material. |
-| Workflow-related waves | `src/orchestrator/*` and workflow-specific recovery material | Mine scenarios and procedure records; do not recreate a workflow engine in `yai-core`. |
-| Model/provider waves | `src/models/*`, `src/runtime/provider/*`, `src/case/policy/*`, `src/substrate/views/*`, `src/substrate/memory/*` | Mine model subject posture, provider posture, projection, policy and memory concepts; do not create a provider registry or model runner in SPINE.2. |
-| Agent/tool waves | `src/agents/grounding/*`, `src/capabilities/mcp/*`, `src/capabilities/external/*`, `src/runtime/execution/*` | Externalize agent framework and tool adapter behavior to future `ai-environment`; import traces and controlled attempts only after naked model behavior is measurable. |
+Macro: HOST / EXTERNAL
 
-## Stub And Stale Surface Rule
+Purpose: close the physical refactor.
 
-If a wave touches code or docs that contain stubs, TODO-only files,
-placeholder-only sections, bootstrap bridges, half-implemented files or stale
-command/path language, the wave must verticalize the material into the current
-doctrine, quarantine it or mark it `delete_later`. Do not leave stale bootstrap
-language alive beside the new canonical surface.
+Subdeliveries: verify `include/system/engine/cmd` layout; remove stale
+transitional references; enforce no active `lib/`, `crates/`, `daemon/` or
+`ctl/` roots; update status docs; final source placement guard; smoke all
+loops; milestone freeze.
 
-## Policy Direction
+Old-yai audit focus: none unless stale path language overlaps active docs.
 
-Policy is case material, not just text, a deterministic gate or model prompt.
-The CORE.NEW policy line must mature policy across source material, machine
-claims/rules/gates, binding to case/subject/op/carrier/projection, decision
-basis, projection to models/agents/operators, memory influence and hard
-enforcement. YAI does not claim to control a model provider's internal policy;
-it controls what the model sees, what operation is accepted, which carrier may
-execute, which receipt remains and which memory derives.
+Quality gate: layout checks pass and the active repo has no old implementation
+roots.
 
-Policy is materialized twice for model work:
+### SPINE.22 - Hot State / Shared Memory Plane
 
-```text
-cognitively through projection
-operationally through gates, decision and carrier
-```
+Macro: DATA / WORLD / VIEW / OBSERVABILITY
 
-L0 provider scouting may begin immediately outside the core. It is useful input
-for future fixtures, but it is not canonical core validation.
+Purpose: make the case live without rereading journal as the primary path.
 
-## CORE.NEW Roadmap
+Subdeliveries: hot-state doctrine; shared-memory contract; active case/session
+state; active projection frame state; pending ops and obligations; carrier
+locks; latest receipt and delta; freshness flags; daemon integration; hot-state
+lifecycle smoke; docs and freeze.
 
-| Wave | Name | Status |
-|---|---|---|
-| NEW.0 | Skeleton + guards | done |
-| NEW.1 | Minimum loop | done |
-| NEW.2 | Persistent journal + subject state | done |
-| NEW.3 | Control gate skeleton | done |
-| NEW.4 | Filesystem carrier v0 | done |
-| NEW.5 | Graph reconstruction v0 | done |
-| NEW.5A | Smoke isolation hardening | done |
-| SPINE.0 | Wave-coupled extraction rule | done |
-| NEW.6 | Operational Memory Candidate v0 | done |
-| NEW.7 | Reconcile / Divergence v0 | done |
-| NEW.8 | Projection hardening and redaction posture v0 | done |
-| NEW.9 | Store/index/query boundary v0 | done |
-| NEW.10 | Rust operational data engine R1 integration | done |
-| NEW.11 | Daemon IPC v0 | done |
-| NEW.12 | Daemon-backed core loop v0 | done |
-| NEW.13 | Target filesystem doctrine: system/engine/cmd/include | done |
-| NEW.14 | Move Rust workspace: crates/ -> engine/ | done |
-| NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | done |
-| NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | done |
-| NEW.17 | Move C implementation: lib/ -> system/ | done |
-| NEW.18 | Split C data logic: system bridge vs engine ownership | done |
-| NEW.18A | Case world binding records / case-world verticalization | done |
-| NEW.18B | Live case context / ref boundary | done |
-| SPINE.3R | Case World + Live Data Plane Rebase | done |
-| SPINE.4 | Operational Observability & Evaluation Plane | done |
-| NEW.18C | Interaction thread / participant view boundary v0 | done |
-| NEW.19 | Makefile/build/guards realignment | planned |
-| NEW.20 | Local install layout: yai + yaid | planned |
-| NEW.21 | Filesystem refactor milestone freeze | planned |
-| NEW.22 | Hot state / shared memory plane v0 | planned |
-| NEW.23 | LMDB record backend v0 | planned |
-| NEW.24 | Journal replay to LMDB v0 | planned |
-| NEW.25 | Ladybug graph backend v0 | planned |
-| NEW.26 | DuckDB fact backend v0 | planned |
-| NEW.27 | Projection delta / live view v0 | planned |
-| NEW.28 | Memory consolidation over record + graph + facts v0 | planned |
-| NEW.29 | Reconcile over hot/store/graph consistency v0 | planned |
-| NEW.30 | Observability/Evaluation facts v0 or data plane milestone freeze | planned |
-| NEW.31 | Ingest material model v0 | planned |
-| NEW.32 | Model/provider subject posture v0 | planned |
-| NEW.33 | Model output claim import v0 | planned |
-| NEW.34 | Policy pack skeleton + model projection v0 | planned |
-| NEW.35 | Naked local model case experiment v0 | planned |
-| NEW.36 | Model behavior trace v0 | planned |
-| NEW.37 | Model carrier v0 | planned |
-| NEW.38 | Agent trace/tool call import v0 | planned |
-| NEW.39 | Policy compliance experiment harness v0 | planned |
-| NEW.40 | Legal/accounting/business-admin domain packs v0 | planned |
-| NEW.41 | Policy memory v0 | planned |
-| NEW.42 | Unknown provider policy handling v0 | planned |
-| NEW.43 | Multi-model comparative case test v0 | planned |
-| NEW.44 | Human review / authority binding v0 | planned |
-| NEW.45 | Case audit packet v0 | planned |
-| NEW.46 | Policy-control milestone freeze | planned |
-| NEW.47 | Filesystem carrier hardening | planned |
-| NEW.48 | Process carrier v0 with host safeguards | planned |
-| NEW.49 | Host observation probes v0 | planned |
-| NEW.50 | Network/http carrier v0 | planned |
-| NEW.51 | Database carrier v0 | planned |
-| NEW.52 | Repository/git carrier v0 | planned |
-| NEW.53 | Carrier receipts hardening | planned |
-| NEW.54 | Recovery/compensation posture v0 | planned |
-| NEW.55 | Daemon op execution over IPC | planned |
-| NEW.56 | Host-control milestone freeze | planned |
-| NEW.57 | Protocol fixtures from smoke journals | planned |
-| NEW.58 | Interfaces handoff prep | planned |
-| NEW.59 | Core conformance harness | planned |
-| NEW.60 | Console projection handoff prep | planned |
-| NEW.61 | ai-environment harness prep | planned |
-| NEW.62 | Local core milestone freeze | planned |
+Old-yai audit focus: `src/runtime/sessions/*`, `src/substrate/signals/*`,
+`src/substrate/views/*`.
 
-Roadmap correction:
+Quality gate: daemon can expose current case/session/projection freshness from
+hot state while durable truth remains residue-backed.
 
-```text
-The current rebase is SPINE.3R Case World + Live Data Plane Rebase.
-NEW.19 follows SPINE.3R.
-Local install layout is delayed to NEW.20.
-Do not install or guard a filesystem/data-plane shape that is already known to be transitional.
-```
+### SPINE.23 - LMDB Record Plane
 
-Model/provider correction:
+Macro: DATA / RESIDUE / WORLD
 
-```text
-L0 provider scouting can start immediately outside the core.
-The first real naked model case experiment follows the data-plane foundation.
-Core-owned model invocation through model carrier follows the naked model case
-experiment.
-Agent-framework/tool-call tests follow model-carrier evidence.
-Agent frameworks are not first.
-```
+Purpose: introduce the durable record lookup plane.
 
-## ENV.CANON Roadmap
+Subdeliveries: LMDB backend doctrine; record key schema; case/subject/receipt
+and decision namespaces; write path from residue; read path by id/kind/case and
+subject; Rust engine integration; C bridge; rebuild safety; record lookup
+smoke; docs and freeze.
 
-Purpose: turn old `yai` into `ai-environment`, concept mine and lab without
-pretending it is still the core.
+Old-yai audit focus: `src/substrate/store/*`, `src/substrate/records/*`.
 
-| Wave | Name |
+Quality gate: journal is no longer the only way to read case records.
+
+### SPINE.24 - Journal Replay To Record Plane
+
+Macro: DATA / RESIDUE / OBSERVABILITY
+
+Purpose: make journal replay/audit, not primary operating state.
+
+Subdeliveries: replay doctrine; journal parser hardening; replay to LMDB;
+idempotency rules; schema version handling; replay diagnostics; corrupt record
+handling; rebuild report; journal-to-LMDB rebuild smoke; docs and freeze.
+
+Old-yai audit focus: old replay, drain and journal persistence paths.
+
+Quality gate: a case can be rebuilt from journal into the record plane with a
+diagnostic report.
+
+### SPINE.25 - Ladybug Operational Graph Plane
+
+Macro: DATA / RECONCILE / MEMORY
+
+Purpose: make graph a persistent causal plane, not only graph-edge records in
+the journal.
+
+Subdeliveries: graph backend doctrine; Ladybug storage boundary; edge schema;
+node/ref schema; write graph edges from records; causal path query; rebuild
+graph from LMDB/journal; orphan edge diagnostics; receipt-to-decision-to-subject
+reconstruction; docs and freeze.
+
+Old-yai audit focus: `src/substrate/graph/*`, `src/lineage/*`.
+
+Quality gate: receipt chains reconstruct from the graph backend.
+
+### SPINE.26 - DuckDB Fact Plane
+
+Macro: DATA / OBSERVABILITY / MODEL / CONTROL
+
+Purpose: start the analytical plane for research, debug and product reporting.
+
+Subdeliveries: fact-plane doctrine; DuckDB schema; receipt facts; decision
+facts; projection facts; memory facts; model behavior facts; policy outcome
+facts; basic reports; facts extraction smoke; docs and freeze.
+
+Old-yai audit focus: `src/analytics/*`, `src/analytics/features/*`.
+
+Quality gate: facts derive from residue without becoming operational truth.
+
+### SPINE.27 - Live Projection Delta Plane
+
+Macro: VIEW / DATA / MODEL / OBSERVABILITY
+
+Purpose: make projection a live versioned view instead of a static summary.
+
+Subdeliveries: live projection doctrine; projection frame schema; projection
+delta schema; previous/next frame links; stale/fresh rules; hot-state
+integration; memory patch integration; divergence exposure; authority
+alignment; model-visible delta smoke; docs and freeze.
+
+Old-yai audit focus: `src/substrate/views/*`, `src/case/surface/*`,
+`src/models/frame/*`.
+
+Quality gate: model-visible context can be refreshed by delta with provenance
+and freshness.
+
+### SPINE.28 - Memory Consolidation Plane
+
+Macro: MEMORY / DATA / VIEW / OBSERVABILITY
+
+Purpose: move from memory candidates to consolidated operational memory.
+
+Subdeliveries: memory consolidation doctrine; memory basis model;
+receipt-backed consolidation; graph-derived consolidation; policy-aware memory;
+subject-scoped memory; contradiction check; memory freshness/confidence; memory
+projection rules; memory quality facts; consolidation smoke; docs and freeze.
+
+Old-yai audit focus: `src/substrate/memory/*`, `src/lineage/*`,
+`src/agents/grounding/memory_strategy.c`.
+
+Quality gate: memory has explicit basis, scope, freshness and projection
+permissions.
+
+### SPINE.29 - Cross-Plane Reconcile
+
+Macro: RECONCILE / DATA / OBSERVABILITY
+
+Purpose: verify the system across data planes.
+
+Subdeliveries: hot vs record consistency; record vs graph consistency; graph vs
+memory consistency; projection stale detection; authority overclaim detection;
+memory without basis detection; missing receipt detection; recovery posture;
+reconcile reports; docs and freeze.
+
+Old-yai audit focus: `src/substrate/signals/*`, `src/runtime/observation/*`.
+
+Quality gate: mismatches become explicit divergence, not silent repair.
+
+### SPINE.30 - Data Plane Milestone Freeze
+
+Macro: DATA / OBSERVABILITY
+
+Purpose: close the first real data-plane foundation.
+
+Subdeliveries: rebuild full case from journal; rebuild LMDB; rebuild graph;
+rebuild facts; rebuild memory; validate projection freshness; validate
+reconcile; full smoke suite; documentation freeze; release checkpoint.
+
+Old-yai audit focus: only gaps discovered by rebuild and smoke evidence.
+
+Quality gate: full case rebuild and projection freshness validation pass.
+
+### SPINE.31 - Ingest Material Model
+
+Macro: RESIDUE / WORLD / DATA
+
+Purpose: make everything entering the case explicit and provenanced.
+
+Subdeliveries: ingest doctrine; source material record; claim record;
+observation record; external receipt import; policy material intake; model
+output intake; agent trace intake placeholder; provenance requirements; docs
+and freeze.
+
+Old-yai audit focus: `src/case/materialization/*`, `src/substrate/records/*`.
+
+Quality gate: no external material enters without source, provenance and case
+binding.
+
+### SPINE.32 - Provider / Model Subject Posture
+
+Macro: MODEL / WORLD / VIEW / CONTROL
+
+Purpose: formalize model and provider as case subjects.
+
+Subdeliveries: provider attachment model; local provider posture; remote
+provider posture; unknown internal policy flag; model subject posture; locality,
+visibility and runtime fields; provider-declared policy refs; default projection
+posture; attach provider/model smoke; docs and freeze.
+
+Old-yai audit focus: `src/models/*`, `src/runtime/provider/*`,
+`src/case/policy/*`.
+
+Quality gate: provider/model attachment does not grant policy or execution
+authority by itself.
+
+### SPINE.33 - Model Output Claim Import
+
+Macro: MODEL / RESIDUE / RECONCILE
+
+Purpose: treat model output as case material, not truth.
+
+Subdeliveries: model output record; `model_interpretation` hardening; claim
+extraction; proposed attempt detection; unsupported claim marking; authority
+overclaim marking; provenance to projection frame; store/query integration;
+model output import smoke; docs and freeze.
+
+Old-yai audit focus: `src/models/*`, `src/agents/grounding/*`.
+
+Quality gate: unsupported claims and overclaims are visible as residue.
+
+### SPINE.34 - Policy Pack + Model Projection
+
+Macro: CONTROL / VIEW / MODEL
+
+Purpose: project materialized policy to models instead of casual prompt text.
+
+Subdeliveries: policy pack schema; policy source material; policy claim/rule
+skeleton; `projection_rule` from policy; `authority_scope` from policy; model
+projection template; review requirement projection; forbidden/allowed action
+projection; policy-pack-to-projection smoke; docs and freeze.
+
+Old-yai audit focus: `src/case/policy/*`, `src/substrate/views/*`.
+
+Quality gate: policy appears both cognitively through projection and
+operationally through gates.
+
+### SPINE.35 - Naked Local Model Case Experiment
+
+Macro: MODEL / VIEW / CONTROL / MEMORY / OBSERVABILITY
+
+Purpose: run the first real naked model inside a case.
+
+Subdeliveries: local model runtime profile; model subject attach; projection to
+model; model output import; claim/proposed op control; receipt/memory
+generation; behavior fact capture; repeated run fixture; naked model case
+smoke; docs and freeze.
+
+Old-yai audit focus: `src/models/*`, `src/runtime/provider/*`,
+`src/agents/grounding/*`.
+
+Quality gate: a model can participate without agent-framework ownership.
+
+### SPINE.36 - Model Behavior Trace
+
+Macro: MODEL / OBSERVABILITY / RECONCILE
+
+Purpose: make model behavior measurable.
+
+Subdeliveries: behavior taxonomy; refusal fact; unsafe proposal fact;
+unsupported claim fact; authority overclaim fact; review request fact; memory
+use fact; projection variant comparison; behavior trace smoke; docs and freeze.
+
+Old-yai audit focus: `src/analytics/signals/*`, `src/runtime/observation/*`.
+
+Quality gate: refusal, unsupported claim and overclaim evidence can be queried.
+
+### SPINE.37 - Model Carrier
+
+Macro: HOST / MODEL / CONTROL
+
+Purpose: invoke a model as a controlled effect.
+
+Subdeliveries: model carrier doctrine; local model invocation carrier; provider
+invocation receipt; `model.invoke` op attempt; decision before model call;
+output receipt; timeout/error handling; no raw-data policy enforcement; model
+carrier smoke; docs and freeze.
+
+Old-yai audit focus: `src/runtime/provider/*`, `src/runtime/execution/*`.
+
+Quality gate: every model call has decision and receipt posture.
+
+### SPINE.38 - Agent Trace / Tool Call Import
+
+Macro: MODEL / EXTERNAL / RESIDUE / CONTROL
+
+Purpose: import agents as external subjects, not core owners.
+
+Subdeliveries: agent trace doctrine; external harness subject; tool call
+import; MCP call import; planner output import; agent claim/attempt mapping;
+trace provenance; control over tool attempts; agent trace import smoke; docs
+and freeze.
+
+Old-yai audit focus: `src/agents/grounding/*`, `src/capabilities/mcp/*`,
+`src/capabilities/external/*`.
+
+Quality gate: tool attempts imported from agents still pass through control.
+
+### SPINE.39 - Policy Compliance Experiment Harness
+
+Macro: CONTROL / MODEL / OBSERVABILITY
+
+Purpose: turn model/policy experiments into measurable evidence.
+
+Subdeliveries: experiment doctrine; policy/projection variants; model
+comparison matrix; scenario fixture format; compliance scoring;
+refusal/overclaim scoring; memory feedback scoring; report generation; policy
+experiment smoke; docs and freeze.
+
+Old-yai audit focus: `src/analytics/*`, `src/case/policy/*`.
+
+Quality gate: experiment reports derive from facts and residue.
+
+### SPINE.40 - Legal / Accounting / Business Domain Packs
+
+Macro: CONTROL / MODEL / VIEW / MEMORY
+
+Purpose: move YAI toward non-dev operational cases.
+
+Subdeliveries: domain pack doctrine; legal review pack; accounting practice
+pack; business admin pack; domain subject templates; domain policy templates;
+projection templates; review obligations; domain pack smoke; docs and freeze.
+
+Old-yai audit focus: old scenario/domain examples only.
+
+Quality gate: domain packs remain case material, not hardcoded core behavior.
+
+### SPINE.41 - Policy Memory
+
+Macro: CONTROL / MEMORY / VIEW
+
+Purpose: reuse policy experience without making policy magical.
+
+Subdeliveries: policy memory doctrine; decision history memory; review outcome
+memory; policy conflict memory; provider policy conflict memory; projection
+policy memory; reuse in future gates; policy memory smoke; docs and freeze.
+
+Old-yai audit focus: `src/case/policy/*`, `src/substrate/memory/*`.
+
+Quality gate: policy memory has decision and receipt basis.
+
+### SPINE.42 - Unknown Provider Policy Handling
+
+Macro: MODEL / CONTROL / RECONCILE
+
+Purpose: treat closed providers as black boxes with unknown policy.
+
+Subdeliveries: unknown policy doctrine; declared provider policy refs; observed
+behavior profile; provider refusal classification; provider conflict
+divergence; remote default projection posture; local/open model posture;
+unknown provider handling smoke; docs and freeze.
+
+Old-yai audit focus: `src/runtime/provider/*`, `src/models/*`.
+
+Quality gate: provider policy conflicts become divergence or posture, not
+assumed truth.
+
+### SPINE.43 - Multi-Model Comparative Case Test
+
+Macro: MODEL / OBSERVABILITY / DATA
+
+Purpose: compare models scientifically inside the same case.
+
+Subdeliveries: comparison doctrine; same case multi-model setup; same
+projection variant; behavior fact comparison; latency/cost comparison; policy
+compliance comparison; memory usefulness comparison; report; docs and freeze.
+
+Old-yai audit focus: model and analytics fixtures.
+
+Quality gate: comparison reports use shared case residue and fact data.
+
+### SPINE.44 - Human Review / Authority Binding
+
+Macro: CONTROL / WORLD / VIEW
+
+Purpose: make human operators explicit authorities.
+
+Subdeliveries: human authority subject; reviewer binding; review request
+record; approval/deny record; review receipt; obligation closure; review
+projection; human review smoke; docs and freeze.
+
+Old-yai audit focus: operator/review runtime material.
+
+Quality gate: review authority is bound to case world and receipts.
+
+### SPINE.45 - Case Audit Packet
+
+Macro: VIEW / OBSERVABILITY / EXTERNAL
+
+Purpose: produce readable and reusable evidence.
+
+Subdeliveries: audit packet doctrine; case summary; receipt bundle; decision
+basis bundle; graph path bundle; memory basis bundle; divergence bundle;
+redaction/audit posture; audit packet smoke; docs and freeze.
+
+Old-yai audit focus: report/export material.
+
+Quality gate: audit packets preserve redaction, provenance and quality posture.
+
+### SPINE.46 - Policy-Control Milestone Freeze
+
+Macro: CONTROL / MODEL / VIEW / MEMORY
+
+Purpose: close the policy/model block.
+
+Subdeliveries: policy pack validation; model projection validation; authority
+validation; review validation; policy memory validation; model behavior
+reports; docs freeze; full smoke.
+
+Old-yai audit focus: only unresolved policy/model residues.
+
+Quality gate: policy/model/review behavior is reproducible from residue.
+
+### SPINE.47 - Filesystem Carrier Hardening
+
+Macro: HOST
+
+Purpose: harden the filesystem carrier.
+
+Subdeliveries: path canonicalization; sandbox boundary proof; permission
+posture; symlink/path traversal tests; before/after hash hardening; receipt
+details; adversarial filesystem tests; docs and freeze.
+
+Old-yai audit focus: filesystem carrier and sandbox material.
+
+Quality gate: adversarial filesystem tests pass.
+
+### SPINE.48 - Process Carrier
+
+Macro: HOST / CONTROL / OBSERVABILITY
+
+Purpose: add controlled process execution.
+
+Subdeliveries: process carrier doctrine; command subject model; environment
+boundary; stdout/stderr receipt; exit status policy; timeout/kill; resource
+limits; process smoke/adversarial; docs and freeze.
+
+Old-yai audit focus: process execution and runtime carrier material.
+
+Quality gate: process effects produce bounded receipts and timeout posture.
+
+### SPINE.49 - Host Observation Probes
+
+Macro: HOST / RECONCILE / OBSERVABILITY
+
+Purpose: observe host state and expose bypass.
+
+Subdeliveries: host observation doctrine; filesystem probe; process probe;
+network probe placeholder; observation receipt; external bypass detection; host
+observation smoke; docs and freeze.
+
+Old-yai audit focus: runtime observation probes.
+
+Quality gate: observed bypass creates residue and reconcile posture.
+
+### SPINE.50 - Network / HTTP Carrier
+
+Macro: HOST / CONTROL / MODEL
+
+Purpose: add controlled network effects.
+
+Subdeliveries: network carrier doctrine; endpoint subject; request policy;
+response receipt; timeout/error receipt; redaction/no-raw-data gate; network
+carrier smoke; docs and freeze.
+
+Old-yai audit focus: external capability and HTTP adapter material.
+
+Quality gate: network requests are gated and receipted.
+
+### SPINE.51 - Database Carrier
+
+Macro: HOST / DATA / CONTROL
+
+Purpose: add controlled database effects.
+
+Subdeliveries: database carrier doctrine; database subject; read/query receipt;
+write/mutation gate; transaction receipt; rollback posture; database carrier
+smoke; docs and freeze.
+
+Old-yai audit focus: database/tool adapter material.
+
+Quality gate: mutation paths require control and receipt posture.
+
+### SPINE.52 - Repository / Git Carrier
+
+Macro: HOST / RESIDUE / OBSERVABILITY
+
+Purpose: add controlled repository effects.
+
+Subdeliveries: repository carrier doctrine; repo subject; diff receipt; patch
+attempt; commit boundary; branch/status observation; repo carrier smoke; docs
+and freeze.
+
+Old-yai audit focus: repository and git operation material.
+
+Quality gate: repo effects preserve diff, status and receipt evidence.
+
+### SPINE.53 - Carrier Receipts Hardening
+
+Macro: HOST / RESIDUE / RECONCILE
+
+Purpose: harden carrier receipt semantics.
+
+Subdeliveries: carrier receipt schema; status taxonomy; before/after state;
+error envelope; external receipt import; receipt validation; receipt replay;
+docs and freeze.
+
+Old-yai audit focus: carrier receipt and external receipt material.
+
+Quality gate: receipt replay validates carrier outcome posture.
+
+### SPINE.54 - Recovery / Compensation Posture
+
+Macro: RECONCILE / HOST / CONTROL
+
+Purpose: represent recovery without silent repair.
+
+Subdeliveries: recovery doctrine; compensation posture; no silent repair rule;
+recovery obligation; recovery projection; compensation receipt; recovery
+posture smoke; docs and freeze.
+
+Old-yai audit focus: recovery and compensation material.
+
+Quality gate: recovery is explicit posture and receipt, not hidden mutation.
+
+### SPINE.55 - Daemon Op Execution Over IPC
+
+Macro: HOST / WORLD / CONTROL
+
+Purpose: execute controlled operations through daemon IPC.
+
+Subdeliveries: op request envelope; `case_session` lookup; authority check;
+control decision; carrier dispatch; receipt response; projection update; IPC op
+execution smoke; docs and freeze.
+
+Old-yai audit focus: daemon, runtime session and IPC execution material.
+
+Quality gate: IPC operation execution returns decision and receipt evidence.
+
+### SPINE.56 - Host-Control Milestone Freeze
+
+Macro: HOST / CONTROL / OBSERVABILITY
+
+Purpose: close host-control foundation.
+
+Subdeliveries: filesystem carrier validation; process carrier validation;
+network/database/repo validation; carrier receipt validation; reconcile
+validation; host observability validation; docs freeze.
+
+Old-yai audit focus: only unresolved host-control residues.
+
+Quality gate: host-control smoke and adversarial coverage pass.
+
+### SPINE.57 - Protocol Fixtures From Core Journals
+
+Macro: EXTERNAL / DATA
+
+Purpose: prepare downstream protocol fixtures from core evidence.
+
+Subdeliveries: fixture doctrine; journal fixture extraction; record fixture
+extraction; projection fixture extraction; receipt fixture extraction; schema
+candidates; docs and freeze.
+
+Old-yai audit focus: protocol and fixture material.
+
+Quality gate: fixtures derive from real smoke journals and records.
+
+### SPINE.58 - Interfaces Handoff Prep
+
+Macro: EXTERNAL
+
+Purpose: prepare `interfaces` to consume core truth.
+
+Subdeliveries: primitive schema list; operation mapping; projection contracts;
+transport needs; SDK boundary; conformance plan; docs and freeze.
+
+Old-yai audit focus: old interface/protocol leakage only.
+
+Quality gate: interfaces remain downstream of projections and protocols.
+
+### SPINE.59 - Core Conformance Harness
+
+Macro: EXTERNAL / OBSERVABILITY
+
+Purpose: define external conformance over core behavior.
+
+Subdeliveries: conformance doctrine; invariant tests; replay tests; projection
+tests; carrier tests; behavior fixtures; report format; docs and freeze.
+
+Old-yai audit focus: old tests useful as scenarios only.
+
+Quality gate: conformance can validate core invariants from fixtures.
+
+### SPINE.60 - Console Projection Handoff
+
+Macro: EXTERNAL / VIEW
+
+Purpose: prepare console as projection-first UX.
+
+Subdeliveries: console role reaffirmation; projection-first command map; review
+queue projection; receipt view contract; graph view contract; memory view
+contract; docs and freeze.
+
+Old-yai audit focus: operator UI concepts only.
+
+Quality gate: console does not own core truth.
+
+### SPINE.61 - AI-Environment Harness Prep
+
+Macro: EXTERNAL / MODEL / HOST
+
+Purpose: prepare the external environment harness.
+
+Subdeliveries: ai-environment role; harness subject model; agent trace adapter
+plan; provider experiment fixtures; policy compliance scenarios; release
+rehearsal boundary; docs and freeze.
+
+Old-yai audit focus: agents, providers, scenarios and release rehearsal
+material.
+
+Quality gate: ai-environment remains outside yai-core ownership.
+
+### SPINE.62 - Local Core Milestone Freeze
+
+Macro: ALL
+
+Purpose: close the local core milestone.
+
+Subdeliveries: full build/check/smoke; case_world validation; data-plane
+validation; projection/memory/reconcile validation; model/policy validation;
+host carrier validation; observability validation; external handoff validation;
+docs freeze; milestone tag.
+
+Old-yai audit focus: final unresolved transition residues only.
+
+Quality gate: full milestone validation passes and status docs freeze.
+
+## External Repo Tracks
+
+These tracks remain later and downstream:
+
+| Track | Meaning |
 |---|---|
-| ENV.CANON.0 | Role declaration and old-core freeze |
-| ENV.CANON.1 | Inventory old roots as experiment/lab material |
-| ENV.CANON.2 | Agents as external subjects/adapters, not core |
-| ENV.CANON.3 | Capabilities as effect/op fixtures, not core catalog |
-| ENV.CANON.4 | Orchestrator/workflow as external workflow lab |
-| ENV.CANON.5 | Models/providers as external model lab and carrier test subjects |
-| ENV.CANON.6 | Substrate material as store/graph/memory extraction evidence |
-| ENV.CANON.7 | Old tests converted to ai-environment scenarios |
-| ENV.CANON.8 | ai-environment harness against yai-core |
-| ENV.CANON.8A | Agentic QA / Release Rehearsal lab boundary |
-| ENV.CANON.9 | Rename/package decision |
-| ENV.CANON.10 | Environment milestone freeze |
-
-### ENV.CANON Agentic QA / Release Rehearsal
-
-Agentic QA is not built inside `yai-core` and should not become an internal
-`yai` self-test engine. It belongs in future `ai-environment` as an external
-lab that can put YAI systems, LidoPro and third-party software under test.
-
-Canonical ownership:
-
-```text
-ai-environment
-  qa/
-    doctrine/
-    scenarios/
-    agents/
-    harnesses/
-    simulators/
-    fake-systems/
-    runners/
-    reports/
-    adapters/
-      yai/
-      lidopro/
-      generic-web-app/
-```
-
-Product-oriented naming can also group the same capability as:
-
-```text
-ai-environment/
-  release-rehearsal/
-  agentic-qa/
-  test-case-engines/
-  evidence-lab/
-```
-
-Ownership split:
-
-| Owner | Owns |
-|---|---|
-| `ai-environment` | Agentic QA engines, release rehearsal, scenario generation, simulation runtime, fake systems, accelerated time, adversarial runs, QA reports, evidence bundles and adapters. |
-| YAI systems under test (`yai-core`, transition `yai`, later packaged YAI) | Invariants, contracts, protocol expectations, trace/evidence shape, conformance targets, smoke targets and release validation requirements. |
-| YaiLabs / site | Public and commercial methodology: Agentic QA, Release Simulation, Test Case Generation and Evidence-Based QA. |
-
-Rule:
-
-```text
-do not build QA inside YAI
-build an agentic environment that can test YAI
-```
-
-YAI exposes verifiable surfaces:
-
-```text
-Documentation/testing/
-  release-validation-contract.md
-  invariant-map.md
-  evidence-contract.md
-
-protocols/testing/
-  scenario-envelope.schema.json
-  evidence-report.schema.json
-
-make test
-make validate-contract
-make smoke
-```
-
-`ai-environment` executes scenarios against those surfaces, validates
-invariants, observes traces and produces evidence reports. This keeps QA at a
-healthy distance from the system it validates and makes the capability reusable
-for non-YAI products.
-
-## INTF.CANON Roadmap
-
-Purpose: make `interfaces` project `yai-core` truth, not old Series 2
-runtime/agent semantics.
-
-| Wave | Name |
-|---|---|
-| INTF.CANON.0 | Interface role reaffirmation |
-| INTF.CANON.1 | Primitive schema alignment: case, subject, op, decision, receipt, projection |
-| INTF.CANON.2 | Transport alignment to yaid/yai/local IPC future |
-| INTF.CANON.3 | Remove old root leakage from registry names |
-| INTF.CANON.4 | Operation registry rebase on op/effect/control |
-| INTF.CANON.5 | SDK boundary: clients consume projections, not core internals |
-| INTF.CANON.6 | Conformance fixtures from yai-core smoke journals |
-| INTF.CANON.7 | Interfaces milestone freeze |
-
-## CONSOLE.CANON Roadmap
-
-Purpose: make `console` operator UX consume `yai-core` projections and
-`interfaces`, not own runtime truth.
-
-| Wave | Name |
-|---|---|
-| CONSOLE.CANON.0 | Console role reaffirmation |
-| CONSOLE.CANON.1 | Command taxonomy rebase: case/subject/op/decision/receipt/memory/projection |
-| CONSOLE.CANON.2 | Remove old agent/governance/runtime command assumptions |
-| CONSOLE.CANON.3 | Projection-first TUI model |
-| CONSOLE.CANON.4 | Review/inspection UX over yai-core receipts and graph |
-| CONSOLE.CANON.5 | Console integration against interfaces |
-| CONSOLE.CANON.6 | Console milestone freeze |
-
-## Commercial Spine
-
-The product begins as `yai-core`: a local AI operational control core.
-`interfaces` and `console` are not the first product root. They are surfaces
-around the core.
-
-Commercial sequence:
-
-```text
-Core Developer / Local
-Integration Kit
-Operational Memory / Audit Pack
-Professional / Team
-Enterprise / Embedded
-Platform / Cloud later
-```
+| ENV.CANON | Turn old `yai` into future `ai-environment` concept mine, lab and harness. |
+| INTF.CANON | Align interfaces, schemas, transports, SDK and conformance to `yai-core` truth. |
+| CONSOLE.CANON | Align operator UX to projections and interfaces. |
 
 ## Non-Goals
 
-SPINE.0 does not:
-
-```text
-create ai-environment repo
-rename yai
-touch interfaces
-touch console
-implement NEW.6
-change code
-move source files
-migrate old yai folders
-make yai-core depend on old yai
-```
+This roadmap does not rename repos, create `ai-environment`, touch
+`interfaces`, touch `console`, implement data planes, or make archived docs
+active again.
