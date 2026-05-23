@@ -1,18 +1,31 @@
 # Current Engineering Status
 
-Status: SPINE.20 local runtime layout.
+Status: SPINE.20A pack roadmap rebase.
 
 ## Completed Foundation
 
 NEW.0 through NEW.19 are complete foundation history. SPINE.6A compressed
 active engineering docs. SPINE.6B adds the operational extraction contract for
-future implementation waves. SPINE.20 adds the local runtime layout.
+future implementation waves. SPINE.20 adds the local runtime layout. SPINE.20A
+rebases the active roadmap so pack materialization becomes the next canonical
+spine step.
 
-The next active roadmap item is:
+Current:
 
 ```text
-SPINE.21 Filesystem Refactor Freeze
+SPINE.20 Local Runtime Layout completed.
+SPINE.20A Pack Roadmap Rebase current/done.
 ```
+
+Next:
+
+```text
+SPINE.21 Pack Materialization Doctrine.
+```
+
+Rationale: packs must be canonized before filesystem freeze and data-plane
+implementation because pack material becomes case-world material and future
+data-plane input.
 
 ## Current Layout
 
@@ -74,9 +87,9 @@ operational-extraction-contract.md
 
 The current data plane remains partly journal-backed and partly transitional C
 smoke support. Shared memory, LMDB, Ladybug, DuckDB, projection deltas, memory
-consolidation and cross-plane reconcile remain future SPINE.22-SPINE.30 work.
-SPINE.20 creates `YAI_HOME/store` as the future durable data-plane root but does
-not create those backends.
+consolidation, cross-plane reconcile and observability/evaluation facts remain
+future SPINE.23-SPINE.32 work. SPINE.20 creates `YAI_HOME/store` as the future
+durable data-plane root but does not create those backends.
 
 Old `yai` residue for SPINE.20 was read-only inspected. The old `yai` worktree
 has an existing dirty architecture file, so no old-yai files were modified.

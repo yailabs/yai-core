@@ -44,10 +44,11 @@ is linear:
 
 ```text
 SPINE.20
+SPINE.20A
 SPINE.21
 SPINE.22
 ...
-SPINE.62
+SPINE.64
 ```
 
 Future implementation waves must also classify corresponding old-yai residue.

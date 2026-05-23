@@ -317,7 +317,9 @@ the wave must extract or rewrite useful material, classify the old residue,
 update inventory and keep commit boundaries clear. SPINE.20 adds local runtime
 layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
 `YAI_HOME/log`, `YAI_HOME/tmp`, `YAI_HOME/cases`, `YAI_HOME/sockets` and
-`YAI_HOME/config`.
+`YAI_HOME/config`. SPINE.20A rebases the active linear roadmap so SPINE.21 is
+Pack Materialization Doctrine before filesystem freeze and data-plane
+implementation.
 
 ### Absorbed Concepts
 

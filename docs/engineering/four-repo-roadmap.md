@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.20 local runtime layout. | SPINE.21 Filesystem Refactor Freeze. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.20 local runtime layout; SPINE.20A pack roadmap rebase current/done. | SPINE.21 Pack Materialization Doctrine. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -31,10 +31,11 @@ live case context, observability doctrine, interaction threads and build/guard
 realignment. SPINE.6A compressed engineering docs. SPINE.6B made
 bidirectional old-yai extraction and residue normalization mandatory for future
 implementation waves. SPINE.20 established the local `YAI_HOME` runtime layout
-and install/uninstall/doctor targets.
+and install/uninstall/doctor targets. SPINE.20A rebased the active roadmap so
+pack materialization becomes the next canonical spine step.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.20.
+delivery is SPINE.21.
 
 ## Canonical Macro Labels
 
@@ -70,7 +71,76 @@ concepts into the new grammar, update inventory, normalize old-yai residue and
 validate. Details live in `wave-template.md` and
 `operational-extraction-contract.md`.
 
-## SPINE.20-SPINE.62 Linear Roadmap
+## Pack Materialization Preview
+
+Packs are case materialization units.
+
+A pack is not a marketplace product, DLC or prompt bundle. A pack is a way to
+materialize methods, procedures, policies, templates, projection rules, output
+schemas, memory seeds, actors/tools and validation fixtures into a case.
+
+Pack kinds:
+
+```text
+native_yai
+user
+organization
+vertical
+pilot/reference
+```
+
+SPINE.21 will define the pack format, lifecycle and materialization rules.
+
+## SPINE.20-SPINE.64 Linear Roadmap
+
+```text
+SPINE.20  Local Runtime Layout                                  done
+SPINE.20A Pack Roadmap Rebase                                   current/done
+SPINE.21  Pack Materialization Doctrine                         planned
+SPINE.22  Filesystem Refactor Milestone Freeze                  planned
+SPINE.23  Hot State / Shared Memory Plane v0                    planned
+SPINE.24  LMDB Record Backend v0                                planned
+SPINE.25  Journal Replay to LMDB v0                             planned
+SPINE.26  Ladybug Graph Backend v0                              planned
+SPINE.27  DuckDB Fact Backend v0                                planned
+SPINE.28  Projection Delta / Live View v0                       planned
+SPINE.29  Memory Consolidation over Record + Graph + Facts v0   planned
+SPINE.30  Reconcile over Hot / Store / Graph Consistency v0     planned
+SPINE.31  Observability / Evaluation Facts v0                   planned
+SPINE.32  Data Plane Milestone Freeze                           planned
+SPINE.33  Ingest Material Model v0                              planned
+SPINE.34  Model / Provider Subject Posture v0                   planned
+SPINE.35  Model Output Claim Import v0                          planned
+SPINE.36  Policy Pack Skeleton + Model Projection v0            planned
+SPINE.37  Naked Local Model Case Experiment v0                  planned
+SPINE.38  Model Behavior Trace v0                               planned
+SPINE.39  Model Carrier v0                                      planned
+SPINE.40  Agent Trace / Tool Call Import v0                     planned
+SPINE.41  Policy Compliance Experiment Harness v0               planned
+SPINE.42  Legal / Accounting / Business Domain Packs v0         planned
+SPINE.43  Policy Memory v0                                      planned
+SPINE.44  Unknown Provider Policy Handling v0                   planned
+SPINE.45  Multi-Model Comparative Case Test v0                  planned
+SPINE.46  Human Review / Authority Binding v0                   planned
+SPINE.47  Case Audit Packet v0                                  planned
+SPINE.48  Policy-Control Milestone Freeze                       planned
+SPINE.49  Filesystem Carrier Hardening                          planned
+SPINE.50  Process Carrier v0 with Host Safeguards               planned
+SPINE.51  Host Observation Probes v0                            planned
+SPINE.52  Network / HTTP Carrier v0                             planned
+SPINE.53  Database Carrier v0                                   planned
+SPINE.54  Repository / Git Carrier v0                           planned
+SPINE.55  Carrier Receipts Hardening                            planned
+SPINE.56  Recovery / Compensation Posture v0                    planned
+SPINE.57  Daemon Op Execution over IPC                          planned
+SPINE.58  Host-Control Milestone Freeze                         planned
+SPINE.59  Protocol Fixtures from Core Journals                  planned
+SPINE.60  Interfaces Handoff Prep                               planned
+SPINE.61  Core Conformance Harness                              planned
+SPINE.62  Console Projection Handoff Prep                       planned
+SPINE.63  AI-Environment Harness Prep                           planned
+SPINE.64  Local Core Milestone Freeze                           planned
+```
 
 ### SPINE.20 - Local Runtime Layout
 
@@ -91,7 +161,51 @@ scripts.
 Quality gate: installed `yai` and `yaid` run the existing smoke path without
 depending on transient build paths.
 
-### SPINE.21 - Filesystem Refactor Freeze
+### SPINE.20A - Pack Roadmap Rebase
+
+Status: current/done.
+
+Macro: WORLD / DATA / VIEW / CONTROL / MEMORY / EXTERNAL
+
+Purpose: update the active roadmap before SPINE.21 so pack materialization
+becomes a canonical spine step.
+
+Subdeliveries: insert SPINE.21 Pack Materialization Doctrine; shift the
+post-SPINE.20 sequence consistently; add pack materialization preview; update
+status, data-plane ordering, wave template and extraction plan surfaces; no
+implementation.
+
+Old-yai audit focus: read-only status/audit only if needed.
+
+Quality gate: active docs use one SPINE.20+ linear numbering sequence and no
+active doc says SPINE.21 is filesystem freeze.
+
+### SPINE.21 - Pack Materialization Doctrine
+
+Macro: WORLD / RESIDUE / VIEW / CONTROL / MEMORY / MODEL / EXTERNAL
+
+Purpose: define packs as first-class case materialization units.
+
+Must define: pack kinds; pack lifecycle; pack manifest shape; pack folder
+shape; pack materialization into `case_domain` / `case_attachment` /
+`case_binding`; policy material; projection rules; authority scopes;
+procedures; templates; output schemas; memory seeds; fixtures; limits /
+budgets; native/user/organization/vertical pack distinction.
+
+Non-goals: no marketplace; no billing; no pack installer; no pack runtime; no
+agent pack execution.
+
+Old-yai audit focus: `../yai/src/case/packs/*`,
+`../yai/src/case/materialization/*`, `../yai/src/case/policy/*`,
+`../yai/src/case/subjects/*`, `../yai/src/case/scope/*`,
+`../yai/src/capabilities/*`, `../yai/src/agents/roles/*`,
+`../yai/src/agents/composition/*`, `../yai/src/models/frame/*`,
+`../yai/src/substrate/sources/*`, `../yai/src/substrate/views/*`.
+
+Quality gate: pack doctrine defines materialization boundaries without creating
+pack runtime, installer, marketplace or pack directories.
+
+### SPINE.22 - Filesystem Refactor Milestone Freeze
 
 Macro: HOST / EXTERNAL
 
@@ -107,7 +221,7 @@ Old-yai audit focus: none unless stale path language overlaps active docs.
 Quality gate: layout checks pass and the active repo has no old implementation
 roots.
 
-### SPINE.22 - Hot State / Shared Memory Plane
+### SPINE.23 - Hot State / Shared Memory Plane v0
 
 Macro: DATA / WORLD / VIEW / OBSERVABILITY
 
@@ -124,7 +238,7 @@ Old-yai audit focus: `src/runtime/sessions/*`, `src/substrate/signals/*`,
 Quality gate: daemon can expose current case/session/projection freshness from
 hot state while durable truth remains residue-backed.
 
-### SPINE.23 - LMDB Record Plane
+### SPINE.24 - LMDB Record Backend v0
 
 Macro: DATA / RESIDUE / WORLD
 
@@ -139,7 +253,7 @@ Old-yai audit focus: `src/substrate/store/*`, `src/substrate/records/*`.
 
 Quality gate: journal is no longer the only way to read case records.
 
-### SPINE.24 - Journal Replay To Record Plane
+### SPINE.25 - Journal Replay to LMDB v0
 
 Macro: DATA / RESIDUE / OBSERVABILITY
 
@@ -154,7 +268,7 @@ Old-yai audit focus: old replay, drain and journal persistence paths.
 Quality gate: a case can be rebuilt from journal into the record plane with a
 diagnostic report.
 
-### SPINE.25 - Ladybug Operational Graph Plane
+### SPINE.26 - Ladybug Graph Backend v0
 
 Macro: DATA / RECONCILE / MEMORY
 
@@ -170,7 +284,7 @@ Old-yai audit focus: `src/substrate/graph/*`, `src/lineage/*`.
 
 Quality gate: receipt chains reconstruct from the graph backend.
 
-### SPINE.26 - DuckDB Fact Plane
+### SPINE.27 - DuckDB Fact Backend v0
 
 Macro: DATA / OBSERVABILITY / MODEL / CONTROL
 
@@ -184,7 +298,7 @@ Old-yai audit focus: `src/analytics/*`, `src/analytics/features/*`.
 
 Quality gate: facts derive from residue without becoming operational truth.
 
-### SPINE.27 - Live Projection Delta Plane
+### SPINE.28 - Projection Delta / Live View v0
 
 Macro: VIEW / DATA / MODEL / OBSERVABILITY
 
@@ -201,7 +315,7 @@ Old-yai audit focus: `src/substrate/views/*`, `src/case/surface/*`,
 Quality gate: model-visible context can be refreshed by delta with provenance
 and freshness.
 
-### SPINE.28 - Memory Consolidation Plane
+### SPINE.29 - Memory Consolidation over Record + Graph + Facts v0
 
 Macro: MEMORY / DATA / VIEW / OBSERVABILITY
 
@@ -218,7 +332,7 @@ Old-yai audit focus: `src/substrate/memory/*`, `src/lineage/*`,
 Quality gate: memory has explicit basis, scope, freshness and projection
 permissions.
 
-### SPINE.29 - Cross-Plane Reconcile
+### SPINE.30 - Reconcile over Hot / Store / Graph Consistency v0
 
 Macro: RECONCILE / DATA / OBSERVABILITY
 
@@ -233,7 +347,24 @@ Old-yai audit focus: `src/substrate/signals/*`, `src/runtime/observation/*`.
 
 Quality gate: mismatches become explicit divergence, not silent repair.
 
-### SPINE.30 - Data Plane Milestone Freeze
+### SPINE.31 - Observability / Evaluation Facts v0
+
+Macro: OBSERVABILITY / DATA / MODEL / RECONCILE
+
+Purpose: make quality and evaluation facts queryable before the data-plane
+milestone freeze.
+
+Subdeliveries: observability fact doctrine; case-view quality facts; freshness
+facts; provenance facts; replayability facts; model behavior evaluation facts;
+memory quality facts; divergence exposure facts; report smoke; docs and freeze.
+
+Old-yai audit focus: `src/analytics/*`, `src/runtime/observation/*`,
+`src/substrate/signals/*`.
+
+Quality gate: evaluation facts derive from residue without becoming
+operational truth.
+
+### SPINE.32 - Data Plane Milestone Freeze
 
 Macro: DATA / OBSERVABILITY
 
@@ -247,7 +378,7 @@ Old-yai audit focus: only gaps discovered by rebuild and smoke evidence.
 
 Quality gate: full case rebuild and projection freshness validation pass.
 
-### SPINE.31 - Ingest Material Model
+### SPINE.33 - Ingest Material Model v0
 
 Macro: RESIDUE / WORLD / DATA
 
@@ -263,7 +394,7 @@ Old-yai audit focus: `src/case/materialization/*`, `src/substrate/records/*`.
 Quality gate: no external material enters without source, provenance and case
 binding.
 
-### SPINE.32 - Provider / Model Subject Posture
+### SPINE.34 - Model / Provider Subject Posture v0
 
 Macro: MODEL / WORLD / VIEW / CONTROL
 
@@ -280,7 +411,7 @@ Old-yai audit focus: `src/models/*`, `src/runtime/provider/*`,
 Quality gate: provider/model attachment does not grant policy or execution
 authority by itself.
 
-### SPINE.33 - Model Output Claim Import
+### SPINE.35 - Model Output Claim Import v0
 
 Macro: MODEL / RESIDUE / RECONCILE
 
@@ -295,7 +426,7 @@ Old-yai audit focus: `src/models/*`, `src/agents/grounding/*`.
 
 Quality gate: unsupported claims and overclaims are visible as residue.
 
-### SPINE.34 - Policy Pack + Model Projection
+### SPINE.36 - Policy Pack Skeleton + Model Projection v0
 
 Macro: CONTROL / VIEW / MODEL
 
@@ -311,7 +442,7 @@ Old-yai audit focus: `src/case/policy/*`, `src/substrate/views/*`.
 Quality gate: policy appears both cognitively through projection and
 operationally through gates.
 
-### SPINE.35 - Naked Local Model Case Experiment
+### SPINE.37 - Naked Local Model Case Experiment v0
 
 Macro: MODEL / VIEW / CONTROL / MEMORY / OBSERVABILITY
 
@@ -327,7 +458,7 @@ Old-yai audit focus: `src/models/*`, `src/runtime/provider/*`,
 
 Quality gate: a model can participate without agent-framework ownership.
 
-### SPINE.36 - Model Behavior Trace
+### SPINE.38 - Model Behavior Trace v0
 
 Macro: MODEL / OBSERVABILITY / RECONCILE
 
@@ -341,7 +472,7 @@ Old-yai audit focus: `src/analytics/signals/*`, `src/runtime/observation/*`.
 
 Quality gate: refusal, unsupported claim and overclaim evidence can be queried.
 
-### SPINE.37 - Model Carrier
+### SPINE.39 - Model Carrier v0
 
 Macro: HOST / MODEL / CONTROL
 
@@ -356,7 +487,7 @@ Old-yai audit focus: `src/runtime/provider/*`, `src/runtime/execution/*`.
 
 Quality gate: every model call has decision and receipt posture.
 
-### SPINE.38 - Agent Trace / Tool Call Import
+### SPINE.40 - Agent Trace / Tool Call Import v0
 
 Macro: MODEL / EXTERNAL / RESIDUE / CONTROL
 
@@ -372,7 +503,7 @@ Old-yai audit focus: `src/agents/grounding/*`, `src/capabilities/mcp/*`,
 
 Quality gate: tool attempts imported from agents still pass through control.
 
-### SPINE.39 - Policy Compliance Experiment Harness
+### SPINE.41 - Policy Compliance Experiment Harness v0
 
 Macro: CONTROL / MODEL / OBSERVABILITY
 
@@ -387,7 +518,7 @@ Old-yai audit focus: `src/analytics/*`, `src/case/policy/*`.
 
 Quality gate: experiment reports derive from facts and residue.
 
-### SPINE.40 - Legal / Accounting / Business Domain Packs
+### SPINE.42 - Legal / Accounting / Business Domain Packs v0
 
 Macro: CONTROL / MODEL / VIEW / MEMORY
 
@@ -401,7 +532,7 @@ Old-yai audit focus: old scenario/domain examples only.
 
 Quality gate: domain packs remain case material, not hardcoded core behavior.
 
-### SPINE.41 - Policy Memory
+### SPINE.43 - Policy Memory v0
 
 Macro: CONTROL / MEMORY / VIEW
 
@@ -415,7 +546,7 @@ Old-yai audit focus: `src/case/policy/*`, `src/substrate/memory/*`.
 
 Quality gate: policy memory has decision and receipt basis.
 
-### SPINE.42 - Unknown Provider Policy Handling
+### SPINE.44 - Unknown Provider Policy Handling v0
 
 Macro: MODEL / CONTROL / RECONCILE
 
@@ -431,7 +562,7 @@ Old-yai audit focus: `src/runtime/provider/*`, `src/models/*`.
 Quality gate: provider policy conflicts become divergence or posture, not
 assumed truth.
 
-### SPINE.43 - Multi-Model Comparative Case Test
+### SPINE.45 - Multi-Model Comparative Case Test v0
 
 Macro: MODEL / OBSERVABILITY / DATA
 
@@ -445,7 +576,7 @@ Old-yai audit focus: model and analytics fixtures.
 
 Quality gate: comparison reports use shared case residue and fact data.
 
-### SPINE.44 - Human Review / Authority Binding
+### SPINE.46 - Human Review / Authority Binding v0
 
 Macro: CONTROL / WORLD / VIEW
 
@@ -459,7 +590,7 @@ Old-yai audit focus: operator/review runtime material.
 
 Quality gate: review authority is bound to case world and receipts.
 
-### SPINE.45 - Case Audit Packet
+### SPINE.47 - Case Audit Packet v0
 
 Macro: VIEW / OBSERVABILITY / EXTERNAL
 
@@ -473,7 +604,7 @@ Old-yai audit focus: report/export material.
 
 Quality gate: audit packets preserve redaction, provenance and quality posture.
 
-### SPINE.46 - Policy-Control Milestone Freeze
+### SPINE.48 - Policy-Control Milestone Freeze
 
 Macro: CONTROL / MODEL / VIEW / MEMORY
 
@@ -487,7 +618,7 @@ Old-yai audit focus: only unresolved policy/model residues.
 
 Quality gate: policy/model/review behavior is reproducible from residue.
 
-### SPINE.47 - Filesystem Carrier Hardening
+### SPINE.49 - Filesystem Carrier Hardening
 
 Macro: HOST
 
@@ -501,7 +632,7 @@ Old-yai audit focus: filesystem carrier and sandbox material.
 
 Quality gate: adversarial filesystem tests pass.
 
-### SPINE.48 - Process Carrier
+### SPINE.50 - Process Carrier v0 with Host Safeguards
 
 Macro: HOST / CONTROL / OBSERVABILITY
 
@@ -515,7 +646,7 @@ Old-yai audit focus: process execution and runtime carrier material.
 
 Quality gate: process effects produce bounded receipts and timeout posture.
 
-### SPINE.49 - Host Observation Probes
+### SPINE.51 - Host Observation Probes v0
 
 Macro: HOST / RECONCILE / OBSERVABILITY
 
@@ -529,7 +660,7 @@ Old-yai audit focus: runtime observation probes.
 
 Quality gate: observed bypass creates residue and reconcile posture.
 
-### SPINE.50 - Network / HTTP Carrier
+### SPINE.52 - Network / HTTP Carrier v0
 
 Macro: HOST / CONTROL / MODEL
 
@@ -543,7 +674,7 @@ Old-yai audit focus: external capability and HTTP adapter material.
 
 Quality gate: network requests are gated and receipted.
 
-### SPINE.51 - Database Carrier
+### SPINE.53 - Database Carrier v0
 
 Macro: HOST / DATA / CONTROL
 
@@ -557,7 +688,7 @@ Old-yai audit focus: database/tool adapter material.
 
 Quality gate: mutation paths require control and receipt posture.
 
-### SPINE.52 - Repository / Git Carrier
+### SPINE.54 - Repository / Git Carrier v0
 
 Macro: HOST / RESIDUE / OBSERVABILITY
 
@@ -571,7 +702,7 @@ Old-yai audit focus: repository and git operation material.
 
 Quality gate: repo effects preserve diff, status and receipt evidence.
 
-### SPINE.53 - Carrier Receipts Hardening
+### SPINE.55 - Carrier Receipts Hardening
 
 Macro: HOST / RESIDUE / RECONCILE
 
@@ -585,7 +716,7 @@ Old-yai audit focus: carrier receipt and external receipt material.
 
 Quality gate: receipt replay validates carrier outcome posture.
 
-### SPINE.54 - Recovery / Compensation Posture
+### SPINE.56 - Recovery / Compensation Posture v0
 
 Macro: RECONCILE / HOST / CONTROL
 
@@ -599,7 +730,7 @@ Old-yai audit focus: recovery and compensation material.
 
 Quality gate: recovery is explicit posture and receipt, not hidden mutation.
 
-### SPINE.55 - Daemon Op Execution Over IPC
+### SPINE.57 - Daemon Op Execution over IPC
 
 Macro: HOST / WORLD / CONTROL
 
@@ -613,7 +744,7 @@ Old-yai audit focus: daemon, runtime session and IPC execution material.
 
 Quality gate: IPC operation execution returns decision and receipt evidence.
 
-### SPINE.56 - Host-Control Milestone Freeze
+### SPINE.58 - Host-Control Milestone Freeze
 
 Macro: HOST / CONTROL / OBSERVABILITY
 
@@ -627,7 +758,7 @@ Old-yai audit focus: only unresolved host-control residues.
 
 Quality gate: host-control smoke and adversarial coverage pass.
 
-### SPINE.57 - Protocol Fixtures From Core Journals
+### SPINE.59 - Protocol Fixtures from Core Journals
 
 Macro: EXTERNAL / DATA
 
@@ -641,7 +772,7 @@ Old-yai audit focus: protocol and fixture material.
 
 Quality gate: fixtures derive from real smoke journals and records.
 
-### SPINE.58 - Interfaces Handoff Prep
+### SPINE.60 - Interfaces Handoff Prep
 
 Macro: EXTERNAL
 
@@ -654,7 +785,7 @@ Old-yai audit focus: old interface/protocol leakage only.
 
 Quality gate: interfaces remain downstream of projections and protocols.
 
-### SPINE.59 - Core Conformance Harness
+### SPINE.61 - Core Conformance Harness
 
 Macro: EXTERNAL / OBSERVABILITY
 
@@ -667,7 +798,7 @@ Old-yai audit focus: old tests useful as scenarios only.
 
 Quality gate: conformance can validate core invariants from fixtures.
 
-### SPINE.60 - Console Projection Handoff
+### SPINE.62 - Console Projection Handoff Prep
 
 Macro: EXTERNAL / VIEW
 
@@ -681,7 +812,7 @@ Old-yai audit focus: operator UI concepts only.
 
 Quality gate: console does not own core truth.
 
-### SPINE.61 - AI-Environment Harness Prep
+### SPINE.63 - AI-Environment Harness Prep
 
 Macro: EXTERNAL / MODEL / HOST
 
@@ -696,7 +827,7 @@ material.
 
 Quality gate: ai-environment remains outside yai-core ownership.
 
-### SPINE.62 - Local Core Milestone Freeze
+### SPINE.64 - Local Core Milestone Freeze
 
 Macro: ALL
 

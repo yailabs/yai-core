@@ -37,15 +37,16 @@ observability/evaluation = quality facts, not truth
 ## Linear Delivery
 
 ```text
-SPINE.22 Hot State / Shared Memory Plane
-SPINE.23 LMDB Record Plane
-SPINE.24 Journal Replay To Record Plane
-SPINE.25 Ladybug Operational Graph Plane
-SPINE.26 DuckDB Fact Plane
-SPINE.27 Live Projection Delta Plane
-SPINE.28 Memory Consolidation Plane
-SPINE.29 Cross-Plane Reconcile
-SPINE.30 Data Plane Milestone Freeze
+SPINE.23 Hot State / Shared Memory Plane v0
+SPINE.24 LMDB Record Backend v0
+SPINE.25 Journal Replay to LMDB v0
+SPINE.26 Ladybug Graph Backend v0
+SPINE.27 DuckDB Fact Backend v0
+SPINE.28 Projection Delta / Live View v0
+SPINE.29 Memory Consolidation over Record + Graph + Facts v0
+SPINE.30 Reconcile over Hot / Store / Graph Consistency v0
+SPINE.31 Observability / Evaluation Facts v0
+SPINE.32 Data Plane Milestone Freeze
 ```
 
 ## Rules

@@ -128,6 +128,37 @@ Case/session/thread waves:
 ../yai/src/runtime/sessions/*
 ```
 
+SPINE.21 Pack Materialization Doctrine must read:
+
+```text
+../yai/src/case/packs/*
+../yai/src/case/materialization/*
+../yai/src/case/policy/*
+../yai/src/case/subjects/*
+../yai/src/case/scope/*
+../yai/src/capabilities/*
+../yai/src/agents/roles/*
+../yai/src/agents/composition/*
+../yai/src/models/frame/*
+../yai/src/substrate/sources/*
+../yai/src/substrate/views/*
+```
+
+SPINE.21 must classify:
+
+```text
+case/packs              -> pack/materialization
+case/materialization    -> case_world/pack_materialization
+case/policy             -> control/policy_pack
+case/scope              -> pack/domain_scope
+capabilities            -> ai-environment or pack/tools, split
+agents/roles            -> ai-environment or pack/actors, externalize
+agents/composition      -> ai-environment, externalize
+models/frame            -> pack/projection/model_frame
+substrate/sources       -> pack/materials
+substrate/views         -> pack/projections
+```
+
 ## Non-Core Material
 
 Agent frameworks, scenario harnesses, release rehearsal, provider labs and QA

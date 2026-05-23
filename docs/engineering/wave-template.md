@@ -67,6 +67,19 @@ Case-world impact:
   sessions/context
   interaction threads
 
+Pack materialization impact:
+  pack kinds
+  pack manifest/folder shape
+  methods/procedures/templates
+  policy material and projection rules
+  authority scopes
+  output schemas
+  memory seeds
+  actors/tools
+  fixtures
+  limits/budgets
+  case_domain / case_attachment / case_binding materialization
+
 Data-plane impact:
   hot state
   journal

@@ -31,9 +31,9 @@ doctrine.
 
 ## Consequences
 
-The next implementation wave is NEW.13 target filesystem doctrine/refactor
-plan. Local install layout is delayed to NEW.20 so the project does not install
-a filesystem shape already known to be transitional.
+At the time of this ADR, the next implementation wave was NEW.13 target
+filesystem doctrine/refactor plan. That pre-SPINE.20 numbering is historical;
+future scheduling now belongs to `docs/engineering/four-repo-roadmap.md`.
 
 NEW.13 defines the exact staged sequence:
 
@@ -44,8 +44,7 @@ NEW.16  move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c
 NEW.17  move C implementation: lib/ -> system/
 NEW.18  split C data logic: system bridge vs engine ownership
 NEW.19  Makefile/build/guards realignment
-NEW.20  local install layout: yai + yaid
-NEW.21  filesystem refactor milestone freeze
+SPINE.20  local install layout: yai + yaid
 ```
 
 NEW.15 makes `cmd/yai` the canonical Rust technical command location. It does
