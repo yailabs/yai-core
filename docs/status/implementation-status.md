@@ -5,9 +5,10 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.6A compresses active engineering docs. `docs/engineering/` now keeps one
-operational roadmap and a small active canon; historical wave records, maps and
-superseded plans live under `docs/archive/engineering/`.
+SPINE.6B adds the operational extraction contract after SPINE.6A compressed
+active engineering docs. `docs/engineering/` now keeps one operational roadmap,
+a small active canon and a mandatory bidirectional extraction rule for future
+implementation waves.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
@@ -49,10 +50,11 @@ NEW.18C adds `interaction_thread`, `interaction_turn` and
 `participant_view_frame` records. The prompt surface supports `/thread status`,
 `/thread new`, `/thread list`, `/thread use` and `/thread archive`; a new
 thread resets the conversational lane without deleting journal/audit history.
-SPINE.6A removes active parallel scheduling from engineering docs. Macro labels
-such as `WORLD`, `DATA`, `VIEW` and `OBSERVABILITY` remain impact labels inside
-one linear SPINE.N roadmap. `docs/engineering/four-repo-roadmap.md` is the
-primary operator reference.
+SPINE.6A removes active parallel scheduling from engineering docs. SPINE.6B
+requires future implementation waves to classify corresponding old-yai residue.
+Macro labels such as `WORLD`, `DATA`, `VIEW` and `OBSERVABILITY` remain impact
+labels inside one linear SPINE.N roadmap. `docs/engineering/four-repo-roadmap.md`
+is the primary operator reference.
 
 ## Filesystem Refoundation History
 
@@ -128,6 +130,11 @@ NEW.19 is complete as the Makefile/build/guards realignment wave.
 SPINE.6A is the engineering docs compression wave. It makes
 `docs/engineering/four-repo-roadmap.md` the only active roadmap, archives wave
 records/maps/superseded plans, and starts future scheduling at SPINE.20.
+
+SPINE.6B is the operational wave contract. It makes old-yai source audit,
+extraction, yai-core implementation, old-yai residue normalization, inventory
+update and validation mandatory for future implementation waves when the
+touched concept already exists in old `yai`.
 
 ## Minimum Loop History
 

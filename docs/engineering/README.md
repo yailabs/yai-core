@@ -26,9 +26,14 @@ data-plane-roadmap.md
 extraction-plan.md
 filesystem-target.md
 four-repo-roadmap.md
+operational-extraction-contract.md
 testing.md
 wave-template.md
 ```
+
+`wave-template.md` is the short operator template for future SPINE.N delivery
+boxes. `operational-extraction-contract.md` is the detailed rule set for
+bidirectional old-yai extraction and residue normalization.
 
 ## Rules
 
@@ -44,3 +49,7 @@ SPINE.22
 ...
 SPINE.62
 ```
+
+Future implementation waves must also classify corresponding old-yai residue.
+Reading old material without extracting, rewriting, externalizing,
+quarantining, marking compatibility or explicitly deferring it is not enough.

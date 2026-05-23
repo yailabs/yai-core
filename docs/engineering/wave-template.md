@@ -8,74 +8,118 @@ SPINE.N - Title
 Purpose:
   What this wave changes and why.
 
-Macro:
+Repos touched:
+  yai-core
+  old yai if residue normalization is required
+
+Spine coverage:
   WORLD / RESIDUE / DATA / VIEW / CONTROL / MEMORY / RECONCILE / HOST / MODEL / OBSERVABILITY / EXTERNAL
 
-Subdeliveries:
-  N.1 ...
-  N.2 ...
-  N.3 ...
+Scope:
+  In-scope work.
 
-Old-yai audit:
-  paths inspected
-  concepts mined
-  source copied? no
+Non-goals:
+  Explicit exclusions.
 
-Residue handling:
-  records affected
-  journal impact
-  receipts/evidence impact
-  extraction inventory updates
+Old-yai source audit:
+  exact paths inspected
+  files read
+  concepts extracted
+  code snippets or algorithms mined
+  files explicitly not used
+  dirty-worktree caveats
+
+Extraction decision table:
+  old path
+  extracted concept
+  target yai-core root
+  action: absorb / rewrite / split / externalize / quarantine / compat_only / delete_later / migrated_concept / leave_untouched
+  future_repo: yai-core / ai-environment / interfaces / console / none
+  status: planned / inspected / imported / rewritten / externalized / archived / blocked_by_dirty_worktree / deferred / complete
+  notes
+
+YAI-core implementation:
+  new files
+  changed files
+  moved files
+  contracts added
+  record kinds added
+  commands added
+  tests added
+  derived_from_old_yai when applicable
+
+Old-yai residue normalization:
+  what was marked historical
+  what was moved to archive
+  what was documented as externalized to ai-environment
+  what was left temporarily and why
+  what must not be touched because user/other changes exist
+
+Inventory update:
+  docs/internal/extraction-inventory.tsv rows changed
+  old-yai inventory rows changed if that repo is touched
 
 Case-world impact:
   domains
   attachments
   bindings
-  authority
-  projection posture
+  authority scopes
+  sessions/context
+  interaction threads
 
 Data-plane impact:
-  hot
+  hot state
   journal
-  record
+  LMDB future
+  Ladybug future
+  DuckDB future
   graph
-  fact
   memory
   projection
   reconcile
 
 Projection/model impact:
-  projection freshness
-  model-visible state
-  authority scope
-  participant view
+  model-visible projection
+  authority wording
+  model_interpretation
+  claim/attempt import
+  thread/participant view
 
 Observability/freshness impact:
-  new residue?
-  hot state affected?
-  projection invalidated?
-  delta produced?
-  trace/span/timing needed?
-  provenance/completeness/reconstructability affected?
-  behavioral or memory-quality facts produced?
+  trace/timing/freshness
+  projection stale/fresh behavior
+  Case View Quality
+  rebuild diagnostics
+  model behavior facts
+  memory quality facts
 
 Tests:
-  build
+  unit
   smoke
-  rebuild
-  adversarial
+  manual
+  rebuild/replay
   stale/freshness
-  projection quality
+  adversarial if applicable
 
 Docs:
-  four-repo-roadmap.md updated?
-  current-status.md updated?
-  active docs only?
+  active docs updated
+  archive docs updated
+  stale docs removed or marked historical
 
 Validation:
-  make info
-  make check-layout
-  make check-docs
-  make check
-  git diff --check
+  commands run
+  known caveats
+
+Commit boundaries:
+  yai-core commit
+  yai cleanup commit if old yai was modified
+  no mixed unrelated changes
 ```
+
+Operational rule:
+
+```text
+A wave is not complete until the corresponding old-yai residue has been classified.
+```
+
+Detailed rules live in `operational-extraction-contract.md`.

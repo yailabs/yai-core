@@ -14,6 +14,7 @@ for file in \
   docs/engineering/extraction-plan.md \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
+  docs/engineering/operational-extraction-contract.md \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
   docs/product/positioning.md \

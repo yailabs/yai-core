@@ -311,10 +311,11 @@ surface now uses an active interaction thread plus participant view frame over
 the current case projection; transcript records remain audit material, not raw
 chat memory.
 
-SPINE.6A compresses active engineering docs. Future waves use one linear
-SPINE.N number and declare macro impact, old-yai audit when relevant, residue
-handling and observability/freshness impact. SPINE.20 Local Runtime Layout is
-next.
+SPINE.6A compresses active engineering docs. SPINE.6B makes future
+implementation waves bidirectional: if the touched concept exists in old `yai`,
+the wave must extract or rewrite useful material, classify the old residue,
+update inventory and keep commit boundaries clear. SPINE.20 Local Runtime
+Layout is next.
 
 ### Absorbed Concepts
 
@@ -362,6 +363,8 @@ docs/architecture/06-control-policy-model.md
 docs/engineering/four-repo-roadmap.md
 docs/engineering/filesystem-target.md
 docs/engineering/data-plane-roadmap.md
+docs/engineering/wave-template.md
+docs/engineering/operational-extraction-contract.md
 docs/engineering/current-status.md
 docs/status/implementation-status.md
 ```

@@ -82,7 +82,7 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: SPINE.6A engineering docs compression done; NEW.19 foundation done\n"
+	@printf "status: SPINE.6B operational extraction contract done; NEW.19 foundation done\n"
 	@printf "next: SPINE.20 Local Runtime Layout\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"

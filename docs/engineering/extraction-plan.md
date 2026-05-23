@@ -17,8 +17,18 @@ Every relevant SPINE.N implementation wave must include:
 
 ```text
 Old-yai audit
+Extraction decision table
+YAI-core implementation
+Old-yai residue normalization
 Residue handling
+Inventory update
 ```
+
+A wave is not complete until the corresponding old-yai residue has been
+classified. If the concept already exists in old `yai`, the wave must absorb
+it, rewrite it, split it, externalize it to future `ai-environment`, quarantine
+it, mark it `compat_only`, mark it `delete_later`, leave it untouched with a
+reason, or explicitly defer it.
 
 ## Inventory
 
@@ -31,15 +41,14 @@ docs/internal/extraction-inventory.tsv
 Required posture:
 
 ```text
-old_path
-old_symbol_or_file
+wave
+old_repo_path
 old_concept
-future_repo
-future_root
-future_primitive
+target_repo
+target_root
 action
-compat_required
-first_wave
+future_repo
+status
 notes
 ```
 
@@ -47,12 +56,28 @@ notes
 
 ```text
 absorb
+rewrite
 quarantine
 externalize
 delete_later
 compat_only
-mine_concept
 split
+migrated_concept
+leave_untouched
+```
+
+Status values:
+
+```text
+planned
+inspected
+imported
+rewritten
+externalized
+archived
+blocked_by_dirty_worktree
+deferred
+complete
 ```
 
 ## Common Audit Sources
@@ -108,3 +133,26 @@ Case/session/thread waves:
 Agent frameworks, scenario harnesses, release rehearsal, provider labs and QA
 engines belong to future `ai-environment` unless a SPINE.N wave explicitly
 imports a primitive residue shape into `yai-core`.
+
+## Dirty Worktree Rule
+
+Before modifying old `yai`, run:
+
+```text
+git -C ../yai status --short
+```
+
+If the wave would touch a path with user or unknown changes, do not edit that
+path. Record `blocked_by_dirty_worktree` or a clear caveat and choose a
+non-conflicting inventory/docs update only if safe.
+
+## Commit Rule
+
+If both repos are modified, keep commit boundaries separate:
+
+```text
+yai-core implementation commit
+old-yai residue normalization commit
+```
+
+Do not mix unrelated old-yai cleanup into a yai-core commit.

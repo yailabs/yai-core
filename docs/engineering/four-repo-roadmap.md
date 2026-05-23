@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through NEW.19 and SPINE.6A document compression. | SPINE.20 Local Runtime Layout. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through NEW.19, SPINE.6A document compression and SPINE.6B operational extraction contract. | SPINE.20 Local Runtime Layout. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -28,7 +28,9 @@ control gate, filesystem carrier, graph, memory candidate, reconcile,
 projection, query, Rust engine integration, daemon IPC, daemon-backed loop,
 target layout, Rust/C source movement, engine bridge split, case-world records,
 live case context, observability doctrine, interaction threads and build/guard
-realignment.
+realignment. SPINE.6A compressed engineering docs. SPINE.6B made
+bidirectional old-yai extraction and residue normalization mandatory for future
+implementation waves.
 
 Do not schedule future work with the old NEW numbering. The next active
 delivery is SPINE.20.
@@ -50,6 +52,22 @@ EXTERNAL
 ```
 
 These labels describe impact. They are not numbered workstreams.
+
+## Operational Wave Contract
+
+Future implementation waves operate on both `yai-core` and corresponding old
+`yai` residue when the touched concept already exists there.
+
+Required rule:
+
+```text
+A wave is not complete until the corresponding old-yai residue has been classified.
+```
+
+Each relevant SPINE.N must read the old files, extract or rewrite useful
+concepts into the new grammar, update inventory, normalize old-yai residue and
+validate. Details live in `wave-template.md` and
+`operational-extraction-contract.md`.
 
 ## SPINE.20-SPINE.62 Linear Roadmap
 
