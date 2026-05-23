@@ -101,6 +101,50 @@ mod tests {
     }
 
     #[test]
+    fn build_authority_projection_summary() {
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "record:projection-rule",
+            "case:authority",
+            RecordKind::ProjectionRule,
+            "subject:llm-provider",
+            "",
+            "",
+            "",
+            "projection_rule:model-context-only",
+        ));
+        journal.append(Record::from_parts(
+            "record:authority-scope",
+            "case:authority",
+            RecordKind::AuthorityScope,
+            "subject:llm-provider",
+            "",
+            "",
+            "",
+            "authority_scope:model may:claim_proposal",
+        ));
+        journal.append(Record::from_parts(
+            "record:model-interpretation",
+            "case:authority",
+            RecordKind::ModelInterpretation,
+            "subject:llm-provider",
+            "attempt:model-prompt",
+            "",
+            "",
+            "model_interpretation:observed authority:not_authoritative_state",
+        ));
+
+        let projection = ProjectionSummary::from_journal("model", &journal);
+
+        assert_eq!(projection.projection_rule_count, 1);
+        assert_eq!(projection.authority_scope_count, 1);
+        assert_eq!(projection.model_interpretation_count, 1);
+        assert!(projection.summary.contains("projection_rules:1"));
+        assert!(projection.summary.contains("authority_scopes:1"));
+        assert!(projection.summary.contains("model_interpretations:1"));
+    }
+
+    #[test]
     fn build_filesystem_projection_summary() {
         let mut journal = Journal::new();
         journal.append(Record::from_parts(

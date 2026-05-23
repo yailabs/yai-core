@@ -4,26 +4,28 @@
   "case_ref": "case:new12-filesystem",
   "subject_ref": "subject:llm-provider",
   "source_ref": "manual-filesystem-loop-validation",
-  "summary": "Model provider may answer only from governed case projection and memory candidates.",
+  "summary": "Model provider may consume governed projections and produce claims/proposals, not effects.",
   "rules": [
     {
       "rule_ref": "rule:model-context-projection-only",
-      "effect": "allow_with_constraints",
+      "rule_class": "projection_rule",
       "operation": "model.context.read",
       "scope": "case_projection_only",
-      "constraints": ["no_raw_journal_unless_projected", "no_out_of_case_memory"],
+      "allowed": ["consume:model_context_projection", "produce:claim", "produce:proposal", "produce:model_interpretation"],
+      "forbidden": ["direct_filesystem_authority", "direct_system_authority", "direct_carrier_execution", "out_of_case_memory"],
+      "requires": ["proposed_action_becomes_op_attempt"],
+      "constraints": ["no_raw_journal_unless_projected", "no_out_of_case_memory", "output_not_authoritative_state"],
       "failure_mode": "defer_until_policy_available",
       "evidence_required": ["projection_result", "memory_candidate"]
     },
     {
       "rule_ref": "rule:model-output-is-observation-not-decision",
-      "effect": "allow_observed",
+      "rule_class": "authority_scope",
       "operation": "model.output.import",
       "scope": "case_only",
-      "constraints": ["output_is_claim_or_observation", "control_retains_decision_authority"],
+      "constraints": ["output_is_claim_or_proposal", "control_retains_decision_authority", "interpretation_checked_against_residue"],
       "failure_mode": "require_review",
-      "evidence_required": ["provider_prompt", "provider_output", "projection_result"]
+      "evidence_required": ["provider_prompt", "provider_output", "projection_result", "model_interpretation"]
     }
   ]
 }
-

@@ -4,33 +4,18 @@
   "case_ref": "case:new12-filesystem",
   "subject_ref": "subject:filesystem-sandbox",
   "source_ref": "manual-filesystem-loop-validation",
-  "summary": "Filesystem sandbox policy for manual daemon loop validation.",
+  "summary": "Filesystem effects are admissible only inside sandbox scope; decisions provide allow/block outcomes.",
   "rules": [
     {
-      "rule_ref": "rule:fs-read-observe-inside-sandbox",
-      "effect": "allow_observed",
-      "operation": "fs.read",
+      "rule_ref": "rule:filesystem-sandbox-boundary",
+      "rule_class": "policy_rule",
+      "condition": "effect_class in [fs.read, fs.write]",
+      "target_subject": "subject:filesystem-sandbox",
       "scope": "sandbox_only",
-      "failure_mode": "deny_without_receipt_path",
-      "evidence_required": ["filesystem_receipt"]
-    },
-    {
-      "rule_ref": "rule:fs-mutative-write-requires-review",
-      "effect": "require_review",
-      "operation": "fs.write",
-      "scope": "mutative",
-      "failure_mode": "require_review",
-      "evidence_required": ["decision", "filesystem_receipt"]
-    },
-    {
-      "rule_ref": "rule:fs-write-allow-only-inside-sandbox",
-      "effect": "allow_with_constraints",
-      "operation": "fs.write",
-      "scope": "sandbox_only",
-      "constraints": ["sandbox_only"],
+      "constraint": "sandbox_only",
+      "decision_consequence": "allow_with_constraints when sandbox_only is satisfied; block or require_review otherwise",
       "failure_mode": "deny_without_receipt_path",
       "evidence_required": ["decision", "filesystem_receipt"]
     }
   ]
 }
-

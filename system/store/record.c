@@ -99,6 +99,12 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "projection_result";
     case YAI_RECORD_QUERY_RESULT:
         return "query_result";
+    case YAI_RECORD_PROJECTION_RULE:
+        return "projection_rule";
+    case YAI_RECORD_AUTHORITY_SCOPE:
+        return "authority_scope";
+    case YAI_RECORD_MODEL_INTERPRETATION:
+        return "model_interpretation";
     default:
         return "unknown";
     }
@@ -156,6 +162,12 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_PROJECTION_RESULT;
     } else if (strcmp(value, "query_result") == 0) {
         *kind = YAI_RECORD_QUERY_RESULT;
+    } else if (strcmp(value, "projection_rule") == 0) {
+        *kind = YAI_RECORD_PROJECTION_RULE;
+    } else if (strcmp(value, "authority_scope") == 0) {
+        *kind = YAI_RECORD_AUTHORITY_SCOPE;
+    } else if (strcmp(value, "model_interpretation") == 0) {
+        *kind = YAI_RECORD_MODEL_INTERPRETATION;
     } else {
         return YAI_ERR_INVALID;
     }

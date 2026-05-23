@@ -37,6 +37,9 @@ pub struct ProjectionSummary {
     pub audit_projection_count: usize,
     pub limited_projection_count: usize,
     pub query_result_count: usize,
+    pub projection_rule_count: usize,
+    pub authority_scope_count: usize,
+    pub model_interpretation_count: usize,
 }
 
 impl ProjectionSummary {
@@ -198,9 +201,24 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.kind == RecordKind::QueryResult)
             .count();
+        let projection_rule_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ProjectionRule)
+            .count();
+        let authority_scope_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::AuthorityScope)
+            .count();
+        let model_interpretation_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ModelInterpretation)
+            .count();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count} projection_requests:{projection_request_count} projection_results:{projection_result_count} query_results:{query_result_count}"
+                "projection:{consumer} records:{source_record_count} decisions:{decision_count} rules:{policy_rule_count} projection_rules:{projection_rule_count} authority_scopes:{authority_scope_count} model_interpretations:{model_interpretation_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count} projection_requests:{projection_request_count} projection_results:{projection_result_count} query_results:{query_result_count}"
             ),
             consumer,
             case_ref,
@@ -234,6 +252,9 @@ impl ProjectionSummary {
             audit_projection_count,
             limited_projection_count,
             query_result_count,
+            projection_rule_count,
+            authority_scope_count,
+            model_interpretation_count,
         }
     }
 }

@@ -1,7 +1,7 @@
 use std::ffi::{CStr, CString};
 use std::fmt::Write as FmtWrite;
 use std::fs::{self, OpenOptions};
-use std::io::{Read, Write};
+use std::io::{IsTerminal, Read, Write};
 use std::net::TcpStream;
 use std::os::raw::{c_char, c_int, c_void};
 #[cfg(unix)]
@@ -18,6 +18,14 @@ use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+const ANSI_RESET: &str = "\x1b[0m";
+const ANSI_BOLD: &str = "\x1b[1m";
+const ANSI_DIM: &str = "\x1b[2m";
+const ANSI_CYAN: &str = "\x1b[36m";
+const ANSI_BLUE: &str = "\x1b[34m";
+const ANSI_GREEN: &str = "\x1b[32m";
+const ANSI_YELLOW: &str = "\x1b[33m";
+const ANSI_MAGENTA: &str = "\x1b[35m";
 
 unsafe extern "C" {
     fn linenoise(prompt: *const c_char) -> *mut c_char;
@@ -232,6 +240,12 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
         projection.projection_request_count
     );
     println!("projection_results: {}", projection.projection_result_count);
+    println!("projection_rules: {}", projection.projection_rule_count);
+    println!("authority_scopes: {}", projection.authority_scope_count);
+    println!(
+        "model_interpretations: {}",
+        projection.model_interpretation_count
+    );
     println!("operator: {}", projection.operator_projection_count);
     println!("model: {}", projection.model_projection_count);
     println!("audit: {}", projection.audit_projection_count);
@@ -376,6 +390,21 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         "memory_candidates: {}",
         projection.memory_candidate_count
     );
+    let _ = writeln!(
+        output,
+        "projection_rules: {}",
+        projection.projection_rule_count
+    );
+    let _ = writeln!(
+        output,
+        "authority_scopes: {}",
+        projection.authority_scope_count
+    );
+    let _ = writeln!(
+        output,
+        "model_interpretations: {}",
+        projection.model_interpretation_count
+    );
     let _ = writeln!(output, "graph_edges: {}", projection.graph_edge_count);
     let _ = writeln!(output);
 
@@ -392,6 +421,20 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         &journal,
         case_ref,
         &[RecordKind::PolicyRule],
+    );
+    render_model_context_records(
+        &mut output,
+        "Projection Rules",
+        &journal,
+        case_ref,
+        &[RecordKind::ProjectionRule],
+    );
+    render_model_context_records(
+        &mut output,
+        "Authority Scopes",
+        &journal,
+        case_ref,
+        &[RecordKind::AuthorityScope],
     );
     render_model_context_records(
         &mut output,
@@ -428,6 +471,13 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         case_ref,
         &[RecordKind::ProjectionRequest, RecordKind::ProjectionResult],
     );
+    render_model_context_records(
+        &mut output,
+        "Model Interpretations",
+        &journal,
+        case_ref,
+        &[RecordKind::ModelInterpretation],
+    );
     let _ = writeln!(output, "## Authority Boundaries");
     let _ = writeln!(
         output,
@@ -435,11 +485,15 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
     );
     let _ = writeln!(
         output,
-        "- subject:llm-provider output is an observation unless YAI records it through prompt/output residue; it is not a YAI decision, policy rule or receipt."
+        "- subject:llm-provider may produce claims, proposals and model_interpretation records; those are not authoritative state until checked against decisions, receipts, graph and memory."
     );
     let _ = writeln!(
         output,
-        "- filesystem decisions are represented by decision records and existing decisions/receipts are historical residue, not mutable by model output."
+        "- filesystem decisions are represented by decision records; existing decisions/receipts are historical residue, not mutable by model output."
+    );
+    let _ = writeln!(
+        output,
+        "- When answering, state authority granted by the current projection, not physical capability of the host process."
     );
     let _ = writeln!(
         output,
@@ -788,6 +842,21 @@ fn env_var(name: &str) -> Option<String> {
     std::env::var(name).ok().filter(|value| !value.is_empty())
 }
 
+fn color_enabled() -> bool {
+    std::io::stdout().is_terminal()
+        && env_var("NO_COLOR").is_none()
+        && env_var("YAI_NO_COLOR").is_none()
+        && env_var("TERM").as_deref() != Some("dumb")
+}
+
+fn paint(enabled: bool, code: &str, value: &str) -> String {
+    if enabled {
+        format!("{code}{value}{ANSI_RESET}")
+    } else {
+        value.to_string()
+    }
+}
+
 fn transcript_retention_enabled(journal: &Journal, case_ref: &str, subject_ref: &str) -> bool {
     let mut enabled = false;
     for record in journal.records().iter().filter(|record| {
@@ -904,6 +973,149 @@ fn linenoise_read_line(prompt: &str) -> Result<Option<String>, String> {
         linenoiseFree(ptr.cast::<c_void>());
     }
     Ok(Some(line))
+}
+
+fn prompt_label(case_ref: &str, colors: bool) -> String {
+    if colors {
+        format!(
+            "{}{}{}({}{}{})> ",
+            ANSI_BOLD, ANSI_CYAN, "yai", ANSI_YELLOW, case_ref, ANSI_RESET
+        )
+    } else {
+        format!("yai({case_ref})> ")
+    }
+}
+
+fn terminal_width() -> usize {
+    env_var("COLUMNS")
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|width| *width >= 50)
+        .map(|width| width.min(120))
+        .unwrap_or(92)
+}
+
+fn print_cli_section(colors: bool, label: &str, detail: &str, color: &str) {
+    let width = terminal_width();
+    let title = if detail.is_empty() {
+        label.to_string()
+    } else {
+        format!("{label} {detail}")
+    };
+    let plain = format!("-- {title} ");
+    let line = if plain.len() >= width {
+        plain
+    } else {
+        format!("{}{}", plain, "-".repeat(width - plain.len()))
+    };
+    println!("{}", paint(colors, color, &line));
+}
+
+fn wrap_words(text: &str, indent: &str, width: usize) -> Vec<String> {
+    let available = width.saturating_sub(indent.len()).max(24);
+    let mut lines = Vec::new();
+    let mut current = String::new();
+    for word in text.split_whitespace() {
+        if current.is_empty() {
+            current.push_str(word);
+        } else if current.len() + 1 + word.len() > available {
+            lines.push(format!("{indent}{current}"));
+            current.clear();
+            current.push_str(word);
+        } else {
+            current.push(' ');
+            current.push_str(word);
+        }
+    }
+    if !current.is_empty() {
+        lines.push(format!("{indent}{current}"));
+    }
+    if lines.is_empty() {
+        lines.push(String::new());
+    }
+    lines
+}
+
+fn ordered_list_marker(line: &str) -> Option<usize> {
+    let (prefix, rest) = line.split_once(". ")?;
+    if prefix.is_empty() || prefix.chars().any(|ch| !ch.is_ascii_digit()) || rest.is_empty() {
+        return None;
+    }
+    Some(prefix.len() + 2)
+}
+
+fn print_wrapped_text(colors: bool, line: &str, width: usize) {
+    let trimmed = line.trim();
+    if trimmed.is_empty() {
+        println!();
+        return;
+    }
+
+    if trimmed.starts_with("```") {
+        println!("{}", paint(colors, ANSI_DIM, trimmed));
+        return;
+    }
+
+    if let Some(title) = trimmed.strip_prefix("### ") {
+        println!();
+        println!("{}", paint(colors, ANSI_BOLD, title));
+        return;
+    }
+    if let Some(title) = trimmed.strip_prefix("## ") {
+        println!();
+        println!("{}", paint(colors, ANSI_BOLD, title));
+        return;
+    }
+    if let Some(title) = trimmed.strip_prefix("# ") {
+        println!();
+        println!("{}", paint(colors, ANSI_BOLD, title));
+        return;
+    }
+
+    if let Some(rest) = trimmed
+        .strip_prefix("* ")
+        .or_else(|| trimmed.strip_prefix("- "))
+    {
+        let bullet = paint(colors, ANSI_GREEN, "-");
+        let first_indent = format!("  {bullet} ");
+        let next_indent = "    ";
+        let wrapped = wrap_words(rest, "", width.saturating_sub(4));
+        for (index, item) in wrapped.iter().enumerate() {
+            if index == 0 {
+                println!("{first_indent}{item}");
+            } else {
+                println!("{next_indent}{item}");
+            }
+        }
+        return;
+    }
+
+    if let Some(marker_len) = ordered_list_marker(trimmed) {
+        let marker = &trimmed[..marker_len];
+        let rest = &trimmed[marker_len..];
+        let marker = paint(colors, ANSI_GREEN, marker.trim_end());
+        let first_indent = format!("  {marker} ");
+        let next_indent = "    ";
+        let wrapped = wrap_words(rest, "", width.saturating_sub(4));
+        for (index, item) in wrapped.iter().enumerate() {
+            if index == 0 {
+                println!("{first_indent}{item}");
+            } else {
+                println!("{next_indent}{item}");
+            }
+        }
+        return;
+    }
+
+    for item in wrap_words(trimmed, "  ", width) {
+        println!("{item}");
+    }
+}
+
+fn print_model_output(colors: bool, output: &str) {
+    let width = terminal_width();
+    for line in output.lines() {
+        print_wrapped_text(colors, line, width);
+    }
 }
 
 fn json_escape(value: &str) -> String {
@@ -1047,7 +1259,7 @@ fn provider_chat_completion(
     prompt: &str,
 ) -> Result<String, String> {
     let url = parse_http_url(&config.base_url)?;
-    let system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Do not claim raw journal, filesystem, decision, receipt, shell, environment or API-key access. subject:linenoise-terminal is only a prompt surface and never owns decisions or authorization. Your output is an observation, not a YAI decision, policy rule, receipt or filesystem effect.";
+    let system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Speak in terms of authority granted by the current case projection, not physical host capability. Prefer phrases like `according to the current projection, I have no authority to...` over absolute `I cannot...` claims. Your outputs are claims/proposals/model interpretations, not authoritative case state, YAI decisions, policy rules, receipts or filesystem effects. subject:linenoise-terminal is only a display/input surface and never owns execution or decision authority. Any proposed action must become an op_attempt and pass through control/carrier before any effect. Do not claim raw journal, filesystem, shell, environment, API-key or out-of-case memory access unless explicitly provided by the participant view.";
     let user_content =
         format!("YAI participant view:\n{participant_view}\n\nOperator prompt:\n{prompt}");
     let body = format!(
@@ -1172,6 +1384,35 @@ fn append_model_output_receipt(
     append_record_to_journal(&session.journal_path, &record)
 }
 
+fn append_model_interpretation_record(
+    session: &PromptSession,
+    attempt_id: &str,
+    output: &str,
+) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let summary = format!(
+        "model_interpretation:observed source:provider_output authority:not_authoritative_state output_is:claim_or_proposal check_against:decisions_receipts_graph preview:{}",
+        compact_text(output, 140)
+    );
+    let record = Record::from_parts(
+        format!(
+            "model-interpretation:{}:{sequence}",
+            session.subject_ref.replace(':', "-")
+        ),
+        &session.case_ref,
+        RecordKind::ModelInterpretation,
+        &session.subject_ref,
+        attempt_id,
+        "",
+        "",
+        summary.clone(),
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(summary)
+}
+
 fn prompt_attempt_summary(session: &PromptSession, prompt: &str) -> String {
     if session.transcript_enabled {
         format!(
@@ -1209,6 +1450,7 @@ fn append_prompt_residue_to_session_view(
     attempt_id: &str,
     prompt: &str,
     output: &str,
+    interpretation_summary: &str,
 ) {
     let _ = writeln!(session.participant_view, "## Prompt Session Residue");
     let _ = writeln!(
@@ -1223,6 +1465,11 @@ fn append_prompt_residue_to_session_view(
         "- kind:effect_receipt subject_ref:{} summary:{}",
         session.subject_ref,
         model_output_summary(session, output)
+    );
+    let _ = writeln!(
+        session.participant_view,
+        "- kind:model_interpretation subject_ref:{} summary:{}",
+        session.subject_ref, interpretation_summary
     );
     let _ = writeln!(session.participant_view);
 }
@@ -1309,6 +1556,7 @@ fn append_memory_proposal(session: &PromptSession, note: Option<&str>) -> Result
 }
 
 fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> Result<(), String> {
+    let colors = color_enabled();
     if dry_run {
         println!("model_prompt: dry_run");
         println!("case_ref: {}", session.case_ref);
@@ -1330,9 +1578,19 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
 
     let attempt_id = append_model_prompt_attempt(session, prompt)?;
     let output = provider_chat_completion(&session.provider, &session.participant_view, prompt)?;
-    println!("{output}");
+    println!();
+    print_cli_section(colors, "MODEL", &session.provider.model, ANSI_MAGENTA);
+    print_model_output(colors, &output);
+    println!();
     append_model_output_receipt(session, &attempt_id, &output)?;
-    append_prompt_residue_to_session_view(session, &attempt_id, prompt, &output);
+    let interpretation_summary = append_model_interpretation_record(session, &attempt_id, &output)?;
+    append_prompt_residue_to_session_view(
+        session,
+        &attempt_id,
+        prompt,
+        &output,
+        &interpretation_summary,
+    );
     Ok(())
 }
 
@@ -1444,6 +1702,7 @@ fn prompt_repl(args: &[String]) -> Result<(), String> {
     let dry_run = args.iter().any(|arg| arg == "--dry-run");
     let once = optional_arg(args, "--once");
     let mut session = prompt_session_from_args(args)?;
+    let colors = color_enabled();
     if let Some(prompt) = once {
         if handle_prompt_command(&mut session, prompt.trim())? {
             return Ok(());
@@ -1466,7 +1725,9 @@ fn prompt_repl(args: &[String]) -> Result<(), String> {
     println!("commands: /refresh /transcript on /transcript off /transcript status /memory propose /exit");
 
     loop {
-        let prompt = format!("yai({})> ", session.case_ref);
+        println!();
+        print_cli_section(colors, "QUESTION", &session.case_ref, ANSI_BLUE);
+        let prompt = prompt_label(&session.case_ref, colors);
         let Some(line) = linenoise_read_line(&prompt)? else {
             break;
         };

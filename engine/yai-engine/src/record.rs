@@ -23,6 +23,9 @@ pub enum RecordKind {
     ProjectionRequest,
     ProjectionResult,
     QueryResult,
+    ProjectionRule,
+    AuthorityScope,
+    ModelInterpretation,
 }
 
 impl RecordKind {
@@ -51,6 +54,9 @@ impl RecordKind {
             Self::ProjectionRequest => "projection_request",
             Self::ProjectionResult => "projection_result",
             Self::QueryResult => "query_result",
+            Self::ProjectionRule => "projection_rule",
+            Self::AuthorityScope => "authority_scope",
+            Self::ModelInterpretation => "model_interpretation",
         }
     }
 
@@ -79,6 +85,9 @@ impl RecordKind {
             "projection_request" => Some(Self::ProjectionRequest),
             "projection_result" => Some(Self::ProjectionResult),
             "query_result" => Some(Self::QueryResult),
+            "projection_rule" => Some(Self::ProjectionRule),
+            "authority_scope" => Some(Self::AuthorityScope),
+            "model_interpretation" => Some(Self::ModelInterpretation),
             _ => None,
         }
     }

@@ -22,6 +22,9 @@ receipts, updates prompt-session residue incrementally, and rebuilds the full
 case view only when the operator requests `/refresh`. Prompt transcript
 retention is preview-only by default, with explicit redacted case-local capture
 through `/transcript on` and derived prompt memory through `/memory propose`.
+The filesystem manual case now separates `policy_rule`, `projection_rule`,
+`authority_scope`, and `model_interpretation` records so model claims can be
+checked against authoritative case residue instead of treated as core truth.
 
 ## Filesystem Refoundation History
 

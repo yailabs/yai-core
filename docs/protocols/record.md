@@ -26,6 +26,9 @@ attempt
 decision
 receipt
 policy
+projection_rule
+authority_scope
+model_interpretation
 memory
 projection
 divergence
