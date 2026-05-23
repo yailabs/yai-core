@@ -8,14 +8,15 @@ status notes that do not belong in the stable repository README.
 SPINE.20 adds the local runtime layout after SPINE.6B made bidirectional
 extraction mandatory for future implementation waves. SPINE.20A rebases the
 active roadmap so pack materialization is canonized before filesystem freeze
-and data-plane implementation.
+and data-plane implementation. SPINE.21 defines packs as case materialization
+units.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. SPINE.20 is complete.
-SPINE.20A is current/done. Next: SPINE.21 Pack Materialization Doctrine.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20, SPINE.20A and
+SPINE.21 are complete. Next: SPINE.22 Filesystem Refactor Milestone Freeze.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits

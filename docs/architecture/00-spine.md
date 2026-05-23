@@ -40,6 +40,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Daemon and ctl | [12-daemon-and-ctl.md](12-daemon-and-ctl.md) |
 | C/Rust boundary | [13-c-rust-boundary.md](13-c-rust-boundary.md) |
 | Observability and evaluation | [14-operational-observability-evaluation.md](14-operational-observability-evaluation.md) |
+| Pack materialization | [15-pack-materialization.md](15-pack-materialization.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
 | Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
@@ -50,6 +51,8 @@ system truth unless the external system binds or reports through YAI protocols.
 
 ```text
 ingest
+-> pack inspection / validation
+-> pack materialization
 -> case_world
 -> case_domain
 -> case_attachment
@@ -90,6 +93,13 @@ Everything that participates in a case enters first as case-world material:
 a domain, attachment or binding.
 ```
 
+Pack rule:
+
+```text
+A pack is not operational until its material has been inspected, validated,
+materialized and bound as case-world residue.
+```
+
 Live-case rule:
 
 ```text
@@ -105,7 +115,7 @@ SPINE.2 defines when model/provider experiments become canonical:
 
 ```text
 L0 provider scouting can start immediately outside the core
-model/provider implementation follows the SPINE.22-SPINE.30 data-plane foundation
+model/provider implementation follows the SPINE.23-SPINE.32 data-plane foundation
 ```
 
 A model is not inside the core. A model is a case-bound subject with locality,
@@ -157,6 +167,7 @@ them, it is outside the core doctrine even if it uses the right names.
 |---|---|---|
 | `base` | ids, time, status, errors, byte refs | domain semantics |
 | `ingest` | normalization of material and claims | belief or execution |
+| `pack` | materialization units for methods, policies, projections, templates, memory seeds and fixtures | marketplace, billing, installer, runtime execution or product catalog |
 | `case_world` | domains, attachments, bindings and authority/projection posture | execution authority by attachment alone |
 | `subject` | operational entities bound to case context | full external system state |
 | `case` | boundary, posture, case-world material, case sessions, context, subject binding, evidence refs | abstract world governance |
@@ -306,7 +317,8 @@ NEW.18B: live case context / ref boundary
 SPINE.3R: case world + live data plane rebase
 NEW.19: Makefile/build/guards realignment
 SPINE.20: local runtime layout
-SPINE.22-SPINE.30: hot, record, graph, fact, projection, memory and reconcile data planes
+SPINE.21: pack materialization doctrine
+SPINE.23-SPINE.32: hot, record, graph, fact, projection, memory and reconcile data planes
 Rust operational data spine behind C FFI
 ```
 

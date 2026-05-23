@@ -31,6 +31,7 @@ Then read the atomic records:
 0014-operational-data-plane-stratification.md
 0015-projection-as-live-cognitive-view.md
 0016-operational-observability-evaluation-plane.md
+0017-packs-as-case-materialization-units.md
 ```
 
 Atomic ADR structure:

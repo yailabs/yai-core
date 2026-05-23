@@ -24,6 +24,10 @@ control shell and engine bridge.
 `proto/`, `tests/`, `docs/` and `tools/` own schemas, validation, docs and
 developer utilities.
 
+Pack format doctrine lives under `docs/engineering/pack-format.md`. SPINE.21
+does not create pack source roots, pack registries, pack installer paths or
+pack runtime directories.
+
 ## Removed Active Roots
 
 These roots are not active implementation roots:

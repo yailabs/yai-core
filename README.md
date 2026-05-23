@@ -117,6 +117,12 @@ shared operational frame. In the C ABI this now includes case-domain,
 case-attachment, and case-binding residue so the case is a small operational
 world, not only a `case_ref` on records.
 
+`pack`
+: A case materialization unit. A pack can materialize methods, procedures,
+policies, templates, projection rules, output schemas, memory seeds,
+actors/tools and validation fixtures into a case. A pack is not a marketplace
+product, DLC, prompt bundle or runtime executor.
+
 `subject`
 : An observable or controllable entity bound to a case. A subject may be a file,
 process, repository, service, model, agent, operator, external system, document,
@@ -319,7 +325,8 @@ layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
 `YAI_HOME/log`, `YAI_HOME/tmp`, `YAI_HOME/cases`, `YAI_HOME/sockets` and
 `YAI_HOME/config`. SPINE.20A rebases the active linear roadmap so SPINE.21 is
 Pack Materialization Doctrine before filesystem freeze and data-plane
-implementation.
+implementation. SPINE.21 defines packs as case materialization units; no pack
+runtime, installer, registry backend or marketplace is implemented.
 
 ### Absorbed Concepts
 

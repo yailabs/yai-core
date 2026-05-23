@@ -212,6 +212,9 @@ evidence requirements
 policy summaries
 memory candidates
 redaction posture
+pack-derived projection rules
+pack-derived output schemas
+pack-derived authority wording
 ```
 
 Projection is not enforcement. It shapes what the model sees and how the task
@@ -225,7 +228,7 @@ refs, records, receipts, graph, memory and divergence.
 
 L0 provider scouting can start immediately outside the core and can produce
 projection fixtures. SPINE.3R rebases implementation order so canonical
-model/provider work follows the SPINE.22-SPINE.30 data-plane foundation.
+model/provider work follows the SPINE.23-SPINE.32 data-plane foundation.
 Agent-framework projection work follows after naked model behavior is
 measurable.
 
@@ -257,4 +260,9 @@ NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future projection mechanics. C projection code remains under
 `system/projection` as `keep_temporarily` after the NEW.18 bridge split.
 
-SPINE.27 is the planned projection delta / live view wave.
+SPINE.21 defines packs as case materialization units. Pack projection material
+may shape model/operator/audit views only after it has been inspected,
+validated and bound to case-world residue. Projection still does not enforce
+policy or create case truth.
+
+SPINE.28 is the planned projection delta / live view wave.

@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.20 local runtime layout; SPINE.20A pack roadmap rebase current/done. | SPINE.21 Pack Materialization Doctrine. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.21 pack materialization doctrine. | SPINE.22 Filesystem Refactor Milestone Freeze. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -32,10 +32,12 @@ realignment. SPINE.6A compressed engineering docs. SPINE.6B made
 bidirectional old-yai extraction and residue normalization mandatory for future
 implementation waves. SPINE.20 established the local `YAI_HOME` runtime layout
 and install/uninstall/doctor targets. SPINE.20A rebased the active roadmap so
-pack materialization becomes the next canonical spine step.
+pack materialization becomes the next canonical spine step. SPINE.21 made
+packs first-class case materialization units and defined their format,
+lifecycle and materialization boundaries.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.21.
+delivery is SPINE.22.
 
 ## Canonical Macro Labels
 
@@ -71,7 +73,7 @@ concepts into the new grammar, update inventory, normalize old-yai residue and
 validate. Details live in `wave-template.md` and
 `operational-extraction-contract.md`.
 
-## Pack Materialization Preview
+## Pack Materialization Doctrine
 
 Packs are case materialization units.
 
@@ -86,17 +88,20 @@ native_yai
 user
 organization
 vertical
-pilot/reference
+pilot
+reference
+experimental
+compat
 ```
 
-SPINE.21 will define the pack format, lifecycle and materialization rules.
+SPINE.21 defines the pack format, lifecycle and materialization rules.
 
 ## SPINE.20-SPINE.64 Linear Roadmap
 
 ```text
 SPINE.20  Local Runtime Layout                                  done
-SPINE.20A Pack Roadmap Rebase                                   current/done
-SPINE.21  Pack Materialization Doctrine                         planned
+SPINE.20A Pack Roadmap Rebase                                   done
+SPINE.21  Pack Materialization Doctrine                         done
 SPINE.22  Filesystem Refactor Milestone Freeze                  planned
 SPINE.23  Hot State / Shared Memory Plane v0                    planned
 SPINE.24  LMDB Record Backend v0                                planned
@@ -163,7 +168,7 @@ depending on transient build paths.
 
 ### SPINE.20A - Pack Roadmap Rebase
 
-Status: current/done.
+Status: done.
 
 Macro: WORLD / DATA / VIEW / CONTROL / MEMORY / EXTERNAL
 
@@ -181,6 +186,8 @@ Quality gate: active docs use one SPINE.20+ linear numbering sequence and no
 active doc says SPINE.21 is filesystem freeze.
 
 ### SPINE.21 - Pack Materialization Doctrine
+
+Status: done.
 
 Macro: WORLD / RESIDUE / VIEW / CONTROL / MEMORY / MODEL / EXTERNAL
 

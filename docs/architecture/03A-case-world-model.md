@@ -21,6 +21,8 @@ target, projection consumer or carrier participant.
 
 ```text
 ingest
+-> pack inspection / validation
+-> pack materialization
 -> case_world
 -> case_domain
 -> case_attachment
@@ -68,6 +70,27 @@ cognitively.
 `model_interpretation`
 : A model interpretation of projected case residue. It is not authoritative
 truth.
+
+## Pack Materialization
+
+A pack is a case materialization unit. It can materialize domains,
+attachments, bindings, policy material, projection rules, authority scopes,
+procedures, templates, output schemas, memory seeds, actors/tools and
+validation fixtures.
+
+Pack material enters case world through:
+
+```text
+pack.domain        -> case_domain
+pack.material      -> case_attachment
+pack.binding       -> case_binding
+pack.policy        -> policy_material / policy_rule
+pack.projection    -> projection_rule
+pack.authority     -> authority_scope
+```
+
+Pack material does not grant authority by existing. It must be validated,
+materialized, bound and later evaluated by control and projection boundaries.
 
 ## Authority Boundaries
 

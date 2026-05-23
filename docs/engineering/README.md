@@ -27,6 +27,8 @@ extraction-plan.md
 filesystem-target.md
 four-repo-roadmap.md
 operational-extraction-contract.md
+pack-format.md
+pack-roadmap.md
 testing.md
 wave-template.md
 ```

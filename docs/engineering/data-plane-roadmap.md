@@ -18,6 +18,7 @@ memory plane = consolidated operational experience
 projection plane = controlled live cognitive view
 reconcile plane = mismatch detection
 observability/evaluation = quality facts, not truth
+pack material = case-world input to future data planes, not loose files
 ```
 
 ## Planes
@@ -33,6 +34,10 @@ observability/evaluation = quality facts, not truth
 | projection | Rust engine projection | live, versioned, delta-aware cognitive view |
 | reconcile | Rust engine reconcile | expected-vs-observed mismatch posture |
 | observability/evaluation | facts and diagnostics | freshness, trace, provenance, rebuild and quality posture |
+
+Pack material will feed these planes after it has been inspected, validated,
+materialized and bound to case-world residue. Packs do not bypass journal,
+records, graph, projection, memory or reconcile.
 
 ## Linear Delivery
 
@@ -75,3 +80,14 @@ or delta material.
 
 Memory is not chat history. It is scoped operational experience derived from
 residue.
+
+Pack-derived material is future input:
+
+```text
+hot: active pack bindings, authority scopes and projection posture
+record: pack manifest, material, binding and validation records
+graph: pack materialization, policy, projection and memory-seed edges
+fact: usage, policy trigger, review burden, violation and effectiveness facts
+memory: pack-derived user/organization method memory
+projection: pack-derived model/operator/audit views
+```
