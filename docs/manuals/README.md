@@ -10,6 +10,6 @@ and preserving evidence from those runs.
 ## Manual Map
 
 - `manual-filesystem-loop-validation.md` - local daemon filesystem loop,
-  model-context projection and provider interrogation runbook.
+  case entry, provider attachment and vendored prompt-surface runbook.
 - `examples/filesystem-loop/policy-packs/` - example policy pack material used
   by the filesystem loop manual.

@@ -12,14 +12,16 @@ Status: NEW.17 C implementation moved to `system/`. The next wave is NEW.18
 data-logic thinning into `system/engine_bridge` versus Rust `engine/`
 ownership. Local install layout is delayed to NEW.20.
 
-Model-in-case status: the daemon filesystem loop can emit model subject,
-policy and model-context projection evidence, and `yai projection model-context`
-can inspect that evidence. That is not yet a complete model runtime posture.
-The missing primitive is case entry / participant admission: `yai-core` must own
-the act of admitting `subject:llm-provider` into a case, materializing the
-participant view, and recording prompt/provider residue. A terminal adapter
-pulling projection text is diagnostic only and must not be treated as the model
-living inside the case.
+Model-in-case status: the daemon filesystem loop emits model subject, policy
+and model-context projection evidence. `yai case enter` admits
+`subject:llm-provider` into the case, `yai case attach-provider` records the
+OpenAI-compatible provider route without storing secrets, and `yai` with an
+active case enters the vendored Linenoise prompt surface. The prompt session
+materializes one participant view, records prompt attempts and provider output
+receipts, updates prompt-session residue incrementally, and rebuilds the full
+case view only when the operator requests `/refresh`. Prompt transcript
+retention is preview-only by default, with explicit redacted case-local capture
+through `/transcript on` and derived prompt memory through `/memory propose`.
 
 ## Filesystem Refoundation History
 

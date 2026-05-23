@@ -1,3 +1,6 @@
 # vendor
 
-Vendor placeholder. No vendored dependencies exist in NEW.0.
+Vendored source used by `yai-core`.
+
+- `linenoise/` - Salvatore Sanfilippo's small line-editing library, used by the
+  `yai` case prompt surface.

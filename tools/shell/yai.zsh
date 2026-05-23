@@ -12,7 +12,7 @@ fi
 export YAI=yai
 
 yai() {
-  if [ "$#" -ge 2 ] && [ "$1" = "case" ] && [ "$2" = "enter" ]; then
+  if [ "$#" -ge 2 ] && [ "$1" = "case" ] && { [ "$2" = "enter" ] || [ "$2" = "attach-provider" ]; }; then
     local _yai_has_shell=0
     local _yai_arg
     for _yai_arg in "$@"; do
@@ -55,4 +55,3 @@ yai-case-leave() {
     unset YAI_RPROMPT_BASE
   fi
 }
-

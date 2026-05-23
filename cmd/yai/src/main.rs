@@ -1,5 +1,9 @@
+use std::ffi::{CStr, CString};
+use std::fmt::Write as FmtWrite;
 use std::fs::{self, OpenOptions};
 use std::io::{Read, Write};
+use std::net::TcpStream;
+use std::os::raw::{c_char, c_int, c_void};
 #[cfg(unix)]
 use std::os::unix::net::UnixStream;
 use std::path::PathBuf;
@@ -14,6 +18,13 @@ use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+unsafe extern "C" {
+    fn linenoise(prompt: *const c_char) -> *mut c_char;
+    fn linenoiseFree(ptr: *mut c_void);
+    fn linenoiseHistoryAdd(line: *const c_char) -> c_int;
+    fn linenoiseHistorySetMaxLen(len: c_int) -> c_int;
+}
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
@@ -67,8 +78,9 @@ fn print_usage() {
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path>");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
-    println!("       yai projection model-context --journal <path> [--case <case_ref>]");
     println!("       yai case enter --journal <path> --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
+    println!("       yai case attach-provider --journal <path> --case <case_ref> --subject <subject_ref> --base-url <url> --model <model> [--api-key-env <env>] [--shell zsh]");
+    println!("       yai prompt [--once <text>] [--dry-run] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>]");
     println!("       yai control summary --journal <path>");
     println!("       yai decision inspect --journal <path>");
     println!("       yai receipt summary --journal <path>");
@@ -291,20 +303,22 @@ fn display_field<'a>(value: &'a str, fallback: &'static str) -> &'a str {
     }
 }
 
-fn print_model_context_records(
+fn render_model_context_records(
+    output: &mut String,
     title: &str,
     journal: &Journal,
     case_ref: Option<&str>,
     kinds: &[RecordKind],
 ) {
-    println!("## {title}");
+    let _ = writeln!(output, "## {title}");
     let mut count = 0usize;
     for record in journal
         .records()
         .iter()
         .filter(|record| record_in_case(record, case_ref) && kinds.contains(&record.kind))
     {
-        println!(
+        let _ = writeln!(
+            output,
             "- {} kind:{} subject_ref:{} attempt_id:{} decision_id:{} receipt_id:{} summary:{}",
             record.id,
             record.kind.as_str(),
@@ -317,71 +331,126 @@ fn print_model_context_records(
         count += 1;
     }
     if count == 0 {
-        println!("- none");
+        let _ = writeln!(output, "- none");
     }
-    println!();
+    let _ = writeln!(output);
 }
 
-fn print_model_context_view(journal: &Journal, case_ref: Option<&str>) {
+fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> String {
     let projection = ProjectionSummary::from_journal("model", &journal);
     let case_ref = case_ref
         .or_else(|| (!projection.case_ref.is_empty()).then_some(projection.case_ref.as_str()));
 
-    println!("case_ref: {}", case_ref.unwrap_or("unknown"));
-    println!("consumer: model");
-    println!("projection_kind: model_context");
-    println!("redaction: summary_only");
-    println!("source: case_projection_graph_memory");
-    println!("raw_journal_access: not_provided");
-    println!("filesystem_access: not_provided");
-    println!("records: {}", projection.source_record_count);
-    println!(
+    let mut output = String::new();
+    let _ = writeln!(output, "case_ref: {}", case_ref.unwrap_or("unknown"));
+    let _ = writeln!(output, "consumer: model");
+    let _ = writeln!(output, "projection_kind: model_context");
+    let _ = writeln!(output, "redaction: summary_only");
+    let _ = writeln!(output, "source: case_projection_graph_memory");
+    let _ = writeln!(output, "raw_journal_access: not_provided");
+    let _ = writeln!(output, "filesystem_access: not_provided");
+    let _ = writeln!(output, "decision_authority: not_provided");
+    let _ = writeln!(output, "receipt_authority: not_provided");
+    let _ = writeln!(
+        output,
+        "terminal_authority: prompt_surface_only_no_decision_authority"
+    );
+    let _ = writeln!(output, "records: {}", projection.source_record_count);
+    let _ = writeln!(
+        output,
         "model_projection_records: {}",
         projection.model_projection_count
     );
-    println!(
+    let _ = writeln!(
+        output,
         "operator_projection_records: {}",
         projection.operator_projection_count
     );
-    println!(
+    let _ = writeln!(
+        output,
         "filesystem_receipts: {}",
         projection.filesystem_receipt_count
     );
-    println!("memory_candidates: {}", projection.memory_candidate_count);
-    println!("graph_edges: {}", projection.graph_edge_count);
-    println!();
+    let _ = writeln!(
+        output,
+        "memory_candidates: {}",
+        projection.memory_candidate_count
+    );
+    let _ = writeln!(output, "graph_edges: {}", projection.graph_edge_count);
+    let _ = writeln!(output);
 
-    print_model_context_records(
+    render_model_context_records(
+        &mut output,
         "Subjects",
         &journal,
         case_ref,
         &[RecordKind::SubjectBinding],
     );
-    print_model_context_records("Policy", &journal, case_ref, &[RecordKind::PolicyRule]);
-    print_model_context_records("Decisions", &journal, case_ref, &[RecordKind::Decision]);
-    print_model_context_records(
+    render_model_context_records(
+        &mut output,
+        "Policy",
+        &journal,
+        case_ref,
+        &[RecordKind::PolicyRule],
+    );
+    render_model_context_records(
+        &mut output,
+        "Decisions",
+        &journal,
+        case_ref,
+        &[RecordKind::Decision],
+    );
+    render_model_context_records(
+        &mut output,
         "Filesystem Receipts",
         &journal,
         case_ref,
         &[RecordKind::FilesystemReceipt],
     );
-    print_model_context_records("Memory", &journal, case_ref, &[RecordKind::MemoryCandidate]);
-    print_model_context_records("Graph", &journal, case_ref, &[RecordKind::GraphEdge]);
-    print_model_context_records(
+    render_model_context_records(
+        &mut output,
+        "Memory",
+        &journal,
+        case_ref,
+        &[RecordKind::MemoryCandidate],
+    );
+    render_model_context_records(
+        &mut output,
+        "Graph",
+        &journal,
+        case_ref,
+        &[RecordKind::GraphEdge],
+    );
+    render_model_context_records(
+        &mut output,
         "Projection Records",
         &journal,
         case_ref,
         &[RecordKind::ProjectionRequest, RecordKind::ProjectionResult],
     );
+    let _ = writeln!(output, "## Authority Boundaries");
+    let _ = writeln!(
+        output,
+        "- subject:linenoise-terminal is a vendored prompt surface only; it does not generate decisions, authorize writes, mutate receipts or own provider semantics."
+    );
+    let _ = writeln!(
+        output,
+        "- subject:llm-provider output is an observation unless YAI records it through prompt/output residue; it is not a YAI decision, policy rule or receipt."
+    );
+    let _ = writeln!(
+        output,
+        "- filesystem decisions are represented by decision records and existing decisions/receipts are historical residue, not mutable by model output."
+    );
+    let _ = writeln!(
+        output,
+        "- raw_journal_access, filesystem_access, decision_authority and receipt_authority are not provided to the model participant view."
+    );
+    let _ = writeln!(output);
+    output
 }
 
-fn projection_model_context(args: &[String]) -> Result<(), String> {
-    let path = journal_arg(args)?;
-    let requested_case = optional_arg(args, "--case");
-    let journal = Journal::load_jsonl(&path)
-        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
-    print_model_context_view(&journal, requested_case.as_deref());
-    Ok(())
+fn print_model_context_view(journal: &Journal, case_ref: Option<&str>) {
+    print!("{}", render_model_context_view(journal, case_ref));
 }
 
 fn append_case_entry_record(
@@ -550,6 +619,876 @@ fn case_enter(args: &[String]) -> Result<(), String> {
     println!("filesystem_access: not_provided");
     println!();
     print_model_context_view(&journal, Some(&case_ref));
+    Ok(())
+}
+
+fn append_record_to_journal(path: &PathBuf, record: &Record) -> Result<(), String> {
+    let mut file = OpenOptions::new()
+        .append(true)
+        .open(path)
+        .map_err(|error| format!("failed to append {}: {error}", path.display()))?;
+    file.write_all(record.to_jsonl().as_bytes())
+        .map_err(|error| format!("failed to write {}: {error}", path.display()))?;
+    Ok(())
+}
+
+fn compact_text(value: &str, max_chars: usize) -> String {
+    let compact = value.split_whitespace().collect::<Vec<_>>().join(" ");
+    let mut result = String::new();
+    for ch in compact.chars().take(max_chars) {
+        result.push(ch);
+    }
+    if compact.chars().count() > max_chars {
+        result.push_str("...");
+    }
+    result
+}
+
+fn print_provider_attach_shell(
+    case_ref: &str,
+    subject_ref: &str,
+    base_url: &str,
+    model: &str,
+    api_key_env: &str,
+    status: &str,
+) {
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("provider_attachment: accepted")
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("provider_attachment_status: {status}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("case_ref: {case_ref}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("subject_ref: {subject_ref}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("provider_base_url: {base_url}"))
+    );
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote(&format!("provider_model: {model}"))
+    );
+    println!("export YAI_PROVIDER_BASE_URL={}", shell_quote(base_url));
+    println!("export YAI_PROVIDER_MODEL={}", shell_quote(model));
+    println!(
+        "export YAI_PROVIDER_SUBJECT_REF={}",
+        shell_quote(subject_ref)
+    );
+    println!(
+        "export YAI_PROVIDER_API_KEY_ENV={}",
+        shell_quote(api_key_env)
+    );
+}
+
+fn case_attach_provider(args: &[String]) -> Result<(), String> {
+    let path = journal_arg(args)?;
+    let case_ref = named_arg(args, "--case")?;
+    let subject_ref = named_arg(args, "--subject")?;
+    let base_url = named_arg(args, "--base-url")?;
+    let model = named_arg(args, "--model")?;
+    let api_key_env =
+        optional_arg(args, "--api-key-env").unwrap_or_else(|| "OPENCODE_LLM_API_KEY".to_string());
+    let shell = optional_arg(args, "--shell");
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
+
+    let subject_bound = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectBinding
+            && record.subject_ref == subject_ref
+    });
+    if !subject_bound {
+        return Err(format!(
+            "subject {subject_ref} is not bound to case {case_ref}"
+        ));
+    }
+
+    let provider_summary = format!(
+        "provider_attachment:attached provider:openai_compatible base_url:{base_url} model:{model} api_key_env:{api_key_env} prompt_surface:vendored_linenoise context:case_projection_graph_memory"
+    );
+    let already_attached = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectState
+            && record.subject_ref == subject_ref
+            && record.summary == provider_summary
+    });
+
+    if !already_attached {
+        let record = Record::from_parts(
+            format!(
+                "provider-attachment:{}:{}",
+                subject_ref.replace(':', "-"),
+                journal.count() + 1
+            ),
+            &case_ref,
+            RecordKind::SubjectState,
+            &subject_ref,
+            "",
+            "",
+            "",
+            provider_summary,
+        );
+        append_record_to_journal(&path, &record)?;
+    }
+
+    let status = if already_attached {
+        "already_attached"
+    } else {
+        "attached"
+    };
+    if let Some(shell) = shell.as_deref() {
+        if shell != "zsh" && shell != "sh" {
+            return Err(format!("unsupported shell: {shell}"));
+        }
+        print_provider_attach_shell(
+            &case_ref,
+            &subject_ref,
+            &base_url,
+            &model,
+            &api_key_env,
+            status,
+        );
+        return Ok(());
+    }
+
+    println!("provider_attachment: accepted");
+    println!("provider_attachment_status: {status}");
+    println!("case_ref: {case_ref}");
+    println!("subject_ref: {subject_ref}");
+    println!("provider_base_url: {base_url}");
+    println!("provider_model: {model}");
+    println!("api_key_env: {api_key_env}");
+    Ok(())
+}
+
+struct ProviderConfig {
+    base_url: String,
+    model: String,
+    api_key: Option<String>,
+}
+
+struct PromptSession {
+    journal_path: PathBuf,
+    case_ref: String,
+    subject_ref: String,
+    provider: ProviderConfig,
+    participant_view: String,
+    transcript_enabled: bool,
+}
+
+fn env_var(name: &str) -> Option<String> {
+    std::env::var(name).ok().filter(|value| !value.is_empty())
+}
+
+fn transcript_retention_enabled(journal: &Journal, case_ref: &str, subject_ref: &str) -> bool {
+    let mut enabled = false;
+    for record in journal.records().iter().filter(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectState
+            && record.subject_ref == subject_ref
+            && record.summary.contains("prompt_transcript_retention:")
+    }) {
+        if record
+            .summary
+            .contains("prompt_transcript_retention:enabled")
+        {
+            enabled = true;
+        } else if record
+            .summary
+            .contains("prompt_transcript_retention:disabled")
+        {
+            enabled = false;
+        }
+    }
+    enabled
+}
+
+fn transcript_retention_label(enabled: bool) -> &'static str {
+    if enabled {
+        "full_redacted_case_local"
+    } else {
+        "preview_only"
+    }
+}
+
+fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
+    let journal_path = optional_arg(args, "--journal")
+        .map(PathBuf::from)
+        .or_else(|| env_var("YAI_JOURNAL").map(PathBuf::from))
+        .ok_or_else(|| "YAI_JOURNAL is required; run `yai case enter` first".to_string())?;
+    let case_ref = optional_arg(args, "--case")
+        .or_else(|| env_var("YAI_CASE_REF"))
+        .ok_or_else(|| "YAI_CASE_REF is required; run `yai case enter` first".to_string())?;
+    let subject_ref = optional_arg(args, "--subject")
+        .or_else(|| env_var("YAI_PROVIDER_SUBJECT_REF"))
+        .or_else(|| env_var("YAI_SUBJECT_REF"))
+        .unwrap_or_else(|| "subject:llm-provider".to_string());
+    let base_url = optional_arg(args, "--base-url")
+        .or_else(|| env_var("YAI_PROVIDER_BASE_URL"))
+        .or_else(|| env_var("YAI_LLM_BASE_URL"))
+        .ok_or_else(|| {
+            "provider base URL missing; run `yai case attach-provider` or export YAI_PROVIDER_BASE_URL"
+                .to_string()
+        })?;
+    let model = optional_arg(args, "--model")
+        .or_else(|| env_var("YAI_PROVIDER_MODEL"))
+        .or_else(|| env_var("YAI_LLM_MODEL"))
+        .ok_or_else(|| {
+            "provider model missing; run `yai case attach-provider` or export YAI_PROVIDER_MODEL"
+                .to_string()
+        })?;
+    let api_key_env = optional_arg(args, "--api-key-env")
+        .or_else(|| env_var("YAI_PROVIDER_API_KEY_ENV"))
+        .unwrap_or_else(|| "OPENCODE_LLM_API_KEY".to_string());
+    let api_key = env_var("YAI_PROVIDER_API_KEY")
+        .or_else(|| env_var(&api_key_env))
+        .or_else(|| env_var("OPENCODE_LLM_API_KEY"));
+    let journal = Journal::load_jsonl(&journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", journal_path.display()))?;
+    let admitted = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectState
+            && record.subject_ref == subject_ref
+            && record.summary.contains("case_entry:admitted")
+    });
+    if !admitted {
+        return Err(format!(
+            "{subject_ref} has not entered {case_ref}; run `yai case enter` first"
+        ));
+    }
+    let attached = journal.records().iter().any(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::SubjectState
+            && record.subject_ref == subject_ref
+            && record.summary.contains("provider_attachment:attached")
+    });
+    if !attached {
+        return Err(format!(
+            "{subject_ref} has no provider attachment in {case_ref}; run `yai case attach-provider` first"
+        ));
+    }
+    let transcript_enabled = transcript_retention_enabled(&journal, &case_ref, &subject_ref);
+
+    Ok(PromptSession {
+        journal_path,
+        case_ref: case_ref.clone(),
+        subject_ref,
+        provider: ProviderConfig {
+            base_url,
+            model,
+            api_key,
+        },
+        participant_view: render_model_context_view(&journal, Some(&case_ref)),
+        transcript_enabled,
+    })
+}
+
+fn linenoise_read_line(prompt: &str) -> Result<Option<String>, String> {
+    let prompt = CString::new(prompt).map_err(|_| "prompt contains a NUL byte".to_string())?;
+    let ptr = unsafe { linenoise(prompt.as_ptr()) };
+    if ptr.is_null() {
+        return Ok(None);
+    }
+    let line = unsafe { CStr::from_ptr(ptr) }
+        .to_string_lossy()
+        .into_owned();
+    unsafe {
+        linenoiseFree(ptr.cast::<c_void>());
+    }
+    Ok(Some(line))
+}
+
+fn json_escape(value: &str) -> String {
+    let mut escaped = String::new();
+    for ch in value.chars() {
+        match ch {
+            '"' => escaped.push_str("\\\""),
+            '\\' => escaped.push_str("\\\\"),
+            '\n' => escaped.push_str("\\n"),
+            '\r' => escaped.push_str("\\r"),
+            '\t' => escaped.push_str("\\t"),
+            ch if ch.is_control() => {
+                let _ = write!(escaped, "\\u{:04x}", ch as u32);
+            }
+            ch => escaped.push(ch),
+        }
+    }
+    escaped
+}
+
+fn parse_json_string_at(bytes: &[u8], mut index: usize) -> Option<(String, usize)> {
+    if bytes.get(index).copied()? != b'"' {
+        return None;
+    }
+    index += 1;
+    let mut output = String::new();
+    while index < bytes.len() {
+        let byte = bytes[index];
+        index += 1;
+        match byte {
+            b'"' => return Some((output, index)),
+            b'\\' => {
+                let escaped = *bytes.get(index)?;
+                index += 1;
+                match escaped {
+                    b'"' => output.push('"'),
+                    b'\\' => output.push('\\'),
+                    b'/' => output.push('/'),
+                    b'b' => output.push('\u{0008}'),
+                    b'f' => output.push('\u{000c}'),
+                    b'n' => output.push('\n'),
+                    b'r' => output.push('\r'),
+                    b't' => output.push('\t'),
+                    b'u' => {
+                        let hex = std::str::from_utf8(bytes.get(index..index + 4)?).ok()?;
+                        let value = u16::from_str_radix(hex, 16).ok()?;
+                        if let Some(ch) = char::from_u32(value as u32) {
+                            output.push(ch);
+                        }
+                        index += 4;
+                    }
+                    other => output.push(other as char),
+                }
+            }
+            other => output.push(other as char),
+        }
+    }
+    None
+}
+
+fn extract_json_string_field(source: &str, field: &str) -> Option<String> {
+    let needle = format!("\"{field}\"");
+    let bytes = source.as_bytes();
+    let mut start = 0usize;
+    while let Some(relative) = source.get(start..)?.find(&needle) {
+        let mut index = start + relative + needle.len();
+        while bytes.get(index).copied()?.is_ascii_whitespace() {
+            index += 1;
+        }
+        if bytes.get(index).copied()? != b':' {
+            start = index;
+            continue;
+        }
+        index += 1;
+        while bytes.get(index).copied()?.is_ascii_whitespace() {
+            index += 1;
+        }
+        if let Some((value, _)) = parse_json_string_at(bytes, index) {
+            return Some(value);
+        }
+        start = index;
+    }
+    None
+}
+
+struct HttpUrl {
+    host: String,
+    port: u16,
+    path: String,
+}
+
+fn parse_http_url(url: &str) -> Result<HttpUrl, String> {
+    let rest = url
+        .strip_prefix("http://")
+        .ok_or_else(|| "only http:// provider URLs are supported in this carrier".to_string())?;
+    let (authority, path) = rest
+        .split_once('/')
+        .map(|(authority, path)| (authority, format!("/{path}")))
+        .unwrap_or((rest, "/".to_string()));
+    let (host, port) = authority
+        .rsplit_once(':')
+        .map(|(host, port)| {
+            port.parse::<u16>()
+                .map(|port| (host.to_string(), port))
+                .map_err(|error| format!("invalid provider port: {error}"))
+        })
+        .transpose()?
+        .unwrap_or_else(|| (authority.to_string(), 80));
+    Ok(HttpUrl { host, port, path })
+}
+
+fn decode_chunked_body(body: &[u8]) -> Result<Vec<u8>, String> {
+    let mut index = 0usize;
+    let mut decoded = Vec::new();
+    loop {
+        let Some(line_end) = body[index..].windows(2).position(|pair| pair == b"\r\n") else {
+            return Err("invalid chunked response".to_string());
+        };
+        let size_line = std::str::from_utf8(&body[index..index + line_end])
+            .map_err(|error| format!("invalid chunk header: {error}"))?;
+        let size_text = size_line.split(';').next().unwrap_or(size_line).trim();
+        let size = usize::from_str_radix(size_text, 16)
+            .map_err(|error| format!("invalid chunk size: {error}"))?;
+        index += line_end + 2;
+        if size == 0 {
+            break;
+        }
+        let chunk_end = index + size;
+        if chunk_end + 2 > body.len() {
+            return Err("truncated chunked response".to_string());
+        }
+        decoded.extend_from_slice(&body[index..chunk_end]);
+        index = chunk_end + 2;
+    }
+    Ok(decoded)
+}
+
+fn provider_chat_completion(
+    config: &ProviderConfig,
+    participant_view: &str,
+    prompt: &str,
+) -> Result<String, String> {
+    let url = parse_http_url(&config.base_url)?;
+    let system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Do not claim raw journal, filesystem, decision, receipt, shell, environment or API-key access. subject:linenoise-terminal is only a prompt surface and never owns decisions or authorization. Your output is an observation, not a YAI decision, policy rule, receipt or filesystem effect.";
+    let user_content =
+        format!("YAI participant view:\n{participant_view}\n\nOperator prompt:\n{prompt}");
+    let body = format!(
+        "{{\"model\":\"{}\",\"stream\":false,\"messages\":[{{\"role\":\"system\",\"content\":\"{}\"}},{{\"role\":\"user\",\"content\":\"{}\"}}]}}",
+        json_escape(&config.model),
+        json_escape(system_prompt),
+        json_escape(&user_content)
+    );
+    let auth = config
+        .api_key
+        .as_deref()
+        .map(|key| format!("Authorization: Bearer {key}\r\n"))
+        .unwrap_or_default();
+    let request = format!(
+        "POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/json\r\nAccept: application/json\r\n{}Content-Length: {}\r\nConnection: close\r\n\r\n{}",
+        url.path,
+        url.host,
+        auth,
+        body.len(),
+        body
+    );
+    let mut stream = TcpStream::connect((url.host.as_str(), url.port))
+        .map_err(|error| format!("failed to connect provider: {error}"))?;
+    stream
+        .write_all(request.as_bytes())
+        .map_err(|error| format!("failed to write provider request: {error}"))?;
+    let mut response = Vec::new();
+    stream
+        .read_to_end(&mut response)
+        .map_err(|error| format!("failed to read provider response: {error}"))?;
+    let split = response
+        .windows(4)
+        .position(|window| window == b"\r\n\r\n")
+        .ok_or_else(|| "invalid HTTP provider response".to_string())?;
+    let headers = String::from_utf8_lossy(&response[..split]).to_string();
+    let body_bytes = &response[split + 4..];
+    if !headers.starts_with("HTTP/1.1 2") && !headers.starts_with("HTTP/1.0 2") {
+        return Err(format!(
+            "provider returned non-2xx response: {}",
+            compact_text(&String::from_utf8_lossy(body_bytes), 240)
+        ));
+    }
+    let lower_headers = headers.to_ascii_lowercase();
+    let body_bytes = if lower_headers.contains("transfer-encoding: chunked") {
+        decode_chunked_body(body_bytes)?
+    } else {
+        body_bytes.to_vec()
+    };
+    let body_text = String::from_utf8_lossy(&body_bytes).to_string();
+    extract_json_string_field(&body_text, "content").ok_or_else(|| {
+        format!(
+            "provider response did not contain message content: {}",
+            compact_text(&body_text, 240)
+        )
+    })
+}
+
+fn redact_sensitive(value: &str, session: &PromptSession) -> String {
+    if let Some(api_key) = session
+        .provider
+        .api_key
+        .as_deref()
+        .filter(|api_key| !api_key.is_empty())
+    {
+        value.replace(api_key, "[redacted:api_key]")
+    } else {
+        value.to_string()
+    }
+}
+
+fn transcript_text(value: &str, session: &PromptSession) -> String {
+    redact_sensitive(value, session)
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn append_model_prompt_attempt(session: &PromptSession, prompt: &str) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let attempt_id = format!("attempt:model-prompt-{sequence}");
+    let record = Record::from_parts(
+        format!(
+            "model-prompt:{}:{sequence}",
+            session.subject_ref.replace(':', "-")
+        ),
+        &session.case_ref,
+        RecordKind::Attempt,
+        &session.subject_ref,
+        &attempt_id,
+        "",
+        "",
+        prompt_attempt_summary(session, prompt),
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(attempt_id)
+}
+
+fn append_model_output_receipt(
+    session: &PromptSession,
+    attempt_id: &str,
+    output: &str,
+) -> Result<(), String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let receipt_id = format!("receipt:model-output-{sequence}");
+    let record = Record::from_parts(
+        format!(
+            "model-output:{}:{sequence}",
+            session.subject_ref.replace(':', "-")
+        ),
+        &session.case_ref,
+        RecordKind::EffectReceipt,
+        &session.subject_ref,
+        attempt_id,
+        "",
+        &receipt_id,
+        model_output_summary(session, output),
+    );
+    append_record_to_journal(&session.journal_path, &record)
+}
+
+fn prompt_attempt_summary(session: &PromptSession, prompt: &str) -> String {
+    if session.transcript_enabled {
+        format!(
+            "op:model.prompt.submit prompt_surface:vendored_linenoise context:session_participant_view transcript_retention:full_redacted_case_local prompt_text:{}",
+            transcript_text(prompt, session)
+        )
+    } else {
+        format!(
+            "op:model.prompt.submit prompt_surface:vendored_linenoise context:session_participant_view transcript_retention:preview_only prompt_preview:{}",
+            compact_text(prompt, 120)
+        )
+    }
+}
+
+fn model_output_summary(session: &PromptSession, output: &str) -> String {
+    if session.transcript_enabled {
+        format!(
+            "model.output status:observed provider:openai_compatible model:{} output_chars:{} transcript_retention:full_redacted_case_local output_text:{}",
+            session.provider.model,
+            output.chars().count(),
+            transcript_text(output, session)
+        )
+    } else {
+        format!(
+            "model.output status:observed provider:openai_compatible model:{} output_chars:{} transcript_retention:preview_only output_preview:{}",
+            session.provider.model,
+            output.chars().count(),
+            compact_text(output, 160)
+        )
+    }
+}
+
+fn append_prompt_residue_to_session_view(
+    session: &mut PromptSession,
+    attempt_id: &str,
+    prompt: &str,
+    output: &str,
+) {
+    let _ = writeln!(session.participant_view, "## Prompt Session Residue");
+    let _ = writeln!(
+        session.participant_view,
+        "- attempt_id:{} kind:attempt subject_ref:{} summary:{}",
+        attempt_id,
+        session.subject_ref,
+        prompt_attempt_summary(session, prompt)
+    );
+    let _ = writeln!(
+        session.participant_view,
+        "- kind:effect_receipt subject_ref:{} summary:{}",
+        session.subject_ref,
+        model_output_summary(session, output)
+    );
+    let _ = writeln!(session.participant_view);
+}
+
+fn append_transcript_retention_state(
+    session: &PromptSession,
+    enabled: bool,
+) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let state = if enabled { "enabled" } else { "disabled" };
+    let full_transcript = if enabled { "on_explicit" } else { "off" };
+    let summary = format!(
+        "prompt_transcript_retention:{state} scope:case_local redaction:secret_redacted prompt_preview:on provider_output_preview:on full_transcript:{full_transcript} memory_candidate:derived_not_raw_chat"
+    );
+    let record = Record::from_parts(
+        format!(
+            "prompt-retention:{}:{sequence}",
+            session.subject_ref.replace(':', "-")
+        ),
+        &session.case_ref,
+        RecordKind::SubjectState,
+        &session.subject_ref,
+        "",
+        "",
+        "",
+        summary.clone(),
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(summary)
+}
+
+fn append_memory_proposal(session: &PromptSession, note: Option<&str>) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let prompt_attempts = journal
+        .records()
+        .iter()
+        .filter(|record| {
+            record.case_ref == session.case_ref
+                && record.kind == RecordKind::Attempt
+                && record.summary.contains("op:model.prompt.submit")
+        })
+        .count();
+    let model_outputs = journal
+        .records()
+        .iter()
+        .filter(|record| {
+            record.case_ref == session.case_ref
+                && record.kind == RecordKind::EffectReceipt
+                && record.summary.contains("model.output")
+        })
+        .count();
+    let basis_records = prompt_attempts + model_outputs;
+    let sequence = journal.count() + 1;
+    let note = note
+        .filter(|value| !value.trim().is_empty())
+        .map(|value| format!(" note:{}", compact_text(value, 120)))
+        .unwrap_or_default();
+    let summary = format!(
+        "memory:operational scope:case source:prompt_session transcript_retention:{} basis_records:{} basis_prompt_attempts:{} basis_model_outputs:{} summary:prompt session tested case boundary and model/provider residue{}",
+        transcript_retention_label(session.transcript_enabled),
+        basis_records,
+        prompt_attempts,
+        model_outputs,
+        note
+    );
+    let record = Record::from_parts(
+        format!(
+            "prompt-memory:{}:{sequence}",
+            session.subject_ref.replace(':', "-")
+        ),
+        &session.case_ref,
+        RecordKind::MemoryCandidate,
+        &session.subject_ref,
+        "",
+        "",
+        "",
+        summary.clone(),
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(summary)
+}
+
+fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> Result<(), String> {
+    if dry_run {
+        println!("model_prompt: dry_run");
+        println!("case_ref: {}", session.case_ref);
+        println!("subject_ref: {}", session.subject_ref);
+        println!("provider_base_url: {}", session.provider.base_url);
+        println!("provider_model: {}", session.provider.model);
+        println!("context_source: session_participant_view");
+        println!(
+            "transcript_retention: {}",
+            transcript_retention_label(session.transcript_enabled)
+        );
+        println!("raw_journal_access: not_provided");
+        println!("filesystem_access: not_provided");
+        println!("decision_authority: not_provided");
+        println!("receipt_authority: not_provided");
+        println!("prompt_preview: {}", compact_text(prompt, 160));
+        return Ok(());
+    }
+
+    let attempt_id = append_model_prompt_attempt(session, prompt)?;
+    let output = provider_chat_completion(&session.provider, &session.participant_view, prompt)?;
+    println!("{output}");
+    append_model_output_receipt(session, &attempt_id, &output)?;
+    append_prompt_residue_to_session_view(session, &attempt_id, prompt, &output);
+    Ok(())
+}
+
+fn handle_prompt_command(session: &mut PromptSession, command: &str) -> Result<bool, String> {
+    if command == "/refresh" {
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        session.participant_view = render_model_context_view(&journal, Some(&session.case_ref));
+        session.transcript_enabled =
+            transcript_retention_enabled(&journal, &session.case_ref, &session.subject_ref);
+        println!("case_prompt: refreshed");
+        println!(
+            "transcript_retention: {}",
+            transcript_retention_label(session.transcript_enabled)
+        );
+        return Ok(true);
+    }
+
+    if command == "/transcript status" {
+        println!(
+            "transcript_retention: {}",
+            transcript_retention_label(session.transcript_enabled)
+        );
+        println!(
+            "prompt_transcript_retention: {}",
+            if session.transcript_enabled {
+                "enabled"
+            } else {
+                "disabled"
+            }
+        );
+        println!("prompt_preview: on");
+        println!("provider_output_preview: on");
+        println!(
+            "full_transcript: {}",
+            if session.transcript_enabled {
+                "on_explicit_redacted_case_local"
+            } else {
+                "off"
+            }
+        );
+        println!("memory_candidate: derived_not_raw_chat");
+        return Ok(true);
+    }
+
+    if command == "/transcript on" {
+        let summary = append_transcript_retention_state(session, true)?;
+        session.transcript_enabled = true;
+        let _ = writeln!(session.participant_view, "## Prompt Session State");
+        let _ = writeln!(
+            session.participant_view,
+            "- kind:subject_state subject_ref:{} summary:{}",
+            session.subject_ref, summary
+        );
+        let _ = writeln!(session.participant_view);
+        println!("prompt_transcript_retention: enabled");
+        println!("transcript_retention: full_redacted_case_local");
+        println!("full_transcript: on_explicit_redacted_case_local");
+        println!("redaction: secret_redacted");
+        return Ok(true);
+    }
+
+    if command == "/transcript off" {
+        let summary = append_transcript_retention_state(session, false)?;
+        session.transcript_enabled = false;
+        let _ = writeln!(session.participant_view, "## Prompt Session State");
+        let _ = writeln!(
+            session.participant_view,
+            "- kind:subject_state subject_ref:{} summary:{}",
+            session.subject_ref, summary
+        );
+        let _ = writeln!(session.participant_view);
+        println!("prompt_transcript_retention: disabled");
+        println!("transcript_retention: preview_only");
+        println!("full_transcript: off");
+        return Ok(true);
+    }
+
+    if command == "/memory propose" || command.starts_with("/memory propose ") {
+        let note = command.strip_prefix("/memory propose").map(str::trim);
+        let summary = append_memory_proposal(session, note)?;
+        let _ = writeln!(session.participant_view, "## Prompt Session Memory");
+        let _ = writeln!(
+            session.participant_view,
+            "- kind:memory_candidate subject_ref:{} summary:{}",
+            session.subject_ref, summary
+        );
+        let _ = writeln!(session.participant_view);
+        println!("memory_proposal: accepted");
+        println!("record_kind: memory_candidate");
+        println!(
+            "transcript_retention: {}",
+            transcript_retention_label(session.transcript_enabled)
+        );
+        return Ok(true);
+    }
+
+    if command.starts_with('/') {
+        println!("unknown_command: {command}");
+        println!("commands: /refresh /transcript on /transcript off /transcript status /memory propose /exit");
+        return Ok(true);
+    }
+
+    Ok(false)
+}
+
+fn prompt_repl(args: &[String]) -> Result<(), String> {
+    let dry_run = args.iter().any(|arg| arg == "--dry-run");
+    let once = optional_arg(args, "--once");
+    let mut session = prompt_session_from_args(args)?;
+    if let Some(prompt) = once {
+        if handle_prompt_command(&mut session, prompt.trim())? {
+            return Ok(());
+        }
+        return run_prompt_once(&mut session, &prompt, dry_run);
+    }
+
+    unsafe {
+        let _ = linenoiseHistorySetMaxLen(200);
+    }
+    println!("case_prompt: entered");
+    println!("case_ref: {}", session.case_ref);
+    println!("subject_ref: {}", session.subject_ref);
+    println!("provider_model: {}", session.provider.model);
+    println!("context_source: session_participant_view");
+    println!(
+        "transcript_retention: {}",
+        transcript_retention_label(session.transcript_enabled)
+    );
+    println!("commands: /refresh /transcript on /transcript off /transcript status /memory propose /exit");
+
+    loop {
+        let prompt = format!("yai({})> ", session.case_ref);
+        let Some(line) = linenoise_read_line(&prompt)? else {
+            break;
+        };
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        if trimmed == "/exit" || trimmed == "/quit" {
+            break;
+        }
+        if handle_prompt_command(&mut session, trimmed)? {
+            continue;
+        }
+        if let Ok(history_line) = CString::new(trimmed) {
+            unsafe {
+                let _ = linenoiseHistoryAdd(history_line.as_ptr());
+            }
+        }
+        if let Err(error) = run_prompt_once(&mut session, trimmed, dry_run) {
+            eprintln!("{error}");
+        }
+    }
     Ok(())
 }
 
@@ -808,6 +1747,12 @@ fn daemon_request_with_journal(_args: &[String], _request: &str) -> Result<(), S
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
+        None if env_var("YAI_JOURNAL").is_some() && env_var("YAI_CASE_REF").is_some() => {
+            if let Err(error) = prompt_repl(&[]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
         Some("--version") | Some("version") => println!("yai {}", VERSION),
         Some("info") => print_info(),
         Some("doctor") => print_doctor(),
@@ -835,14 +1780,20 @@ fn main() {
                 std::process::exit(2);
             }
         }
-        Some("projection") if args.get(1).map(String::as_str) == Some("model-context") => {
-            if let Err(error) = projection_model_context(&args[2..]) {
+        Some("case") if args.get(1).map(String::as_str) == Some("enter") => {
+            if let Err(error) = case_enter(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }
         }
-        Some("case") if args.get(1).map(String::as_str) == Some("enter") => {
-            if let Err(error) = case_enter(&args[2..]) {
+        Some("case") if args.get(1).map(String::as_str) == Some("attach-provider") => {
+            if let Err(error) = case_attach_provider(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("prompt") => {
+            if let Err(error) = prompt_repl(&args[1..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

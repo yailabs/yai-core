@@ -4,17 +4,16 @@
   "case_ref": "case:new12-filesystem",
   "subject_ref": "subject:linenoise-terminal",
   "source_ref": "manual-filesystem-loop-validation",
-  "summary": "Linenoise is an external terminal interface for operator prompts, not YAI core.",
+  "summary": "Vendored Linenoise is the YAI CLI terminal prompt surface; it has no policy or provider authority.",
   "rules": [
     {
       "rule_ref": "rule:terminal-interface-no-authority",
       "effect": "allow_observed",
       "operation": "operator.prompt.submit",
       "scope": "manual_test_interface",
-      "constraints": ["no_policy_authority", "no_provider_semantics", "no_runtime_authorization"],
+      "constraints": ["no_policy_authority", "no_provider_semantics", "no_runtime_authorization", "no_decision_authority", "case_participant_view_required"],
       "failure_mode": "require_review",
       "evidence_required": ["prompt_text", "provider_output"]
     }
   ]
 }
-

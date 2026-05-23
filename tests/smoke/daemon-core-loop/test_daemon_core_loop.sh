@@ -51,9 +51,14 @@ fi
 
 filesystem_summary=$(target/debug/yai daemon journal-summary --socket "$socket_path" --journal "$filesystem_journal")
 filesystem_projection=$(target/debug/yai projection inspect --journal "$filesystem_journal")
-filesystem_model_context=$(target/debug/yai projection model-context --journal "$filesystem_journal" --case case:new12-filesystem)
 filesystem_case_entry=$(target/debug/yai case enter --journal "$filesystem_journal" --case case:new12-filesystem --subject subject:llm-provider)
 filesystem_case_shell=$(target/debug/yai case enter --journal "$filesystem_journal" --case case:new12-filesystem --subject subject:llm-provider --shell zsh)
+filesystem_provider_attach=$(target/debug/yai case attach-provider --journal "$filesystem_journal" --case case:new12-filesystem --subject subject:llm-provider --base-url http://127.0.0.1:43117/v1/chat/completions --model qwen-local)
+filesystem_provider_shell=$(target/debug/yai case attach-provider --journal "$filesystem_journal" --case case:new12-filesystem --subject subject:llm-provider --base-url http://127.0.0.1:43117/v1/chat/completions --model qwen-local --shell zsh)
+filesystem_transcript_on=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/transcript on")
+filesystem_transcript_status=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/transcript status")
+filesystem_memory_propose=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/memory propose smoke boundary residue")
+filesystem_prompt_dry_run=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --dry-run --once "What subjects are bound to this case?")
 shutdown_output=$(target/debug/yai daemon shutdown --socket "$socket_path")
 
 printf '%s\n' "$status_output" | grep '"status":"ok"' >/dev/null
@@ -71,17 +76,6 @@ printf '%s\n' "$filesystem_projection" | grep 'projection_results: 2' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'operator: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'model: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'redacted_or_limited: 1' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'consumer: model' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'projection_kind: model_context' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'raw_journal_access: not_provided' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'filesystem_access: not_provided' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'subject:llm-provider' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'subject:linenoise-terminal' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'policy:manual-model-case-projection-v0' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'decision:require_review' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'decision:allow_with_constraints' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'kind:filesystem_receipt' >/dev/null
-printf '%s\n' "$filesystem_model_context" | grep 'memory:operational' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'case_entry: accepted' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'subject_ref: subject:llm-provider' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'participant_view: model_context' >/dev/null
@@ -90,6 +84,22 @@ printf '%s\n' "$filesystem_case_shell" | grep 'export YAI_CASE_REF=' >/dev/null
 printf '%s\n' "$filesystem_case_shell" | grep 'export YAI_CASE_PROMPT_FLAG=' >/dev/null
 printf '%s\n' "$filesystem_case_shell" | grep 'export PROMPT=' >/dev/null
 printf '%s\n' "$filesystem_case_shell" | grep 'export RPROMPT="$YAI_RPROMPT_BASE"' >/dev/null
+printf '%s\n' "$filesystem_provider_attach" | grep 'provider_attachment: accepted' >/dev/null
+printf '%s\n' "$filesystem_provider_attach" | grep 'provider_attachment_status: attached' >/dev/null
+printf '%s\n' "$filesystem_provider_shell" | grep 'export YAI_PROVIDER_BASE_URL=' >/dev/null
+printf '%s\n' "$filesystem_provider_shell" | grep 'export YAI_PROVIDER_MODEL=' >/dev/null
+printf '%s\n' "$filesystem_transcript_on" | grep 'prompt_transcript_retention: enabled' >/dev/null
+printf '%s\n' "$filesystem_transcript_on" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
+printf '%s\n' "$filesystem_transcript_status" | grep 'prompt_transcript_retention: enabled' >/dev/null
+printf '%s\n' "$filesystem_transcript_status" | grep 'memory_candidate: derived_not_raw_chat' >/dev/null
+printf '%s\n' "$filesystem_memory_propose" | grep 'memory_proposal: accepted' >/dev/null
+printf '%s\n' "$filesystem_memory_propose" | grep 'record_kind: memory_candidate' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'model_prompt: dry_run' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'context_source: session_participant_view' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'raw_journal_access: not_provided' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'decision_authority: not_provided' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'receipt_authority: not_provided' >/dev/null
 
 wait "$daemon_pid"
 trap - EXIT INT TERM
@@ -100,6 +110,9 @@ printf 'daemon-loop:minimum completed\n'
 printf 'daemon-loop:filesystem completed\n'
 printf 'journal:summary ok\n'
 printf 'projection:summary ok\n'
-printf 'projection:model-context ok\n'
 printf 'case:enter ok\n'
+printf 'case:attach-provider ok\n'
+printf 'case:transcript retention ok\n'
+printf 'case:memory proposal ok\n'
+printf 'case:prompt dry-run ok\n'
 printf 'daemon:shutdown ok\n'
