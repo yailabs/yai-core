@@ -76,8 +76,8 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.18 engine bridge split\n"
-	@printf "next: NEW.19 Makefile/build/guards realignment\n"
+	@printf "status: NEW.18.FIX layout/status cleanup; SPINE.3R docs rebase current\n"
+	@printf "next: NEW.19 Makefile/build/guards realignment after SPINE.3R\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
 	@printf "engine-bridge: active\n"

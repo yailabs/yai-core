@@ -5,12 +5,14 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.1 rebases the next phase: the repository is moving toward filesystem and
-data-spine refoundation before local install layout.
+SPINE.3R rebases the next phase: case-world material comes before subject
+behavior, and the live data-plane doctrine must be canonical before NEW.19
+Makefile/build/guards realignment.
 
-Status: NEW.17 C implementation moved to `system/`. The next wave is NEW.18
-data-logic thinning into `system/engine_bridge` versus Rust `engine/`
-ownership. Local install layout is delayed to NEW.20.
+Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
+post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
+binding record vertical slice. The current wave is SPINE.3R documentation
+rebase; NEW.19 follows it. Local install layout is delayed to NEW.20.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -31,6 +33,8 @@ record kinds. The filesystem manual case emits those records before subjects
 and policies, so a model participant sees an operational case world rather than
 a flat journal label. Registry persistence, SHM, LMDB, DuckDB, Ladybug and full
 runtime carrier enforcement remain planned-not-created in this repository.
+SPINE.3R also keeps shared memory, LMDB, DuckDB, Ladybug and live projection
+delta implementation planned-not-created until dedicated data-plane waves.
 
 ## Filesystem Refoundation History
 
@@ -77,6 +81,22 @@ lib/* -> system/*
 `lib/` and the retired `ctl/` root are removed after NEW.17. The data-spine C
 folders now under `system/{store,graph,index,memory,projection,reconcile}` are
 transitional and scheduled for NEW.18 thinning/splitting.
+
+NEW.18 is the engine bridge split wave. It creates `system/engine_bridge`,
+moves the Rust engine C shim there, and classifies the remaining C data-spine
+folders as `keep_temporarily`.
+
+NEW.18.FIX is the post-NEW.18 cleanup wave. It removes stale `crates/target`
+build output so `crates/` is absent again, keeps `target/`, `build/` and
+`.DS_Store` ignored, and updates this status record so NEW.18 is no longer
+described as the next wave after NEW.17.
+
+NEW.18A is the case-world binding record vertical slice. It adds case-world
+record posture for `case_domain`, `case_attachment` and `case_binding`.
+
+SPINE.3R follows NEW.18.FIX and NEW.18A before NEW.19. It is the documentation
+rebase for case-world-first operation, live projection and operational data
+plane doctrine.
 
 ## Minimum Loop History
 
