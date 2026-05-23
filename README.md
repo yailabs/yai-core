@@ -18,7 +18,6 @@ a commercial license.
 <div align="center">
   <img src="docs/reference/figures/brand/yai-transp.png" alt="YAI" width="220" />
 
-  <h1>YAI Core</h1>
   <strong>local AI operational control core</strong>
   <br />
   <span>Cases, subjects, control gates, receipts, and operational memory for local AI systems.</span>
