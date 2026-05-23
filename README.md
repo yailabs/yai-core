@@ -314,8 +314,10 @@ chat memory.
 SPINE.6A compresses active engineering docs. SPINE.6B makes future
 implementation waves bidirectional: if the touched concept exists in old `yai`,
 the wave must extract or rewrite useful material, classify the old residue,
-update inventory and keep commit boundaries clear. SPINE.20 Local Runtime
-Layout is next.
+update inventory and keep commit boundaries clear. SPINE.20 adds local runtime
+layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
+`YAI_HOME/log`, `YAI_HOME/tmp`, `YAI_HOME/cases`, `YAI_HOME/sockets` and
+`YAI_HOME/config`.
 
 ### Absorbed Concepts
 

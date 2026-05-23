@@ -11,6 +11,14 @@ RUST_TARGET_DIR := target
 RUST_ENGINE_STATIC := $(RUST_TARGET_DIR)/debug/libyai_core_engine.a
 INSTALL_BINDIR := $(PREFIX)/bin
 YAI_BIN := $(RUST_TARGET_DIR)/debug/yai
+YAI_RUN_DIR := $(YAI_HOME)/run
+YAI_STORE_DIR := $(YAI_HOME)/store
+YAI_LOG_DIR := $(YAI_HOME)/log
+YAI_TMP_DIR := $(YAI_HOME)/tmp
+YAI_CASES_DIR := $(YAI_HOME)/cases
+YAI_SOCKETS_DIR := $(YAI_HOME)/sockets
+YAI_CONFIG_DIR := $(YAI_HOME)/config
+YAI_DAEMON_SOCKET := $(YAI_RUN_DIR)/yaid.sock
 
 C_SOURCES := \
 	system/internal/string_util.c \
@@ -82,8 +90,8 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: SPINE.6B operational extraction contract done; NEW.19 foundation done\n"
-	@printf "next: SPINE.20 Local Runtime Layout\n"
+	@printf "status: SPINE.20 local runtime layout done\n"
+	@printf "next: SPINE.21 Filesystem Refactor Freeze\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
 	@printf "engine-bridge: active\n"
@@ -91,7 +99,7 @@ info:
 	@printf "daemon: moved to cmd/yaid + system/daemon\n"
 	@printf "crates: removed\n"
 	@printf "ctl: removed\n"
-	@printf "install-local: next in SPINE.20\n"
+	@printf "install-local: active PREFIX=%s YAI_HOME=%s\n" "$(PREFIX)" "$(YAI_HOME)"
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh
@@ -181,15 +189,18 @@ print-install-paths:
 	@printf "YAI_HOME=%s\n" "$(YAI_HOME)"
 	@printf "yai=%s/yai\n" "$(INSTALL_BINDIR)"
 	@printf "yaid=%s/yaid\n" "$(INSTALL_BINDIR)"
-	@printf "run=%s/run\n" "$(YAI_HOME)"
-	@printf "store=%s/store\n" "$(YAI_HOME)"
-	@printf "log=%s/log\n" "$(YAI_HOME)"
-	@printf "tmp=%s/tmp\n" "$(YAI_HOME)"
-	@printf "socket=%s/run/yaid.sock\n" "$(YAI_HOME)"
+	@printf "run=%s\n" "$(YAI_RUN_DIR)"
+	@printf "store=%s\n" "$(YAI_STORE_DIR)"
+	@printf "log=%s\n" "$(YAI_LOG_DIR)"
+	@printf "tmp=%s\n" "$(YAI_TMP_DIR)"
+	@printf "cases=%s\n" "$(YAI_CASES_DIR)"
+	@printf "sockets=%s\n" "$(YAI_SOCKETS_DIR)"
+	@printf "config=%s\n" "$(YAI_CONFIG_DIR)"
+	@printf "socket=%s\n" "$(YAI_DAEMON_SOCKET)"
 
 install-local: build
 	@mkdir -p "$(INSTALL_BINDIR)"
-	@mkdir -p "$(YAI_HOME)/run" "$(YAI_HOME)/store" "$(YAI_HOME)/log" "$(YAI_HOME)/tmp"
+	@mkdir -p "$(YAI_RUN_DIR)" "$(YAI_STORE_DIR)" "$(YAI_LOG_DIR)" "$(YAI_TMP_DIR)" "$(YAI_CASES_DIR)" "$(YAI_SOCKETS_DIR)" "$(YAI_CONFIG_DIR)"
 	@cp "$(YAI_BIN)" "$(INSTALL_BINDIR)/yai"
 	@cp "$(YAID)" "$(INSTALL_BINDIR)/yaid"
 	@chmod +x "$(INSTALL_BINDIR)/yai" "$(INSTALL_BINDIR)/yaid"
@@ -205,13 +216,19 @@ doctor-local:
 	@printf "yai local doctor\n"
 	@printf "PREFIX: %s\n" "$(PREFIX)"
 	@printf "YAI_HOME: %s\n" "$(YAI_HOME)"
-	@printf "yai: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yai" ]; then printf "%s/yai" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
-	@printf "yaid: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yaid" ]; then printf "%s/yaid" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
-	@printf "run_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/run" ]; then printf "%s/run" "$(YAI_HOME)"; else printf "missing"; fi)"
-	@printf "store_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/store" ]; then printf "%s/store" "$(YAI_HOME)"; else printf "missing"; fi)"
-	@printf "log_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/log" ]; then printf "%s/log" "$(YAI_HOME)"; else printf "missing"; fi)"
-	@printf "tmp_dir: %s\n" "$$(if [ -d "$(YAI_HOME)/tmp" ]; then printf "%s/tmp" "$(YAI_HOME)"; else printf "missing"; fi)"
-	@printf "daemon_socket_default: %s/run/yaid.sock\n" "$(YAI_HOME)"
+	@printf "YAI_HOME_status: %s\n" "$$(if [ -d "$(YAI_HOME)" ]; then printf "ok"; else printf "missing"; fi)"
+	@printf "binary_path: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yai" ]; then printf "%s/yai" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
+	@printf "yaid_path: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yaid" ]; then printf "%s/yaid" "$(INSTALL_BINDIR)"; else printf "missing"; fi)"
+	@printf "yai_version: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yai" ]; then "$(INSTALL_BINDIR)/yai" --version; else printf "missing"; fi)"
+	@printf "run_dir: %s\n" "$$(if [ -d "$(YAI_RUN_DIR)" ]; then printf "%s" "$(YAI_RUN_DIR)"; else printf "missing"; fi)"
+	@printf "store_dir: %s\n" "$$(if [ -d "$(YAI_STORE_DIR)" ]; then printf "%s" "$(YAI_STORE_DIR)"; else printf "missing"; fi)"
+	@printf "log_dir: %s\n" "$$(if [ -d "$(YAI_LOG_DIR)" ]; then printf "%s" "$(YAI_LOG_DIR)"; else printf "missing"; fi)"
+	@printf "tmp_dir: %s\n" "$$(if [ -d "$(YAI_TMP_DIR)" ]; then printf "%s" "$(YAI_TMP_DIR)"; else printf "missing"; fi)"
+	@printf "cases_dir: %s\n" "$$(if [ -d "$(YAI_CASES_DIR)" ]; then printf "%s" "$(YAI_CASES_DIR)"; else printf "missing"; fi)"
+	@printf "sockets_dir: %s\n" "$$(if [ -d "$(YAI_SOCKETS_DIR)" ]; then printf "%s" "$(YAI_SOCKETS_DIR)"; else printf "missing"; fi)"
+	@printf "config_dir: %s\n" "$$(if [ -d "$(YAI_CONFIG_DIR)" ]; then printf "%s" "$(YAI_CONFIG_DIR)"; else printf "missing"; fi)"
+	@printf "daemon_socket_default: %s\n" "$(YAI_DAEMON_SOCKET)"
+	@printf "runtime_layout_status: %s\n" "$$(if [ -d "$(YAI_RUN_DIR)" ] && [ -d "$(YAI_STORE_DIR)" ] && [ -d "$(YAI_LOG_DIR)" ] && [ -d "$(YAI_TMP_DIR)" ] && [ -d "$(YAI_CASES_DIR)" ] && [ -d "$(YAI_SOCKETS_DIR)" ] && [ -d "$(YAI_CONFIG_DIR)" ]; then printf "ok"; else printf "incomplete"; fi)"
 	@case ":$$PATH:" in *:"$(INSTALL_BINDIR)":*) printf "PATH_status: ok\n" ;; *) printf "PATH_status: warning add %s to PATH\n" "$(INSTALL_BINDIR)" ;; esac
 
 smoke-new1: $(SMOKE_MINIMUM_LOOP)

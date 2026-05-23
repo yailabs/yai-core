@@ -5,17 +5,15 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.6B adds the operational extraction contract after SPINE.6A compressed
-active engineering docs. `docs/engineering/` now keeps one operational roadmap,
-a small active canon and a mandatory bidirectional extraction rule for future
-implementation waves.
+SPINE.20 adds the local runtime layout after SPINE.6B made bidirectional
+extraction mandatory for future implementation waves.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. Future work is now numbered
-linearly as SPINE.20 onward. Next: SPINE.20 Local Runtime Layout.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20 is complete.
+Next: SPINE.21 Filesystem Refactor Freeze.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -135,6 +133,11 @@ SPINE.6B is the operational wave contract. It makes old-yai source audit,
 extraction, yai-core implementation, old-yai residue normalization, inventory
 update and validation mandatory for future implementation waves when the
 touched concept already exists in old `yai`.
+
+SPINE.20 is the local runtime layout wave. It adds `install-local`,
+`uninstall-local`, `doctor-local`, `print-install-paths`, expands `yai doctor`
+runtime diagnostics and creates the canonical `YAI_HOME` directory set:
+`run`, `store`, `log`, `tmp`, `cases`, `sockets` and `config`.
 
 ## Minimum Loop History
 
@@ -285,8 +288,8 @@ Rust = engine / operational data spine
 ```
 
 `yai` is Rust and now lives under `cmd/yai`. The bootstrap operational data
-engine is Rust and now lives under `engine/`. Local command installation is now
-SPINE.20, and there is no public API, no HTTP, no auth, no service
+engine is Rust and now lives under `engine/`. Local command installation exists
+as SPINE.20, and there is no public API, no HTTP, no auth, no service
 manager, no multi-client runtime, no process/network/model/database carrier, no
 full policy engine, no graph database, no vector/RAG retrieval, no automatic
 repair, no memory consolidation engine, no backend switch, and no full secret
@@ -299,9 +302,9 @@ make info
 make check
 ```
 
-## Planned Local Install Layout
+## Local Install Layout
 
-Planned local install layout for SPINE.20:
+Implemented local install layout:
 
 ```text
 make install-local PREFIX=$HOME/.local YAI_HOME=$HOME/.yai

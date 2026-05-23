@@ -37,10 +37,17 @@ ctl/
 
 Historical references are archived under `docs/archive/engineering/`.
 
-## Target Runtime Layout
+## Local Runtime Layout
 
-SPINE.20 defines the local runtime layout. It must introduce a normal local
-operating environment instead of treating `build/tmp` as the user runtime.
+SPINE.20 defines the local runtime layout and is now the active installed
+runtime baseline.
+
+Rule:
+
+```text
+build/tmp = test/lab
+YAI_HOME = real local runtime
+```
 
 Target concepts:
 
@@ -50,7 +57,10 @@ run/
 store/
 log/
 tmp/
-socket path
+cases/
+sockets/
+config/
+run/yaid.sock
 installed yai
 installed yaid
 doctor output
@@ -58,10 +68,44 @@ cleanup/uninstall
 manual daemon start/stop/status
 ```
 
+Default local paths:
+
+```text
+PREFIX=$HOME/.local
+YAI_HOME=$HOME/.yai
+$(PREFIX)/bin/yai
+$(PREFIX)/bin/yaid
+$(YAI_HOME)/run
+$(YAI_HOME)/store
+$(YAI_HOME)/log
+$(YAI_HOME)/tmp
+$(YAI_HOME)/cases
+$(YAI_HOME)/sockets
+$(YAI_HOME)/config
+$(YAI_HOME)/run/yaid.sock
+```
+
+`run/` is the ephemeral daemon/runtime directory and owns the default socket.
+`store/` is the future durable data-plane root. `cases/` is the future
+case-session storage root. `log/`, `tmp/` and `config/` hold local runtime
+logs, scratch files and configuration material.
+
+Future data-plane locations may live under:
+
+```text
+$(YAI_HOME)/store/journal/
+$(YAI_HOME)/store/lmdb/
+$(YAI_HOME)/store/ladybug/
+$(YAI_HOME)/store/duckdb/
+```
+
+SPINE.20 creates only the top-level runtime directories. It does not implement
+LMDB, Ladybug, DuckDB or shared memory.
+
 ## Transitional Caveats
 
 The C data-spine folders under `system/{store,graph,index,memory,projection,reconcile}`
 remain transitional smoke support until the Rust engine owns the mature data
 planes.
 
-The current build tree is not the target local runtime environment.
+The build tree is not the target local runtime environment.

@@ -36,10 +36,11 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: NEW.15");
+    println!("status: SPINE.20");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
+    println!("runtime_layout: YAI_HOME local runtime v0");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -50,12 +51,31 @@ fn print_doctor() {
     let store_dir = yai_home.join("store");
     let log_dir = yai_home.join("log");
     let tmp_dir = yai_home.join("tmp");
+    let cases_dir = yai_home.join("cases");
+    let sockets_dir = yai_home.join("sockets");
+    let config_dir = yai_home.join("config");
     let socket = run_dir.join("yaid.sock");
     let yai_path = std::env::current_exe()
         .map(|path| path.display().to_string())
         .unwrap_or_else(|_| "unknown".to_string());
     let yaid_path = find_on_path("yaid").unwrap_or_else(|| "not found on PATH".to_string());
+    let yaid_found = if find_on_path("yaid").is_some() {
+        "found"
+    } else {
+        "missing"
+    };
     let path_status = path_contains_current_bin().unwrap_or(false);
+    let runtime_layout_ok = [
+        &run_dir,
+        &store_dir,
+        &log_dir,
+        &tmp_dir,
+        &cases_dir,
+        &sockets_dir,
+        &config_dir,
+    ]
+    .iter()
+    .all(|path| path.is_dir());
 
     println!("yai doctor: ok");
     println!("public_semantics: C ABI + core docs");
@@ -63,12 +83,17 @@ fn print_doctor() {
     println!("journal_mode: file debug only");
     println!("binary_path: {yai_path}");
     println!("yaid_path: {yaid_path}");
+    println!("yaid_found: {yaid_found}");
     println!("yai_version: {VERSION}");
     println!("YAI_HOME: {}", yai_home.display());
-    println!("run_dir: {}", run_dir.display());
-    println!("store_dir: {}", store_dir.display());
-    println!("log_dir: {}", log_dir.display());
-    println!("tmp_dir: {}", tmp_dir.display());
+    println!("YAI_HOME_status: {}", path_state(&yai_home));
+    println!("run_dir: {}", path_state_with_path(&run_dir));
+    println!("store_dir: {}", path_state_with_path(&store_dir));
+    println!("log_dir: {}", path_state_with_path(&log_dir));
+    println!("tmp_dir: {}", path_state_with_path(&tmp_dir));
+    println!("cases_dir: {}", path_state_with_path(&cases_dir));
+    println!("sockets_dir: {}", path_state_with_path(&sockets_dir));
+    println!("config_dir: {}", path_state_with_path(&config_dir));
     println!(
         "env_file: {}",
         yai_env_file()
@@ -84,6 +109,22 @@ fn print_doctor() {
         }
     );
     println!("daemon_socket_default: {}", socket.display());
+    println!(
+        "socket_default_status: {}",
+        if socket.exists() {
+            "present"
+        } else {
+            "not_present"
+        }
+    );
+    println!(
+        "runtime_layout_status: {}",
+        if runtime_layout_ok {
+            "ok"
+        } else {
+            "incomplete"
+        }
+    );
 }
 
 fn print_usage() {
@@ -136,6 +177,20 @@ fn find_on_path(name: &str) -> Option<String> {
         }
     }
     None
+}
+
+fn path_state(path: &std::path::Path) -> &'static str {
+    if path.is_dir() {
+        "ok"
+    } else if path.exists() {
+        "not_directory"
+    } else {
+        "missing"
+    }
+}
+
+fn path_state_with_path(path: &std::path::Path) -> String {
+    format!("{} {}", path.display(), path_state(path))
 }
 
 fn yai_env_file() -> Option<PathBuf> {
@@ -344,7 +399,10 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
     println!("case_domains: {}", projection.case_domain_count);
     println!("case_attachments: {}", projection.case_attachment_count);
     println!("case_bindings: {}", projection.case_binding_count);
-    println!("interaction_threads: {}", projection.interaction_thread_count);
+    println!(
+        "interaction_threads: {}",
+        projection.interaction_thread_count
+    );
     println!("interaction_turns: {}", projection.interaction_turn_count);
     println!(
         "participant_view_frames: {}",
@@ -1130,7 +1188,10 @@ fn append_thread_record(
         compact_text(label, 48)
     );
     let record = Record::from_parts(
-        format!("interaction-thread:{}:{sequence}", thread_id.replace(':', "-")),
+        format!(
+            "interaction-thread:{}:{sequence}",
+            thread_id.replace(':', "-")
+        ),
         case_ref,
         RecordKind::InteractionThread,
         subject_ref,
@@ -1740,14 +1801,17 @@ fn append_participant_view_frame(session: &PromptSession) -> Result<String, Stri
     let journal = Journal::load_jsonl(&session.journal_path)
         .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
     let sequence = journal.count() + 1;
-    let previous_frame_id = latest_frame_id(&journal, &session.case_ref, &session.active_thread_id)
-        .unwrap_or_default();
+    let previous_frame_id =
+        latest_frame_id(&journal, &session.case_ref, &session.active_thread_id).unwrap_or_default();
     let frame_id = format!("frame:participant-view-{sequence}");
-    let included_turn_count = thread_turn_count(&journal, &session.case_ref, &session.active_thread_id);
+    let included_turn_count =
+        thread_turn_count(&journal, &session.case_ref, &session.active_thread_id);
     let included_memory_count = journal
         .records()
         .iter()
-        .filter(|record| record.case_ref == session.case_ref && record.kind == RecordKind::MemoryCandidate)
+        .filter(|record| {
+            record.case_ref == session.case_ref && record.kind == RecordKind::MemoryCandidate
+        })
         .count();
     let included_receipt_count = journal
         .records()
@@ -1764,7 +1828,9 @@ fn append_participant_view_frame(session: &PromptSession) -> Result<String, Stri
         .records()
         .iter()
         .rev()
-        .find(|record| record.case_ref == session.case_ref && record.kind == RecordKind::ProjectionResult)
+        .find(|record| {
+            record.case_ref == session.case_ref && record.kind == RecordKind::ProjectionResult
+        })
         .map(|record| record.id.as_str())
         .unwrap_or("projection:current");
     let summary = format!(
@@ -1978,7 +2044,10 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
         render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
     println!("participant_view_frame: {frame_id}");
     println!("interaction_turn: {turn_id}");
-    println!("model_interpretation: {}", compact_text(&interpretation_summary, 120));
+    println!(
+        "model_interpretation: {}",
+        compact_text(&interpretation_summary, 120)
+    );
     Ok(())
 }
 

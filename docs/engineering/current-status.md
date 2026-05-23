@@ -1,17 +1,17 @@
 # Current Engineering Status
 
-Status: SPINE.6B operational wave contract.
+Status: SPINE.20 local runtime layout.
 
 ## Completed Foundation
 
-NEW.0 through NEW.19 are complete foundation history. They are no longer the
-future scheduling system. SPINE.6A compressed active engineering docs. SPINE.6B
-adds the operational extraction contract for future implementation waves.
+NEW.0 through NEW.19 are complete foundation history. SPINE.6A compressed
+active engineering docs. SPINE.6B adds the operational extraction contract for
+future implementation waves. SPINE.20 adds the local runtime layout.
 
-The active roadmap now starts at:
+The next active roadmap item is:
 
 ```text
-SPINE.20 Local Runtime Layout
+SPINE.21 Filesystem Refactor Freeze
 ```
 
 ## Current Layout
@@ -27,6 +27,25 @@ docs/
 tools/
 vendor/
 ```
+
+## Local Runtime Layout
+
+```text
+PREFIX=$HOME/.local
+YAI_HOME=$HOME/.yai
+$(PREFIX)/bin/yai
+$(PREFIX)/bin/yaid
+$(YAI_HOME)/run
+$(YAI_HOME)/store
+$(YAI_HOME)/log
+$(YAI_HOME)/tmp
+$(YAI_HOME)/cases
+$(YAI_HOME)/sockets
+$(YAI_HOME)/config
+$(YAI_HOME)/run/yaid.sock
+```
+
+`build/tmp` remains test/lab space. `YAI_HOME` is the local runtime home.
 
 Removed active implementation roots:
 
@@ -56,6 +75,12 @@ operational-extraction-contract.md
 The current data plane remains partly journal-backed and partly transitional C
 smoke support. Shared memory, LMDB, Ladybug, DuckDB, projection deltas, memory
 consolidation and cross-plane reconcile remain future SPINE.22-SPINE.30 work.
+SPINE.20 creates `YAI_HOME/store` as the future durable data-plane root but does
+not create those backends.
+
+Old `yai` residue for SPINE.20 was read-only inspected. The old `yai` worktree
+has an existing dirty architecture file, so no old-yai files were modified.
+The extraction inventory records that caveat as `blocked_by_dirty_worktree`.
 
 Future implementation waves must classify corresponding old-yai residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

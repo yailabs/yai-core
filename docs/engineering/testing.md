@@ -288,8 +288,15 @@ model carrier and background runtime execution.
 make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
 PATH=/tmp/yai-core-install-test/bin:$PATH yai --version
 PATH=/tmp/yai-core-install-test/bin:$PATH yai info
-PATH=/tmp/yai-core-install-test/bin:$PATH yai doctor
+YAI_HOME=/tmp/yai-core-home-test PATH=/tmp/yai-core-install-test/bin:$PATH yai doctor
 PATH=/tmp/yai-core-install-test/bin:$PATH yaid --version
+test -d /tmp/yai-core-home-test/run
+test -d /tmp/yai-core-home-test/store
+test -d /tmp/yai-core-home-test/log
+test -d /tmp/yai-core-home-test/tmp
+test -d /tmp/yai-core-home-test/cases
+test -d /tmp/yai-core-home-test/sockets
+test -d /tmp/yai-core-home-test/config
 PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock
 make uninstall-local PREFIX=/tmp/yai-core-install-test
 ```

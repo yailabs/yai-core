@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through NEW.19, SPINE.6A document compression and SPINE.6B operational extraction contract. | SPINE.20 Local Runtime Layout. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.20 local runtime layout. | SPINE.21 Filesystem Refactor Freeze. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -30,7 +30,8 @@ target layout, Rust/C source movement, engine bridge split, case-world records,
 live case context, observability doctrine, interaction threads and build/guard
 realignment. SPINE.6A compressed engineering docs. SPINE.6B made
 bidirectional old-yai extraction and residue normalization mandatory for future
-implementation waves.
+implementation waves. SPINE.20 established the local `YAI_HOME` runtime layout
+and install/uninstall/doctor targets.
 
 Do not schedule future work with the old NEW numbering. The next active
 delivery is SPINE.20.
@@ -72,6 +73,8 @@ validate. Details live in `wave-template.md` and
 ## SPINE.20-SPINE.62 Linear Roadmap
 
 ### SPINE.20 - Local Runtime Layout
+
+Status: done.
 
 Macro: HOST / DATA / WORLD / OBSERVABILITY
 

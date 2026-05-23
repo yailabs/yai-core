@@ -53,6 +53,21 @@ SPINE.30 Data Plane Milestone Freeze
 The journal must remain in the system, but it must recede from the primary
 operational path.
 
+SPINE.20 creates the local host root for future data planes:
+
+```text
+YAI_HOME/store
+```
+
+Future backend-specific subdirectories may be introduced by their owning waves:
+
+```text
+YAI_HOME/store/journal
+YAI_HOME/store/lmdb
+YAI_HOME/store/ladybug
+YAI_HOME/store/duckdb
+```
+
 Models do not access the case directly. They receive a controlled live
 projection assembled with the active interaction thread and authorized memory
 or delta material.
