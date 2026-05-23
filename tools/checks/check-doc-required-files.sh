@@ -5,6 +5,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 
 for file in \
   docs/architecture/00-spine.md \
+  docs/architecture/15-pack-materialization.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -15,8 +16,11 @@ for file in \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
   docs/engineering/operational-extraction-contract.md \
+  docs/engineering/pack-format.md \
+  docs/engineering/pack-roadmap.md \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
+  docs/adr/0017-packs-as-case-materialization-units.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

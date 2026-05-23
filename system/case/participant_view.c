@@ -49,17 +49,8 @@ yai_status_t yai_participant_view_frame_build(yai_participant_view_frame_t *fram
 
     yai_copy_string(frame->redaction_posture, sizeof(frame->redaction_posture), "summary_only");
     yai_copy_string(frame->freshness, sizeof(frame->freshness), "fresh");
-    (void)snprintf(frame->summary,
-                   sizeof(frame->summary),
-                   "participant_view_frame:%s case_ref:%s thread_id:%s projection_id:%s previous_frame_id:%s delta_since_frame_id:%s included_turn_count:%zu included_memory_count:%zu included_receipt_count:%zu redaction:summary_only freshness:fresh",
-                   frame->frame_id.value,
-                   frame->case_ref.case_id.value,
-                   frame->thread_id.value,
-                   frame->projection_id.value,
-                   frame->previous_frame_id.value,
-                   frame->delta_since_frame_id.value,
-                   frame->included_turn_count,
-                   frame->included_memory_count,
-                   frame->included_receipt_count);
+    yai_copy_string(frame->summary,
+                    sizeof(frame->summary),
+                    "participant_view_frame redaction:summary_only freshness:fresh");
     return YAI_OK;
 }
