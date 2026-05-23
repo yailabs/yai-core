@@ -160,9 +160,12 @@ pub unsafe extern "C" fn yai_engine_projection_summary_json(
     }
     let projection = ProjectionSummary::from_journal("rust_engine", &(*handle).journal);
     let summary = format!(
-        "{{\"records\":{},\"receipts\":{},\"graph_edges\":{},\"memory_candidates\":{},\"projection_results\":{},\"divergences\":{}}}",
+        "{{\"records\":{},\"receipts\":{},\"case_domains\":{},\"case_attachments\":{},\"case_bindings\":{},\"graph_edges\":{},\"memory_candidates\":{},\"projection_results\":{},\"divergences\":{}}}",
         projection.source_record_count,
         projection.receipt_count,
+        projection.case_domain_count,
+        projection.case_attachment_count,
+        projection.case_binding_count,
         projection.graph_edge_count,
         projection.memory_candidate_count,
         projection.projection_result_count,

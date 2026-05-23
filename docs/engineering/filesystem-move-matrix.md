@@ -1,11 +1,12 @@
 # Filesystem Move Matrix
 
-Status: NEW.17 applied system move matrix.
+Status: NEW.18 applied engine bridge split matrix.
 
 This matrix is the operational checklist for NEW.14 through NEW.21. NEW.14
 moved the Rust engine crates, NEW.15 moved the Rust command, NEW.16 moved the
-daemon entrypoint/support and NEW.17 moved remaining C implementation to
-`system/`; data bridge thinning remains planned for NEW.18.
+daemon entrypoint/support, NEW.17 moved remaining C implementation to
+`system/` and NEW.18 centralized the Rust engine C bridge under
+`system/engine_bridge`.
 
 ## Root Moves
 
@@ -13,7 +14,7 @@ daemon entrypoint/support and NEW.17 moved remaining C implementation to
 |---|---|---|---|
 | `crates/` | `engine/` plus `cmd/yai/` | NEW.14, NEW.15 | Completed; `crates/` removed after NEW.15. |
 | `daemon/` | `cmd/yaid/` plus `system/daemon/` | NEW.16 | Completed; top-level `daemon/` removed. |
-| `lib/` | `system/` plus `system/engine_bridge` | NEW.17, NEW.18 | NEW.17 physical move done; data bridge split second. |
+| `lib/` | `system/` plus `system/engine_bridge` | NEW.17, NEW.18 | Completed; C implementation moved and Rust bridge centralized. |
 | `ctl/` | removed | NEW.17 | Retired pointer removed after C system move. |
 | `include/` | `include/` | unchanged | Remains public ABI root. |
 
@@ -66,29 +67,29 @@ daemon entrypoint/support and NEW.17 moved remaining C implementation to
 
 | Current file | Target route | Initial classification |
 |---|---|---|
-| `system/store/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | `keep_as_bridge` |
-| `system/store/journal.c` | `system/engine_bridge/journal.c`, then `engine/yai-engine/src/journal` | `keep_temporarily` |
-| `system/store/journal_file.c` | `system/engine_bridge/journal_file.c`, then `engine/yai-engine/src/journal` | `replace_with_rust` |
-| `system/store/record.c` | `system/engine_bridge/record.c`, then `engine/yai-engine/src/record` | `replace_with_rust` |
-| `system/store/record_codec.c` | `system/engine_bridge/record_codec.c`, then `engine/yai-engine/src/record` | `replace_with_rust` |
-| `system/graph/edge.c` | `system/engine_bridge/graph_edge.c`, then `engine/yai-engine/src/graph` | `replace_with_rust` |
-| `system/graph/graph.c` | `system/engine_bridge/graph.c`, then `engine/yai-engine/src/graph` | `replace_with_rust` |
-| `system/graph/reconstruct.c` | `system/engine_bridge/reconstruct.c`, then `engine/yai-engine/src/graph` | `replace_with_rust` |
-| `system/index/query.c` | `system/engine_bridge/query.c`, then `engine/yai-engine/src/query` | `replace_with_rust` |
-| `system/index/query_filter.c` | `system/engine_bridge/query_filter.c`, then `engine/yai-engine/src/query` | `replace_with_rust` |
-| `system/index/query_result.c` | `system/engine_bridge/query_result.c`, then `engine/yai-engine/src/query` | `replace_with_rust` |
-| `system/memory/memory_candidate.c` | `system/engine_bridge/memory_candidate.c`, then `engine/yai-engine/src/memory` | `replace_with_rust` |
-| `system/memory/memory_kind.c` | `system/engine_bridge/memory_kind.c`, then `engine/yai-engine/src/memory` | `replace_with_rust` |
-| `system/memory/memory_scope.c` | `system/engine_bridge/memory_scope.c`, then `engine/yai-engine/src/memory` | `replace_with_rust` |
-| `system/projection/freshness.c` | `system/engine_bridge/freshness.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/projection/projection.c` | `system/engine_bridge/projection.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/projection/projection_kind.c` | `system/engine_bridge/projection_kind.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/projection/projection_request.c` | `system/engine_bridge/projection_request.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/projection/projection_result.c` | `system/engine_bridge/projection_result.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/projection/redaction.c` | `system/engine_bridge/redaction.c`, then `engine/yai-engine/src/projection` | `replace_with_rust` |
-| `system/reconcile/divergence.c` | `system/engine_bridge/divergence.c`, then `engine/yai-engine/src/reconcile` | `replace_with_rust` |
-| `system/reconcile/reconcile.c` | `system/engine_bridge/reconcile.c`, then `engine/yai-engine/src/reconcile` | `replace_with_rust` |
-| `system/reconcile/recovery.c` | `system/engine_bridge/recovery.c`, then `engine/yai-engine/src/reconcile` | `delete_after_engine` |
+| `system/engine_bridge/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | `keep_as_bridge` |
+| `system/store/journal.c` | `engine/yai-engine/src/journal` | `keep_temporarily` |
+| `system/store/journal_file.c` | `engine/yai-engine/src/journal` | `keep_temporarily` |
+| `system/store/record.c` | `engine/yai-engine/src/record` | `keep_temporarily` |
+| `system/store/record_codec.c` | `engine/yai-engine/src/record` | `keep_temporarily` |
+| `system/graph/edge.c` | `engine/yai-engine/src/graph` | `keep_temporarily` |
+| `system/graph/graph.c` | `engine/yai-engine/src/graph` | `keep_temporarily` |
+| `system/graph/reconstruct.c` | `engine/yai-engine/src/graph` | `keep_temporarily` |
+| `system/index/query.c` | `engine/yai-engine/src/query` | `keep_temporarily` |
+| `system/index/query_filter.c` | `engine/yai-engine/src/query` | `keep_temporarily` |
+| `system/index/query_result.c` | `engine/yai-engine/src/query` | `keep_temporarily` |
+| `system/memory/memory_candidate.c` | `engine/yai-engine/src/memory` | `keep_temporarily` |
+| `system/memory/memory_kind.c` | `engine/yai-engine/src/memory` | `keep_temporarily` |
+| `system/memory/memory_scope.c` | `engine/yai-engine/src/memory` | `keep_temporarily` |
+| `system/projection/freshness.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/projection/projection.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/projection/projection_kind.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/projection/projection_request.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/projection/projection_result.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/projection/redaction.c` | `engine/yai-engine/src/projection` | `keep_temporarily` |
+| `system/reconcile/divergence.c` | `engine/yai-engine/src/reconcile` | `keep_temporarily` |
+| `system/reconcile/reconcile.c` | `engine/yai-engine/src/reconcile` | `keep_temporarily` |
+| `system/reconcile/recovery.c` | `engine/yai-engine/src/reconcile` | `keep_temporarily` |
 
 `keep_as_bridge` means the C file is an intentional ABI/FFI bridge.
 `keep_temporarily` means it stays only until the Rust engine has parity and the
@@ -125,6 +126,6 @@ After NEW.21:
 .rs -> engine/, cmd/yai/
 ```
 
-After NEW.17, `.rs` is allowed under `engine/` and `cmd/yai/`; `.c` is allowed
+After NEW.18, `.rs` is allowed under `engine/` and `cmd/yai/`; `.c` is allowed
 under `system/`, `cmd/yaid/` and `tests/`. No implementation source remains
 under `crates/`, top-level `daemon/`, `lib/` or `ctl/`.

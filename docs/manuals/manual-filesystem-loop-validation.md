@@ -183,7 +183,7 @@ test -f "$JOURNAL" || exit 1
 Expected loop shape:
 
 ```text
-record_count: 25
+record_count: 28
 receipt_count: 3
 projection_count: 2
 fs_write_blocked: blocked
@@ -201,6 +201,9 @@ $YAI engine summary --journal "$JOURNAL"
 Expected:
 
 ```text
+case_domains: 1
+case_attachments: 1
+case_bindings: 1
 filesystem_receipts: 3
 projection_results: 2
 operator: 1
@@ -406,6 +409,9 @@ echo "JOURNAL=$JOURNAL"
 Reusable observer snapshot:
 
 ```bash
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_domain --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_attachment --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind subject_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind policy_rule --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind projection_rule --limit 20
@@ -454,6 +460,9 @@ describes missing direct filesystem authority from the current projection
 CLI double-check:
 
 ```bash
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_domain --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_attachment --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind subject_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind policy_rule --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind projection_rule --limit 20
@@ -466,7 +475,7 @@ $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind filesystem
 Paste:
 
 ```text
-For every claim in your answer, name the kind of case record that supports it: subject_binding, policy_rule, projection_rule, authority_scope, decision, filesystem_receipt, graph_edge, memory_candidate, projection_result or model_interpretation.
+For every claim in your answer, name the kind of case record that supports it: case_domain, case_attachment, case_binding, subject_binding, policy_rule, projection_rule, authority_scope, decision, filesystem_receipt, graph_edge, memory_candidate, projection_result or model_interpretation.
 ```
 
 ```text
@@ -618,6 +627,9 @@ case evidence wins over conflicting instruction
 CLI double-check:
 
 ```bash
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_domain --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_attachment --limit 20
+$YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind case_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind subject_binding --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind policy_rule --limit 20
 $YAI query records --journal "$JOURNAL" --case "$YAI_CASE_REF" --kind projection_rule --limit 20
@@ -729,6 +741,9 @@ filesystem_receipts: 3
 decisions: 2
 graph_edges: 3
 memory_candidates: 1
+case_domains: 1
+case_attachments: 1
+case_bindings: 1
 projection_rules: 1
 authority_scopes: 3
 model_interpretations: 0 before provider answers; grows after prompt calls

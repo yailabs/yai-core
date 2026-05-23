@@ -105,6 +105,12 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "authority_scope";
     case YAI_RECORD_MODEL_INTERPRETATION:
         return "model_interpretation";
+    case YAI_RECORD_CASE_DOMAIN:
+        return "case_domain";
+    case YAI_RECORD_CASE_ATTACHMENT:
+        return "case_attachment";
+    case YAI_RECORD_CASE_BINDING:
+        return "case_binding";
     default:
         return "unknown";
     }
@@ -168,6 +174,12 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_AUTHORITY_SCOPE;
     } else if (strcmp(value, "model_interpretation") == 0) {
         *kind = YAI_RECORD_MODEL_INTERPRETATION;
+    } else if (strcmp(value, "case_domain") == 0) {
+        *kind = YAI_RECORD_CASE_DOMAIN;
+    } else if (strcmp(value, "case_attachment") == 0) {
+        *kind = YAI_RECORD_CASE_ATTACHMENT;
+    } else if (strcmp(value, "case_binding") == 0) {
+        *kind = YAI_RECORD_CASE_BINDING;
     } else {
         return YAI_ERR_INVALID;
     }

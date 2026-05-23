@@ -63,9 +63,10 @@ engine/yai-engine/src/projection
 engine/yai-engine/src/reconcile
 ```
 
-NEW.18 must classify each duplicated C data file as `keep_as_bridge`,
-`move_to_engine`, `replace_with_rust`, `delete_after_engine` or
-`keep_temporarily`.
+NEW.18 classifies the duplicated C data folders as `keep_temporarily` and moves
+the active Rust engine C shim to `system/engine_bridge/rust_engine_backend.c`.
+Later parity waves may reclassify individual files as `replace_with_rust` or
+`delete_after_engine`.
 
 ## Non-goals
 

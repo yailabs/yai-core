@@ -104,6 +104,36 @@ mod tests {
     fn build_authority_projection_summary() {
         let mut journal = Journal::new();
         journal.append(Record::from_parts(
+            "record:case-domain",
+            "case:authority",
+            RecordKind::CaseDomain,
+            "subject:none",
+            "",
+            "",
+            "",
+            "case_domain scope:manual domain:nested_case",
+        ));
+        journal.append(Record::from_parts(
+            "record:case-attachment",
+            "case:authority",
+            RecordKind::CaseAttachment,
+            "subject:llm-provider",
+            "",
+            "",
+            "",
+            "case_attachment:model kind:model posture:bound",
+        ));
+        journal.append(Record::from_parts(
+            "record:case-binding",
+            "case:authority",
+            RecordKind::CaseBinding,
+            "subject:none",
+            "",
+            "",
+            "",
+            "case_binding:model kind:model posture:bound",
+        ));
+        journal.append(Record::from_parts(
             "record:projection-rule",
             "case:authority",
             RecordKind::ProjectionRule,
@@ -136,9 +166,15 @@ mod tests {
 
         let projection = ProjectionSummary::from_journal("model", &journal);
 
+        assert_eq!(projection.case_domain_count, 1);
+        assert_eq!(projection.case_attachment_count, 1);
+        assert_eq!(projection.case_binding_count, 1);
         assert_eq!(projection.projection_rule_count, 1);
         assert_eq!(projection.authority_scope_count, 1);
         assert_eq!(projection.model_interpretation_count, 1);
+        assert!(projection.summary.contains("case_domains:1"));
+        assert!(projection.summary.contains("case_attachments:1"));
+        assert!(projection.summary.contains("case_bindings:1"));
         assert!(projection.summary.contains("projection_rules:1"));
         assert!(projection.summary.contains("authority_scopes:1"));
         assert!(projection.summary.contains("model_interpretations:1"));

@@ -235,6 +235,9 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
         .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
     let projection = ProjectionSummary::from_journal("projection", &journal);
     println!("records: {}", projection.source_record_count);
+    println!("case_domains: {}", projection.case_domain_count);
+    println!("case_attachments: {}", projection.case_attachment_count);
+    println!("case_bindings: {}", projection.case_binding_count);
     println!(
         "projection_requests: {}",
         projection.projection_request_count
@@ -370,6 +373,13 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         "terminal_authority: prompt_surface_only_no_decision_authority"
     );
     let _ = writeln!(output, "records: {}", projection.source_record_count);
+    let _ = writeln!(output, "case_domains: {}", projection.case_domain_count);
+    let _ = writeln!(
+        output,
+        "case_attachments: {}",
+        projection.case_attachment_count
+    );
+    let _ = writeln!(output, "case_bindings: {}", projection.case_binding_count);
     let _ = writeln!(
         output,
         "model_projection_records: {}",
@@ -408,6 +418,17 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
     let _ = writeln!(output, "graph_edges: {}", projection.graph_edge_count);
     let _ = writeln!(output);
 
+    render_model_context_records(
+        &mut output,
+        "Case World",
+        &journal,
+        case_ref,
+        &[
+            RecordKind::CaseDomain,
+            RecordKind::CaseAttachment,
+            RecordKind::CaseBinding,
+        ],
+    );
     render_model_context_records(
         &mut output,
         "Subjects",
@@ -479,6 +500,10 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         &[RecordKind::ModelInterpretation],
     );
     let _ = writeln!(output, "## Authority Boundaries");
+    let _ = writeln!(
+        output,
+        "- case_domain, case_attachment and case_binding records define the operational case world visible to this participant."
+    );
     let _ = writeln!(
         output,
         "- subject:linenoise-terminal is a vendored prompt surface only; it does not generate decisions, authorize writes, mutate receipts or own provider semantics."

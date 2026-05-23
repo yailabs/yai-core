@@ -262,6 +262,25 @@ NEW.16 applies wave-coupled extraction only as daemon-boundary audit:
 No old source is copied. `cmd/yaid` remains the C daemon entrypoint and
 `system/daemon` owns daemon support.
 
+NEW.18 applies wave-coupled extraction only as data-spine and bridge audit:
+
+```text
+../yai/src/substrate/store/*          -> engine/store or system/engine_bridge
+../yai/src/substrate/records/*        -> engine/record
+../yai/src/substrate/graph/*          -> engine/graph
+../yai/src/substrate/indexes/*        -> engine/index
+../yai/src/substrate/query/*          -> engine/query
+../yai/src/substrate/memory/*         -> engine/memory
+../yai/src/substrate/views/*          -> engine/projection
+../yai/src/substrate/signals/*        -> engine/reconcile or engine/memory
+../yai/src/lineage/*                  -> engine/graph + engine/memory + engine/projection
+../yai/src/analytics/signals/*        -> engine/reconcile or ai-environment
+../yai/src/analytics/features/*       -> engine/index/memory or ai-environment
+```
+
+No old source is copied. `system/engine_bridge` owns only the Rust engine C
+bridge; duplicated C data logic remains `keep_temporarily`.
+
 The inventory records these routes. No old-yai source is copied.
 
 Future model/provider waves must audit and classify:

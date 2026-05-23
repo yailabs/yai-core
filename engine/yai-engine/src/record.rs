@@ -26,6 +26,9 @@ pub enum RecordKind {
     ProjectionRule,
     AuthorityScope,
     ModelInterpretation,
+    CaseDomain,
+    CaseAttachment,
+    CaseBinding,
 }
 
 impl RecordKind {
@@ -57,6 +60,9 @@ impl RecordKind {
             Self::ProjectionRule => "projection_rule",
             Self::AuthorityScope => "authority_scope",
             Self::ModelInterpretation => "model_interpretation",
+            Self::CaseDomain => "case_domain",
+            Self::CaseAttachment => "case_attachment",
+            Self::CaseBinding => "case_binding",
         }
     }
 
@@ -88,6 +94,9 @@ impl RecordKind {
             "projection_rule" => Some(Self::ProjectionRule),
             "authority_scope" => Some(Self::AuthorityScope),
             "model_interpretation" => Some(Self::ModelInterpretation),
+            "case_domain" => Some(Self::CaseDomain),
+            "case_attachment" => Some(Self::CaseAttachment),
+            "case_binding" => Some(Self::CaseBinding),
             _ => None,
         }
     }

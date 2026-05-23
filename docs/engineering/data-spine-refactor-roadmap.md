@@ -137,8 +137,12 @@ NEW.16 status: completed as the daemon move wave. It moved `daemon/main.c` to
 NEW.17 status: completed as the C system move wave. It moved the remaining C
 implementation from `lib/` to `system/`, removed `lib/` and removed the retired
 `ctl/` pointer root. The data-spine C folders under
-`system/{store,graph,index,memory,projection,reconcile}` remain transitional
-until NEW.18.
+`system/{store,graph,index,memory,projection,reconcile}` remained transitional
+for NEW.18 classification.
+
+NEW.18 status: completed as the engine bridge split wave. It created
+`system/engine_bridge`, moved the Rust engine C shim there and classified the
+remaining C data-spine folders as `keep_temporarily`.
 
 NEW.13 planning artifacts:
 
@@ -150,6 +154,8 @@ system-ownership-map.md
 new15-command-layout.md
 new16-daemon-layout.md
 new17-system-layout.md
+new18-engine-bridge-split.md
+c-data-logic-thinning-map.md
 ```
 
 Model/provider experiment runway:

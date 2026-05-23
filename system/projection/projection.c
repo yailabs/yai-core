@@ -60,6 +60,9 @@ yai_status_t yai_projection_build(const char *projection_id,
     projection->projection_rule_count = 0;
     projection->authority_scope_count = 0;
     projection->model_interpretation_count = 0;
+    projection->case_domain_count = 0;
+    projection->case_attachment_count = 0;
+    projection->case_binding_count = 0;
 
     for (index = 0; index < yai_journal_count(journal); index += 1) {
         const yai_store_record_t *record = yai_journal_get(journal, index);
@@ -143,14 +146,23 @@ yai_status_t yai_projection_build(const char *projection_id,
             projection->authority_scope_count += 1;
         } else if (record->record_kind == YAI_RECORD_MODEL_INTERPRETATION) {
             projection->model_interpretation_count += 1;
+        } else if (record->record_kind == YAI_RECORD_CASE_DOMAIN) {
+            projection->case_domain_count += 1;
+        } else if (record->record_kind == YAI_RECORD_CASE_ATTACHMENT) {
+            projection->case_attachment_count += 1;
+        } else if (record->record_kind == YAI_RECORD_CASE_BINDING) {
+            projection->case_binding_count += 1;
         }
     }
 
     (void)snprintf(projection->summary,
                    sizeof(projection->summary),
-                   "projection:%s records:%zu decisions:%zu rules:%zu projection_rules:%zu authority_scopes:%zu model_interpretations:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu divergences:%zu reconciliations:%zu projection_requests:%zu projection_results:%zu query_results:%zu",
+                   "projection:%s records:%zu case_domains:%zu case_attachments:%zu case_bindings:%zu decisions:%zu rules:%zu projection_rules:%zu authority_scopes:%zu model_interpretations:%zu gates:%zu obligations:%zu receipt_requirements:%zu filesystem_receipts:%zu subject_states:%zu effects:%zu graph_edges:%zu reconstructions:%zu memory_candidates:%zu divergences:%zu reconciliations:%zu projection_requests:%zu projection_results:%zu query_results:%zu",
                    yai_projection_consumer_string(consumer_kind),
                    projection->source_record_count,
+                   projection->case_domain_count,
+                   projection->case_attachment_count,
+                   projection->case_binding_count,
                    projection->decision_count,
                    projection->policy_rule_count,
                    projection->projection_rule_count,

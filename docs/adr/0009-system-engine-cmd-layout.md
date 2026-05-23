@@ -52,9 +52,10 @@ NEW.15 makes `cmd/yai` the canonical Rust technical command location. It does
 not make `yai-core` own Console UX.
 NEW.16 makes `cmd/yaid` the canonical C daemon entrypoint location and
 `system/daemon` the daemon support location.
-NEW.17 makes `system/` the active C implementation root. Data-spine C folders
-under `system/{store,graph,index,memory,projection,reconcile}` remain
-transitional until NEW.18 splits bridge code from Rust engine ownership.
+NEW.17 makes `system/` the active C implementation root. NEW.18 creates
+`system/engine_bridge` and classifies data-spine C folders under
+`system/{store,graph,index,memory,projection,reconcile}` as temporary smoke
+support while Rust engine ownership matures.
 
 ## Non-goals
 

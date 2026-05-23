@@ -25,6 +25,12 @@ through `/transcript on` and derived prompt memory through `/memory propose`.
 The filesystem manual case now separates `policy_rule`, `projection_rule`,
 `authority_scope`, and `model_interpretation` records so model claims can be
 checked against authoritative case residue instead of treated as core truth.
+Case verticalization has started inside `yai-core`: the C ABI now has
+`case_domain`, `case_attachment`, and `case_binding` primitives and matching
+record kinds. The filesystem manual case emits those records before subjects
+and policies, so a model participant sees an operational case world rather than
+a flat journal label. Registry persistence, SHM, LMDB, DuckDB, Ladybug and full
+runtime carrier enforcement remain planned-not-created in this repository.
 
 ## Filesystem Refoundation History
 

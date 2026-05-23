@@ -21,11 +21,14 @@ integrity_ref optional
 
 ```text
 source
-subject
+case_domain
+case_attachment
+case_binding
+subject_binding
 attempt
 decision
 receipt
-policy
+policy_rule
 projection_rule
 authority_scope
 model_interpretation

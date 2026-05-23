@@ -110,7 +110,7 @@ No reconciliation implementation moves in NEW.13.
 
 NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future reconcile mechanics. C reconcile code remains under
-`system/reconcile` until the NEW.18 bridge split.
+`system/reconcile` as `keep_temporarily` after the NEW.18 bridge split.
 
 ## Projection Interaction
 

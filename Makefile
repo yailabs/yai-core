@@ -17,6 +17,7 @@ C_SOURCES := \
 	system/base/id.c \
 	system/base/error.c \
 	system/case/case_ref.c \
+	system/case/case_world.c \
 	system/subject/subject_ref.c \
 	system/subject/subject_binding.c \
 	system/subject/subject_state.c \

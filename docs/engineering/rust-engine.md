@@ -245,10 +245,10 @@ The C shim lives under the store boundary:
 
 ```text
 include/yai/store/rust_engine_backend.h
-system/store/rust_engine_backend.c
+system/engine_bridge/rust_engine_backend.c
 ```
 
-This is a mirror/backend path, not semantic promotion. NEW.17 moved it under
-`system/store`; NEW.18 decides whether it stays as bridge code or moves to
+This is a bridge path, not semantic promotion. NEW.18 centralizes the C shim in
 `system/engine_bridge`. C remains the public ABI owner and the C file-backed
-journal remains tested as the default path.
+journal remains tested as the default path until Rust engine parity waves
+replace or thin the temporary C data paths.

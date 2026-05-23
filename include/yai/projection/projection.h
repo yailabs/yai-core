@@ -53,6 +53,9 @@ typedef struct yai_projection {
     size_t projection_rule_count;
     size_t authority_scope_count;
     size_t model_interpretation_count;
+    size_t case_domain_count;
+    size_t case_attachment_count;
+    size_t case_binding_count;
 } yai_projection_t;
 
 yai_status_t yai_projection_build(const char *projection_id,

@@ -53,11 +53,15 @@ lib/projection  -> system/engine_bridge + engine/yai-engine/src/projection
 lib/reconcile   -> system/engine_bridge + engine/yai-engine/src/reconcile
 ```
 
+NEW.18 applies the first split: `system/engine_bridge` is created and the Rust
+engine C shim moves there. The remaining C data-spine folders under `system/`
+are explicitly `keep_temporarily`, not final ownership.
+
 ## Non-goals
 
-Do not rewrite C data code before the scheduled NEW.18 bridge split. NEW.17 is
-only the physical move from `lib/` to `system/`; data ownership cleanup remains
-separate.
+Do not rewrite C data code as part of the filesystem moves. NEW.17 is only the
+physical move from `lib/` to `system/`; NEW.18 creates the bridge boundary and
+classification, while full data ownership cleanup remains separate.
 
 ## Related docs
 

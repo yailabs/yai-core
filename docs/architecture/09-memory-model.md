@@ -139,4 +139,4 @@ No memory implementation moves in NEW.13.
 
 NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future memory mechanics. C memory code remains under
-`system/memory` until the NEW.18 bridge split.
+`system/memory` as `keep_temporarily` after the NEW.18 bridge split.

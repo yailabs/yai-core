@@ -108,8 +108,8 @@ system/
 
 ## Transitional Roots
 
-Bootstrap roots are now retired except for transitional data logic that remains
-under `system/` until NEW.18.
+Bootstrap roots are now retired. Transitional data logic remains under
+`system/` as `keep_temporarily` after NEW.18.
 
 | Current root | Target destination | Status |
 |---|---|---|
@@ -179,7 +179,7 @@ Rust engine becomes the operational data spine.
 The current implementation wave state is:
 
 ```text
-NEW.17 C implementation moved to system/
+NEW.18 engine bridge split
 ```
 
 NEW.14 moved only the Rust data engine crates into `engine/`. NEW.15 moved the
@@ -187,12 +187,14 @@ Rust technical command into `cmd/yai` and removed `crates/`. Local install
 NEW.16 moved `yaid` into `cmd/yaid` and daemon support into `system/daemon`.
 NEW.17 moved remaining C implementation into `system/` and removed `lib/` and
 the retired `ctl/` root.
+NEW.18 created `system/engine_bridge` as the active C bridge into the Rust
+engine and moved the Rust engine C shim there.
 Local install layout is delayed to NEW.20. Do not install a filesystem shape
 that is already known to be transitional.
 
 NEW.13 is retained as the planning wave. NEW.14 is the first physical move
 wave; NEW.15 is the command move wave; NEW.16 is the daemon move wave; NEW.17
-is the C system move wave.
+is the C system move wave; NEW.18 is the engine bridge split wave.
 
 ## Model Provider Experiment Boundary
 
@@ -222,6 +224,7 @@ After NEW.21:
 .rs allowed under engine/ and cmd/yai/
 ```
 
-`lib/`, `ctl/`, `crates/` and top-level `daemon/` are retired roots. The
-remaining temporary exception is duplicated data logic under
-`system/{store,graph,index,memory,projection,reconcile}` until NEW.18.
+`lib/`, `ctl/`, `crates/` and top-level `daemon/` are retired roots. The C
+data logic under `system/{store,graph,index,memory,projection,reconcile}` is
+classified `keep_temporarily` after NEW.18. Rust engine ownership is the target;
+`system/engine_bridge` is the active C bridge only.

@@ -44,7 +44,8 @@ system/store -> split: system/engine_bridge + engine/yai-engine/src/store
 
 NEW.14 moved the Rust engine crate that owns the future store path to
 `engine/yai-engine`. NEW.17 moved C store code to `system/store`; it remains
-transitional there until NEW.18.
+transitional there after NEW.18. The Rust engine C shim now lives in
+`system/engine_bridge/rust_engine_backend.c`.
 
 ## NEW.2 Store V0
 
@@ -146,7 +147,7 @@ system/index -> split: system/engine_bridge + engine/yai-engine/src/index/query
 
 NEW.14 moved the Rust engine crate that owns the future index/query path to
 `engine/yai-engine`. NEW.17 moved C index/query code to `system/index`; it
-remains transitional there until NEW.18.
+remains transitional there after NEW.18 as `keep_temporarily`.
 
 ## NEW.9 Query Boundary V0
 
@@ -204,7 +205,7 @@ system/graph -> split: system/engine_bridge + engine/yai-engine/src/graph
 
 NEW.14 moved the Rust engine crate that owns the future graph path to
 `engine/yai-engine`. NEW.17 moved C graph code to `system/graph`; it remains
-transitional there until NEW.18.
+transitional there after NEW.18 as `keep_temporarily`.
 
 ## NEW.5 Graph V0
 

@@ -54,7 +54,7 @@ system/
 | `system/internal/*` | `system/internal/` | NEW.17 done |
 | `daemon/ipc.c` | `system/daemon/ipc.c` | NEW.16 done |
 | `daemon/core_loop.c` | `system/daemon/core_loop.c` | NEW.16 done |
-| `system/store/rust_engine_backend.c` | `system/engine_bridge/rust_engine_backend.c` | NEW.18 |
+| `system/engine_bridge/rust_engine_backend.c` | `system/engine_bridge/` | NEW.18 done |
 
 ## Command Boundary
 
@@ -91,9 +91,10 @@ detect mismatch. System code must not become the long-term owner of store,
 journal, record codec, graph, index, query, memory, projection, reconcile,
 retention or integrity logic.
 
-After NEW.17, `system/{store,graph,index,memory,projection,reconcile}` are
-physical C system paths but still transitional data-spine logic. NEW.18 must
-classify each file into bridge, Rust replacement or deletion.
+After NEW.18, `system/engine_bridge` is the active bridge into Rust. The folders
+`system/{store,graph,index,memory,projection,reconcile}` are physical C system
+paths but still transitional data-spine logic classified `keep_temporarily`.
+They preserve smoke behavior while Rust engine ownership reaches parity.
 
 ## Acceptance Target
 

@@ -75,8 +75,9 @@ cmd/     = yai and yaid entrypoints
 
 The current C data logic in `system/store`, `system/graph`, `system/index`,
 `system/memory`, `system/projection` and `system/reconcile` is transitional.
-NEW.18 must split it into `system/engine_bridge` versus Rust
-`engine/yai-engine` ownership.
+NEW.18 creates `system/engine_bridge`, moves the Rust engine C shim there and
+classifies the remaining C data logic as `keep_temporarily` versus Rust
+`engine/yai-engine` target ownership.
 
 ## NEW.14 Engine Move
 
@@ -94,3 +95,6 @@ NEW.15.
 NEW.16 moved `yaid` into `cmd/yaid` and daemon support into `system/daemon`.
 NEW.17 moved the remaining C implementation into `system/` without changing the
 public C ABI or daemon protocol.
+NEW.18 moved `system/store/rust_engine_backend.c` to
+`system/engine_bridge/rust_engine_backend.c` while keeping the public shim
+header under `include/yai/store/`.

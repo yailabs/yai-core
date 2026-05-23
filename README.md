@@ -111,7 +111,9 @@ Authority, execution, receipts, memory, and continuity remain outside the model.
 `case`
 : A bounded operational control domain. A case gives subjects, operations,
 policies, receipts, records, graph edges, memory, projections, and divergence a
-shared operational frame.
+shared operational frame. In the C ABI this now includes case-domain,
+case-attachment, and case-binding residue so the case is a small operational
+world, not only a `case_ref` on records.
 
 `subject`
 : An observable or controllable entity bound to a case. A subject may be a file,
@@ -272,6 +274,13 @@ docs/     architecture, protocols, engineering notes, and ADRs
 tests/    unit, integration, conformance, smoke, and adversarial tests
 tools/    checks, probes, validation, and developer utilities
 ```
+
+Current refactor state: NEW.18 has centralized the Rust engine C shim under
+`system/engine_bridge`. The C data-spine folders under
+`system/{store,graph,index,memory,projection,reconcile}` are transitional
+`keep_temporarily` smoke paths; Rust `engine/yai-engine` is the target owner of
+store, journal, record codec, graph, index/query, memory, projection,
+reconcile, retention, and integrity logic.
 
 ### Absorbed Concepts
 

@@ -33,6 +33,8 @@ SPINE.1 adopts filesystem / data-spine refoundation as the next phase. The
 target layout is `include/`, `system/`, `engine/` and `cmd/`; Rust owns the
 operational data spine. `crates/` is removed after NEW.15, top-level `daemon/`
 after NEW.16, and `lib/` plus retired `ctl/` after NEW.17.
+NEW.18 creates `system/engine_bridge` as the active C bridge into Rust and
+classifies remaining C data logic as temporary smoke support.
 
 SPINE.2 adopts the model/provider experiment maturity ladder. L0 provider
 scouting can start immediately outside the core. The first canonical AI

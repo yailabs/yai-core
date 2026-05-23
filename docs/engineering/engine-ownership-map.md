@@ -92,7 +92,12 @@ has parity.
 
 NEW.17 moved the C implementation root to `system/`. The C data folders
 `system/{store,graph,index,memory,projection,reconcile}` remain transitional
-until NEW.18 splits bridge responsibilities from Rust engine ownership.
+and are classified `keep_temporarily` after NEW.18.
+
+NEW.18 created `system/engine_bridge` and moved the Rust engine C shim to
+`system/engine_bridge/rust_engine_backend.c`. That bridge is active, but Rust
+engine remains the target owner for store, journal, record codec, graph,
+index/query, memory, projection, reconcile, retention and integrity logic.
 
 ## Acceptance Target
 

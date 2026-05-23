@@ -67,11 +67,14 @@ printf '%s\n' "$minimum_output" | grep '"receipt_status":"blocked"' >/dev/null
 printf '%s\n' "$journal_output" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$projection_output" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"status":"completed"' >/dev/null
-printf '%s\n' "$filesystem_output" | grep '"record_count":25' >/dev/null
+printf '%s\n' "$filesystem_output" | grep '"record_count":28' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"fs_write_blocked":"blocked"' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"fs_write_allowed":"executed"' >/dev/null
 printf '%s\n' "$filesystem_summary" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$shutdown_output" | grep '"status":"ok"' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'case_domains: 1' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'case_attachments: 1' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'case_bindings: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'projection_results: 2' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'projection_rules: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'authority_scopes: 3' >/dev/null

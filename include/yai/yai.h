@@ -6,6 +6,7 @@
 #include "yai/base/error.h"
 #include "yai/base/id.h"
 #include "yai/case/case_ref.h"
+#include "yai/case/case_world.h"
 #include "yai/control/decision_basis.h"
 #include "yai/control/decision.h"
 #include "yai/control/failure_mode.h"

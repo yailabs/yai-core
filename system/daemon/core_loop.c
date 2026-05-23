@@ -94,6 +94,14 @@ static yai_status_t append_record(const yai_journal_file_t *journal_file,
     return yai_journal_file_append(journal_file, &record);
 }
 
+static yai_status_t append_prepared_record(const yai_journal_file_t *journal_file,
+                                           const yai_store_record_t *record) {
+    if (journal_file == 0 || record == 0) {
+        return YAI_ERR_INVALID;
+    }
+    return yai_journal_file_append(journal_file, record);
+}
+
 static yai_status_t load_projection(const char *journal_path,
                                     const yai_case_ref_t *case_ref,
                                     yai_projection_t *projection) {
@@ -241,6 +249,12 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
     yai_subject_ref_t model_subject_ref;
     yai_subject_ref_t terminal_subject_ref;
     yai_subject_ref_t policy_subject_ref;
+    yai_case_domain_t case_domain;
+    yai_case_attachment_t sandbox_attachment;
+    yai_case_binding_t model_binding;
+    yai_store_record_t case_domain_record;
+    yai_store_record_t sandbox_attachment_record;
+    yai_store_record_t model_binding_record;
     yai_projection_t projection;
     yai_status_t status;
 
@@ -292,11 +306,45 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
                              "subject:policy-pack",
                              "policy_pack",
                              "manual-filesystem-loop-validation") != YAI_OK ||
+        yai_case_domain_init(&case_domain,
+                             &case_ref,
+                             YAI_CASE_DOMAIN_OPERATIONAL,
+                             "manual-filesystem-loop",
+                             "case://root",
+                             "manual-validation",
+                             "filesystem-loop") != YAI_OK ||
+        yai_case_attachment_init(&sandbox_attachment,
+                                 &case_ref,
+                                 &subject_ref,
+                                 YAI_CASE_ATTACHMENT_RUNTIME_SUBJECT,
+                                 YAI_CASE_POSTURE_BOUND,
+                                 "attachment:filesystem-sandbox",
+                                 "asset:filesystem-sandbox",
+                                 "trace:daemon-filesystem-loop") != YAI_OK ||
+        yai_case_binding_init(&model_binding,
+                              &case_ref,
+                              YAI_CASE_BINDING_MODEL,
+                              YAI_CASE_POSTURE_BOUND,
+                              "binding:llm-provider-model-context",
+                              "subject:llm-provider",
+                              "trace:model-context-projection") != YAI_OK ||
+        yai_case_domain_record_init(&case_domain_record,
+                                    "rec:new12-fs-case-domain",
+                                    &case_domain) != YAI_OK ||
+        yai_case_attachment_record_init(&sandbox_attachment_record,
+                                        "rec:new12-fs-case-attachment-sandbox",
+                                        &sandbox_attachment) != YAI_OK ||
+        yai_case_binding_record_init(&model_binding_record,
+                                     "rec:new12-fs-case-binding-model",
+                                     &model_binding) != YAI_OK ||
         yai_journal_file_init(&journal_file, response->journal_path) != YAI_OK) {
         return YAI_ERR_INVALID;
     }
 
     if (append_record(&journal_file, &case_ref, 0, YAI_RECORD_CASE, "rec:new12-fs-case", 0, 0, 0, "case:opened daemon filesystem loop") != YAI_OK ||
+        append_prepared_record(&journal_file, &case_domain_record) != YAI_OK ||
+        append_prepared_record(&journal_file, &sandbox_attachment_record) != YAI_OK ||
+        append_prepared_record(&journal_file, &model_binding_record) != YAI_OK ||
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_SUBJECT_BINDING, "rec:new12-fs-subject", 0, 0, 0, "subject:filesystem sandbox bound") != YAI_OK ||
         append_record(&journal_file, &case_ref, &model_subject_ref, YAI_RECORD_SUBJECT_BINDING, "rec:new12-fs-model-subject", 0, 0, 0, "subject:llm-provider bound role:model_provider projection:model_context") != YAI_OK ||
         append_record(&journal_file, &case_ref, &terminal_subject_ref, YAI_RECORD_SUBJECT_BINDING, "rec:new12-fs-terminal-subject", 0, 0, 0, "subject:linenoise-terminal bound role:operator_interface prompt_surface:vendored_linenoise") != YAI_OK ||
@@ -316,10 +364,10 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_DECISION, "rec:new12-fs-write-decision", "attempt:new12-fs-write", "decision:new12-fs-write", 0, "decision:allow_with_constraints constraint:sandbox_only") != YAI_OK ||
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_FILESYSTEM_RECEIPT, "rec:new12-fs-write-receipt", "attempt:new12-fs-write", "decision:new12-fs-write", "receipt:new12-fs-write", "fs:write status:executed sandbox:inside") != YAI_OK ||
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_GRAPH_EDGE, "rec:new12-fs-edge", "attempt:new12-fs-write", "decision:new12-fs-write", "receipt:new12-fs-write", "edge:decision_controls_op edge:receipt_records_effect") != YAI_OK ||
-        append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_MEMORY_CANDIDATE, "rec:new12-fs-memory", "attempt:new12-fs-block", "decision:new12-fs-block", "receipt:new12-fs-block", "memory:operational scope:case basis_records:19 basis_receipts:3 basis_edges:1 summary:filesystem write required review before sandbox execution") != YAI_OK ||
+        append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_MEMORY_CANDIDATE, "rec:new12-fs-memory", "attempt:new12-fs-block", "decision:new12-fs-block", "receipt:new12-fs-block", "memory:operational scope:case basis_records:22 basis_receipts:3 basis_edges:1 summary:filesystem write required review before sandbox execution") != YAI_OK ||
         append_record(&journal_file, &case_ref, &model_subject_ref, YAI_RECORD_PROJECTION_REQUEST, "rec:new12-fs-model-projection-request", 0, 0, 0, "request:model_context redaction:summary_only subject:llm-provider") != YAI_OK ||
-        append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_PROJECTION_RESULT, "rec:new12-fs-projection", 0, 0, 0, "consumer:operator kind:operator_summary redaction:none freshness:fresh source_records:22 source_receipts:3 source_memory:1") != YAI_OK ||
-        append_record(&journal_file, &case_ref, &model_subject_ref, YAI_RECORD_PROJECTION_RESULT, "rec:new12-fs-model-projection", 0, 0, 0, "consumer:model kind:model_context redaction:summary_only freshness:fresh source_records:23 source_receipts:3 source_memory:1") != YAI_OK ||
+        append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_PROJECTION_RESULT, "rec:new12-fs-projection", 0, 0, 0, "consumer:operator kind:operator_summary redaction:none freshness:fresh source_records:25 source_receipts:3 source_memory:1") != YAI_OK ||
+        append_record(&journal_file, &case_ref, &model_subject_ref, YAI_RECORD_PROJECTION_RESULT, "rec:new12-fs-model-projection", 0, 0, 0, "consumer:model kind:model_context redaction:summary_only freshness:fresh source_records:26 source_receipts:3 source_memory:1") != YAI_OK ||
         append_record(&journal_file, &case_ref, &model_subject_ref, YAI_RECORD_GRAPH_EDGE, "rec:new12-fs-model-edge", 0, 0, 0, "edge:model_context_projects_case_graph subject:llm-provider case:new12-filesystem") != YAI_OK) {
         return YAI_ERR_INVALID;
     }

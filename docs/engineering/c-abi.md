@@ -234,3 +234,9 @@ The shim uses an opaque `yai_rust_engine_t` handle and caller-owned output
 buffers. It does not expose Rust structs, Rust allocation ownership or database
 row layouts. The raw Rust symbols remain implementation detail behind the C
 wrapper.
+
+NEW.18 keeps this header public and moves the implementation to:
+
+```text
+system/engine_bridge/rust_engine_backend.c
+```
