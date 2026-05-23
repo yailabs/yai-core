@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke check clean
+.PHONY: info check-layout check-docs build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -16,7 +16,9 @@ C_SOURCES := \
 	system/internal/string_util.c \
 	system/base/id.c \
 	system/base/error.c \
+	system/case/case_context.c \
 	system/case/case_ref.c \
+	system/case/case_session.c \
 	system/case/case_world.c \
 	system/subject/subject_ref.c \
 	system/subject/subject_binding.c \
@@ -71,13 +73,14 @@ SMOKE_RECONCILE_DIVERGENCE := $(BUILD_DIR)/test_reconcile_divergence
 SMOKE_PROJECTION_HARDENING := $(BUILD_DIR)/test_projection_hardening
 SMOKE_QUERY_BOUNDARY := $(BUILD_DIR)/test_query_boundary
 SMOKE_RUST_ENGINE_R1 := $(BUILD_DIR)/test_rust_engine_r1
+SMOKE_CASE_CONTEXT := $(BUILD_DIR)/test_case_context
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: NEW.18.FIX layout/status cleanup; SPINE.3R docs rebase current\n"
-	@printf "next: NEW.19 Makefile/build/guards realignment after SPINE.3R\n"
+	@printf "status: SPINE.4 operational observability/evaluation docs rebase current\n"
+	@printf "next: NEW.19 Makefile/build/guards realignment after SPINE.4\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
 	@printf "engine-bridge: active\n"
@@ -149,7 +152,11 @@ $(SMOKE_RUST_ENGINE_R1): tests/smoke/rust-engine-r1/test_rust_engine_r1.c $(C_LI
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/rust-engine-r1/test_rust_engine_r1.c $(C_LIBRARY) $(RUST_ENGINE_STATIC) $(RUST_FFI_LIBS) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1)
+$(SMOKE_CASE_CONTEXT): tests/smoke/case-context/test_case_context.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/case-context/test_case_context.c $(C_LIBRARY) -o "$@"
+
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -236,7 +243,10 @@ smoke-new11: $(YAID) build-rust
 smoke-new12: $(YAID) build-rust
 	@$(SMOKE_DAEMON_CORE_LOOP)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12
+smoke-new18b: $(SMOKE_CASE_CONTEXT)
+	@$(SMOKE_CASE_CONTEXT)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b
 
 check: check-layout check-docs build smoke
 

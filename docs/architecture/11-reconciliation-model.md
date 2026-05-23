@@ -1,7 +1,7 @@
 # Reconciliation Model
 
-Reconciliation handles mismatch between expected, decided, executed, observed
-and remembered reality.
+Reconciliation handles mismatch between expected, decided, executed, observed,
+projected and remembered reality.
 
 Reconcile is not recovery execution. It is expected-vs-observed mismatch
 detection and recovery posture.
@@ -18,6 +18,9 @@ stale_memory
 subject_state_mismatch
 carrier_partial_failure
 projection_stale
+hot_state_mismatch
+record_graph_mismatch
+fact_derivation_mismatch
 ```
 
 ## Reconciliation Flow
@@ -25,7 +28,7 @@ projection_stale
 ```text
 detect divergence
 classify risk
-link records / receipts / graph edges
+link case-world material / records / receipts / graph edges / facts
 produce recovery or compensation posture
 project finding
 ```
@@ -98,6 +101,11 @@ SPINE.1 target owner: Rust data spine detects and materializes reconcile
 records; C system code may enforce or carry later recovery decisions only
 through explicit control and carrier boundaries.
 
+SPINE.3R target owner: Rust engine reconciles across hot, journal, record,
+graph, fact, memory and projection planes. NEW.29 is the planned wave for
+reconcile over hot/store/graph consistency. SPINE.3R does not implement that
+backend.
+
 ## NEW.13 Route
 
 ```text
@@ -115,6 +123,24 @@ physical owner for future reconcile mechanics. C reconcile code remains under
 ## Projection Interaction
 
 NEW.8 makes divergence visibility explicit in projection results. A projection
-result carries `source_divergence_count` and a redaction posture, so audit and
-operator views can expose mismatch without allowing projection to rewrite or
-hide reconciliation truth.
+result carries `source_divergence_count` and a redaction posture, so audit,
+operator and model views can expose mismatch without allowing projection to
+rewrite or hide reconciliation truth. Live projection must expose delta and
+freshness posture when divergence affects the view.
+
+## Observability Interaction
+
+SPINE.4 makes divergence exposure part of Case View Quality. Reconcile feeds
+observability with:
+
+```text
+critical divergence flags
+divergence_exposure
+case_context_consistency
+record_graph_mismatch
+fact_derivation_mismatch
+projection_stale
+```
+
+Observability measures whether mismatch is visible quickly enough for controlled
+behavior. It does not repair mismatch and it does not own reconcile truth.

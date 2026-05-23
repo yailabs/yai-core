@@ -3,11 +3,39 @@
 # Source this file once in a terminal. It keeps the normal `yai ...` command
 # shape, while allowing `yai case enter ...` to update the parent shell prompt.
 
+_yai_shell_source="${(%):-%N}"
+_yai_shell_dir="${_yai_shell_source:A:h}"
+
 if [ -z "${YAI_CORE_BIN:-}" ]; then
-  _yai_shell_source="${(%):-%N}"
-  _yai_shell_dir="${_yai_shell_source:A:h}"
   export YAI_CORE_BIN="${_yai_shell_dir:h:h}/target/debug/yai"
 fi
+
+if [ -z "${YAI_ENV_FILE:-}" ]; then
+  export YAI_ENV_FILE="${_yai_shell_dir:h:h}/.yai/env"
+fi
+
+_yai_load_env_file() {
+  local _yai_env_file="$1"
+  local _yai_line _yai_key _yai_value
+  [ -f "$_yai_env_file" ] || return 0
+
+  while IFS= read -r _yai_line || [ -n "$_yai_line" ]; do
+    case "$_yai_line" in
+      ""|\#*) continue ;;
+    esac
+    _yai_line="${_yai_line#export }"
+    _yai_key="${_yai_line%%=*}"
+    _yai_value="${_yai_line#*=}"
+    [ "$_yai_key" = "$_yai_line" ] && continue
+    [[ "$_yai_key" == [A-Za-z_][A-Za-z0-9_]* ]] || continue
+    if eval '[ -z "${'"$_yai_key"'+x}" ]'; then
+      export "$_yai_key=$_yai_value"
+    fi
+  done < "$_yai_env_file"
+}
+
+_yai_load_env_file "$YAI_ENV_FILE"
+unset -f _yai_load_env_file
 
 export YAI=yai
 

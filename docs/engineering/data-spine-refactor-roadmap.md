@@ -118,6 +118,8 @@ NEW.15  move yai command: crates/yai-ctl -> cmd/yai
 NEW.16  move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c
 NEW.17  move C implementation: lib/ -> system/
 NEW.18  split C data logic: system bridge vs engine ownership
+NEW.18A case world binding records / case-world verticalization
+SPINE.3R case world + live data plane rebase
 NEW.19  Makefile/build/guards realignment
 NEW.20  local install layout: yai + yaid
 NEW.21  filesystem refactor milestone freeze
@@ -144,6 +146,23 @@ NEW.18 status: completed as the engine bridge split wave. It created
 `system/engine_bridge`, moved the Rust engine C shim there and classified the
 remaining C data-spine folders as `keep_temporarily`.
 
+NEW.18A status: completed as the case-world binding record vertical slice. It
+added `case_world` records for `case_domain`, `case_attachment` and
+`case_binding`.
+
+NEW.18B status: done live case context boundary. It preserves refs for
+journal, graph, IPC and audit while introducing `case_context` and
+`case_session` as the active loaded case runtime surface.
+
+SPINE.3R status: done documentation rebase. It makes case-world material
+precede subject behavior, defines projection as live versioned cognitive view
+and stratifies operational data planes before NEW.19 guard realignment.
+
+SPINE.4 status: current operational observability/evaluation rebase. It makes
+Case View Quality, freshness, trace, provenance, rebuild posture, model
+behavior facts and memory quality first-class architectural concerns before
+NEW.19 guard realignment.
+
 NEW.13 planning artifacts:
 
 ```text
@@ -158,22 +177,21 @@ new18-engine-bridge-split.md
 c-data-logic-thinning-map.md
 ```
 
-Model/provider experiment runway:
+Operational data-plane runway:
 
 ```text
-NEW.22  ingest material model v0
-NEW.23  model/provider subject posture v0
-NEW.24  model output claim import v0
-NEW.25  policy pack skeleton + model projection v0
-NEW.26  naked local model case experiment v0
-NEW.27  model behavior trace v0
-NEW.28  model carrier v0
-NEW.29  agent trace/tool call import v0
-NEW.30  policy compliance experiment harness v0
+NEW.22  hot state / shared memory plane v0
+NEW.23  LMDB record backend v0
+NEW.24  journal replay to LMDB v0
+NEW.25  Ladybug graph backend v0
+NEW.26  DuckDB fact backend v0
+NEW.27  projection delta / live view v0
+NEW.28  memory consolidation over record + graph + facts v0
+NEW.29  reconcile over hot/store/graph consistency v0
+NEW.30  observability/evaluation facts v0 or data plane milestone freeze
 ```
 
-The first real naked model test is NEW.26. The first core-owned model
-invocation is NEW.28. The first agent-framework test is NEW.29/NEW.30.
+Model/provider experiment work continues after the data-plane foundation.
 Provider scouting may begin immediately at L0, outside the core, but it is not
 canonical core validation.
 

@@ -267,7 +267,7 @@ binaries, schemas, documentation, validation, and developer tools.
 ```text
 include/  public and system ABI contracts
 system/   C and system plane: daemon, host boundary, carriers, control shell, FFI bridges
-engine/   Rust operational data spine: store, graph, index, memory, query
+engine/   Rust operational data spine: hot state, store, graph, index, memory, query, projection, reconcile
 cmd/      local binaries: yai and yaid
 proto/    schemas, fixtures, and protocol material
 docs/     architecture, protocols, engineering notes, and ADRs
@@ -281,6 +281,28 @@ Current refactor state: NEW.18 has centralized the Rust engine C shim under
 `keep_temporarily` smoke paths; Rust `engine/yai-engine` is the target owner of
 store, journal, record codec, graph, index/query, memory, projection,
 reconcile, retention, and integrity logic.
+
+SPINE.3R adds the case-world and live data-plane doctrine before NEW.19 guard
+realignment. Case-world material precedes subject behavior:
+
+```text
+case_world -> case_domain -> case_attachment -> case_binding -> case_session -> case_context -> subject
+```
+
+Projection is not a summary. It is a versioned cognitive view over the
+operational data planes of a case. SPINE.4 adds Operational Observability &
+Evaluation: YAI measures whether the case view is fresh, causal, provenanced,
+coherent, complete, replayable and useful enough for controlled behavior.
+Shared memory, LMDB, Ladybug, DuckDB, observability records and debug commands
+are planned-not-created backend waves, not current implementations.
+
+NEW.18B adds the live case context boundary: refs identify durable material,
+while sessions and contexts operate on loaded case state.
+
+The canonical case-view quality vector is `CVQ`: freshness,
+causal_completeness, provenance_sufficiency, projection_consistency,
+authority_alignment, memory_basis_quality, divergence_exposure, delta_accuracy
+and cost.
 
 ### Absorbed Concepts
 

@@ -178,58 +178,73 @@ for future fixtures, but it is not canonical core validation.
 | NEW.15 | Move yai command: crates/yai-ctl -> cmd/yai | done |
 | NEW.16 | Move yaid entrypoint: daemon/main.c -> cmd/yaid/main.c | done |
 | NEW.17 | Move C implementation: lib/ -> system/ | done |
-| NEW.18 | Split C data logic: system bridge vs engine ownership | current |
+| NEW.18 | Split C data logic: system bridge vs engine ownership | done |
+| NEW.18A | Case world binding records / case-world verticalization | done |
+| NEW.18B | Live case context / ref boundary | done |
+| SPINE.3R | Case World + Live Data Plane Rebase | done |
+| SPINE.4 | Operational Observability & Evaluation Plane | current |
 | NEW.19 | Makefile/build/guards realignment | planned |
 | NEW.20 | Local install layout: yai + yaid | planned |
 | NEW.21 | Filesystem refactor milestone freeze | planned |
-| NEW.22 | Ingest material model v0 | planned |
-| NEW.23 | Model/provider subject posture v0 | planned |
-| NEW.24 | Model output claim import v0 | planned |
-| NEW.25 | Policy pack skeleton + model projection v0 | planned |
-| NEW.26 | Naked local model case experiment v0 | planned |
-| NEW.27 | Model behavior trace v0 | planned |
-| NEW.28 | Model carrier v0 | planned |
-| NEW.29 | Agent trace/tool call import v0 | planned |
-| NEW.30 | Policy compliance experiment harness v0 | planned |
-| NEW.31 | Legal/accounting/business-admin domain packs v0 | planned |
-| NEW.32 | Policy memory v0 | planned |
-| NEW.33 | Unknown provider policy handling v0 | planned |
-| NEW.34 | Multi-model comparative case test v0 | planned |
-| NEW.35 | Human review / authority binding v0 | planned |
-| NEW.36 | Case audit packet v0 | planned |
-| NEW.37 | Policy-control milestone freeze | planned |
-| NEW.38 | Filesystem carrier hardening | planned |
-| NEW.39 | Process carrier v0 with host safeguards | planned |
-| NEW.40 | Host observation probes v0 | planned |
-| NEW.41 | Network/http carrier v0 | planned |
-| NEW.42 | Database carrier v0 | planned |
-| NEW.43 | Repository/git carrier v0 | planned |
-| NEW.44 | Carrier receipts hardening | planned |
-| NEW.45 | Recovery/compensation posture v0 | planned |
-| NEW.46 | Daemon op execution over IPC | planned |
-| NEW.47 | Host-control milestone freeze | planned |
-| NEW.48 | Protocol fixtures from smoke journals | planned |
-| NEW.49 | Interfaces handoff prep | planned |
-| NEW.50 | Core conformance harness | planned |
-| NEW.51 | Console projection handoff prep | planned |
-| NEW.52 | ai-environment harness prep | planned |
-| NEW.53 | Local core milestone freeze | planned |
+| NEW.22 | Hot state / shared memory plane v0 | planned |
+| NEW.23 | LMDB record backend v0 | planned |
+| NEW.24 | Journal replay to LMDB v0 | planned |
+| NEW.25 | Ladybug graph backend v0 | planned |
+| NEW.26 | DuckDB fact backend v0 | planned |
+| NEW.27 | Projection delta / live view v0 | planned |
+| NEW.28 | Memory consolidation over record + graph + facts v0 | planned |
+| NEW.29 | Reconcile over hot/store/graph consistency v0 | planned |
+| NEW.30 | Observability/Evaluation facts v0 or data plane milestone freeze | planned |
+| NEW.31 | Ingest material model v0 | planned |
+| NEW.32 | Model/provider subject posture v0 | planned |
+| NEW.33 | Model output claim import v0 | planned |
+| NEW.34 | Policy pack skeleton + model projection v0 | planned |
+| NEW.35 | Naked local model case experiment v0 | planned |
+| NEW.36 | Model behavior trace v0 | planned |
+| NEW.37 | Model carrier v0 | planned |
+| NEW.38 | Agent trace/tool call import v0 | planned |
+| NEW.39 | Policy compliance experiment harness v0 | planned |
+| NEW.40 | Legal/accounting/business-admin domain packs v0 | planned |
+| NEW.41 | Policy memory v0 | planned |
+| NEW.42 | Unknown provider policy handling v0 | planned |
+| NEW.43 | Multi-model comparative case test v0 | planned |
+| NEW.44 | Human review / authority binding v0 | planned |
+| NEW.45 | Case audit packet v0 | planned |
+| NEW.46 | Policy-control milestone freeze | planned |
+| NEW.47 | Filesystem carrier hardening | planned |
+| NEW.48 | Process carrier v0 with host safeguards | planned |
+| NEW.49 | Host observation probes v0 | planned |
+| NEW.50 | Network/http carrier v0 | planned |
+| NEW.51 | Database carrier v0 | planned |
+| NEW.52 | Repository/git carrier v0 | planned |
+| NEW.53 | Carrier receipts hardening | planned |
+| NEW.54 | Recovery/compensation posture v0 | planned |
+| NEW.55 | Daemon op execution over IPC | planned |
+| NEW.56 | Host-control milestone freeze | planned |
+| NEW.57 | Protocol fixtures from smoke journals | planned |
+| NEW.58 | Interfaces handoff prep | planned |
+| NEW.59 | Core conformance harness | planned |
+| NEW.60 | Console projection handoff prep | planned |
+| NEW.61 | ai-environment harness prep | planned |
+| NEW.62 | Local core milestone freeze | planned |
 
 Roadmap correction:
 
 ```text
-The next implementation wave is NEW.13 target filesystem doctrine/refactor plan.
+The current rebase is SPINE.3R Case World + Live Data Plane Rebase.
+NEW.19 follows SPINE.3R.
 Local install layout is delayed to NEW.20.
-Do not install a filesystem shape that is already known to be transitional.
+Do not install or guard a filesystem/data-plane shape that is already known to be transitional.
 ```
 
 Model/provider correction:
 
 ```text
 L0 provider scouting can start immediately outside the core.
-NEW.26 is the first real naked model case experiment.
-NEW.28 is the first core-owned model invocation through model carrier v0.
-NEW.29/NEW.30 are the first agent-framework/tool-call test path.
+The first real naked model case experiment follows the data-plane foundation.
+Core-owned model invocation through model carrier follows the naked model case
+experiment.
+Agent-framework/tool-call tests follow model-carrier evidence.
 Agent frameworks are not first.
 ```
 

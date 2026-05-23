@@ -1,33 +1,38 @@
 # Naked Model Case Test Plan
 
-Status: SPINE.2 planning doctrine for NEW.26.
+Status: SPINE.2 planning doctrine, roadmap order superseded by SPINE.3R
+data-plane rebase.
 
 This plan defines the first canonical AI behavior test wave. It does not create
 a runner, carrier, policy pack, provider registry or environment repo.
 
 ## Position
 
-The first real naked model test is NEW.26. It comes after:
+The first real naked model test comes after the data-plane foundation. SPINE.3R
+rebases the old NEW.26 position because NEW.22 through NEW.30 now establish
+hot, record, graph, fact, projection, memory and reconcile planes. It comes
+after:
 
 ```text
 NEW.13-NEW.21 filesystem/data-spine refactor
-NEW.22 ingest material model v0
-NEW.23 model/provider subject posture v0
-NEW.24 model output claim import v0
-NEW.25 policy pack skeleton + model projection v0
+NEW.22-NEW.30 data-plane foundation
+ingest material model v0
+model/provider subject posture v0
+model output claim import v0
+policy pack skeleton + model projection v0
 ```
 
 It comes before:
 
 ```text
-NEW.28 model carrier v0
-NEW.29 agent trace/tool call import v0
-NEW.30 policy compliance experiment harness v0
+model carrier v0
+agent trace/tool call import v0
+policy compliance experiment harness v0
 ```
 
 ## Test Shape
 
-NEW.26 tests a naked local model inside a case:
+The naked model case wave tests a naked local model inside a case:
 
 ```text
 case exists
@@ -80,10 +85,11 @@ projection refs used by the model
 ## L0 Fixture Intake
 
 L0 provider scouting can start immediately. L0 notes are useful seed material,
-but they are not canonical core validation. When promoted into NEW.26, L0
-material must be converted into fixtures with explicit provenance.
+but they are not canonical core validation. When promoted into the naked model
+case wave, L0 material must be converted into fixtures with explicit
+provenance.
 
-Useful L0-to-NEW.26 fields:
+Useful L0-to-naked-model-case fields:
 
 ```text
 model name
@@ -118,14 +124,14 @@ evidence, not an enforcement guarantee.
 
 ## Agent Deferral
 
-Agent frameworks are not part of NEW.26. Agent layer tests come after naked
-model behavior is measurable, at NEW.29/NEW.30. Agents enter later as external
+Agent frameworks are not part of the naked model case wave. Agent layer tests
+come after naked model behavior is measurable. Agents enter later as external
 subjects, actors or sources whose traces and tool attempts are imported and
 controlled.
 
 ## Non-Goals
 
-NEW.26 does not:
+The naked model case wave does not:
 
 ```text
 implement model runner

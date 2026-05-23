@@ -5,14 +5,17 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.3R rebases the next phase: case-world material comes before subject
-behavior, and the live data-plane doctrine must be canonical before NEW.19
-Makefile/build/guards realignment.
+SPINE.4 rebases the next phase: case-world material comes before subject
+behavior, the live data-plane doctrine is canonical, and operational
+observability/evaluation must be canonical before NEW.19 Makefile/build/guards
+realignment.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
-binding record vertical slice. The current wave is SPINE.3R documentation
-rebase; NEW.19 follows it. Local install layout is delayed to NEW.20.
+binding record vertical slice. NEW.18B adds live `case_context` and
+`case_session` semantics while preserving durable refs. SPINE.3R is complete.
+The current rebase is SPINE.4; NEW.19 follows it. Local install layout is
+delayed to NEW.20.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -35,6 +38,13 @@ a flat journal label. Registry persistence, SHM, LMDB, DuckDB, Ladybug and full
 runtime carrier enforcement remain planned-not-created in this repository.
 SPINE.3R also keeps shared memory, LMDB, DuckDB, Ladybug and live projection
 delta implementation planned-not-created until dedicated data-plane waves.
+NEW.18B normalizes the active case posture: `case_ref`, `subject_ref` and
+receipt refs remain durable boundary material, while runtime operation uses a
+loaded `case_context` inside a `case_session`.
+SPINE.4 makes Operational Observability & Evaluation canonical: Case View
+Quality, trace, freshness, provenance, rebuild posture, model behavior facts
+and memory quality facts are required design inputs for future waves, but their
+records and debug commands remain planned-not-created.
 
 ## Filesystem Refoundation History
 
@@ -97,6 +107,9 @@ record posture for `case_domain`, `case_attachment` and `case_binding`.
 SPINE.3R follows NEW.18.FIX and NEW.18A before NEW.19. It is the documentation
 rebase for case-world-first operation, live projection and operational data
 plane doctrine.
+
+SPINE.4 follows NEW.18B before NEW.19. It is the documentation rebase for
+operational observability/evaluation and Case View Quality.
 
 ## Minimum Loop History
 

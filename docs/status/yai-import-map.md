@@ -27,6 +27,7 @@ case identity
 case domain
 case attachment
 case operational binding
+projection and authority posture
 ```
 
 Implemented in `yai-core` as:
@@ -42,6 +43,10 @@ record_kind: case_binding
 The daemon filesystem loop now emits case-world residue before subjects,
 policy, decisions, receipts, graph, memory and projections.
 
+SPINE.3R makes that ordering canonical: everything that participates in a case
+enters first as case-world material, then may act as subject, source, actor,
+target, projection consumer or carrier participant.
+
 ## Planned Not Created
 
 The following remain outside this import wave:
@@ -56,6 +61,7 @@ SHM store layer
 LMDB registry/store layer
 DuckDB analytical layer
 Ladybug/debug layer
+live projection delta layer
 provider registry
 agent framework
 ```

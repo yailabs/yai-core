@@ -37,10 +37,26 @@ NEW.18 creates `system/engine_bridge` as the active C bridge into Rust and
 classifies remaining C data logic as temporary smoke support.
 
 SPINE.2 adopts the model/provider experiment maturity ladder. L0 provider
-scouting can start immediately outside the core. The first canonical AI
-behavior test is a naked model inside a case at NEW.26, not agent framework
-integration. Core-owned model invocation waits for NEW.28 model carrier v0.
-Agent framework/tool-call traces begin after that at NEW.29/NEW.30.
+scouting can start immediately outside the core. SPINE.3R later rebases the
+roadmap so canonical model/provider implementation follows the NEW.22-NEW.30
+data-plane foundation.
+
+SPINE.3R adopts case-world-first operation and live data-plane doctrine.
+Everything that participates in a case enters first as case-world material: a
+domain, attachment or binding. Projection is not a summary; it is a versioned
+cognitive view over the operational data planes of a case. The data planes are
+hot/shared memory, journal, record, graph, fact, memory, projection and
+reconcile. Shared memory, LMDB, Ladybug and DuckDB remain planned-not-created.
+
+NEW.18B adds the live case context boundary. Refs identify durable material;
+contexts operate on loaded case state. `case_ref`, `subject_ref` and receipt
+refs remain in persisted residue and boundary messages, but active runtime work
+uses `case_session` and `case_context`.
+
+SPINE.4 adds the Operational Observability & Evaluation Plane. YAI Core does
+not only control actions; it measures whether the case remains knowable enough
+for controlled action. The canonical quality vector is Case View Quality
+(`CVQ`).
 
 ## Decision Set
 
@@ -58,12 +74,18 @@ Agent framework/tool-call traces begin after that at NEW.29/NEW.30.
 | 0010 | Rust data spine ownership | Rust owns store, journal, record, graph, index/query, memory, projection, reconcile, retention and integrity. |
 | 0011 | Lib is transitional | `lib/` and retired `ctl/` were bootstrap roots and are removed after NEW.17. |
 | 0012 | Naked model before agent framework | First AI behavior experiment is a naked model inside a case; agent frameworks are later adapters. |
+| 0013 | Case world before subject binding | Case-world material precedes subject behavior. |
+| 0014 | Operational data plane stratification | Hot, journal, record, graph, fact, memory, projection and reconcile planes are distinct. |
+| 0015 | Projection as live cognitive view | Projection is live, versioned and delta-aware, not a static summary. |
+| 0016 | Operational observability evaluation plane | Case-view quality, trace, freshness, provenance, behavior and memory quality are first-class. |
 
 ## Combined Doctrine
 
 The future core starts from a small machine spine:
 
 ```text
+case builds case_world
+case opens case_session and derives case_context
 case binds subjects
 ops target subjects
 control gates ops through materialized policy
@@ -74,12 +96,14 @@ graph reconstructs relationships
 memory derives scoped operational experience
 projection serves controlled read models
 reconcile exposes mismatch
+observability/evaluation measures case-view quality
 ```
 
 Core truth exists through case-bound records, subject bindings, attempts,
-decisions, receipts, graph relations, memory and projections. The legacy `yai`
-repository is a concept mine. The `yai-core` repository is shaped by primitives,
-protocols and receipts, not by old folder names.
+decisions, receipts, graph relations, memory and projections. Case-world
+material precedes subject behavior. The legacy `yai` repository is a concept
+mine. The `yai-core` repository is shaped by primitives, protocols and
+receipts, not by old folder names.
 
 Four-repo ownership:
 
@@ -116,13 +140,43 @@ Projection is not UI state.
 Reconcile is not recovery execution.
 ```
 
-Model/provider experiment doctrine:
+SPINE.3R data-plane doctrine:
+
+```text
+shared memory = hot state, not truth
+journal = replay
+LMDB = durable record plane
+Ladybug = operational graph
+DuckDB = derived facts / analytics
+projection = live versioned cognitive view
+```
+
+SPINE.4 observability/evaluation doctrine:
+
+```text
+YAI measures whether the live case remains fresh, causal, provenanced,
+coherent, complete, replayable and useful enough for controlled behavior.
+```
+
+Case View Quality fields:
+
+```text
+freshness
+causal_completeness
+provenance_sufficiency
+projection_consistency
+authority_alignment
+memory_basis_quality
+divergence_exposure
+delta_accuracy
+cost
+```
+
+Model/provider experiment doctrine after SPINE.3R:
 
 ```text
 L0 provider scouting can start immediately outside the core
-NEW.26 is the first real naked model case experiment
-NEW.28 is the first core-owned model invocation
-NEW.29/NEW.30 are the first agent-framework/tool-call test path
+model/provider implementation follows the NEW.22-NEW.30 data-plane foundation
 ```
 
 A model is not inside the core. It is a case-bound subject with locality,
@@ -136,8 +190,9 @@ C/Rust target:
 ```text
 C owns public ABI, daemon bootstrap, host carriers, control enforcement
 boundary, system bridge and FFI shims.
-Rust owns store, journal, record codec, graph, index/query, memory, projection,
-reconcile, retention and integrity.
+Rust owns hot state mechanics, store, journal, record codec, graph,
+index/query, fact derivation, memory, live projection, reconcile, retention and
+integrity.
 ```
 
 ## Consequences
@@ -174,6 +229,8 @@ No atomic ADR. This file supersedes ad hoc reading order notes for the ADR set.
 ../engineering/four-repo-roadmap.md
 ../engineering/filesystem-target-v2.md
 ../engineering/data-spine-refactor-roadmap.md
+../engineering/observability-evaluation-plane.md
+../engineering/case-view-quality.md
 ../engineering/model-provider-experiment-ladder.md
 ../engineering/naked-model-case-test-plan.md
 ```

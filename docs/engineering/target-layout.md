@@ -13,7 +13,9 @@ NEW.1 creates only files needed for the first executable loop.
 
 ## 1. Target Layout V2
 
-SPINE.1 rebases the filesystem doctrine. The future `yai-core` repository
+SPINE.4 extends the filesystem and live data-plane doctrine with operational
+observability/evaluation. The future
+`yai-core` repository
 should eventually have this root shape:
 
 ```text
@@ -42,7 +44,7 @@ Meaning:
 |---|---|
 | `include/` | public C ABI contracts |
 | `system/` | C system plane: daemon, host, carriers, control boundary, FFI bridges |
-| `engine/` | Rust operational data engine |
+| `engine/` | Rust operational data engine: hot state, store, journal, record, graph, query, facts, memory, live projection and reconcile |
 | `cmd/` | binaries: `yai` and `yaid` |
 | `proto/` | schemas and fixtures |
 | `tests/` | smoke, unit, integration and adversarial tests |
@@ -77,12 +79,14 @@ engine/
 │   └── src/
 │       ├── lib.rs
 │       ├── residue/
+│       ├── hot/
 │       ├── store/
 │       ├── journal/
 │       ├── record/
 │       ├── graph/
 │       ├── index/
 │       ├── query/
+│       ├── facts/
 │       ├── memory/
 │       ├── projection/
 │       ├── reconcile/
@@ -123,6 +127,20 @@ The target does not keep `lib/` as an implementation root. NEW.17 moved C
 implementation into `system/`; NEW.18 thins the transitional data-spine C
 folders into bridge code versus Rust engine ownership. Local install layout is
 delayed to NEW.20.
+
+SPINE.3R and SPINE.4 add the post-NEW.18B target:
+
+```text
+case_world before subject binding
+projection as live versioned cognitive view
+observability/evaluation as case-view quality plane
+system = host/control/carrier/daemon/bridge
+engine = hot/store/journal/record/graph/index/query/facts/memory/projection/reconcile/observability
+```
+
+Shared memory, LMDB, Ladybug and DuckDB are planned-not-created until their
+dedicated data-plane waves. Observability records, debug commands and analytics
+facts are also planned-not-created until dedicated implementation waves.
 
 NEW.13 adds the executable move plan in:
 

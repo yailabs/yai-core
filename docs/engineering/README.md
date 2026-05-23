@@ -12,6 +12,10 @@ NEW.0 package     = first documentation/skeleton package
 NEW.1 loop        = first executable loop
 NEW.2 journal     = first persistent/reconstructable loop
 data spine        = Rust operational data ownership roadmap
+case world        = domain/attachment/binding before subject behavior
+case context      = live loaded case state behind refs
+live projection   = versioned cognitive view over operational data planes
+observability     = freshness, trace, provenance, behavior and case-view quality
 extraction plan   = conceptual mining from old roots
 export matrices   = controlled projections and consumer boundaries
 ```
@@ -28,6 +32,12 @@ new13-filesystem-refactor-plan.md
 filesystem-move-matrix.md
 engine-ownership-map.md
 system-ownership-map.md
+case-world-verticalization.md
+operational-data-plane-doctrine.md
+live-projection-model.md
+observability-evaluation-plane.md
+case-view-quality.md
+new18b-live-case-context.md
 extraction-plan.md
 export-matrices.md
 new0-package.md

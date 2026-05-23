@@ -1,10 +1,23 @@
 # Projection Model
 
-Projection serves controlled read models over core residue.
+Projection serves live controlled cognitive views over core residue.
 
-Projection replaces the old final `views` wording in the new core. Console views are UX; core projections are data products.
-Projection is not UI state and not source-of-truth state. It is the controlled
-read model for model, agent, operator, API, audit and debug consumers.
+Projection replaces the old final `views` wording in the new core. Console
+views are UX; core projections are data products. Projection is not UI state
+and not source-of-truth state. It is the live, versioned cognitive view for
+model, agent, operator, API, audit and debug consumers.
+
+Canonical SPINE.3R definition:
+
+```text
+A projection is not a summary.
+A projection is a versioned cognitive view over the operational data planes of a case.
+```
+
+Models do not access the case directly. Models receive controlled live
+projections of the case. NEW.18B clarifies that projection reads from the
+materialized case world/context, not directly from loose `--journal`, `--case`
+and `--subject` arguments.
 
 ## Projection Audiences
 
@@ -29,12 +42,77 @@ redaction
 audience
 scope
 policy constraints
+authority scope refs
+case version
+delta lineage
 receipt support
+case view quality
 ```
 
 ## Rule
 
-Projection is not truth. Projection reads records, receipts, graph, memory and policy posture. It must not become UI state, dashboard authority or API truth.
+Projection is not truth. Projection reads case-world material, records,
+receipts, graph, facts, memory, reconcile and policy posture. It must not
+become UI state, dashboard authority or API truth.
+
+SPINE.4 defines Case View Quality (`CVQ`) as the canonical vector for measuring
+whether a projection is useful enough for controlled behavior:
+
+```text
+freshness
+causal_completeness
+provenance_sufficiency
+projection_consistency
+authority_alignment
+memory_basis_quality
+divergence_exposure
+delta_accuracy
+cost
+```
+
+Projection must carry enough refs, version posture and freshness posture for
+CVQ to be computed. CVQ is diagnostic posture, not case truth.
+
+## Observability Boundary
+
+The model does not access the case. The model receives a controlled live view
+of the case. YAI owns the freshness and quality of that view. The model owns
+its inference behavior and inference latency.
+
+Future projection work must make these facts measurable:
+
+```text
+record_to_projection_ms
+projection_to_model_ms
+projection_freshness
+projection_consistency
+delta_accuracy
+authority_alignment
+model_authority_overclaim
+unsupported_claim
+```
+
+SPINE.4 documents future commands such as `yai debug freshness` and
+`yai debug projection-lag`; it does not implement them.
+
+## Live Projection Fields
+
+```text
+projection_id
+case_version
+consumer_kind
+projection_kind
+source_record_refs
+source_receipt_refs
+source_memory_refs
+source_divergence_refs
+policy_refs
+authority_scope_refs
+delta_since_projection_id
+freshness
+redaction_posture
+summary
+```
 
 ## NEW.8 Projection Request / Result V0
 
@@ -133,12 +211,18 @@ redaction posture
 
 Projection is not enforcement. It shapes what the model sees and how the task
 is framed. Control still evaluates proposed operations, obligations, evidence
-requirements and receipt requirements.
+requirements and receipt requirements. Model output is claim, proposal or
+`model_interpretation` residue, not authoritative case truth.
+
+`case_context` is not projection truth. It is the active runtime
+materialization from which projection can be derived. Durable truth remains in
+refs, records, receipts, graph, memory and divergence.
 
 L0 provider scouting can start immediately outside the core and can produce
-projection fixtures. The first canonical naked model case experiment is NEW.26.
-The first core-owned model invocation is NEW.28. Agent-framework projection
-work follows after naked model behavior is measurable.
+projection fixtures. SPINE.3R rebases implementation order so canonical
+model/provider work follows the NEW.22-NEW.30 data-plane foundation.
+Agent-framework projection work follows after naked model behavior is
+measurable.
 
 ## Query Interaction
 
@@ -150,7 +234,7 @@ records; projection remains a controlled view over residue.
 ## Rust Engine Interaction
 
 NEW.10 allows the Rust engine to build projection summary JSON from existing
-journal residue. SPINE.1 clarifies the target: projection materialization
+journal residue. SPINE.3R clarifies the target: live projection materialization
 belongs to the Rust operational data spine, exposed through C ABI and system
 bridges without turning projection into UI state.
 
@@ -167,3 +251,5 @@ No projection implementation moves in NEW.13.
 NEW.14 moved the Rust engine crate to `engine/yai-engine`, making that the
 physical owner for future projection mechanics. C projection code remains under
 `system/projection` as `keep_temporarily` after the NEW.18 bridge split.
+
+NEW.27 is the planned projection delta / live view wave.

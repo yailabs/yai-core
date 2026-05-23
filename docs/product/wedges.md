@@ -24,8 +24,8 @@ Model/provider maturity:
 
 ```text
 L0 provider scouting can start immediately outside the core.
-NEW.26 proves naked local model behavior inside a case.
-NEW.28 introduces core-owned model invocation through a carrier.
+Naked local model behavior is proven inside a case after the data-plane foundation.
+Core-owned model invocation through a carrier follows that.
 Agent frameworks come later as external subjects/actors/sources.
 ```
 

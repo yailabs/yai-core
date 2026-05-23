@@ -16,7 +16,7 @@ the Console product UX, and it must not absorb operator command surfaces.
 | Stage | Product | Core Proof |
 |---|---|---|
 | 1 | Core Developer / Local | Local `yai` command, `yaid` daemon, case, subject, attempt, decision, receipt, store, graph and projection. |
-| 2 | Model/Provider Behavior Lab | L0 provider scouting notes, NEW.26 naked model case tests and NEW.28 model carrier evidence without agent-framework ownership. |
+| 2 | Model/Provider Behavior Lab | L0 provider scouting notes, naked model case tests and model carrier evidence after the data-plane foundation, without agent-framework ownership. |
 | 3 | Integration Kit | Interfaces, SDK, conformance fixtures and adapters around core primitives. |
 | 4 | Operational Memory / Audit Pack | Memory candidates, receipt reconstruction, divergence and redaction posture. |
 | 5 | Professional / Team | Multi-case store, policy packs, team subject registry and audit export. |
@@ -31,9 +31,9 @@ core milestone freeze.
 Do not lead with an agent framework before naked model behavior is measurable.
 
 L0 provider scouting can start immediately, but it is product research and
-fixture material, not canonical core validation. The first real naked model test
-is NEW.26; the first core-owned model invocation is NEW.28; agent-framework
-tests begin after that at NEW.29/NEW.30.
+fixture material, not canonical core validation. SPINE.3R places the data-plane
+foundation before canonical model/provider implementation; agent-framework
+tests begin only after naked model and model-carrier behavior are measurable.
 
 YAI does not sell memory as chat history. YAI produces operational memory:
 

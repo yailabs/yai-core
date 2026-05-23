@@ -70,6 +70,9 @@ printf '%s\n' "$filesystem_output" | grep '"status":"completed"' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"record_count":28' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"fs_write_blocked":"blocked"' >/dev/null
 printf '%s\n' "$filesystem_output" | grep '"fs_write_allowed":"executed"' >/dev/null
+printf '%s\n' "$filesystem_output" | grep '"case_session":"active"' >/dev/null
+printf '%s\n' "$filesystem_output" | grep '"case_world":"loaded"' >/dev/null
+printf '%s\n' "$filesystem_output" | grep '"case_context":"active"' >/dev/null
 printf '%s\n' "$filesystem_summary" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$shutdown_output" | grep '"status":"ok"' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'case_domains: 1' >/dev/null
@@ -84,6 +87,9 @@ printf '%s\n' "$filesystem_projection" | grep 'model: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'redacted_or_limited: 1' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'case_entry: accepted' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'subject_ref: subject:llm-provider' >/dev/null
+printf '%s\n' "$filesystem_case_entry" | grep 'case_session: active' >/dev/null
+printf '%s\n' "$filesystem_case_entry" | grep 'case_world: materialized' >/dev/null
+printf '%s\n' "$filesystem_case_entry" | grep 'case_context: active' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'participant_view: model_context' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'raw_journal_access: not_provided' >/dev/null
 printf '%s\n' "$filesystem_case_shell" | grep 'export YAI_CASE_REF=' >/dev/null
@@ -92,6 +98,9 @@ printf '%s\n' "$filesystem_case_shell" | grep 'export PROMPT=' >/dev/null
 printf '%s\n' "$filesystem_case_shell" | grep 'export RPROMPT="$YAI_RPROMPT_BASE"' >/dev/null
 printf '%s\n' "$filesystem_provider_attach" | grep 'provider_attachment: accepted' >/dev/null
 printf '%s\n' "$filesystem_provider_attach" | grep 'provider_attachment_status: attached' >/dev/null
+printf '%s\n' "$filesystem_provider_attach" | grep 'case_session: active' >/dev/null
+printf '%s\n' "$filesystem_provider_attach" | grep 'case_context: active' >/dev/null
+printf '%s\n' "$filesystem_provider_attach" | grep 'authority_scope: model interpretation_only' >/dev/null
 printf '%s\n' "$filesystem_provider_shell" | grep 'export YAI_PROVIDER_BASE_URL=' >/dev/null
 printf '%s\n' "$filesystem_provider_shell" | grep 'export YAI_PROVIDER_MODEL=' >/dev/null
 printf '%s\n' "$filesystem_transcript_on" | grep 'prompt_transcript_retention: enabled' >/dev/null
@@ -101,6 +110,8 @@ printf '%s\n' "$filesystem_transcript_status" | grep 'memory_candidate: derived_
 printf '%s\n' "$filesystem_memory_propose" | grep 'memory_proposal: accepted' >/dev/null
 printf '%s\n' "$filesystem_memory_propose" | grep 'record_kind: memory_candidate' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'model_prompt: dry_run' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_session: active' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_context: active' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'context_source: session_participant_view' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'raw_journal_access: not_provided' >/dev/null
@@ -121,4 +132,5 @@ printf 'case:attach-provider ok\n'
 printf 'case:transcript retention ok\n'
 printf 'case:memory proposal ok\n'
 printf 'case:prompt dry-run ok\n'
+printf 'case:context active ok\n'
 printf 'daemon:shutdown ok\n'

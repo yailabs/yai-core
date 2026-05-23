@@ -26,6 +26,11 @@ Then read the atomic records:
 0009-system-engine-cmd-layout.md
 0010-rust-data-spine-ownership.md
 0011-lib-is-transitional.md
+0012-naked-model-before-agent-framework.md
+0013-case-world-before-subject-binding.md
+0014-operational-data-plane-stratification.md
+0015-projection-as-live-cognitive-view.md
+0016-operational-observability-evaluation-plane.md
 ```
 
 Atomic ADR structure:

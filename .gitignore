@@ -1,6 +1,8 @@
 build/
 target/
 .yai-core/
+.yai/
+.venv/
 
 *.o
 *.a

@@ -179,7 +179,7 @@ Rust engine becomes the operational data spine.
 The current implementation wave state is:
 
 ```text
-NEW.18 engine bridge split
+SPINE.3R case world + live data plane rebase
 ```
 
 NEW.14 moved only the Rust data engine crates into `engine/`. NEW.15 moved the
@@ -189,12 +189,16 @@ NEW.17 moved remaining C implementation into `system/` and removed `lib/` and
 the retired `ctl/` root.
 NEW.18 created `system/engine_bridge` as the active C bridge into the Rust
 engine and moved the Rust engine C shim there.
+NEW.18A added case-world binding records. SPINE.3R rebases the target before
+NEW.19 so guards align with case-world-first ordering and live operational data
+planes.
 Local install layout is delayed to NEW.20. Do not install a filesystem shape
 that is already known to be transitional.
 
 NEW.13 is retained as the planning wave. NEW.14 is the first physical move
 wave; NEW.15 is the command move wave; NEW.16 is the daemon move wave; NEW.17
-is the C system move wave; NEW.18 is the engine bridge split wave.
+is the C system move wave; NEW.18 is the engine bridge split wave; SPINE.3R
+comes before NEW.19 Makefile/build/guards realignment.
 
 ## Model Provider Experiment Boundary
 
@@ -205,10 +209,7 @@ canonical validation and does not change the target filesystem.
 The first core roadmap positions are:
 
 ```text
-NEW.26 naked local model case experiment v0
-NEW.28 model carrier v0
-NEW.29 agent trace/tool call import v0
-NEW.30 policy compliance experiment harness v0
+after NEW.30 data plane milestone freeze
 ```
 
 SPINE.2 must not create a model runner, provider registry, model carrier,
@@ -228,3 +229,13 @@ After NEW.21:
 data logic under `system/{store,graph,index,memory,projection,reconcile}` is
 classified `keep_temporarily` after NEW.18. Rust engine ownership is the target;
 `system/engine_bridge` is the active C bridge only.
+
+SPINE.3R extends the target split:
+
+```text
+system = host/control/carrier/daemon/bridge
+engine = hot/store/journal/record/graph/index/query/memory/projection/reconcile
+```
+
+Shared memory, LMDB, Ladybug and DuckDB are planned-not-created until their
+dedicated data-plane waves.

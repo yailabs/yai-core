@@ -70,6 +70,12 @@ fn print_doctor() {
     println!("log_dir: {}", log_dir.display());
     println!("tmp_dir: {}", tmp_dir.display());
     println!(
+        "env_file: {}",
+        yai_env_file()
+            .map(|path| path.display().to_string())
+            .unwrap_or_else(|| "not found".to_string())
+    );
+    println!(
         "PATH_status: {}",
         if path_status {
             "current binary dir present"
@@ -88,7 +94,8 @@ fn print_usage() {
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
     println!("       yai case enter --journal <path> --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
     println!("       yai case attach-provider --journal <path> --case <case_ref> --subject <subject_ref> --base-url <url> --model <model> [--api-key-env <env>] [--shell zsh]");
-    println!("       yai prompt [--once <text>] [--dry-run] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>]");
+    println!("       yai prompt [--once <text>] [--dry-run] [--language-mode auto|none] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>]");
+    println!("       yai prompt [--dry-run] [--language-mode auto|none] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>] < prompt.txt");
     println!("       yai control summary --journal <path>");
     println!("       yai decision inspect --journal <path>");
     println!("       yai receipt summary --journal <path>");
@@ -129,6 +136,71 @@ fn find_on_path(name: &str) -> Option<String> {
         }
     }
     None
+}
+
+fn yai_env_file() -> Option<PathBuf> {
+    if let Some(path) = std::env::var_os("YAI_ENV_FILE")
+        .map(PathBuf::from)
+        .filter(|path| path.is_file())
+    {
+        return Some(path);
+    }
+
+    let mut dir = std::env::current_dir().ok()?;
+    loop {
+        let candidate = dir.join(".yai").join("env");
+        if candidate.is_file() {
+            return Some(candidate);
+        }
+        if !dir.pop() {
+            break;
+        }
+    }
+
+    let candidate = yai_home().join("env");
+    candidate.is_file().then_some(candidate)
+}
+
+fn parse_env_assignment(line: &str) -> Option<(String, String)> {
+    let line = line.trim();
+    if line.is_empty() || line.starts_with('#') {
+        return None;
+    }
+    let line = line.strip_prefix("export ").unwrap_or(line).trim();
+    let (key, value) = line.split_once('=')?;
+    let key = key.trim();
+    if key.is_empty()
+        || !key
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+        || key.chars().next().is_some_and(|ch| ch.is_ascii_digit())
+    {
+        return None;
+    }
+
+    let value = value.trim();
+    let value = if value.len() >= 2 {
+        let bytes = value.as_bytes();
+        if (bytes[0] == b'"' && bytes[value.len() - 1] == b'"')
+            || (bytes[0] == b'\'' && bytes[value.len() - 1] == b'\'')
+        {
+            &value[1..value.len() - 1]
+        } else {
+            value
+        }
+    } else {
+        value
+    };
+    Some((key.to_string(), value.to_string()))
+}
+
+fn env_file_var(name: &str) -> Option<String> {
+    let path = yai_env_file()?;
+    let content = fs::read_to_string(path).ok()?;
+    content
+        .lines()
+        .filter_map(parse_env_assignment)
+        .find_map(|(key, value)| (key == name && !value.is_empty()).then_some(value))
 }
 
 fn path_contains_current_bin() -> Result<bool, String> {
@@ -180,6 +252,40 @@ fn optional_arg(args: &[String], name: &str) -> Option<String> {
         index += 1;
     }
     None
+}
+
+fn latest_filesystem_journal() -> Option<PathBuf> {
+    fn visit(dir: &std::path::Path, best: &mut Option<PathBuf>) {
+        let Ok(entries) = fs::read_dir(dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                visit(&path, best);
+            } else if path.file_name().and_then(|name| name.to_str()) == Some("journal.jsonl")
+                && path
+                    .components()
+                    .any(|component| component.as_os_str() == "filesystem")
+                && best.as_ref().map_or(true, |current| path > *current)
+            {
+                *best = Some(path);
+            }
+        }
+    }
+
+    let mut best = None;
+    visit(std::path::Path::new("build/tmp"), &mut best);
+    best
+}
+
+fn existing_env_path(name: &str) -> Option<PathBuf> {
+    let path = env_var(name).map(PathBuf::from)?;
+    if path.is_file() {
+        Some(path)
+    } else {
+        None
+    }
 }
 
 fn path_inside_sandbox(sandbox: &str, path: &str) -> bool {
@@ -360,6 +466,8 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
 
     let mut output = String::new();
     let _ = writeln!(output, "case_ref: {}", case_ref.unwrap_or("unknown"));
+    let _ = writeln!(output, "case_world: materialized");
+    let _ = writeln!(output, "case_context: active");
     let _ = writeln!(output, "consumer: model");
     let _ = writeln!(output, "projection_kind: model_context");
     let _ = writeln!(output, "redaction: summary_only");
@@ -586,6 +694,9 @@ fn print_case_enter_shell(path: &PathBuf, case_ref: &str, subject_ref: &str) {
         "printf '%s\\n' {}",
         shell_quote("case_entry_status: shell_scoped")
     );
+    println!("printf '%s\\n' {}", shell_quote("case_session: active"));
+    println!("printf '%s\\n' {}", shell_quote("case_world: materialized"));
+    println!("printf '%s\\n' {}", shell_quote("case_context: active"));
     println!(
         "printf '%s\\n' {}",
         shell_quote(&format!("case_ref: {case_ref}"))
@@ -689,6 +800,9 @@ fn case_enter(args: &[String]) -> Result<(), String> {
             "admitted"
         }
     );
+    println!("case_session: active");
+    println!("case_world: materialized");
+    println!("case_context: active");
     println!("case_ref: {case_ref}");
     println!("subject_ref: {subject_ref}");
     println!("participant_view: {kind}");
@@ -696,6 +810,7 @@ fn case_enter(args: &[String]) -> Result<(), String> {
     println!("redaction: summary_only");
     println!("raw_journal_access: not_provided");
     println!("filesystem_access: not_provided");
+    println!("authority_scope: model interpretation_only");
     println!();
     print_model_context_view(&journal, Some(&case_ref));
     Ok(())
@@ -754,6 +869,12 @@ fn print_provider_attach_shell(
     println!(
         "printf '%s\\n' {}",
         shell_quote(&format!("provider_model: {model}"))
+    );
+    println!("printf '%s\\n' {}", shell_quote("case_session: active"));
+    println!("printf '%s\\n' {}", shell_quote("case_context: active"));
+    println!(
+        "printf '%s\\n' {}",
+        shell_quote("authority_scope: model interpretation_only")
     );
     println!("export YAI_PROVIDER_BASE_URL={}", shell_quote(base_url));
     println!("export YAI_PROVIDER_MODEL={}", shell_quote(model));
@@ -842,6 +963,9 @@ fn case_attach_provider(args: &[String]) -> Result<(), String> {
     println!("provider_attachment_status: {status}");
     println!("case_ref: {case_ref}");
     println!("subject_ref: {subject_ref}");
+    println!("case_session: active");
+    println!("case_context: active");
+    println!("authority_scope: model interpretation_only");
     println!("provider_base_url: {base_url}");
     println!("provider_model: {model}");
     println!("api_key_env: {api_key_env}");
@@ -852,6 +976,7 @@ struct ProviderConfig {
     base_url: String,
     model: String,
     api_key: Option<String>,
+    language_mode: String,
 }
 
 struct PromptSession {
@@ -864,7 +989,10 @@ struct PromptSession {
 }
 
 fn env_var(name: &str) -> Option<String> {
-    std::env::var(name).ok().filter(|value| !value.is_empty())
+    std::env::var(name)
+        .ok()
+        .filter(|value| !value.is_empty())
+        .or_else(|| env_file_var(name))
 }
 
 fn color_enabled() -> bool {
@@ -916,7 +1044,9 @@ fn transcript_retention_label(enabled: bool) -> &'static str {
 fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
     let journal_path = optional_arg(args, "--journal")
         .map(PathBuf::from)
-        .or_else(|| env_var("YAI_JOURNAL").map(PathBuf::from))
+        .filter(|path| path.is_file())
+        .or_else(|| existing_env_path("YAI_JOURNAL"))
+        .or_else(latest_filesystem_journal)
         .ok_or_else(|| "YAI_JOURNAL is required; run `yai case enter` first".to_string())?;
     let case_ref = optional_arg(args, "--case")
         .or_else(|| env_var("YAI_CASE_REF"))
@@ -945,6 +1075,12 @@ fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
     let api_key = env_var("YAI_PROVIDER_API_KEY")
         .or_else(|| env_var(&api_key_env))
         .or_else(|| env_var("OPENCODE_LLM_API_KEY"));
+    let language_mode = optional_arg(args, "--language-mode")
+        .or_else(|| env_var("YAI_PROVIDER_LANGUAGE_MODE"))
+        .unwrap_or_else(|| "none".to_string());
+    if language_mode != "none" && language_mode != "auto" {
+        return Err("--language-mode must be auto or none".to_string());
+    }
     let journal = Journal::load_jsonl(&journal_path)
         .map_err(|error| format!("failed to load {}: {error}", journal_path.display()))?;
     let admitted = journal.records().iter().any(|record| {
@@ -979,6 +1115,7 @@ fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
             base_url,
             model,
             api_key,
+            language_mode,
         },
         participant_view: render_model_context_view(&journal, Some(&case_ref)),
         transcript_enabled,
@@ -1284,13 +1421,16 @@ fn provider_chat_completion(
     prompt: &str,
 ) -> Result<String, String> {
     let url = parse_http_url(&config.base_url)?;
-    let system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Speak in terms of authority granted by the current case projection, not physical host capability. Prefer phrases like `according to the current projection, I have no authority to...` over absolute `I cannot...` claims. Your outputs are claims/proposals/model interpretations, not authoritative case state, YAI decisions, policy rules, receipts or filesystem effects. subject:linenoise-terminal is only a display/input surface and never owns execution or decision authority. Any proposed action must become an op_attempt and pass through control/carrier before any effect. Do not claim raw journal, filesystem, shell, environment, API-key or out-of-case memory access unless explicitly provided by the participant view.";
+    let mut system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Speak in terms of authority granted by the current case projection, not physical host capability. Prefer phrases like `according to the current projection, I have no authority to...` over absolute `I cannot...` claims. Your outputs are claims/proposals/model interpretations, not authoritative case state, YAI decisions, policy rules, receipts or filesystem effects. subject:linenoise-terminal is only a display/input surface and never owns execution or decision authority. Any proposed action must become an op_attempt and pass through control/carrier before any effect. Do not claim raw journal, filesystem, shell, environment, API-key or out-of-case memory access unless explicitly provided by the participant view.".to_string();
+    if config.language_mode == "auto" {
+        system_prompt.push_str(" Respond in the same natural language as the operator prompt. Do not translate technical identifiers, record kinds, subject refs, case refs, decision ids, receipt ids, command names or code spans.");
+    }
     let user_content =
         format!("YAI participant view:\n{participant_view}\n\nOperator prompt:\n{prompt}");
     let body = format!(
         "{{\"model\":\"{}\",\"stream\":false,\"messages\":[{{\"role\":\"system\",\"content\":\"{}\"}},{{\"role\":\"user\",\"content\":\"{}\"}}]}}",
         json_escape(&config.model),
-        json_escape(system_prompt),
+        json_escape(&system_prompt),
         json_escape(&user_content)
     );
     let auth = config
@@ -1585,6 +1725,8 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
     if dry_run {
         println!("model_prompt: dry_run");
         println!("case_ref: {}", session.case_ref);
+        println!("case_session: active");
+        println!("case_context: active");
         println!("subject_ref: {}", session.subject_ref);
         println!("provider_base_url: {}", session.provider.base_url);
         println!("provider_model: {}", session.provider.model);
@@ -1735,11 +1877,29 @@ fn prompt_repl(args: &[String]) -> Result<(), String> {
         return run_prompt_once(&mut session, &prompt, dry_run);
     }
 
+    let mut stdin = std::io::stdin();
+    if !stdin.is_terminal() {
+        let mut prompt = String::new();
+        stdin
+            .read_to_string(&mut prompt)
+            .map_err(|error| format!("failed to read prompt from stdin: {error}"))?;
+        let prompt = prompt.trim();
+        if prompt.is_empty() {
+            return Err("prompt stdin is empty".to_string());
+        }
+        if handle_prompt_command(&mut session, prompt)? {
+            return Ok(());
+        }
+        return run_prompt_once(&mut session, prompt, dry_run);
+    }
+
     unsafe {
         let _ = linenoiseHistorySetMaxLen(200);
     }
     println!("case_prompt: entered");
     println!("case_ref: {}", session.case_ref);
+    println!("case_session: active");
+    println!("case_context: active");
     println!("subject_ref: {}", session.subject_ref);
     println!("provider_model: {}", session.provider.model);
     println!("context_source: session_participant_view");
@@ -2033,7 +2193,7 @@ fn daemon_request_with_journal(_args: &[String], _request: &str) -> Result<(), S
 fn main() {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     let result = match args.first().map(String::as_str) {
-        None if env_var("YAI_JOURNAL").is_some() && env_var("YAI_CASE_REF").is_some() => {
+        None if env_var("YAI_CASE_REF").is_some() => {
             if let Err(error) = prompt_repl(&[]) {
                 eprintln!("{error}");
                 std::process::exit(2);

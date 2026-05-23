@@ -2,9 +2,10 @@
 
 Status: NEW.14 active engine location.
 
-`engine/` is the Rust operational data spine. It owns residue mechanics behind
-the public C ABI and system bridge. It does not own daemon bootstrap, host
-carriers, policy authority or public ABI semantics.
+`engine/` is the Rust operational data spine. It owns residue mechanics, hot
+state mechanics and live data-plane materialization behind the public C ABI and
+system bridge. It does not own daemon bootstrap, host carriers, policy
+authority or public ABI semantics.
 
 ## Target Shape
 
@@ -16,12 +17,14 @@ engine/
 │   └── src/
 │       ├── lib.rs
 │       ├── residue/
+│       ├── hot/
 │       ├── store/
 │       ├── journal/
 │       ├── record/
 │       ├── graph/
 │       ├── index/
 │       ├── query/
+│       ├── facts/
 │       ├── memory/
 │       ├── projection/
 │       ├── reconcile/
@@ -39,14 +42,16 @@ engine/
 | Engine area | Owns | Does not own |
 |---|---|---|
 | `residue/` | common residue refs, record identity mechanics and case-bound residue posture | public C ABI authority |
+| `hot/` | shared memory / hot state mechanics for active cases, projection frames, locks and pending deltas | source-of-truth state |
 | `store/` | durable residue persistence | memory semantics |
 | `journal/` | append/tail/replay mechanics | daemon lifecycle |
 | `record/` | record model and codec mechanics | policy authority |
 | `graph/` | causality and reconstruction over residue | legacy lineage root |
 | `index/` | operational indexes and freshness metadata | RAG product semantics |
 | `query/` | operational access over case-bound residue | projection authority |
+| `facts/` | derived analytical facts, metrics and model behavior analysis | source-of-truth records |
 | `memory/` | receipt-backed, graph-derived, policy-aware operational experience | chat history |
-| `projection/` | controlled read-model materialization | UI state |
+| `projection/` | live, versioned, delta-aware cognitive view materialization | UI state |
 | `reconcile/` | expected-vs-observed mismatch detection and recovery posture | recovery execution |
 | `retention/` | retention and forgetting mechanics | external legal authority |
 | `integrity/` | hashes, parity checks and residue consistency | trust over unbound external claims |
@@ -104,3 +109,16 @@ index/query, memory, projection, reconcile, retention and integrity logic.
 By NEW.21 the repository layout can still have C bridge code, but duplicated C
 data logic must be marked for Rust replacement or deletion in NEW.22 through
 NEW.30.
+
+SPINE.3R data-plane targets:
+
+```text
+NEW.22 hot/shared memory plane
+NEW.23 LMDB record backend
+NEW.25 Ladybug graph backend
+NEW.26 DuckDB fact backend
+NEW.27 live projection delta
+```
+
+These target directories and backends are planned-not-created until their
+dedicated waves.

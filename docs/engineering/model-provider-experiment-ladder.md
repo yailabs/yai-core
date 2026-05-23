@@ -1,6 +1,7 @@
 # Model Provider Experiment Ladder
 
-Status: SPINE.2 canonical experiment maturity doctrine.
+Status: SPINE.2 experiment maturity doctrine, roadmap order superseded by
+SPINE.3R data-plane rebase.
 
 YAI Core can learn from model/provider experiments before it owns model
 invocation. The core must not confuse early provider scouting with canonical
@@ -41,7 +42,8 @@ materialize policy into gates, issue a decision, record a receipt or derive
 memory.
 
 L0 outputs should be stored as notes or fixtures for future
-`ai-environment` work or future NEW.26 naked model case tests.
+`ai-environment` work or future naked model case tests after the data-plane
+foundation.
 
 Suggested L0 artifacts:
 
@@ -122,20 +124,14 @@ still owns operational admission, decision, obligations and receipts.
 
 ## Roadmap Position
 
-The first real naked model test is NEW.26. The first core-owned model
-invocation is NEW.28. The first agent-framework test is NEW.29/NEW.30.
+SPINE.3R keeps the maturity order but rebases the wave numbers. The data-plane
+foundation now occupies NEW.22 through NEW.30, so model/provider implementation
+comes after that foundation.
 
 ```text
-NEW.13-NEW.21 filesystem/data-spine refactor
-NEW.22 ingest material model v0
-NEW.23 model/provider subject posture v0
-NEW.24 model output claim import v0
-NEW.25 policy pack skeleton + model projection v0
-NEW.26 naked local model case experiment v0
-NEW.27 model behavior trace v0
-NEW.28 model carrier v0
-NEW.29 agent trace/tool call import v0
-NEW.30 policy compliance experiment harness v0
+NEW.13-NEW.21 filesystem/data-spine refactor and freeze
+NEW.22-NEW.30 hot, record, graph, fact, projection, memory and reconcile planes
+then ingest/model/provider/policy/model-carrier experiments
 ```
 
 ## Non-Goals

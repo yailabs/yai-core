@@ -4,8 +4,8 @@ Memory is scoped consolidated operational continuity.
 
 Memory is not prompt history, chat transcript, hidden model state, generic
 knowledge, record truth or UI state. YAI does not sell memory as chat history.
-YAI memory is operational memory: decisions, receipts, subject state, policy,
-graph paths and divergences.
+YAI memory is operational memory: case-world material, decisions, receipts,
+subject state, policy, graph paths, facts and divergences.
 
 Comparison:
 
@@ -13,7 +13,7 @@ Comparison:
 |---|---|
 | RAG | retrieves documents or knowledge |
 | Agent memory | remembers textual or task experience |
-| YAI memory | remembers decisions, receipts, subject state, policy, graph paths and divergences |
+| YAI memory | remembers case-world material, decisions, receipts, subject state, policy, graph paths, facts and divergences |
 
 ## Memory Kinds
 
@@ -65,6 +65,7 @@ store records
 receipt refs
 decision refs
 subject refs
+case-world refs
 graph edge refs
 receipt reconstruction chains
 ```
@@ -117,10 +118,29 @@ A memory candidate can be counted in a projection result, but projection must
 report source memory counts, freshness and redaction posture. Model and agent
 consumers receive limited summaries by default.
 
+SPINE.3R changes projection from static summary posture to live, versioned and
+delta-aware view materialization. Memory contributes refs and freshness to that
+view; memory does not become hidden prompt context or model-owned continuity.
+
+SPINE.4 adds memory quality as an explicit evaluation dimension. Future memory
+work must expose:
+
+```text
+memory_basis_quality
+reuse_quality
+contradiction_rate
+receipt_to_memory_ms
+behavioral memory_use facts
+```
+
+Memory quality facts are derived diagnostics. They do not make memory true
+without record, receipt, graph, policy or divergence basis.
+
 ## Rust Direction
 
 Advanced recall, ranking, consolidation, decay, pinning and privacy filtering
-belong to the Rust operational data spine behind C FFI.
+belong to the Rust operational data spine behind C FFI. NEW.28 is the planned
+memory consolidation wave over record, graph and fact planes.
 
 NEW.10 begins that direction only as residue consumption. Rust can count memory
 candidate records through the engine path, but it does not consolidate, rank,

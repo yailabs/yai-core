@@ -20,6 +20,10 @@ typedef struct yai_daemon_loop_response {
     char fs_read[32];
     char fs_write_blocked[32];
     char fs_write_allowed[32];
+    char case_session[32];
+    char case_world[32];
+    char case_context[32];
+    char authority_scope[64];
 } yai_daemon_loop_response_t;
 
 void yai_daemon_loop_response_init(yai_daemon_loop_response_t *response,

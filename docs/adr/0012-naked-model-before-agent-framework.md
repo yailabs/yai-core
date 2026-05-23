@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted for SPINE.2.
+Accepted for SPINE.2. Roadmap numbering superseded by SPINE.3R data-plane
+rebase.
 
 ## Context
 
@@ -32,12 +33,14 @@ notes and fixtures, but it is not canonical core validation.
 
 ## Consequences
 
-The roadmap places:
+SPINE.2 placed these model/provider experiments after filesystem refoundation.
+SPINE.3R keeps the maturity order but moves implementation after the
+NEW.22-NEW.30 data-plane foundation:
 
 ```text
-NEW.26 first naked local model case experiment
-NEW.28 first core-owned model invocation through model carrier v0
-NEW.29/NEW.30 first agent-framework/tool-call experiment path
+first naked local model case experiment
+then first core-owned model invocation through model carrier v0
+then first agent-framework/tool-call experiment path
 ```
 
 Model output is imported as a claim, observation or proposed operation before it

@@ -158,7 +158,7 @@ yai_status_t yai_daemon_loop_response_json(const yai_daemon_loop_response_t *res
     }
     written = snprintf(buffer,
                        buffer_size,
-                       "{\"request_id\":\"%s\",\"ok\":%s,\"version\":\"%s\",\"status\":\"%s\",\"message\":\"%s\",\"journal_path\":\"%s\",\"record_count\":%zu,\"receipt_count\":%zu,\"projection_count\":%zu,\"decision_outcome\":\"%s\",\"receipt_status\":\"%s\",\"fs_read\":\"%s\",\"fs_write_blocked\":\"%s\",\"fs_write_allowed\":\"%s\"}\n",
+                       "{\"request_id\":\"%s\",\"ok\":%s,\"version\":\"%s\",\"status\":\"%s\",\"message\":\"%s\",\"journal_path\":\"%s\",\"record_count\":%zu,\"receipt_count\":%zu,\"projection_count\":%zu,\"decision_outcome\":\"%s\",\"receipt_status\":\"%s\",\"fs_read\":\"%s\",\"fs_write_blocked\":\"%s\",\"fs_write_allowed\":\"%s\",\"case_session\":\"%s\",\"case_world\":\"%s\",\"case_context\":\"%s\",\"authority_scope\":\"%s\"}\n",
                        response->request_id,
                        response->ok ? "true" : "false",
                        YAI_CORE_VERSION,
@@ -172,7 +172,11 @@ yai_status_t yai_daemon_loop_response_json(const yai_daemon_loop_response_t *res
                        response->receipt_status,
                        response->fs_read,
                        response->fs_write_blocked,
-                       response->fs_write_allowed);
+                       response->fs_write_allowed,
+                       response->case_session,
+                       response->case_world,
+                       response->case_context,
+                       response->authority_scope);
     if (written < 0 || (size_t)written >= buffer_size) {
         return YAI_ERR_BUFFER_TOO_SMALL;
     }
@@ -256,6 +260,8 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
     yai_store_record_t sandbox_attachment_record;
     yai_store_record_t model_binding_record;
     yai_projection_t projection;
+    yai_journal_t journal;
+    yai_case_session_t case_session;
     yai_status_t status;
 
     if (request == 0 || response == 0) {
@@ -375,6 +381,17 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
     if (load_projection(response->journal_path, &case_ref, &projection) != YAI_OK) {
         return YAI_ERR_INVALID;
     }
+    if (yai_journal_init(&journal) != YAI_OK ||
+        yai_journal_file_load(&journal_file, &journal) != YAI_OK ||
+        yai_case_session_open(&case_session,
+                              "session:new12-filesystem",
+                              response->journal_path,
+                              &case_ref,
+                              &model_subject_ref,
+                              &journal) != YAI_OK) {
+        yai_journal_free(&journal);
+        return YAI_ERR_INVALID;
+    }
     fill_counts_from_projection(response, &projection);
     response->ok = 1;
     copy_field(response->status, sizeof(response->status), "completed");
@@ -384,6 +401,15 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
     copy_field(response->fs_read, sizeof(response->fs_read), "observed");
     copy_field(response->fs_write_blocked, sizeof(response->fs_write_blocked), "blocked");
     copy_field(response->fs_write_allowed, sizeof(response->fs_write_allowed), "executed");
+    copy_field(response->case_session, sizeof(response->case_session), "active");
+    copy_field(response->case_world, sizeof(response->case_world), "loaded");
+    copy_field(response->case_context,
+               sizeof(response->case_context),
+               yai_case_context_state_string(case_session.context.state));
+    copy_field(response->authority_scope,
+               sizeof(response->authority_scope),
+               "model:interpretation_only terminal:display_only");
+    yai_journal_free(&journal);
     return YAI_OK;
 }
 

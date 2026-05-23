@@ -1,9 +1,10 @@
 # Store, Index And Graph Model
 
-The data plane is split because persistence, retrieval and reconstruction are
-different responsibilities. SPINE.1 makes the mature owner explicit: Rust owns
-the operational data spine under target `engine/`, while C keeps the host,
-daemon, carrier, control and ABI boundary under target `system/`.
+The data plane is split because hot state, replay, durable records, retrieval,
+facts, reconstruction, memory, projection and mismatch detection are different
+responsibilities. SPINE.3R makes the mature owner explicit: Rust owns the
+operational data planes under target `engine/`, while C keeps the host, daemon,
+carrier, control and ABI boundary under target `system/`.
 
 Doctrine:
 
@@ -17,9 +18,23 @@ Projection is not UI state.
 Reconcile is not recovery execution.
 ```
 
+SPINE.3R stratifies the operational data planes:
+
+| Plane | Target role |
+|---|---|
+| hot | shared memory / hot state, not truth |
+| journal | append-only replay chronology |
+| record | LMDB or equivalent durable KV lookup |
+| graph | Ladybug operational graph |
+| fact | DuckDB derived analytical facts |
+| memory | operational continuity over residue |
+| projection | live, versioned, delta-aware view materialization |
+| reconcile | expected-vs-observed mismatch detection |
+| observability/evaluation | trace, timing, freshness, model behavior and quality diagnostics |
+
 ## Store
 
-Store owns physical persistence posture:
+Store owns durable persistence posture:
 
 ```text
 journal
@@ -33,6 +48,10 @@ backend abstraction
 ```
 
 Store does not own semantic truth.
+
+SPINE.4 adds diagnostic residue pressure: future store backends must support
+trace lookup, diagnostic state lookup and case-view version lookup without
+turning diagnostics into source truth.
 
 Target owner: Rust engine.
 
@@ -165,6 +184,26 @@ id, memory marker and projection marker. Results remain in journal order and
 can be limited. This is deliberately not a database, index file, graph
 traversal, vector search or retrieval ranking layer.
 
+## Observability Inputs
+
+Store, index and graph feed the Operational Observability & Evaluation Plane:
+
+```text
+journal trace records
+timing samples
+diagnostic records
+record replayability
+trace lookup
+case-view version lookup
+graph_chain_completeness
+causal reconstruction
+orphan edge detection
+```
+
+SPINE.4 documents future records such as `trace`, `trace_span`,
+`timing_sample`, `rebuild_report` and `analytics_fact`; it does not implement
+them.
+
 `query_result` is a derived residue record kind for count summaries. Store
 persists the result artifact; query owns scan/filter posture; projection may
 summarize query results but does not become query truth.
@@ -178,6 +217,19 @@ kind, query by kind and build projection summary JSON.
 This is not a store backend switch. The C file-backed journal remains active
 and tested. Rust R1 is an internal backend path for operational data mechanics,
 not semantic ownership.
+
+## SPINE.3R Backend Direction
+
+```text
+journal plane = replay
+record plane = LMDB or equivalent durable normalized lookup
+graph plane = Ladybug persistent operational graph
+fact plane = DuckDB derived analytical facts
+```
+
+These backends are planned-not-created in SPINE.3R. The current JSONL journal
+and C smoke paths remain bootstrap behavior until their dedicated data-plane
+waves.
 
 ## Graph
 

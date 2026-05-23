@@ -8,7 +8,7 @@ It must stay technical and operational. Commercial positioning belongs in
 
 ## Canonical Roots
 
-SPINE.1 filesystem target roots:
+SPINE.3R filesystem and live data-plane target roots:
 
 ```text
 include
@@ -29,6 +29,9 @@ Primitive responsibilities inside `system/`, `engine/` and `include/`:
 ```text
 base
 ingest
+case_world
+case_context
+observability
 subject
 case
 op
@@ -53,6 +56,10 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 00-spine.md
 01-terminology.md
 02-integration-modes.md
+03-case-domain.md
+03A-case-world-model.md
+03B-live-case-context.md
+14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md
 repo-split.md

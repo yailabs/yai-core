@@ -10,8 +10,22 @@ Un subject e qualunque entita osservabile, controllabile, invocabile,
 interrogabile o targettabile legata a un caso.
 ```
 
-Without subject, case is only a stream. With subject, case becomes an
-operational world.
+Without case-world material, a case is only a stream. With domains,
+attachments, bindings and subjects, a case becomes an operational world.
+
+SPINE.3R rule: subject behavior starts after case-world material exists. A
+participant enters first as a `case_domain`, `case_attachment` or
+`case_binding`; only then can it act as a subject, source, actor, target,
+projection consumer or carrier participant.
+
+NEW.18B rule: `subject_ref` is durable identity, not the live subject. Runtime
+behavior uses the active `case_context`, where subject bindings and authority
+scope have already been materialized.
+
+SPINE.4 rule: subject participation must be observable and evaluable. A subject
+view must expose enough posture to measure authority alignment, model behavior,
+unsupported claims, unsafe attempts, memory use and divergence triggers without
+turning those diagnostics into subject truth.
 
 ## 1. Required Terms
 
@@ -113,7 +127,7 @@ Lifecycle meanings:
 |---|---|
 | `discovered` | material suggests an entity exists |
 | `candidate` | entity is recognized but not yet case-bound |
-| `bound` | entity has a case binding and subject reference |
+| `bound` | entity has case-world binding and subject reference |
 | `observed` | YAI has recorded state or activity for the subject |
 | `controlled` | at least one operation path is gated or carrier-owned |
 | `retired` | binding is intentionally ended |
@@ -145,6 +159,10 @@ external
 
 Binding mode describes relationship to the case. It does not by itself imply
 enforcement strength; control mode carries that guarantee.
+
+SPINE.3R separates case binding from authority. An attached provider, model,
+terminal, policy pack, operator or environment process can be represented in
+the case world while still having no execution authority.
 
 ## 6. Subject Control Modes
 

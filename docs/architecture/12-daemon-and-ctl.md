@@ -18,6 +18,11 @@ cmd/
     └── main.c
 ```
 
+NEW.18B adds the live case session boundary. The daemon and CLI may still pass
+`case_ref`, `subject_ref` and journal paths across IPC or shell boundaries, but
+an active case is represented as a `case_session` with a materialized
+`case_context`.
+
 The target system plane keeps daemon implementation and host/control boundary
 code under `system/`. After NEW.16, `system/daemon` owns daemon support:
 

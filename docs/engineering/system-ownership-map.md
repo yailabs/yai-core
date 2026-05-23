@@ -28,7 +28,7 @@ system/
 | System area | Owns | Does not own |
 |---|---|---|
 | `base/` | C ids, status and error implementation | data-spine algorithms |
-| `case/` | C case ABI implementation | external case UX |
+| `case/` | C case ABI implementation, including case-world binding shell | external case UX |
 | `subject/` | C subject ABI implementation and binding surface | full external subject state |
 | `op/` | C operation attempt ABI implementation | execution engine |
 | `control/` | policy/control boundary, gates, decisions and obligations | model-provider policy internals |
@@ -81,6 +81,7 @@ parse process-level arguments, initialize daemon configuration and call into
 | `../yai/src/runtime/lifecycle/*` | `system/daemon` | mine status/readiness/fail-closed posture |
 | `../yai/tools/runtime/*` | `system/daemon/tooling` | mine tooling posture only |
 | `../yai/src/case/subjects/*` | `system/subject` plus engine residue refs | mine subject binding and evidence trace |
+| `../yai/src/case/attachments/*` | `system/case` plus engine residue refs | mine case-world attachment posture |
 | `../yai/src/case/materialization/*` | `system/case` plus engine residue | mine materialization contracts |
 | `../yai/src/case/surface/*` | projection/console future | do not absorb as system UX |
 
@@ -88,13 +89,23 @@ parse process-level arguments, initialize daemon configuration and call into
 
 System code can ask the engine to persist, reconstruct, query, project or
 detect mismatch. System code must not become the long-term owner of store,
-journal, record codec, graph, index, query, memory, projection, reconcile,
-retention or integrity logic.
+journal, record codec, graph, index, query, facts, memory, live projection,
+reconcile, retention or integrity logic.
 
 After NEW.18, `system/engine_bridge` is the active bridge into Rust. The folders
 `system/{store,graph,index,memory,projection,reconcile}` are physical C system
 paths but still transitional data-spine logic classified `keep_temporarily`.
 They preserve smoke behavior while Rust engine ownership reaches parity.
+
+SPINE.3R target split:
+
+```text
+system = host/control/carrier/daemon/bridge
+engine = hot/store/journal/record/graph/index/query/memory/projection/reconcile
+```
+
+Shared memory, LMDB, Ladybug and DuckDB are not system-owned backend
+implementations in this wave.
 
 ## Acceptance Target
 

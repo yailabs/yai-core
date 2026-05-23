@@ -8,12 +8,12 @@ the target owner of durable data-spine logic.
 
 | Current folder | Current role | Target role | Immediate status | Future waves |
 |---|---|---|---|---|
-| `system/store` | C journal, record and codec path used by smokes | bridge or replaced by engine store/journal/record | `keep_temporarily` | NEW.22, NEW.23 |
+| `system/store` | C journal, record and codec path used by smokes | bridge or replaced by engine store/journal/record | `keep_temporarily` | NEW.23, NEW.24 |
 | `system/graph` | C graph edge and reconstruction smoke path | engine graph | `keep_temporarily` | NEW.25 |
 | `system/index` | C query/filter smoke path | engine query/index | `keep_temporarily` | NEW.24 |
-| `system/memory` | C memory candidate smoke path | engine memory | `keep_temporarily` | NEW.26 |
+| `system/memory` | C memory candidate smoke path | engine memory | `keep_temporarily` | NEW.28 |
 | `system/projection` | C projection materialization and counts | engine projection | `keep_temporarily` | NEW.27 |
-| `system/reconcile` | C divergence and reconcile smoke path | engine reconcile | `keep_temporarily` | NEW.28 |
+| `system/reconcile` | C divergence and reconcile smoke path | engine reconcile | `keep_temporarily` | NEW.29 |
 | `system/engine_bridge` | C bridge into Rust engine | only C location for Rust engine FFI integration | active | NEW.18 onward |
 
 ## File Classification

@@ -283,6 +283,49 @@ bridge; duplicated C data logic remains `keep_temporarily`.
 
 The inventory records these routes. No old-yai source is copied.
 
+SPINE.3R applies wave-coupled extraction as documentation-only doctrine:
+
+```text
+../yai/src/case/attachments/*          -> case_world attachment posture
+../yai/src/case/materialization/*      -> case_world materialization posture
+../yai/src/case/subjects/*             -> case_world before subject binding
+../yai/src/case/policy/*               -> projection_rule and authority_scope posture
+../yai/src/case/surface/*              -> live projection concepts only
+../yai/src/runtime/boundary/subjects/* -> subject participation posture
+../yai/src/runtime/observation/subjects/* -> observed subject posture
+../yai/src/substrate/store/*           -> journal and durable record plane doctrine
+../yai/src/substrate/records/*         -> record plane doctrine
+../yai/src/substrate/graph/*           -> Ladybug graph plane doctrine
+../yai/src/substrate/indexes/*         -> index/query plane doctrine
+../yai/src/substrate/query/*           -> query plane doctrine
+../yai/src/substrate/memory/*          -> memory plane doctrine
+../yai/src/substrate/views/*           -> live projection plane doctrine
+../yai/src/substrate/signals/*         -> reconcile plane doctrine
+../yai/src/lineage/*                   -> graph/memory/projection doctrine
+../yai/src/analytics/*                 -> DuckDB fact plane and ai-environment split
+```
+
+No old source is copied. SPINE.3R does not implement shared memory, LMDB,
+Ladybug, DuckDB, model runner, provider registry or agent harness.
+
+NEW.18B applies wave-coupled extraction as read-only concept mining for live
+case context:
+
+```text
+../yai/src/case/identity/*                  -> case/session/context
+../yai/src/case/materialization/*           -> case_world/materialization
+../yai/src/case/attachments/*               -> case_world/attachment
+../yai/src/case/subjects/*                  -> subject/case_context
+../yai/src/case/surface/*                   -> console or projection split
+../yai/src/case/continuity/*                -> case/session/memory
+../yai/src/runtime/sessions/*               -> daemon/case_session
+../yai/src/runtime/operator/operator_context.c -> cmd/yai or console split
+../yai/src/runtime/operator/pilot.c         -> ai-environment or console split
+```
+
+No old source is copied. NEW.18B introduces `case_context` and `case_session`
+inside yai-core but does not clean or edit old `yai`.
+
 Future model/provider waves must audit and classify:
 
 ```text
@@ -296,10 +339,10 @@ src/substrate/memory/*        -> memory concepts
 src/case/policy/*             -> policy materialization and model projection evidence
 ```
 
-SPINE.2 is documentation only. It defines L0 provider scouting and the NEW.26
-through NEW.30 model/provider experiment sequence, but it does not touch old
-`yai`, copy source, create a model carrier, create a provider registry, create
-policy packs or create `ai-environment`.
+SPINE.2 remains documentation only. SPINE.3R rebases the roadmap so
+model/provider experiment work follows the data-plane foundation. Neither wave
+touches old `yai`, copies source, creates a model carrier, creates a provider
+registry, creates policy packs or creates `ai-environment`.
 
 NEW.6 applied wave-coupled extraction for operational memory:
 
@@ -441,6 +484,23 @@ must not port old packaging scripts, service managers, distro packages, console
 command UX, authorization, launchd/systemd, Homebrew or cloud distribution.
 
 ## 8. Old Root Non-Recreation Rule
+
+SPINE.4 adds observability/evaluation concept mining from old-yai without
+recreating old roots:
+
+```text
+../yai/src/analytics/signals/*        -> observability/reconcile concepts
+../yai/src/analytics/features/*       -> fact-plane/DuckDB concepts
+../yai/src/substrate/signals/*        -> reconcile/observability concepts
+../yai/src/substrate/views/*          -> projection/freshness concepts
+../yai/src/substrate/query/*          -> query/diagnostics concepts
+../yai/src/lineage/*                  -> graph/reconstructability concepts
+../yai/src/runtime/observation/*      -> host-observation concepts
+../yai/src/runtime/execution/*        -> trace/timing/carrier diagnostic concepts
+```
+
+No old source is copied. Observability becomes a future engine plane and
+diagnostic posture, not a revived `analytics` root.
 
 Forbidden future core roots:
 
