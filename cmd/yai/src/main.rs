@@ -36,11 +36,12 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: SPINE.20");
+    println!("status: SPINE.22");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
     println!("runtime_layout: YAI_HOME local runtime v0");
+    println!("foundation_freeze: filesystem_runtime_layout");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }

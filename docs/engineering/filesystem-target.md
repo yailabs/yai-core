@@ -13,6 +13,8 @@ proto/
 tests/
 docs/
 tools/
+packaging/
+examples/
 vendor/
 ```
 
@@ -22,7 +24,8 @@ control shell and engine bridge.
 `engine/` owns Rust operational data engine code.
 `cmd/` owns local binaries: `yai` and `yaid`.
 `proto/`, `tests/`, `docs/` and `tools/` own schemas, validation, docs and
-developer utilities.
+developer utilities. `packaging/` owns package source material. `examples/`
+owns non-authoritative examples. `vendor/` owns vendored support code.
 
 Pack format doctrine lives under `docs/engineering/pack-format.md`. SPINE.21
 does not create pack source roots, pack registries, pack installer paths or
@@ -105,6 +108,9 @@ $(YAI_HOME)/store/duckdb/
 
 SPINE.20 creates only the top-level runtime directories. It does not implement
 LMDB, Ladybug, DuckDB or shared memory.
+
+SPINE.22 freezes this host/runtime layout. It does not add data-plane contents
+inside `YAI_HOME`.
 
 ## Transitional Caveats
 

@@ -282,9 +282,10 @@ case/subject/op/control/receipt/store/projection loop can cross the local
 daemon boundary. It still avoids public API, auth, HTTP, process carrier,
 model carrier and background runtime execution.
 
-## SPINE.20 Local Runtime Layout
+## SPINE.22 Filesystem & Runtime Layout Freeze
 
 ```text
+rm -rf /tmp/yai-core-install-test /tmp/yai-core-home-test
 make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
 PATH=/tmp/yai-core-install-test/bin:$PATH yai --version
 PATH=/tmp/yai-core-install-test/bin:$PATH yai info
@@ -298,11 +299,15 @@ test -d /tmp/yai-core-home-test/cases
 test -d /tmp/yai-core-home-test/sockets
 test -d /tmp/yai-core-home-test/config
 PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock
+PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon run-minimum-loop --socket /tmp/yai-core-home-test/run/yaid.sock
+PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon shutdown --socket /tmp/yai-core-home-test/run/yaid.sock
 make uninstall-local PREFIX=/tmp/yai-core-install-test
+test ! -e /tmp/yai-core-install-test/bin/yai
+test ! -e /tmp/yai-core-install-test/bin/yaid
 ```
 
-SPINE.20 owns local runtime layout validation. Earlier filesystem waves
-validated doctrine/refactor planning rather than installed command layout.
+SPINE.22 freezes local runtime layout validation. Uninstall removes installed
+binaries only; it must not delete `YAI_HOME`, which is user data.
 
 ## Minimum Test Cases
 

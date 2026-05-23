@@ -281,6 +281,9 @@ proto/    schemas, fixtures, and protocol material
 docs/     architecture, protocols, engineering notes, and ADRs
 tests/    unit, integration, conformance, smoke, and adversarial tests
 tools/    checks, probes, validation, and developer utilities
+packaging/ package source material
+examples/ non-authoritative examples
+vendor/   vendored support code
 ```
 
 Current refactor state: NEW.18 has centralized the Rust engine C shim under
@@ -326,7 +329,9 @@ layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
 `YAI_HOME/config`. SPINE.20A rebases the active linear roadmap so SPINE.21 is
 Pack Materialization Doctrine before filesystem freeze and data-plane
 implementation. SPINE.21 defines packs as case materialization units; no pack
-runtime, installer, registry backend or marketplace is implemented.
+runtime, installer, registry backend or marketplace is implemented. SPINE.22
+freezes the filesystem/runtime foundation before hot state, record, graph,
+fact, projection and memory backends begin.
 
 ### Absorbed Concepts
 

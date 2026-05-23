@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.21 pack materialization doctrine. | SPINE.22 Filesystem Refactor Milestone Freeze. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.21 pack materialization doctrine; SPINE.22 filesystem/runtime freeze current. | SPINE.23 Hot State / Shared Memory Plane v0. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -34,10 +34,11 @@ implementation waves. SPINE.20 established the local `YAI_HOME` runtime layout
 and install/uninstall/doctor targets. SPINE.20A rebased the active roadmap so
 pack materialization becomes the next canonical spine step. SPINE.21 made
 packs first-class case materialization units and defined their format,
-lifecycle and materialization boundaries.
+lifecycle and materialization boundaries. SPINE.22 freezes the filesystem and
+runtime foundation before data-plane implementation begins.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.22.
+delivery is SPINE.23.
 
 ## Canonical Macro Labels
 
@@ -102,7 +103,7 @@ SPINE.21 defines the pack format, lifecycle and materialization rules.
 SPINE.20  Local Runtime Layout                                  done
 SPINE.20A Pack Roadmap Rebase                                   done
 SPINE.21  Pack Materialization Doctrine                         done
-SPINE.22  Filesystem Refactor Milestone Freeze                  planned
+SPINE.22  Filesystem & Runtime Layout Freeze                    current
 SPINE.23  Hot State / Shared Memory Plane v0                    planned
 SPINE.24  LMDB Record Backend v0                                planned
 SPINE.25  Journal Replay to LMDB v0                             planned
@@ -212,21 +213,27 @@ Old-yai audit focus: `../yai/src/case/packs/*`,
 Quality gate: pack doctrine defines materialization boundaries without creating
 pack runtime, installer, marketplace or pack directories.
 
-### SPINE.22 - Filesystem Refactor Milestone Freeze
+### SPINE.22 - Filesystem & Runtime Layout Freeze
 
-Macro: HOST / EXTERNAL
+Status: current.
 
-Purpose: close the physical refactor.
+Macro: HOST / DATA / WORLD / OBSERVABILITY / EXTERNAL
 
-Subdeliveries: verify `include/system/engine/cmd` layout; remove stale
-transitional references; enforce no active `lib/`, `crates/`, `daemon/` or
-`ctl/` roots; update status docs; final source placement guard; smoke all
-loops; milestone freeze.
+Purpose: freeze the current filesystem, runtime layout, documentation canon
+and checks before starting real data-plane implementation.
+
+Subdeliveries: verify source layout; verify runtime layout; verify active docs
+compactness; verify roadmap status; verify pack doctrine guard; verify
+operational extraction contract guard; verify install-local/uninstall-local;
+verify installed `yai`/`yaid` daemon loop; verify old roots absent; verify old
+`yai` dirty state is not touched; update stale status surfaces; full
+validation; milestone freeze.
 
 Old-yai audit focus: none unless stale path language overlaps active docs.
 
-Quality gate: layout checks pass and the active repo has no old implementation
-roots.
+Quality gate: source layout, runtime layout, active docs, pack doctrine,
+operational extraction contract, install/uninstall and installed daemon loop
+all validate.
 
 ### SPINE.23 - Hot State / Shared Memory Plane v0
 

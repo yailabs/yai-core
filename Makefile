@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-pack-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke check clean
+.PHONY: info check-layout check-docs check-pack-doctrine check-foundation-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -90,10 +90,13 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: SPINE.21 pack materialization doctrine done\n"
-	@printf "next: SPINE.22 Filesystem Refactor Milestone Freeze\n"
+	@printf "status: SPINE.22 Filesystem & Runtime Layout Freeze\n"
+	@printf "completed: SPINE.20 Local Runtime Layout; SPINE.21 Pack Materialization Doctrine\n"
+	@printf "next: SPINE.23 Hot State / Shared Memory Plane v0\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
+	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "pack-doctrine: active docs/engineering/pack-format.md\n"
+	@printf "foundation-freeze: filesystem closed; runtime layout exists; active docs compact; extraction contract active\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
 	@printf "engine-bridge: active\n"
 	@printf "lib: removed\n"
@@ -112,9 +115,13 @@ check-docs:
 	@./tools/checks/check-doc-required-files.sh
 	@./tools/checks/check-doc-no-old-root-language.sh
 	@./tools/checks/check-pack-doctrine.sh
+	@./tools/checks/check-foundation-freeze.sh
 
 check-pack-doctrine:
 	@./tools/checks/check-pack-doctrine.sh
+
+check-foundation-freeze:
+	@./tools/checks/check-foundation-freeze.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
