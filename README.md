@@ -303,6 +303,11 @@ causal_completeness, provenance_sufficiency, projection_consistency,
 authority_alignment, memory_basis_quality, divergence_exposure, delta_accuracy
 and cost.
 
+NEW.18C separates journal replay/audit from active model context. The prompt
+surface now uses an active interaction thread plus participant view frame over
+the current case projection; transcript records remain audit material, not raw
+chat memory.
+
 ### Absorbed Concepts
 
 Earlier or adjacent concepts are absorbed into the control spine:

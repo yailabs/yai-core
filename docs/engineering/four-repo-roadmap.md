@@ -182,7 +182,8 @@ for future fixtures, but it is not canonical core validation.
 | NEW.18A | Case world binding records / case-world verticalization | done |
 | NEW.18B | Live case context / ref boundary | done |
 | SPINE.3R | Case World + Live Data Plane Rebase | done |
-| SPINE.4 | Operational Observability & Evaluation Plane | current |
+| SPINE.4 | Operational Observability & Evaluation Plane | done |
+| NEW.18C | Interaction thread / participant view boundary v0 | done |
 | NEW.19 | Makefile/build/guards realignment | planned |
 | NEW.20 | Local install layout: yai + yaid | planned |
 | NEW.21 | Filesystem refactor milestone freeze | planned |

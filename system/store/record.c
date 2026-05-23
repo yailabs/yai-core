@@ -111,6 +111,12 @@ const char *yai_record_kind_string(yai_record_kind_t kind) {
         return "case_attachment";
     case YAI_RECORD_CASE_BINDING:
         return "case_binding";
+    case YAI_RECORD_INTERACTION_THREAD:
+        return "interaction_thread";
+    case YAI_RECORD_INTERACTION_TURN:
+        return "interaction_turn";
+    case YAI_RECORD_PARTICIPANT_VIEW_FRAME:
+        return "participant_view_frame";
     default:
         return "unknown";
     }
@@ -180,6 +186,12 @@ yai_status_t yai_record_kind_from_string(const char *value,
         *kind = YAI_RECORD_CASE_ATTACHMENT;
     } else if (strcmp(value, "case_binding") == 0) {
         *kind = YAI_RECORD_CASE_BINDING;
+    } else if (strcmp(value, "interaction_thread") == 0) {
+        *kind = YAI_RECORD_INTERACTION_THREAD;
+    } else if (strcmp(value, "interaction_turn") == 0) {
+        *kind = YAI_RECORD_INTERACTION_TURN;
+    } else if (strcmp(value, "participant_view_frame") == 0) {
+        *kind = YAI_RECORD_PARTICIPANT_VIEW_FRAME;
     } else {
         return YAI_ERR_INVALID;
     }

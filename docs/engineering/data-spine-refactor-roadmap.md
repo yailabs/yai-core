@@ -158,10 +158,15 @@ SPINE.3R status: done documentation rebase. It makes case-world material
 precede subject behavior, defines projection as live versioned cognitive view
 and stratifies operational data planes before NEW.19 guard realignment.
 
-SPINE.4 status: current operational observability/evaluation rebase. It makes
+SPINE.4 status: done operational observability/evaluation rebase. It makes
 Case View Quality, freshness, trace, provenance, rebuild posture, model
 behavior facts and memory quality first-class architectural concerns before
 NEW.19 guard realignment.
+
+NEW.18C status: done interaction thread / participant view boundary. It
+keeps the journal as replay/audit while introducing `interaction_thread`,
+`interaction_turn` and `participant_view_frame` as the active model-context
+boundary before NEW.19.
 
 NEW.13 planning artifacts:
 

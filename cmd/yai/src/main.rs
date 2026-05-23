@@ -344,6 +344,12 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
     println!("case_domains: {}", projection.case_domain_count);
     println!("case_attachments: {}", projection.case_attachment_count);
     println!("case_bindings: {}", projection.case_binding_count);
+    println!("interaction_threads: {}", projection.interaction_thread_count);
+    println!("interaction_turns: {}", projection.interaction_turn_count);
+    println!(
+        "participant_view_frames: {}",
+        projection.participant_view_frame_count
+    );
     println!(
         "projection_requests: {}",
         projection.projection_request_count
@@ -488,6 +494,21 @@ fn render_model_context_view(journal: &Journal, case_ref: Option<&str>) -> Strin
         projection.case_attachment_count
     );
     let _ = writeln!(output, "case_bindings: {}", projection.case_binding_count);
+    let _ = writeln!(
+        output,
+        "interaction_threads: {}",
+        projection.interaction_thread_count
+    );
+    let _ = writeln!(
+        output,
+        "interaction_turns: {}",
+        projection.interaction_turn_count
+    );
+    let _ = writeln!(
+        output,
+        "participant_view_frames: {}",
+        projection.participant_view_frame_count
+    );
     let _ = writeln!(
         output,
         "model_projection_records: {}",
@@ -984,9 +1005,12 @@ struct PromptSession {
     case_ref: String,
     subject_ref: String,
     provider: ProviderConfig,
+    active_thread_id: String,
     participant_view: String,
     transcript_enabled: bool,
 }
+
+const DEFAULT_THREAD_ID: &str = "thread:default";
 
 fn env_var(name: &str) -> Option<String> {
     std::env::var(name)
@@ -1039,6 +1063,136 @@ fn transcript_retention_label(enabled: bool) -> &'static str {
     } else {
         "preview_only"
     }
+}
+
+fn summary_token(summary: &str, key: &str) -> Option<String> {
+    let prefix = format!("{key}:");
+    summary.split_whitespace().find_map(|part| {
+        part.strip_prefix(&prefix)
+            .map(|value| value.trim_matches(',').to_string())
+            .filter(|value| !value.is_empty())
+    })
+}
+
+fn active_thread_id(journal: &Journal, case_ref: &str) -> Option<String> {
+    let mut active = None;
+    for record in journal.records().iter().filter(|record| {
+        record.case_ref == case_ref && record.kind == RecordKind::InteractionThread
+    }) {
+        if record.summary.contains("state:active") {
+            if let Some(thread_id) = summary_token(&record.summary, "thread_id") {
+                active = Some(thread_id);
+            }
+        }
+    }
+    active
+}
+
+fn thread_turn_count(journal: &Journal, case_ref: &str, thread_id: &str) -> usize {
+    let needle = format!("thread_id:{thread_id}");
+    journal
+        .records()
+        .iter()
+        .filter(|record| {
+            record.case_ref == case_ref
+                && record.kind == RecordKind::InteractionTurn
+                && record.summary.contains(&needle)
+        })
+        .count()
+}
+
+fn latest_frame_id(journal: &Journal, case_ref: &str, thread_id: &str) -> Option<String> {
+    let needle = format!("thread_id:{thread_id}");
+    let mut frame_id = None;
+    for record in journal.records().iter().filter(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::ParticipantViewFrame
+            && record.summary.contains(&needle)
+    }) {
+        frame_id = summary_token(&record.summary, "frame_id").or_else(|| Some(record.id.clone()));
+    }
+    frame_id
+}
+
+fn append_thread_record(
+    journal_path: &PathBuf,
+    case_ref: &str,
+    subject_ref: &str,
+    thread_id: &str,
+    label: &str,
+    state: &str,
+) -> Result<(), String> {
+    let journal = Journal::load_jsonl(journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let summary = format!(
+        "interaction_thread:{thread_id} thread_id:{thread_id} state:{state} label:{} journal_role:replay_audit active_context:thread_plus_projection",
+        compact_text(label, 48)
+    );
+    let record = Record::from_parts(
+        format!("interaction-thread:{}:{sequence}", thread_id.replace(':', "-")),
+        case_ref,
+        RecordKind::InteractionThread,
+        subject_ref,
+        "",
+        "",
+        "",
+        summary,
+    );
+    append_record_to_journal(journal_path, &record)
+}
+
+fn ensure_default_thread(
+    journal_path: &PathBuf,
+    journal: &Journal,
+    case_ref: &str,
+    subject_ref: &str,
+) -> Result<String, String> {
+    if let Some(thread_id) = active_thread_id(journal, case_ref) {
+        return Ok(thread_id);
+    }
+    append_thread_record(
+        journal_path,
+        case_ref,
+        subject_ref,
+        DEFAULT_THREAD_ID,
+        "default",
+        "active",
+    )?;
+    Ok(DEFAULT_THREAD_ID.to_string())
+}
+
+fn render_thread_context(journal: &Journal, case_ref: &str, thread_id: &str) -> String {
+    let mut output = String::new();
+    let needle = format!("thread_id:{thread_id}");
+    let mut count = 0usize;
+    let _ = writeln!(output, "## Active Interaction Thread");
+    let _ = writeln!(output, "interaction_thread: {thread_id}");
+    let _ = writeln!(output, "journal_role: replay_audit_not_chat_memory");
+    for record in journal.records().iter().filter(|record| {
+        record.case_ref == case_ref
+            && record.kind == RecordKind::InteractionTurn
+            && record.summary.contains(&needle)
+    }) {
+        count += 1;
+        let _ = writeln!(
+            output,
+            "- kind:interaction_turn record_id:{} summary:{}",
+            record.id, record.summary
+        );
+    }
+    let _ = writeln!(output, "included_turn_count: {count}");
+    if count == 0 {
+        let _ = writeln!(output, "thread_state: empty");
+    }
+    output
+}
+
+fn render_participant_view(journal: &Journal, case_ref: &str, thread_id: &str) -> String {
+    let mut view = render_model_context_view(journal, Some(case_ref));
+    view.push('\n');
+    view.push_str(&render_thread_context(journal, case_ref, thread_id));
+    view
 }
 
 fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
@@ -1106,6 +1260,9 @@ fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
         ));
     }
     let transcript_enabled = transcript_retention_enabled(&journal, &case_ref, &subject_ref);
+    let active_thread_id = ensure_default_thread(&journal_path, &journal, &case_ref, &subject_ref)?;
+    let journal = Journal::load_jsonl(&journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", journal_path.display()))?;
 
     Ok(PromptSession {
         journal_path,
@@ -1117,7 +1274,8 @@ fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
             api_key,
             language_mode,
         },
-        participant_view: render_model_context_view(&journal, Some(&case_ref)),
+        active_thread_id: active_thread_id.clone(),
+        participant_view: render_participant_view(&journal, &case_ref, &active_thread_id),
         transcript_enabled,
     })
 }
@@ -1578,15 +1736,103 @@ fn append_model_interpretation_record(
     Ok(summary)
 }
 
+fn append_participant_view_frame(session: &PromptSession) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let previous_frame_id = latest_frame_id(&journal, &session.case_ref, &session.active_thread_id)
+        .unwrap_or_default();
+    let frame_id = format!("frame:participant-view-{sequence}");
+    let included_turn_count = thread_turn_count(&journal, &session.case_ref, &session.active_thread_id);
+    let included_memory_count = journal
+        .records()
+        .iter()
+        .filter(|record| record.case_ref == session.case_ref && record.kind == RecordKind::MemoryCandidate)
+        .count();
+    let included_receipt_count = journal
+        .records()
+        .iter()
+        .filter(|record| {
+            record.case_ref == session.case_ref
+                && matches!(
+                    record.kind,
+                    RecordKind::Receipt | RecordKind::EffectReceipt | RecordKind::FilesystemReceipt
+                )
+        })
+        .count();
+    let projection_id = journal
+        .records()
+        .iter()
+        .rev()
+        .find(|record| record.case_ref == session.case_ref && record.kind == RecordKind::ProjectionResult)
+        .map(|record| record.id.as_str())
+        .unwrap_or("projection:current");
+    let summary = format!(
+        "participant_view_frame frame_id:{frame_id} case_ref:{} thread_id:{} projection_id:{projection_id} previous_frame_id:{} delta_since_frame_id:{} included_turn_count:{included_turn_count} included_memory_count:{included_memory_count} included_receipt_count:{included_receipt_count} redaction:summary_only freshness:fresh source:active_thread_plus_case_projection",
+        session.case_ref,
+        session.active_thread_id,
+        if previous_frame_id.is_empty() { "none" } else { previous_frame_id.as_str() },
+        if previous_frame_id.is_empty() { "none" } else { previous_frame_id.as_str() }
+    );
+    let record = Record::from_parts(
+        &frame_id,
+        &session.case_ref,
+        RecordKind::ParticipantViewFrame,
+        &session.subject_ref,
+        "",
+        "",
+        "",
+        summary,
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(frame_id)
+}
+
+fn append_interaction_turn(
+    session: &PromptSession,
+    attempt_id: &str,
+    prompt: &str,
+    output: &str,
+) -> Result<String, String> {
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    let sequence = journal.count() + 1;
+    let record_id = format!(
+        "interaction-turn:{}:{sequence}",
+        session.active_thread_id.replace(':', "-")
+    );
+    let summary = format!(
+        "interaction_turn:{sequence} thread_id:{} attempt_id:{attempt_id} prompt_preview:{} output_preview:{} transcript_retention:{} lane:selected_thread audit:journal_retained",
+        session.active_thread_id,
+        compact_text(prompt, 100),
+        compact_text(output, 120),
+        transcript_retention_label(session.transcript_enabled)
+    );
+    let record = Record::from_parts(
+        &record_id,
+        &session.case_ref,
+        RecordKind::InteractionTurn,
+        &session.subject_ref,
+        attempt_id,
+        "",
+        "",
+        summary,
+    );
+    append_record_to_journal(&session.journal_path, &record)?;
+    Ok(record_id)
+}
+
 fn prompt_attempt_summary(session: &PromptSession, prompt: &str) -> String {
     if session.transcript_enabled {
         format!(
-            "op:model.prompt.submit prompt_surface:vendored_linenoise context:session_participant_view transcript_retention:full_redacted_case_local prompt_text:{}",
+            "op:model.prompt.submit prompt_surface:vendored_linenoise context:participant_view_frame thread_id:{} transcript_retention:full_redacted_case_local prompt_text:{}",
+            session.active_thread_id,
             transcript_text(prompt, session)
         )
     } else {
         format!(
-            "op:model.prompt.submit prompt_surface:vendored_linenoise context:session_participant_view transcript_retention:preview_only prompt_preview:{}",
+            "op:model.prompt.submit prompt_surface:vendored_linenoise context:participant_view_frame thread_id:{} transcript_retention:preview_only prompt_preview:{}",
+            session.active_thread_id,
             compact_text(prompt, 120)
         )
     }
@@ -1608,35 +1854,6 @@ fn model_output_summary(session: &PromptSession, output: &str) -> String {
             compact_text(output, 160)
         )
     }
-}
-
-fn append_prompt_residue_to_session_view(
-    session: &mut PromptSession,
-    attempt_id: &str,
-    prompt: &str,
-    output: &str,
-    interpretation_summary: &str,
-) {
-    let _ = writeln!(session.participant_view, "## Prompt Session Residue");
-    let _ = writeln!(
-        session.participant_view,
-        "- attempt_id:{} kind:attempt subject_ref:{} summary:{}",
-        attempt_id,
-        session.subject_ref,
-        prompt_attempt_summary(session, prompt)
-    );
-    let _ = writeln!(
-        session.participant_view,
-        "- kind:effect_receipt subject_ref:{} summary:{}",
-        session.subject_ref,
-        model_output_summary(session, output)
-    );
-    let _ = writeln!(
-        session.participant_view,
-        "- kind:model_interpretation subject_ref:{} summary:{}",
-        session.subject_ref, interpretation_summary
-    );
-    let _ = writeln!(session.participant_view);
 }
 
 fn append_transcript_retention_state(
@@ -1727,10 +1944,12 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
         println!("case_ref: {}", session.case_ref);
         println!("case_session: active");
         println!("case_context: active");
+        println!("interaction_thread: {}", session.active_thread_id);
+        println!("participant_view_frame: would_build");
         println!("subject_ref: {}", session.subject_ref);
         println!("provider_base_url: {}", session.provider.base_url);
         println!("provider_model: {}", session.provider.model);
-        println!("context_source: session_participant_view");
+        println!("context_source: interaction_thread_plus_projection_frame");
         println!(
             "transcript_retention: {}",
             transcript_retention_label(session.transcript_enabled)
@@ -1743,6 +1962,7 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
         return Ok(());
     }
 
+    let frame_id = append_participant_view_frame(session)?;
     let attempt_id = append_model_prompt_attempt(session, prompt)?;
     let output = provider_chat_completion(&session.provider, &session.participant_view, prompt)?;
     println!();
@@ -1751,13 +1971,14 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
     println!();
     append_model_output_receipt(session, &attempt_id, &output)?;
     let interpretation_summary = append_model_interpretation_record(session, &attempt_id, &output)?;
-    append_prompt_residue_to_session_view(
-        session,
-        &attempt_id,
-        prompt,
-        &output,
-        &interpretation_summary,
-    );
+    let turn_id = append_interaction_turn(session, &attempt_id, prompt, &output)?;
+    let journal = Journal::load_jsonl(&session.journal_path)
+        .map_err(|error| format!("failed to load {}: {error}", session.journal_path.display()))?;
+    session.participant_view =
+        render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
+    println!("participant_view_frame: {frame_id}");
+    println!("interaction_turn: {turn_id}");
+    println!("model_interpretation: {}", compact_text(&interpretation_summary, 120));
     Ok(())
 }
 
@@ -1766,10 +1987,14 @@ fn handle_prompt_command(session: &mut PromptSession, command: &str) -> Result<b
         let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
             format!("failed to load {}: {error}", session.journal_path.display())
         })?;
-        session.participant_view = render_model_context_view(&journal, Some(&session.case_ref));
+        session.participant_view =
+            render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
         session.transcript_enabled =
             transcript_retention_enabled(&journal, &session.case_ref, &session.subject_ref);
+        let frame_id = append_participant_view_frame(session)?;
         println!("case_prompt: refreshed");
+        println!("participant_view_frame: {frame_id}");
+        println!("interaction_thread: {}", session.active_thread_id);
         println!(
             "transcript_retention: {}",
             transcript_retention_label(session.transcript_enabled)
@@ -1801,6 +2026,139 @@ fn handle_prompt_command(session: &mut PromptSession, command: &str) -> Result<b
             }
         );
         println!("memory_candidate: derived_not_raw_chat");
+        return Ok(true);
+    }
+
+    if command == "/thread status" {
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        println!("interaction_thread: {}", session.active_thread_id);
+        println!(
+            "thread_turn_count: {}",
+            thread_turn_count(&journal, &session.case_ref, &session.active_thread_id)
+        );
+        println!("participant_view: active_thread_plus_projection");
+        println!("journal_role: replay_audit_not_chat_memory");
+        return Ok(true);
+    }
+
+    if command == "/thread list" {
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        let mut seen = Vec::<String>::new();
+        for record in journal.records().iter().filter(|record| {
+            record.case_ref == session.case_ref && record.kind == RecordKind::InteractionThread
+        }) {
+            if let Some(thread_id) = summary_token(&record.summary, "thread_id") {
+                if !seen.iter().any(|value| value == &thread_id) {
+                    println!(
+                        "interaction_thread: {} turns:{}",
+                        thread_id,
+                        thread_turn_count(&journal, &session.case_ref, &thread_id)
+                    );
+                    seen.push(thread_id);
+                }
+            }
+        }
+        if seen.is_empty() {
+            println!("interaction_thread: none");
+        }
+        return Ok(true);
+    }
+
+    if command == "/thread new" || command.starts_with("/thread new ") {
+        let label = command
+            .strip_prefix("/thread new")
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+            .unwrap_or("thread");
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        let thread_id = format!("thread:{}", journal.count() + 1);
+        append_thread_record(
+            &session.journal_path,
+            &session.case_ref,
+            &session.subject_ref,
+            &thread_id,
+            label,
+            "active",
+        )?;
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        session.active_thread_id = thread_id.clone();
+        session.participant_view =
+            render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
+        println!("interaction_thread: new active");
+        println!("thread_id: {thread_id}");
+        println!("participant_view: empty thread");
+        println!("journal:audit retained");
+        return Ok(true);
+    }
+
+    if let Some(thread_id) = command.strip_prefix("/thread use ").map(str::trim) {
+        if thread_id.is_empty() {
+            println!("thread_use: missing_thread_id");
+            return Ok(true);
+        }
+        append_thread_record(
+            &session.journal_path,
+            &session.case_ref,
+            &session.subject_ref,
+            thread_id,
+            thread_id,
+            "active",
+        )?;
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        session.active_thread_id = thread_id.to_string();
+        session.participant_view =
+            render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
+        println!("interaction_thread: restored previous");
+        println!("thread_id: {thread_id}");
+        println!(
+            "thread_turn_count: {}",
+            thread_turn_count(&journal, &session.case_ref, &session.active_thread_id)
+        );
+        return Ok(true);
+    }
+
+    if let Some(thread_id) = command.strip_prefix("/thread archive ").map(str::trim) {
+        if thread_id.is_empty() {
+            println!("thread_archive: missing_thread_id");
+            return Ok(true);
+        }
+        append_thread_record(
+            &session.journal_path,
+            &session.case_ref,
+            &session.subject_ref,
+            thread_id,
+            thread_id,
+            "archived",
+        )?;
+        if session.active_thread_id == thread_id {
+            session.active_thread_id = DEFAULT_THREAD_ID.to_string();
+            append_thread_record(
+                &session.journal_path,
+                &session.case_ref,
+                &session.subject_ref,
+                DEFAULT_THREAD_ID,
+                "default",
+                "active",
+            )?;
+        }
+        let journal = Journal::load_jsonl(&session.journal_path).map_err(|error| {
+            format!("failed to load {}: {error}", session.journal_path.display())
+        })?;
+        session.participant_view =
+            render_participant_view(&journal, &session.case_ref, &session.active_thread_id);
+        println!("interaction_thread: archived");
+        println!("thread_id: {thread_id}");
+        println!("active_thread_id: {}", session.active_thread_id);
         return Ok(true);
     }
 
@@ -1858,7 +2216,7 @@ fn handle_prompt_command(session: &mut PromptSession, command: &str) -> Result<b
 
     if command.starts_with('/') {
         println!("unknown_command: {command}");
-        println!("commands: /refresh /transcript on /transcript off /transcript status /memory propose /exit");
+        println!("commands: /thread status /thread new [label] /thread list /thread use <thread_id> /thread archive <thread_id> /refresh /transcript on /transcript off /transcript status /memory propose /exit");
         return Ok(true);
     }
 
@@ -1900,14 +2258,15 @@ fn prompt_repl(args: &[String]) -> Result<(), String> {
     println!("case_ref: {}", session.case_ref);
     println!("case_session: active");
     println!("case_context: active");
+    println!("interaction_thread: {}", session.active_thread_id);
     println!("subject_ref: {}", session.subject_ref);
     println!("provider_model: {}", session.provider.model);
-    println!("context_source: session_participant_view");
+    println!("context_source: interaction_thread_plus_projection_frame");
     println!(
         "transcript_retention: {}",
         transcript_retention_label(session.transcript_enabled)
     );
-    println!("commands: /refresh /transcript on /transcript off /transcript status /memory propose /exit");
+    println!("commands: /thread status /thread new [label] /thread list /thread use <thread_id> /thread archive <thread_id> /refresh /transcript on /transcript off /transcript status /memory propose /exit");
 
     loop {
         println!();

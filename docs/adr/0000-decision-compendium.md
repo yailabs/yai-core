@@ -58,6 +58,10 @@ not only control actions; it measures whether the case remains knowable enough
 for controlled action. The canonical quality vector is Case View Quality
 (`CVQ`).
 
+NEW.18C adds the interaction thread / participant view boundary. Journal
+remains replay/audit; active model context is selected interaction thread plus
+participant view frame plus current case projection.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -86,6 +90,8 @@ The future core starts from a small machine spine:
 ```text
 case builds case_world
 case opens case_session and derives case_context
+case selects active_interaction_thread
+participant_view_frame assembles model-visible context
 case binds subjects
 ops target subjects
 control gates ops through materialized policy

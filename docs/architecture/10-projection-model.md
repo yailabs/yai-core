@@ -79,6 +79,11 @@ The model does not access the case. The model receives a controlled live view
 of the case. YAI owns the freshness and quality of that view. The model owns
 its inference behavior and inference latency.
 
+NEW.18C adds the interaction-thread boundary. Model context is the current
+projection plus selected thread turns and authorized memory/delta material. It
+is not the full journal, all previous `model_interpretation` records or raw
+transcript.
+
 Future projection work must make these facts measurable:
 
 ```text

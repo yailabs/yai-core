@@ -31,6 +31,10 @@ machine terms, not product labels.
 | `graph` | Relationship and causality reconstruction over subjects, ops, policy, decisions and receipts. |
 | `memory` | Scoped operational experience derived from records, receipts and graph paths. |
 | `projection` | Controlled read model served to models, agents, operators, APIs, audit and debug surfaces. |
+| `interaction_thread` | Case-bound conversational lane selected for a participant. |
+| `interaction_turn` | One user/model/system exchange or event inside an interaction thread. |
+| `participant_view_frame` | Model/operator-visible context assembled for a specific turn from projection, thread, memory, delta and authority posture. |
+| `transcript` | Audit persistence of prompt/output material. It is not automatically model context. |
 | `reconcile` | Divergence detection and recovery/compensation posture. |
 | `divergence` | Mismatch between claim, decision, expected effect, receipt, observation, policy or memory. |
 | `daemon` | Local resident process, `yaid`, for boot, loop, IPC, status and supervision. |
@@ -46,6 +50,7 @@ machine terms, not product labels.
 | substrate | `store` + `index` + `graph` + `memory` + `projection` |
 | lineage | graph reconstruction |
 | view | projection |
+| chat | interaction thread at the core boundary; console may use chat UX language |
 
 Old terms may appear in extraction and ADR history. They must not become future
 core roots.

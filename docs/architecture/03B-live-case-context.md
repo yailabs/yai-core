@@ -45,6 +45,7 @@ journal stores refs
 runtime operates on case_context
 daemon manages case_session
 projection reads from case_world/context
+participant view reads from active thread + projection frame
 ```
 
 `case_context` is not truth. Durable truth still comes from residue:
@@ -74,6 +75,11 @@ case session backing store. `case_ref` is persistent identity. `case_context` is
 the active operating surface.
 
 There is no global singleton case. Multiple sessions must remain possible.
+
+NEW.18C adds an active interaction thread below the case session. A case session
+can switch threads without deleting journal or case history. The active
+participant view frame is derived from the selected thread plus the current
+case projection.
 
 ## Observability
 

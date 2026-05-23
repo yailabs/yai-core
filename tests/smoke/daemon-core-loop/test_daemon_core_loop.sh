@@ -57,6 +57,9 @@ filesystem_provider_attach=$(target/debug/yai case attach-provider --journal "$f
 filesystem_provider_shell=$(target/debug/yai case attach-provider --journal "$filesystem_journal" --case case:new12-filesystem --subject subject:llm-provider --base-url http://127.0.0.1:43117/v1/chat/completions --model qwen-local --shell zsh)
 filesystem_transcript_on=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/transcript on")
 filesystem_transcript_status=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/transcript status")
+filesystem_thread_status=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/thread status")
+filesystem_thread_new=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/thread new clean")
+filesystem_thread_use_default=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/thread use thread:default")
 filesystem_memory_propose=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --once "/memory propose smoke boundary residue")
 filesystem_prompt_dry_run=$(YAI_JOURNAL="$filesystem_journal" YAI_CASE_REF=case:new12-filesystem YAI_SUBJECT_REF=subject:llm-provider YAI_PROVIDER_BASE_URL=http://127.0.0.1:43117/v1/chat/completions YAI_PROVIDER_MODEL=qwen-local target/debug/yai prompt --dry-run --once "What subjects are bound to this case?")
 shutdown_output=$(target/debug/yai daemon shutdown --socket "$socket_path")
@@ -107,12 +110,20 @@ printf '%s\n' "$filesystem_transcript_on" | grep 'prompt_transcript_retention: e
 printf '%s\n' "$filesystem_transcript_on" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
 printf '%s\n' "$filesystem_transcript_status" | grep 'prompt_transcript_retention: enabled' >/dev/null
 printf '%s\n' "$filesystem_transcript_status" | grep 'memory_candidate: derived_not_raw_chat' >/dev/null
+printf '%s\n' "$filesystem_thread_status" | grep 'interaction_thread: thread:default' >/dev/null
+printf '%s\n' "$filesystem_thread_status" | grep 'journal_role: replay_audit_not_chat_memory' >/dev/null
+printf '%s\n' "$filesystem_thread_new" | grep 'interaction_thread: new active' >/dev/null
+printf '%s\n' "$filesystem_thread_new" | grep 'participant_view: empty thread' >/dev/null
+printf '%s\n' "$filesystem_thread_new" | grep 'journal:audit retained' >/dev/null
+printf '%s\n' "$filesystem_thread_use_default" | grep 'interaction_thread: restored previous' >/dev/null
+printf '%s\n' "$filesystem_thread_use_default" | grep 'thread_id: thread:default' >/dev/null
 printf '%s\n' "$filesystem_memory_propose" | grep 'memory_proposal: accepted' >/dev/null
 printf '%s\n' "$filesystem_memory_propose" | grep 'record_kind: memory_candidate' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'model_prompt: dry_run' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_session: active' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_context: active' >/dev/null
-printf '%s\n' "$filesystem_prompt_dry_run" | grep 'context_source: session_participant_view' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'interaction_thread: thread:default' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'context_source: interaction_thread_plus_projection_frame' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'raw_journal_access: not_provided' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'decision_authority: not_provided' >/dev/null
@@ -130,6 +141,7 @@ printf 'projection:summary ok\n'
 printf 'case:enter ok\n'
 printf 'case:attach-provider ok\n'
 printf 'case:transcript retention ok\n'
+printf 'case:interaction thread ok\n'
 printf 'case:memory proposal ok\n'
 printf 'case:prompt dry-run ok\n'
 printf 'case:context active ok\n'

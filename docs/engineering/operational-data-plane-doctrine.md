@@ -29,6 +29,7 @@ journal = replay
 LMDB = durable record plane
 Ladybug = operational graph
 DuckDB = derived facts / analytics
+interaction thread = active conversational lane, journal-backed now and hot/record-backed later
 Rust engine = data-plane materialization and query
 C system = host boundary, daemon, carrier, control shell, FFI bridge
 ```

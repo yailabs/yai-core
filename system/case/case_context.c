@@ -59,6 +59,9 @@ yai_status_t yai_case_context_materialize(yai_case_context_t *context,
     context->case_domain_count = 0;
     context->case_attachment_count = 0;
     context->case_binding_count = 0;
+    context->interaction_thread_count = 0;
+    context->interaction_turn_count = 0;
+    context->participant_view_frame_count = 0;
     context->subject_binding_count = 0;
     context->projection_rule_count = 0;
     context->authority_scope_count = 0;
@@ -82,6 +85,15 @@ yai_status_t yai_case_context_materialize(yai_case_context_t *context,
             break;
         case YAI_RECORD_CASE_BINDING:
             context->case_binding_count += 1;
+            break;
+        case YAI_RECORD_INTERACTION_THREAD:
+            context->interaction_thread_count += 1;
+            break;
+        case YAI_RECORD_INTERACTION_TURN:
+            context->interaction_turn_count += 1;
+            break;
+        case YAI_RECORD_PARTICIPANT_VIEW_FRAME:
+            context->participant_view_frame_count += 1;
             break;
         case YAI_RECORD_SUBJECT_BINDING:
             context->subject_binding_count += 1;

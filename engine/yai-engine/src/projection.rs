@@ -43,6 +43,9 @@ pub struct ProjectionSummary {
     pub case_domain_count: usize,
     pub case_attachment_count: usize,
     pub case_binding_count: usize,
+    pub interaction_thread_count: usize,
+    pub interaction_turn_count: usize,
+    pub participant_view_frame_count: usize,
 }
 
 impl ProjectionSummary {
@@ -234,9 +237,24 @@ impl ProjectionSummary {
             .iter()
             .filter(|record| record.kind == RecordKind::CaseBinding)
             .count();
+        let interaction_thread_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::InteractionThread)
+            .count();
+        let interaction_turn_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::InteractionTurn)
+            .count();
+        let participant_view_frame_count = journal
+            .records()
+            .iter()
+            .filter(|record| record.kind == RecordKind::ParticipantViewFrame)
+            .count();
         Self {
             summary: format!(
-                "projection:{consumer} records:{source_record_count} case_domains:{case_domain_count} case_attachments:{case_attachment_count} case_bindings:{case_binding_count} decisions:{decision_count} rules:{policy_rule_count} projection_rules:{projection_rule_count} authority_scopes:{authority_scope_count} model_interpretations:{model_interpretation_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count} projection_requests:{projection_request_count} projection_results:{projection_result_count} query_results:{query_result_count}"
+                "projection:{consumer} records:{source_record_count} case_domains:{case_domain_count} case_attachments:{case_attachment_count} case_bindings:{case_binding_count} interaction_threads:{interaction_thread_count} interaction_turns:{interaction_turn_count} participant_view_frames:{participant_view_frame_count} decisions:{decision_count} rules:{policy_rule_count} projection_rules:{projection_rule_count} authority_scopes:{authority_scope_count} model_interpretations:{model_interpretation_count} gates:{gate_count} obligations:{obligation_count} receipt_requirements:{receipt_requirement_count} filesystem_receipts:{filesystem_receipt_count} subject_states:{subject_state_count} effects:{effect_count} graph_edges:{graph_edge_count} reconstructions:{reconstruction_count} memory_candidates:{memory_candidate_count} divergences:{divergence_count} reconciliations:{reconciliation_count} projection_requests:{projection_request_count} projection_results:{projection_result_count} query_results:{query_result_count}"
             ),
             consumer,
             case_ref,
@@ -276,6 +294,9 @@ impl ProjectionSummary {
             case_domain_count,
             case_attachment_count,
             case_binding_count,
+            interaction_thread_count,
+            interaction_turn_count,
+            participant_view_frame_count,
         }
     }
 }

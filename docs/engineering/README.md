@@ -14,6 +14,7 @@ NEW.2 journal     = first persistent/reconstructable loop
 data spine        = Rust operational data ownership roadmap
 case world        = domain/attachment/binding before subject behavior
 case context      = live loaded case state behind refs
+interaction thread = selected conversational lane for participant view frames
 live projection   = versioned cognitive view over operational data planes
 observability     = freshness, trace, provenance, behavior and case-view quality
 extraction plan   = conceptual mining from old roots
@@ -38,6 +39,7 @@ live-projection-model.md
 observability-evaluation-plane.md
 case-view-quality.md
 new18b-live-case-context.md
+new18c-interaction-thread.md
 extraction-plan.md
 export-matrices.md
 new0-package.md

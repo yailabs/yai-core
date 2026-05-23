@@ -88,3 +88,12 @@ Does this wave add trace/span/timing needs?
 Does this wave affect provenance/completeness/reconstructability?
 Does this wave produce behavioral facts or memory quality facts?
 ```
+
+NEW.18C observability impact:
+
+```text
+thread switch invalidates participant_view_frame
+new interaction_turn creates a participant-view delta
+transcript mode changes audit completeness, not authority
+projection freshness must be checked before model prompt
+```

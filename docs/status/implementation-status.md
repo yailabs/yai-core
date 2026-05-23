@@ -5,28 +5,28 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.4 rebases the next phase: case-world material comes before subject
-behavior, the live data-plane doctrine is canonical, and operational
-observability/evaluation must be canonical before NEW.19 Makefile/build/guards
-realignment.
+NEW.18C rebases the prompt/session boundary before NEW.19: the journal remains
+replay/audit, while active model context is selected interaction thread plus
+participant view frame over the current case projection.
 
 Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
-`case_session` semantics while preserving durable refs. SPINE.3R is complete.
-The current rebase is SPINE.4; NEW.19 follows it. Local install layout is
-delayed to NEW.20.
+`case_session` semantics while preserving durable refs. SPINE.3R and SPINE.4
+are complete. NEW.18C is complete; NEW.19 follows it. Local install
+layout is delayed to NEW.20.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
 `subject:llm-provider` into the case, `yai case attach-provider` records the
 OpenAI-compatible provider route without storing secrets, and `yai` with an
 active case enters the vendored Linenoise prompt surface. The prompt session
-materializes one participant view, records prompt attempts and provider output
-receipts, updates prompt-session residue incrementally, and rebuilds the full
-case view only when the operator requests `/refresh`. Prompt transcript
-retention is preview-only by default, with explicit redacted case-local capture
-through `/transcript on` and derived prompt memory through `/memory propose`.
+materializes a participant view frame from the active interaction thread plus
+current case projection, records prompt attempts and provider output receipts,
+and keeps transcript persistence separate from active thread context. Prompt
+transcript retention is preview-only by default, with explicit redacted
+case-local capture through `/transcript on` and derived prompt memory through
+`/memory propose`.
 The filesystem manual case now separates `policy_rule`, `projection_rule`,
 `authority_scope`, and `model_interpretation` records so model claims can be
 checked against authoritative case residue instead of treated as core truth.
@@ -45,6 +45,10 @@ SPINE.4 makes Operational Observability & Evaluation canonical: Case View
 Quality, trace, freshness, provenance, rebuild posture, model behavior facts
 and memory quality facts are required design inputs for future waves, but their
 records and debug commands remain planned-not-created.
+NEW.18C adds `interaction_thread`, `interaction_turn` and
+`participant_view_frame` records. The prompt surface supports `/thread status`,
+`/thread new`, `/thread list`, `/thread use` and `/thread archive`; a new
+thread resets the conversational lane without deleting journal/audit history.
 
 ## Filesystem Refoundation History
 

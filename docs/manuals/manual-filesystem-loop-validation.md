@@ -190,7 +190,7 @@ Expected dry-run shape:
 
 ```text
 model_prompt: dry_run
-context_source: session_participant_view
+context_source: interaction_thread_plus_projection_frame
 raw_journal_access: not_provided
 filesystem_access: not_provided
 decision_authority: not_provided
@@ -205,7 +205,7 @@ After attach, use this in a normal terminal for the interactive prompt surface:
 yai
 ```
 
-Inside Linenoise, use natural-language prompts or slash commands such as `/refresh`, `/transcript status`, `/transcript on`, `/transcript off`, `/memory propose ...`, and `/exit`. Run `yai query ...` observer commands outside Linenoise in a second terminal.
+Inside Linenoise, use natural-language prompts or slash commands such as `/thread status`, `/thread new test`, `/thread list`, `/thread use <thread_id>`, `/refresh`, `/transcript status`, `/transcript on`, `/transcript off`, `/memory propose ...`, and `/exit`. Run `yai query ...` observer commands outside Linenoise in a second terminal.
 
 ## Prompt Labs
 

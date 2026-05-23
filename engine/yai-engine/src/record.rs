@@ -29,6 +29,9 @@ pub enum RecordKind {
     CaseDomain,
     CaseAttachment,
     CaseBinding,
+    InteractionThread,
+    InteractionTurn,
+    ParticipantViewFrame,
 }
 
 impl RecordKind {
@@ -63,6 +66,9 @@ impl RecordKind {
             Self::CaseDomain => "case_domain",
             Self::CaseAttachment => "case_attachment",
             Self::CaseBinding => "case_binding",
+            Self::InteractionThread => "interaction_thread",
+            Self::InteractionTurn => "interaction_turn",
+            Self::ParticipantViewFrame => "participant_view_frame",
         }
     }
 
@@ -97,6 +103,9 @@ impl RecordKind {
             "case_domain" => Some(Self::CaseDomain),
             "case_attachment" => Some(Self::CaseAttachment),
             "case_binding" => Some(Self::CaseBinding),
+            "interaction_thread" => Some(Self::InteractionThread),
+            "interaction_turn" => Some(Self::InteractionTurn),
+            "participant_view_frame" => Some(Self::ParticipantViewFrame),
             _ => None,
         }
     }

@@ -22,6 +22,9 @@ typedef struct yai_case_context {
     size_t case_domain_count;
     size_t case_attachment_count;
     size_t case_binding_count;
+    size_t interaction_thread_count;
+    size_t interaction_turn_count;
+    size_t participant_view_frame_count;
     size_t subject_binding_count;
     size_t projection_rule_count;
     size_t authority_scope_count;

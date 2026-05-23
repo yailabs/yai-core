@@ -54,6 +54,15 @@ NEW.18B adds the immediate runtime source:
 case_session -> case_context -> live projection
 ```
 
+NEW.18C adds the model-visible assembly path:
+
+```text
+case_session -> active_interaction_thread -> participant_view_frame
+```
+
+The frame combines current case projection with selected thread turns. It does
+not treat the journal as chat memory.
+
 The current implementation is still journal-backed. The journal stores refs;
 the runtime operates on case context derived from journal records and
 case-world material.

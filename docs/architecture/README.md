@@ -31,6 +31,7 @@ base
 ingest
 case_world
 case_context
+interaction_thread
 observability
 subject
 case
@@ -59,6 +60,7 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 03-case-domain.md
 03A-case-world-model.md
 03B-live-case-context.md
+03C-interaction-thread-model.md
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md

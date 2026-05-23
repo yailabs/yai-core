@@ -28,6 +28,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Case boundary | [03-case-domain.md](03-case-domain.md) |
 | Case world | [03A-case-world-model.md](03A-case-world-model.md) |
 | Live case context | [03B-live-case-context.md](03B-live-case-context.md) |
+| Interaction thread | [03C-interaction-thread-model.md](03C-interaction-thread-model.md) |
 | Subjects | [04-subject-model.md](04-subject-model.md) |
 | Operations | [05-operation-model.md](05-operation-model.md) |
 | Control and policy | [06-control-policy-model.md](06-control-policy-model.md) |
@@ -58,11 +59,14 @@ ingest
 -> case_binding
 -> case_session
 -> case_context
+-> active_interaction_thread
+-> participant_view_frame
 -> subject
 -> policy_rule
 -> projection_rule
 -> authority_scope
 -> live_projection
+-> interaction_turn
 -> model_interpretation / claim / attempt
 -> operation attempt
 -> control / policy gate
@@ -137,6 +141,7 @@ through external environment/adapters after naked model behavior is measurable.
 no operation without a case boundary
 no participant without case-world material
 no active operation without case context
+no model-visible prompt without selected thread and participant view frame
 no target without a subject reference
 no enforcement claim without a control decision
 no effect truth without receipt or observation provenance
@@ -158,6 +163,7 @@ them, it is outside the core doctrine even if it uses the right names.
 | `case_world` | domains, attachments, bindings and authority/projection posture | execution authority by attachment alone |
 | `subject` | operational entities bound to case context | full external system state |
 | `case` | boundary, posture, case-world material, case sessions, context, subject binding, evidence refs | abstract world governance |
+| `interaction_thread` | selected conversational lane and participant view frame posture | audit truth or whole case projection |
 | `op` | normalized attempted operation | policy decision or execution |
 | `control` | policy materialization, gates, decisions, obligations | carrier side effects |
 | `effect` | carrier requests, execution/observation, receipts | policy authority |
@@ -221,6 +227,15 @@ Definitions:
 | projection | live versioned cognitive view for model, agent, operator, API, audit and debug |
 | reconcile | expected-vs-observed mismatch detection and recovery posture |
 | observability/evaluation | case-view quality, trace, freshness, provenance and behavior diagnostics |
+
+NEW.18C interaction-thread doctrine:
+
+```text
+journal = replay/audit, not active conversation memory
+interaction_thread = selected conversational lane
+participant_view_frame = model-visible assembled context for a turn
+transcript = audit material, not automatically model context
+```
 
 SPINE.3R data-plane stratification:
 

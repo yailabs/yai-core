@@ -502,6 +502,17 @@ recreating old roots:
 No old source is copied. Observability becomes a future engine plane and
 diagnostic posture, not a revived `analytics` root.
 
+NEW.18C adds interaction-thread concept mining:
+
+```text
+../yai/src/agents/contracts/conversation*       -> case/interaction_thread
+../yai/src/runtime/operator/conversation_*      -> console or cmd/yai split
+../yai/src/case/continuity/case_chat_*          -> case/participant_view
+../yai/src/case/continuity/continuity_*         -> case/session/memory
+```
+
+No old source is copied and `chat` does not become a core root.
+
 Forbidden future core roots:
 
 ```text
