@@ -42,6 +42,7 @@ for file in \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
   docs/engineering/hot-state-plane.md \
+  docs/engineering/non-process-carrier-skeletons.md \
   docs/engineering/operational-extraction-contract.md \
   docs/engineering/pack-format.md \
   docs/engineering/pack-roadmap.md \
@@ -60,6 +61,7 @@ for file in \
   docs/adr/0023-process-carrier-signal-control.md \
   docs/adr/0024-host-observation-probe.md \
   docs/adr/0025-carrier-coverage-matrix.md \
+  docs/adr/0026-non-process-carrier-skeletons.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

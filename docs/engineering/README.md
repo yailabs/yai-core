@@ -32,6 +32,7 @@ filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md
 lmdb-record-plane.md
+non-process-carrier-skeletons.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md

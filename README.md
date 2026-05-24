@@ -127,6 +127,8 @@ yai carrier lanes
 yai carrier route --family filesystem
 yai carrier inspect filesystem
 yai carrier inspect process
+yai carrier inspect database
+yai carrier inspect model_provider
 yai process observe --pid $$
 yai process signal --pid $$ --signal TERM --dry-run
 yai observe process --pid $$
@@ -134,10 +136,12 @@ yai observe compare-process --pid $$ --expected running
 yai observe compare-process --pid $$ --expected stopped
 ```
 
-These commands expose routing and the active-minimal filesystem carrier
-contract plus conservative process carrier inspection and independent host
-observation. They do not execute arbitrary process, network, database,
-repository, model or observation carriers.
+These commands expose routing, the active-minimal filesystem/process carrier
+contracts, independent host observation and non-process carrier.v1 skeletons.
+Skeletons are inspectable and receipt-aware, but report
+`execution_available: false`. They do not execute arbitrary process, network,
+database, repository, model, service, endpoint, socket, listener or review
+carriers.
 
 - `input/proposal`: candidate material from a model, provider, operator, tool,
   script, or system.

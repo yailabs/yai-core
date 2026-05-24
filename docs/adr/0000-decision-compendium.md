@@ -74,6 +74,9 @@ SPINE.30 adds the LMDB write path. The daemon loop still writes journal residue
 first; `yai` mirrors completed loop journals into LMDB id/case/kind indexes and
 fails explicitly if LMDB import fails.
 
+SPINE.33G adopts non-process carrier skeletons. Planned carrier families must
+be inspectable and receipt-aware before execution is implemented.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -97,6 +100,7 @@ fails explicitly if LMDB import fails.
 | 0017 | Packs as case materialization units | Packs materialize methods, policies, projections, schemas, memory seeds and fixtures into cases. |
 | 0018 | Hot state is not truth | Hot state is live cache/freshness posture, not durable truth. |
 | 0019 | LMDB record plane | LMDB is durable indexed record lookup, rebuildable from journal and separate from hot state, graph, facts and memory. |
+| 0026 | Non-process carrier skeletons | Planned carrier families become carrier.v1 skeletons before implementation and do not execute effects. |
 
 ## Combined Doctrine
 

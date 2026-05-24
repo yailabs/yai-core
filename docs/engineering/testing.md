@@ -44,6 +44,7 @@ file header standard
 | `hot state` | active case/session/projection freshness is visible without treating journal as the live surface |
 | `record store` | LMDB lookup status, writes and reads are visible without faking readiness or journal-backed records |
 | `file header standard` | ownership/header doctrine exists before broad source header application |
+| `carrier skeleton` | non-process carrier families are inspectable with no execution |
 
 ## REPO.HYGIENE.0 Header Standard Loop
 
@@ -854,6 +855,53 @@ controlled: skeleton
 execution_available: false
 family: unknown
 controlled: unsupported
+```
+
+## SPINE.33G Non-Process Carrier Skeleton Loop
+
+```text
+network_http/database/repository_git/service/endpoint/socket/listener inspectable
+model_provider and review inspectable with special mode posture
+all skeletons report carrier.v1
+all skeletons report execution_available:false
+all skeletons report receipt_required:yes
+coverage matrix agrees with skeleton contract status
+no real effects are executed
+```
+
+`tests/smoke/non-process-carrier-skeletons/test_non_process_carrier_skeletons.c`
+proves the C ABI skeleton registry. The CLI smoke checks every skeleton family.
+
+```text
+make check-non-process-carrier-skeletons
+make smoke-spine33g
+target/debug/yai carrier inspect database
+target/debug/yai carrier inspect network_http
+target/debug/yai carrier inspect repository_git
+target/debug/yai carrier inspect model_provider
+target/debug/yai carrier coverage --family database
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier inspect database
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier inspect endpoint
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier inspect model_provider
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage --family database
+```
+
+Expected key lines:
+
+```text
+contract: carrier.v1
+status: skeleton
+execution_available: false
+receipt_required: yes
+non_execution_reason:
+carrier_attempted: false
 ```
 
 ## SPINE.28 Hot State Freeze Loop

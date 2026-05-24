@@ -102,6 +102,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | host process observation | independent host probe | `yai observe process --pid <pid>` | `target/debug/yai observe process --pid 1` | `host-observation-probe.md`, `testing.md` |
 | host process comparison | expected/observed mismatch view | `yai observe compare-process --pid <pid> --expected running|stopped` | `target/debug/yai observe compare-process --pid 1 --expected stopped` | `host-observation-probe.md`, `testing.md` |
 | carrier coverage matrix | family/mode/outcome coverage visibility | `yai carrier coverage [--family <family>] [--mode <mode>]` | `target/debug/yai carrier coverage --family process` | `carrier-coverage-matrix.md`, `testing.md` |
+| non-process carrier skeletons | inspectable carrier.v1 no-execution skeletons | `yai carrier inspect <family>` | `target/debug/yai carrier inspect database` | `non-process-carrier-skeletons.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -222,13 +223,16 @@ carrier_families:
 current_status:
   filesystem: implemented_minimal carrier.v1
   process: implemented_minimal
-  network_http: planned
-  database: planned
-  repository_git: planned
-  service: skeleton
-  endpoint: skeleton
-  socket: skeleton
-  listener: skeleton
+  network_http: skeleton carrier.v1
+  database: skeleton carrier.v1
+  repository_git: skeleton carrier.v1
+  service: skeleton carrier.v1
+  endpoint: skeleton carrier.v1
+  socket: skeleton carrier.v1
+  listener: skeleton carrier.v1
+  model_provider: skeleton carrier.v1
+  observation: planned
+  review: skeleton carrier.v1
 
 gate_outcomes:
 - allow
@@ -468,6 +472,53 @@ outcomes. Coverage outcomes include `executed`, `blocked`, `failed`,
 `mismatch`, `observed` and `not_attempted`. Skeleton carriers are visible but
 must report `execution_available: false`; the carrier coverage matrix is no
 fake execution.
+
+SPINE.33G adds non-process carrier skeleton inspection:
+
+```text
+yai carrier inspect database
+carrier: database
+carrier_family: database
+contract: carrier.v1
+status: skeleton
+controlled: skeleton
+observed: skeleton
+imported: skeleton
+execution_available: false
+receipt_required: yes
+supports_inspect: true
+non_execution_reason: adapter_not_implemented
+future_activation_wave: planned
+carrier_attempted: false
+
+yai carrier inspect model_provider
+carrier: model_provider
+carrier_family: model_provider
+contract: carrier.v1
+status: skeleton
+controlled: planned
+observed: planned
+imported: skeleton
+execution_available: false
+receipt_required: yes
+non_execution_reason: model_provider_carrier_not_implemented
+
+yai carrier inspect review
+carrier: review
+carrier_family: review
+contract: carrier.v1
+status: skeleton
+controlled: unsupported
+observed: unsupported
+imported: skeleton
+execution_available: false
+receipt_required: yes
+non_execution_reason: review_lane_not_implemented
+```
+
+Skeleton inspect is available for `network_http`, `database`,
+`repository_git`, `service`, `endpoint`, `socket`, `listener`,
+`model_provider` and `review`. It does not execute carrier effects.
 
 ## Projection Commands
 

@@ -2,7 +2,7 @@
 
 Status: active
 Owner: control/carrier substrate
-Purpose: Define SPINE.33F carrier coverage matrix and mode taxonomy.
+Purpose: Define carrier coverage matrix and mode taxonomy.
 Not source of truth for: adapter execution, receipt hardening or provider runtime
 
 SPINE.33F makes every relevant effect-capable carrier family visible. The
@@ -74,8 +74,8 @@ unknown
 
 Filesystem and process have active-minimal controlled paths. Process observed
 mode is active-minimal through the host probe. Network, database, repository,
-service, endpoint, socket, listener and model provider are visible skeletons or
-planned surfaces, not executable carriers.
+service, endpoint, socket, listener, model provider and review are visible
+carrier.v1 skeleton surfaces, not executable carriers.
 
 The command surface is:
 
@@ -89,4 +89,9 @@ Skeleton carrier families must report:
 
 ```text
 execution_available: false
+receipt_required: yes
+carrier_contract: carrier.v1
 ```
+
+SPINE.33G adds `yai carrier inspect <family>` for the non-process skeleton
+families and requires the coverage matrix to agree with skeleton status.

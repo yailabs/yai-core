@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33F Carrier Coverage Matrix + Mode Taxonomy");
+    println!("status: SPINE.33G Non-Process Carrier Skeletons");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -63,7 +63,7 @@ fn print_info() {
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
     println!(
-        "carrier_substrate: carrier coverage matrix; carrier.v1 filesystem/process; host probe v0"
+        "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; host probe v0"
     );
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
@@ -217,7 +217,7 @@ fn print_usage() {
     println!("       yai carrier lanes");
     println!("       yai carrier route --family <carrier_family>");
     println!("       yai carrier coverage [--family <carrier_family>] [--mode controlled|observed|imported]");
-    println!("       yai carrier inspect filesystem|process");
+    println!("       yai carrier inspect <carrier_family>");
     println!("       yai process observe --pid <pid>");
     println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
     println!("       yai observe process --pid <pid>");
@@ -244,16 +244,16 @@ fn print_carrier_families() {
     println!("current_status:");
     println!("  filesystem: implemented_minimal carrier.v1");
     println!("  process: implemented_minimal");
-    println!("  network_http: planned");
-    println!("  database: planned");
-    println!("  repository_git: planned");
-    println!("  service: skeleton");
-    println!("  endpoint: skeleton");
-    println!("  socket: skeleton");
-    println!("  listener: skeleton");
-    println!("  model_provider: planned");
+    println!("  network_http: skeleton carrier.v1");
+    println!("  database: skeleton carrier.v1");
+    println!("  repository_git: skeleton carrier.v1");
+    println!("  service: skeleton carrier.v1");
+    println!("  endpoint: skeleton carrier.v1");
+    println!("  socket: skeleton carrier.v1");
+    println!("  listener: skeleton carrier.v1");
+    println!("  model_provider: skeleton carrier.v1");
     println!("  observation: planned");
-    println!("  review: planned");
+    println!("  review: skeleton carrier.v1");
     println!();
     println!("gate_outcomes:");
     println!("- allow");
@@ -287,6 +287,7 @@ fn print_carrier_families() {
     println!("  inspect_route: yai carrier route --family <family>");
     println!("  inspect_coverage: yai carrier coverage");
     println!("  inspect_contract: yai carrier inspect filesystem");
+    println!("  inspect_skeleton: yai carrier inspect database");
 }
 
 #[derive(Clone, Copy)]
@@ -348,7 +349,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -365,7 +366,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -382,7 +383,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -399,7 +400,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -416,7 +417,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -433,7 +434,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -450,7 +451,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("executed", "planned"),
             ("blocked", "planned"),
@@ -461,13 +462,13 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
     },
     CarrierCoverage {
         family: "model_provider",
-        controlled: "skeleton",
+        controlled: "planned",
         observed: "planned",
         imported: "skeleton",
         execution_available: "false",
         execution_scope: "none",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("observed", "planned"),
             ("failed", "planned"),
@@ -501,7 +502,7 @@ const CARRIER_COVERAGE: &[CarrierCoverage] = &[
         execution_available: "false",
         execution_scope: "review_lane_only",
         receipt_required: "yes",
-        carrier_contract: "planned",
+        carrier_contract: "carrier.v1",
         outcomes: &[
             ("deferred", "planned"),
             ("waiting_operator", "planned"),
@@ -765,6 +766,130 @@ fn carrier_route(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Clone, Copy)]
+struct CarrierSkeleton {
+    carrier: &'static str,
+    carrier_family: &'static str,
+    adapter_status: &'static str,
+    controlled: &'static str,
+    observed: &'static str,
+    imported: &'static str,
+    non_execution_reason: &'static str,
+    future_activation_wave: &'static str,
+}
+
+const CARRIER_SKELETONS: &[CarrierSkeleton] = &[
+    CarrierSkeleton {
+        carrier: "network_http",
+        carrier_family: "network_http",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "database",
+        carrier_family: "database",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "repository_git",
+        carrier_family: "repository_git",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "service",
+        carrier_family: "service",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "endpoint",
+        carrier_family: "endpoint",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "socket",
+        carrier_family: "socket",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "listener",
+        carrier_family: "listener",
+        adapter_status: "skeleton",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        non_execution_reason: "adapter_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "model_provider",
+        carrier_family: "model_provider",
+        adapter_status: "skeleton",
+        controlled: "planned",
+        observed: "planned",
+        imported: "skeleton",
+        non_execution_reason: "model_provider_carrier_not_implemented",
+        future_activation_wave: "planned",
+    },
+    CarrierSkeleton {
+        carrier: "review",
+        carrier_family: "review",
+        adapter_status: "skeleton",
+        controlled: "unsupported",
+        observed: "unsupported",
+        imported: "skeleton",
+        non_execution_reason: "review_lane_not_implemented",
+        future_activation_wave: "planned",
+    },
+];
+
+fn print_carrier_skeleton(skeleton: &CarrierSkeleton) {
+    println!("carrier: {}", skeleton.carrier);
+    println!("carrier_family: {}", skeleton.carrier_family);
+    println!("contract: carrier.v1");
+    println!("status: {}", skeleton.adapter_status);
+    println!("controlled: {}", skeleton.controlled);
+    println!("observed: {}", skeleton.observed);
+    println!("imported: {}", skeleton.imported);
+    println!("execution_available: false");
+    println!("receipt_required: yes");
+    println!("supports_inspect: true");
+    println!("non_execution_reason: {}", skeleton.non_execution_reason);
+    println!(
+        "future_activation_wave: {}",
+        skeleton.future_activation_wave
+    );
+    println!("carrier_attempted: false");
+}
+
 fn carrier_inspect(args: &[String]) -> Result<(), String> {
     let name = args
         .first()
@@ -814,6 +939,13 @@ fn carrier_inspect(args: &[String]) -> Result<(), String> {
             Ok(())
         }
         _ => {
+            if let Some(skeleton) = CARRIER_SKELETONS
+                .iter()
+                .find(|skeleton| skeleton.carrier == name.as_str())
+            {
+                print_carrier_skeleton(skeleton);
+                return Ok(());
+            }
             println!("carrier: unknown");
             println!("status: not_supported");
             println!("dispatch_status: not_supported");

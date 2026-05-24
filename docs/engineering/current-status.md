@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33F Carrier Coverage Matrix + Mode Taxonomy.
+Status: SPINE.33G Non-Process Carrier Skeletons.
 
 ## Completed Foundation
 
@@ -43,7 +43,10 @@ blocked arbitrary PID behavior. SPINE.33E adds independent host observation
 probe v0, expected/observed process comparison and divergence candidate
 posture. SPINE.33F adds the carrier coverage matrix, controlled/observed/imported
 mode taxonomy and visible skeleton coverage for non-process carrier families
-without adding fake execution.
+without adding fake execution. SPINE.33G adds concrete inspectable carrier.v1
+skeleton surfaces for network_http, database, repository_git, service,
+endpoint, socket, listener, model_provider and review without executing those
+effects.
 
 Current:
 
@@ -73,6 +76,7 @@ SPINE.33C Carrier Contract v1 + Filesystem Adapter completed.
 SPINE.33D Process Carrier v0 / Signal Control completed.
 SPINE.33E Host Observation Probe v0 / Bypass Verification completed.
 SPINE.33F Carrier Coverage Matrix + Mode Taxonomy completed.
+SPINE.33G Non-Process Carrier Skeletons completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -80,7 +84,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.33G Non-Process Carrier Skeletons.
+SPINE.33H Carrier Outcome Harness.
 ```
 
 Foundation status:
@@ -114,6 +118,7 @@ LMDB CLI manual validation active
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
+non-process carrier skeletons active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -318,6 +323,11 @@ modified.
 SPINE.33F read-only inspected yai-dev boundary subject, provider, observation
 subject and carrier residue for carrier family coverage, mode taxonomy and
 skeleton posture. No `yai-dev` source file was modified.
+
+SPINE.33G read-only inspected yai-dev database, endpoint, listener, service
+and socket boundary subjects, provider request/result and transport material,
+and subject observers for non-process skeleton posture. No `yai-dev` source
+file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

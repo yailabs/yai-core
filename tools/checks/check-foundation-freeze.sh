@@ -48,6 +48,7 @@ four-repo-roadmap.md
 hot-state-plane.md
 host-observation-probe.md
 lmdb-record-plane.md
+non-process-carrier-skeletons.md
 operation-dispatch-multiplex.md
 operational-extraction-contract.md
 pack-format.md

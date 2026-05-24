@@ -2,7 +2,7 @@
 
 Status: active
 Owner: system/effect and command surface
-Purpose: Track SPINE.33F carrier coverage matrix implementation.
+Purpose: Track carrier coverage matrix implementation.
 Not source of truth for: real network/database/git/service/socket/model execution
 
 Implemented files:
@@ -27,4 +27,5 @@ yai carrier coverage --mode controlled
 ```
 
 This surface is visibility only. It does not execute non-filesystem/non-process
-carriers and does not claim support beyond the matrix.
+carriers and does not claim support beyond the matrix. SPINE.33G aligns
+non-process skeleton coverage with `carrier.v1` inspect surfaces.

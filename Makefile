@@ -10,12 +10,12 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke check clean
 
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -std=c11 -Wall -Wextra -Werror -Iinclude
-RUST_FFI_LIBS ?= -lpthread -ldl -lm
+RUST_FFI_LIBS ?= $(shell pkg-config --libs lmdb 2>/dev/null) -lpthread -ldl -lm
 PREFIX ?= $(HOME)/.local
 YAI_HOME ?= $(HOME)/.yai
 BUILD_DIR := build
@@ -66,6 +66,7 @@ C_SOURCES := \
 	system/effect/carrier_mode.c \
 	system/effect/carrier_outcome.c \
 	system/effect/carrier_receipt.c \
+	system/effect/carrier_skeleton.c \
 	system/effect/dispatch.c \
 	system/effect/dispatch_lane.c \
 	system/effect/dispatch_multiplex.c \
@@ -128,6 +129,7 @@ SMOKE_CARRIER_CONTRACT_FILESYSTEM := $(BUILD_DIR)/test_carrier_contract_filesyst
 SMOKE_PROCESS_CARRIER := $(BUILD_DIR)/test_process_carrier
 SMOKE_HOST_OBSERVATION_PROBE := $(BUILD_DIR)/test_host_observation_probe
 SMOKE_CARRIER_COVERAGE_MATRIX := $(BUILD_DIR)/test_carrier_coverage_matrix
+SMOKE_NON_PROCESS_CARRIER_SKELETONS := $(BUILD_DIR)/test_non_process_carrier_skeletons
 SMOKE_HOT_STATE_SNAPSHOT := tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh
 SMOKE_COMMAND_SURFACE := tests/smoke/command-surface/test_command_surface.sh
 SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
@@ -143,9 +145,9 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.33F Carrier Coverage Matrix + Mode Taxonomy\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33F Carrier Coverage Matrix + Mode Taxonomy\n"
-	@printf "next: SPINE.33G Non-Process Carrier Skeletons\n"
+	@printf "status: SPINE.33G Non-Process Carrier Skeletons\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33G Non-Process Carrier Skeletons\n"
+	@printf "next: SPINE.33H Carrier Outcome Harness\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -184,6 +186,7 @@ check-docs:
 	@./tools/checks/check-process-carrier-signal-control.sh
 	@./tools/checks/check-host-observation-probe.sh
 	@./tools/checks/check-carrier-coverage-matrix.sh
+	@./tools/checks/check-non-process-carrier-skeletons.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -229,6 +232,9 @@ check-host-observation-probe:
 
 check-carrier-coverage-matrix:
 	@./tools/checks/check-carrier-coverage-matrix.sh
+
+check-non-process-carrier-skeletons:
+	@./tools/checks/check-non-process-carrier-skeletons.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -318,6 +324,10 @@ $(SMOKE_CARRIER_COVERAGE_MATRIX): tests/smoke/carrier-coverage-matrix/test_carri
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/carrier-coverage-matrix/test_carrier_coverage_matrix.c $(C_LIBRARY) -o "$@"
 
+$(SMOKE_NON_PROCESS_CARRIER_SKELETONS): tests/smoke/non-process-carrier-skeletons/test_non_process_carrier_skeletons.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/non-process-carrier-skeletons/test_non_process_carrier_skeletons.c $(C_LIBRARY) -o "$@"
+
 $(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY) -o "$@"
@@ -326,7 +336,7 @@ $(SMOKE_PROJECTION_FRESHNESS): tests/smoke/projection-freshness/test_projection_
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOST_OBSERVATION_PROBE) $(SMOKE_CARRIER_COVERAGE_MATRIX) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOST_OBSERVATION_PROBE) $(SMOKE_CARRIER_COVERAGE_MATRIX) $(SMOKE_NON_PROCESS_CARRIER_SKELETONS) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -522,7 +532,19 @@ smoke-spine33f: $(SMOKE_CARRIER_COVERAGE_MATRIX) build-rust
 	@$(YAI_BIN) carrier coverage --family database | grep -F -- "execution_available: false" >/dev/null
 	@$(YAI_BIN) carrier coverage --family unknown | grep -F -- "controlled: unsupported" >/dev/null
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f
+smoke-spine33g: $(SMOKE_NON_PROCESS_CARRIER_SKELETONS) build-rust
+	@$(SMOKE_NON_PROCESS_CARRIER_SKELETONS)
+	@for family in network_http database repository_git service endpoint socket listener model_provider review; do \
+		$(YAI_BIN) carrier inspect $$family | grep -F -- "carrier: $$family" >/dev/null; \
+		$(YAI_BIN) carrier inspect $$family | grep -F -- "contract: carrier.v1" >/dev/null; \
+		$(YAI_BIN) carrier inspect $$family | grep -F -- "status: skeleton" >/dev/null; \
+		$(YAI_BIN) carrier inspect $$family | grep -F -- "execution_available: false" >/dev/null; \
+		$(YAI_BIN) carrier inspect $$family | grep -F -- "receipt_required: yes" >/dev/null; \
+	done
+	@$(YAI_BIN) carrier coverage --family database | grep -F -- "carrier_contract: carrier.v1" >/dev/null
+	@$(YAI_BIN) carrier coverage --family model_provider | grep -F -- "imported: skeleton" >/dev/null
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g
 
 check: check-layout check-docs build smoke
 

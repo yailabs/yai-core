@@ -1024,6 +1024,31 @@ network, repository, service, endpoint, socket, listener, model provider and
 review surfaces are visible here, but they are not executable carriers in this
 wave.
 
+## Non-Process Carrier Skeletons
+
+These are visible skeleton carriers. They do not execute effects. They exist so
+future operations have an explicit carrier surface and cannot bypass the
+coverage matrix.
+
+```bash
+yai carrier inspect database
+yai carrier inspect network_http
+yai carrier inspect repository_git
+yai carrier inspect model_provider
+yai carrier coverage --family database
+```
+
+Expected posture:
+
+```text
+contract: carrier.v1
+status: skeleton
+execution_available: false
+receipt_required: yes
+non_execution_reason:
+carrier_attempted: false
+```
+
 ## Shutdown
 
 ```bash

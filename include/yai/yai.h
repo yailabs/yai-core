@@ -30,6 +30,7 @@
 #include "yai/effect/carrier_mode.h"
 #include "yai/effect/carrier_outcome.h"
 #include "yai/effect/carrier_receipt.h"
+#include "yai/effect/carrier_skeleton.h"
 #include "yai/effect/dispatch.h"
 #include "yai/effect/dispatch_lane.h"
 #include "yai/effect/dispatch_multiplex.h"
