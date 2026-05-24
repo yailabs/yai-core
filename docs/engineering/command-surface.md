@@ -99,6 +99,8 @@ available. LMDB will add durable record lookup later; it will not replace
 | process carrier inspection | process carrier.v1 posture | `yai carrier inspect process` | `target/debug/yai carrier inspect process` | `process-carrier-signal-control.md`, `testing.md` |
 | process observe | process state observation | `yai process observe --pid <pid>` | `target/debug/yai process observe --pid $$` | `process-carrier-signal-control.md`, `testing.md` |
 | process signal dry-run | no-effect signal planning | `yai process signal --pid <pid> --signal TERM --dry-run` | `target/debug/yai process signal --pid $$ --signal TERM --dry-run` | `process-carrier-signal-control.md`, `testing.md` |
+| host process observation | independent host probe | `yai observe process --pid <pid>` | `target/debug/yai observe process --pid 1` | `host-observation-probe.md`, `testing.md` |
+| host process comparison | expected/observed mismatch view | `yai observe compare-process --pid <pid> --expected running|stopped` | `target/debug/yai observe compare-process --pid 1 --expected stopped` | `host-observation-probe.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -372,6 +374,31 @@ carrier_attempted: false
 outcome: blocked
 reason: unsafe_process_target
 ```
+
+SPINE.33E adds independent host observation:
+
+```text
+yai observe process --pid <pid>
+observation_target: process
+pid: <pid>
+result: matched|not_found|permission_denied|unknown
+observed_state: running|not_found|permission_denied|unknown
+enforcement: none
+observation_is_enforcement: false
+
+yai observe compare-process --pid <pid> --expected stopped
+observation_target: process
+expected_state: stopped
+observed_state: running
+result: mismatch
+enforcement: none
+observation_is_enforcement: false
+divergence_candidate: expected_stopped_but_running
+silent_repair: false
+```
+
+`yai process observe` is the process carrier surface. `yai observe process` is
+the independent host probe surface.
 
 ## Projection Commands
 

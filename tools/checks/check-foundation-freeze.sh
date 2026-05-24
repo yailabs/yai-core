@@ -45,6 +45,7 @@ file-header-standard.md
 filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md
+host-observation-probe.md
 lmdb-record-plane.md
 operation-dispatch-multiplex.md
 operational-extraction-contract.md

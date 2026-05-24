@@ -963,6 +963,29 @@ done
 yai engine summary --journal "$JOURNAL"
 ```
 
+## Host Observation / Process Probe
+
+SPINE.33E keeps host observation separate from carrier execution. These
+commands observe and compare state; they do not enforce, signal or repair.
+
+```bash
+yai observe process --pid 1
+yai observe compare-process --pid 1 --expected running
+yai observe compare-process --pid 1 --expected stopped
+```
+
+Expected posture:
+
+```text
+observation_target: process
+enforcement: none
+observation_is_enforcement: false
+result: matched
+result: mismatch
+divergence_candidate: expected_stopped_but_running
+silent_repair: false
+```
+
 ## Shutdown
 
 ```bash

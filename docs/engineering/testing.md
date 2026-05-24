@@ -762,6 +762,43 @@ expected_receipt: process_signal_receipt
 reason: unsafe_process_target
 ```
 
+## SPINE.33E Host Observation Probe Loop
+
+```text
+host probe process observation reports running/not_found/permission_denied
+observation says enforcement none
+observation_is_enforcement is false
+compare expected running can match
+compare expected stopped against running process yields mismatch
+mismatch yields divergence_candidate
+no silent repair
+```
+
+`tests/smoke/host-observation-probe/test_host_observation_probe.c` spawns a
+test-owned child process, observes it, compares expected/observed state, emits
+an `expected_stopped_but_running` divergence candidate, terminates the child
+safely and confirms stopped/not_found posture.
+
+```text
+make check-host-observation-probe
+make smoke-spine33e
+target/debug/yai observe process --pid 1
+target/debug/yai observe compare-process --pid 1 --expected running
+target/debug/yai observe compare-process --pid 1 --expected stopped
+```
+
+Expected key lines:
+
+```text
+observation_target: process
+enforcement: none
+observation_is_enforcement: false
+result: matched
+result: mismatch
+divergence_candidate: expected_stopped_but_running
+silent_repair: false
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

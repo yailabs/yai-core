@@ -67,6 +67,7 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 19-operation-dispatch-multiplex.md
 20-carrier-contract-v1.md
 21-process-carrier-signal-control.md
+22-host-observation-probe.md
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md

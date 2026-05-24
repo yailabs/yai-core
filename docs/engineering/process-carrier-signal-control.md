@@ -33,3 +33,7 @@ posture and real signals to arbitrary PIDs are blocked with
 Real signal execution is validated in C smoke only against a test-owned child
 process spawned by the smoke test. No process spawn API is exposed for user
 workflows in this wave.
+
+SPINE.33E adds a separate host probe. Process carrier observation remains a
+carrier surface; host probe observation is independent and reports
+`enforcement: none`.

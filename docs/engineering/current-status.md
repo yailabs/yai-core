@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33D Process Carrier v0 / Signal Control.
+Status: SPINE.33E Host Observation Probe v0 / Bypass Verification.
 
 ## Completed Foundation
 
@@ -39,7 +39,9 @@ adds no-execution carrier lanes and route plans so carrier families can be
 mapped to dispatch posture without executing effects. SPINE.33C defines
 carrier.v1 and adapts the filesystem carrier as the first minimal contract
 example. SPINE.33D adds process carrier v0 with test-owned signal control and
-blocked arbitrary PID behavior.
+blocked arbitrary PID behavior. SPINE.33E adds independent host observation
+probe v0, expected/observed process comparison and divergence candidate
+posture.
 
 Current:
 
@@ -67,6 +69,7 @@ SPINE.33A Control / Carrier Substrate Primitives completed.
 SPINE.33B Operation Dispatch + Multiplex v0 completed.
 SPINE.33C Carrier Contract v1 + Filesystem Adapter completed.
 SPINE.33D Process Carrier v0 / Signal Control completed.
+SPINE.33E Host Observation Probe v0 / Bypass Verification completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -74,7 +77,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.33E Host Observation Probe v0 / Bypass Check.
+SPINE.33F Carrier Receipt / Divergence Hardening.
 ```
 
 Foundation status:
@@ -106,6 +109,7 @@ LMDB record read/query surface active
 LMDB subject/receipt indexes active
 LMDB CLI manual validation active
 control/carrier substrate primitives active
+host observation probe active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -301,6 +305,11 @@ contract residue for carrier.v1 posture. No `yai-dev` source file was modified.
 SPINE.33D read-only inspected yai-dev command execution, process observation,
 stage/enforcement, recovery and watch-session residue for process carrier
 signal posture. No `yai-dev` source file was modified.
+
+SPINE.33E read-only inspected yai-dev process observer, runtime probe, watch
+plan/session, observation view, host-mediated/native probe and recovery residue
+for host observation and bypass mismatch posture. No `yai-dev` source file was
+modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

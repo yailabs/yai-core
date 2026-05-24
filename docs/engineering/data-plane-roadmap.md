@@ -62,7 +62,8 @@ SPINE.33A Control / Carrier Substrate Primitives                    done
 SPINE.33B Operation Dispatch + Multiplex v0                         done
 SPINE.33C Carrier Contract v1 + Filesystem Adapter                  done
 SPINE.33D Process Carrier v0 / Signal Control                      done
-SPINE.33E Host Observation Probe v0 / Bypass Check                 planned
+SPINE.33E Host Observation Probe v0 / Bypass Check                 done
+SPINE.33F Carrier Receipt / Divergence Hardening                   planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -348,6 +349,19 @@ unsafe target blocking
 
 Process signals are controlled effects, not shell commands. Real signal effects
 are limited to test-owned child processes in smoke/manual tests.
+
+SPINE.33E Host Observation Probe v0 / Bypass Verification adds:
+
+```text
+host probe process observation
+expected/observed comparison
+divergence_candidate posture
+yai observe process
+yai observe compare-process
+```
+
+Observation is not enforcement. A mismatch produces a divergence candidate and
+no silent repair.
 
 Source surface boundary:
 

@@ -84,3 +84,10 @@ signal failed -> failed
 
 Process receipts use `guarantee_mode: interposed` because YAI mediates the
 signal path in tests. This does not claim kernel-level embedded enforcement.
+
+SPINE.33E separates this from the independent host probe surface:
+
+```text
+yai process observe = process carrier surface
+yai observe process = independent host observation surface
+```

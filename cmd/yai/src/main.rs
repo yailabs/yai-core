@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33D Process Carrier v0 / Signal Control");
+    println!("status: SPINE.33E Host Observation Probe v0 / Bypass Verification");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -62,7 +62,7 @@ fn print_info() {
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
-    println!("carrier_substrate: carrier.v1 filesystem and process adapters; no arbitrary kill");
+    println!("carrier_substrate: carrier.v1 filesystem and process adapters; host probe v0");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -217,6 +217,8 @@ fn print_usage() {
     println!("       yai carrier inspect filesystem|process");
     println!("       yai process observe --pid <pid>");
     println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
+    println!("       yai observe process --pid <pid>");
+    println!("       yai observe compare-process --pid <pid> --expected running|stopped");
     println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -509,6 +511,14 @@ fn process_state_for_pid(pid: i32) -> &'static str {
     if result == 0 {
         return "running";
     }
+    if let Some(errno) = std::io::Error::last_os_error().raw_os_error() {
+        if errno == 3 {
+            return "not_found";
+        }
+        if errno == 1 {
+            return "permission_denied";
+        }
+    }
     let proc_path = PathBuf::from(format!("/proc/{pid}"));
     if PathBuf::from("/proc").is_dir() && !proc_path.exists() {
         return "not_found";
@@ -521,6 +531,28 @@ fn process_state_for_pid(_pid: i32) -> &'static str {
     "unknown"
 }
 
+fn observed_result_for_state(state: &str) -> &'static str {
+    match state {
+        "running" => "matched",
+        "not_found" => "not_found",
+        "permission_denied" => "permission_denied",
+        "unknown" => "unknown",
+        _ => "unknown",
+    }
+}
+
+fn expected_matches_observed(expected: &str, observed: &str) -> bool {
+    expected == observed || (expected == "stopped" && observed != "running")
+}
+
+fn divergence_candidate_for(expected: &str, observed: &str) -> &'static str {
+    match (expected, observed) {
+        ("stopped", "running") => "expected_stopped_but_running",
+        ("running", "not_found") => "expected_running_but_not_found",
+        _ => "unknown",
+    }
+}
+
 fn process_observe(args: &[String]) -> Result<(), String> {
     let pid = parse_pid_arg(args)?;
     let state = process_state_for_pid(pid);
@@ -531,6 +563,45 @@ fn process_observe(args: &[String]) -> Result<(), String> {
     println!("carrier_family: process");
     println!("outcome: observed");
     println!("receipt_required: yes");
+    Ok(())
+}
+
+fn observe_process(args: &[String]) -> Result<(), String> {
+    let pid = parse_pid_arg(args)?;
+    let state = process_state_for_pid(pid);
+    println!("observation_target: process");
+    println!("pid: {pid}");
+    println!("result: {}", observed_result_for_state(state));
+    println!("observed_state: {state}");
+    println!("enforcement: none");
+    println!("observation_is_enforcement: false");
+    Ok(())
+}
+
+fn observe_compare_process(args: &[String]) -> Result<(), String> {
+    let pid = parse_pid_arg(args)?;
+    let expected =
+        optional_arg(args, "--expected").ok_or_else(|| "--expected is required".to_string())?;
+    if expected != "running" && expected != "stopped" {
+        return Err("--expected must be running or stopped".to_string());
+    }
+    let observed = process_state_for_pid(pid);
+    let matched = expected_matches_observed(&expected, observed);
+    println!("observation_target: process");
+    println!("pid: {pid}");
+    println!("expected_state: {expected}");
+    println!("observed_state: {observed}");
+    println!("result: {}", if matched { "matched" } else { "mismatch" });
+    println!("enforcement: none");
+    println!("observation_is_enforcement: false");
+    if !matched {
+        println!(
+            "divergence_candidate: {}",
+            divergence_candidate_for(&expected, observed)
+        );
+        println!("severity: warning");
+        println!("silent_repair: false");
+    }
     Ok(())
 }
 
@@ -3760,6 +3831,18 @@ fn main() {
         }
         Some("process") if args.get(1).map(String::as_str) == Some("signal") => {
             if let Err(error) = process_signal(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("observe") if args.get(1).map(String::as_str) == Some("process") => {
+            if let Err(error) = observe_process(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("observe") if args.get(1).map(String::as_str) == Some("compare-process") => {
+            if let Err(error) = observe_compare_process(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

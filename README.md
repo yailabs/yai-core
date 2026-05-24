@@ -129,11 +129,15 @@ yai carrier inspect filesystem
 yai carrier inspect process
 yai process observe --pid $$
 yai process signal --pid $$ --signal TERM --dry-run
+yai observe process --pid $$
+yai observe compare-process --pid $$ --expected running
+yai observe compare-process --pid $$ --expected stopped
 ```
 
 These commands expose routing and the active-minimal filesystem carrier
-contract plus conservative process carrier inspection. They do not execute
-arbitrary process, network, database, repository, model or observation carriers.
+contract plus conservative process carrier inspection and independent host
+observation. They do not execute arbitrary process, network, database,
+repository, model or observation carriers.
 
 - `input/proposal`: candidate material from a model, provider, operator, tool,
   script, or system.
