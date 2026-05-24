@@ -225,6 +225,5 @@ unless maintainers explicitly scope the change.
 - Provider/backend mentions should not be read as tested provider breadth.
 - Data-plane ownership is still being consolidated between transitional C paths
   and the Rust engine.
-- No DS4 integration is claimed by this README.
 - Commercial or public launch use still requires legal review and explicit
   permission under the source-available posture.
