@@ -48,16 +48,16 @@ do
 done
 
 for old_path in \
-  '../yai/src/case/packs/*' \
-  '../yai/src/case/materialization/*' \
-  '../yai/src/case/policy/*' \
-  '../yai/src/case/scope/*' \
-  '../yai/src/capabilities/*' \
-  '../yai/src/agents/roles/*' \
-  '../yai/src/agents/composition/*' \
-  '../yai/src/models/frame/*' \
-  '../yai/src/substrate/sources/*' \
-  '../yai/src/substrate/views/*'
+  '../yai-dev/src/case/packs/*' \
+  '../yai-dev/src/case/materialization/*' \
+  '../yai-dev/src/case/policy/*' \
+  '../yai-dev/src/case/scope/*' \
+  '../yai-dev/src/capabilities/*' \
+  '../yai-dev/src/agents/roles/*' \
+  '../yai-dev/src/agents/composition/*' \
+  '../yai-dev/src/models/frame/*' \
+  '../yai-dev/src/substrate/sources/*' \
+  '../yai-dev/src/substrate/views/*'
 do
   if ! grep -q "SPINE.21	$old_path" "$INVENTORY"; then
     printf 'SPINE.21 extraction inventory row missing: %s\n' "$old_path" >&2

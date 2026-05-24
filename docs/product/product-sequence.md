@@ -2,7 +2,7 @@
 
 The commercial path follows the maturity of the core.
 
-The product begins as `yai-core`: a local AI operational control core.
+The product begins as `yai`: a local AI operational control core.
 `interfaces` and `console` are not the first product root. They are surfaces
 around the core: interfaces project primitive truth, and console gives humans an
 operator surface over projections and review flows.
@@ -26,7 +26,7 @@ the Console product UX, and it must not absorb operator command surfaces.
 ## Rule
 
 Do not sell the platform before the local core proves the loop.
-Do not make interfaces or console the product root before `yai-core` reaches a
+Do not make interfaces or console the product root before `yai` reaches a
 core milestone freeze.
 Do not lead with an agent framework before naked model behavior is measurable.
 

@@ -13,7 +13,7 @@ would preserve the old architectural confusion.
 
 ## Decision
 
-YAI Core is a local AI operational control core, not a cleaned-up copy of the
+YAI is a local AI operational control core, not a cleaned-up copy of the
 current `src/` tree.
 
 Future roots:

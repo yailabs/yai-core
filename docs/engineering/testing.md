@@ -103,7 +103,7 @@ operator surface for SPINE.20-SPINE.24.
 
 ```text
 make smoke-spine24a
-make print-install-paths PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
+make print-install-paths PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
 make check-pack-doctrine
 make check-foundation-freeze
 target/debug/yai --version
@@ -513,25 +513,25 @@ model carrier and background runtime execution.
 ## SPINE.22 Filesystem & Runtime Layout Freeze
 
 ```text
-rm -rf /tmp/yai-core-install-test /tmp/yai-core-home-test
-make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
-PATH=/tmp/yai-core-install-test/bin:$PATH yai --version
-PATH=/tmp/yai-core-install-test/bin:$PATH yai info
-YAI_HOME=/tmp/yai-core-home-test PATH=/tmp/yai-core-install-test/bin:$PATH yai doctor
-PATH=/tmp/yai-core-install-test/bin:$PATH yaid --version
-test -d /tmp/yai-core-home-test/run
-test -d /tmp/yai-core-home-test/store
-test -d /tmp/yai-core-home-test/log
-test -d /tmp/yai-core-home-test/tmp
-test -d /tmp/yai-core-home-test/cases
-test -d /tmp/yai-core-home-test/sockets
-test -d /tmp/yai-core-home-test/config
-PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock
-PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon run-minimum-loop --socket /tmp/yai-core-home-test/run/yaid.sock
-PATH=/tmp/yai-core-install-test/bin:$PATH yai daemon shutdown --socket /tmp/yai-core-home-test/run/yaid.sock
-make uninstall-local PREFIX=/tmp/yai-core-install-test
-test ! -e /tmp/yai-core-install-test/bin/yai
-test ! -e /tmp/yai-core-install-test/bin/yaid
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai --version
+PATH=/tmp/yai-install-test/bin:$PATH yai info
+YAI_HOME=/tmp/yai-home-test PATH=/tmp/yai-install-test/bin:$PATH yai doctor
+PATH=/tmp/yai-install-test/bin:$PATH yaid --version
+test -d /tmp/yai-home-test/run
+test -d /tmp/yai-home-test/store
+test -d /tmp/yai-home-test/log
+test -d /tmp/yai-home-test/tmp
+test -d /tmp/yai-home-test/cases
+test -d /tmp/yai-home-test/sockets
+test -d /tmp/yai-home-test/config
+PATH=/tmp/yai-install-test/bin:$PATH yai daemon status --socket /tmp/yai-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock
+make uninstall-local PREFIX=/tmp/yai-install-test
+test ! -e /tmp/yai-install-test/bin/yai
+test ! -e /tmp/yai-install-test/bin/yaid
 ```
 
 SPINE.22 freezes local runtime layout validation. Uninstall removes installed

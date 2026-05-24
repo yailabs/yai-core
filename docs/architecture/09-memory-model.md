@@ -150,9 +150,9 @@ recall or widen memory scope.
 
 ```text
 system/memory -> split: system/engine_bridge + engine/yai-engine/src/memory
-../yai/src/substrate/memory/* -> concept evidence only
-../yai/src/lineage/* -> graph-derived memory evidence only
-../yai/src/analytics/* -> memory/reconcile/index evidence or ai-environment
+../yai-dev/src/substrate/memory/* -> concept evidence only
+../yai-dev/src/lineage/* -> graph-derived memory evidence only
+../yai-dev/src/analytics/* -> memory/reconcile/index evidence or yai-dev
 ```
 
 No memory implementation moves in NEW.13.

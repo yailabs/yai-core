@@ -2,7 +2,7 @@
 
 Status: SPINE.4 canonical observability/evaluation doctrine.
 
-YAI Core does not only control actions. It measures whether the case remains
+YAI does not only control actions. It measures whether the case remains
 knowable enough for controlled action.
 
 The Operational Observability & Evaluation Plane measures the quality of the

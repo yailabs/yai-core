@@ -1,5 +1,5 @@
 # internal
 
-Private implementation helpers for YAI Core.
+Private implementation helpers for YAI.
 
 No public ABI headers belong here.

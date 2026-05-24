@@ -1,6 +1,6 @@
 # Extraction Plan
 
-The old `yai` repository is a concept mine, not a folder migration source.
+The `yai-dev` repository is a concept mine, not a folder migration source.
 
 ## Rule
 
@@ -10,23 +10,23 @@ do not copy old source
 do not recreate old roots
 update extraction inventory
 classify residue
-externalize non-core material to future ai-environment
+externalize non-core material to yai-dev lab
 ```
 
 Every relevant SPINE.N implementation wave must include:
 
 ```text
-Old-yai audit
+yai-dev audit
 Extraction decision table
-YAI-core implementation
-Old-yai residue normalization
+YAI implementation
+yai-dev residue normalization
 Residue handling
 Inventory update
 ```
 
-A wave is not complete until the corresponding old-yai residue has been
-classified. If the concept already exists in old `yai`, the wave must absorb
-it, rewrite it, split it, externalize it to future `ai-environment`, quarantine
+A wave is not complete until the corresponding yai-dev residue has been
+classified. If the concept already exists in `yai-dev`, the wave must absorb
+it, rewrite it, split it, externalize it to `yai-dev` lab, quarantine
 it, mark it `compat_only`, mark it `delete_later`, leave it untouched with a
 reason, or explicitly defer it.
 
@@ -85,63 +85,63 @@ complete
 Data and memory waves:
 
 ```text
-../yai/src/substrate/store/*
-../yai/src/substrate/records/*
-../yai/src/substrate/graph/*
-../yai/src/substrate/indexes/*
-../yai/src/substrate/query/*
-../yai/src/substrate/memory/*
-../yai/src/substrate/views/*
-../yai/src/substrate/signals/*
-../yai/src/lineage/*
-../yai/src/analytics/*
+../yai-dev/src/substrate/store/*
+../yai-dev/src/substrate/records/*
+../yai-dev/src/substrate/graph/*
+../yai-dev/src/substrate/indexes/*
+../yai-dev/src/substrate/query/*
+../yai-dev/src/substrate/memory/*
+../yai-dev/src/substrate/views/*
+../yai-dev/src/substrate/signals/*
+../yai-dev/src/lineage/*
+../yai-dev/src/analytics/*
 ```
 
 Model/provider/policy waves:
 
 ```text
-../yai/src/models/*
-../yai/src/runtime/provider/*
-../yai/src/case/policy/*
-../yai/src/agents/grounding/*
+../yai-dev/src/models/*
+../yai-dev/src/runtime/provider/*
+../yai-dev/src/case/policy/*
+../yai-dev/src/agents/grounding/*
 ```
 
 Host/carrier waves:
 
 ```text
-../yai/src/runtime/execution/*
-../yai/src/runtime/carriers/*
-../yai/src/runtime/observation/*
-../yai/src/capabilities/mcp/*
-../yai/src/capabilities/external/*
+../yai-dev/src/runtime/execution/*
+../yai-dev/src/runtime/carriers/*
+../yai-dev/src/runtime/observation/*
+../yai-dev/src/capabilities/mcp/*
+../yai-dev/src/capabilities/external/*
 ```
 
 Case/session/thread waves:
 
 ```text
-../yai/src/case/identity/*
-../yai/src/case/materialization/*
-../yai/src/case/attachments/*
-../yai/src/case/subjects/*
-../yai/src/case/surface/*
-../yai/src/case/continuity/*
-../yai/src/runtime/sessions/*
+../yai-dev/src/case/identity/*
+../yai-dev/src/case/materialization/*
+../yai-dev/src/case/attachments/*
+../yai-dev/src/case/subjects/*
+../yai-dev/src/case/surface/*
+../yai-dev/src/case/continuity/*
+../yai-dev/src/runtime/sessions/*
 ```
 
 SPINE.21 Pack Materialization Doctrine must read:
 
 ```text
-../yai/src/case/packs/*
-../yai/src/case/materialization/*
-../yai/src/case/policy/*
-../yai/src/case/subjects/*
-../yai/src/case/scope/*
-../yai/src/capabilities/*
-../yai/src/agents/roles/*
-../yai/src/agents/composition/*
-../yai/src/models/frame/*
-../yai/src/substrate/sources/*
-../yai/src/substrate/views/*
+../yai-dev/src/case/packs/*
+../yai-dev/src/case/materialization/*
+../yai-dev/src/case/policy/*
+../yai-dev/src/case/subjects/*
+../yai-dev/src/case/scope/*
+../yai-dev/src/capabilities/*
+../yai-dev/src/agents/roles/*
+../yai-dev/src/agents/composition/*
+../yai-dev/src/models/frame/*
+../yai-dev/src/substrate/sources/*
+../yai-dev/src/substrate/views/*
 ```
 
 SPINE.21 must classify:
@@ -151,9 +151,9 @@ case/packs              -> pack/materialization
 case/materialization    -> case_world/pack_materialization
 case/policy             -> control/policy_pack
 case/scope              -> pack/domain_scope
-capabilities            -> ai-environment or pack/tools, split
-agents/roles            -> ai-environment or pack/actors, externalize
-agents/composition      -> ai-environment, externalize
+capabilities            -> yai-dev or pack/tools, split
+agents/roles            -> yai-dev or pack/actors, externalize
+agents/composition      -> yai-dev, externalize
 models/frame            -> pack/projection/model_frame
 substrate/sources       -> pack/materials
 substrate/views         -> pack/projections
@@ -162,15 +162,15 @@ substrate/views         -> pack/projections
 ## Non-Core Material
 
 Agent frameworks, scenario harnesses, release rehearsal, provider labs and QA
-engines belong to future `ai-environment` unless a SPINE.N wave explicitly
-imports a primitive residue shape into `yai-core`.
+engines belong to `yai-dev` lab unless a SPINE.N wave explicitly
+imports a primitive residue shape into `yai`.
 
 ## Dirty Worktree Rule
 
-Before modifying old `yai`, run:
+Before modifying `yai-dev`, run:
 
 ```text
-git -C ../yai status --short
+git -C ../yai-dev status --short
 ```
 
 If the wave would touch a path with user or unknown changes, do not edit that
@@ -182,8 +182,8 @@ non-conflicting inventory/docs update only if safe.
 If both repos are modified, keep commit boundaries separate:
 
 ```text
-yai-core implementation commit
-old-yai residue normalization commit
+yai implementation commit
+yai-dev residue normalization commit
 ```
 
-Do not mix unrelated old-yai cleanup into a yai-core commit.
+Do not mix unrelated yai-dev cleanup into a yai commit.

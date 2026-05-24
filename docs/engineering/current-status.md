@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.28 Hot State Freeze.
+Status: SPINE.28A Repository Identity Cutover.
 
 ## Completed Foundation
 
@@ -20,7 +20,9 @@ SPINE.25 links that snapshot to case session, case world and case context
 lifecycle. SPINE.26 defines the projection freshness policy used by model,
 operator, audit and debug consumers. SPINE.27 stabilizes the manual CLI surface
 for hot state, doctor diagnostics and projection freshness inspection. SPINE.28
-freezes the hot-state block before LMDB record plane work begins.
+freezes the hot-state block before LMDB record plane work begins. SPINE.28A
+renames the canonical core repository to `yai` and the concept-mine/lab
+repository to `yai-dev`.
 
 Current:
 
@@ -36,13 +38,14 @@ SPINE.24A Retroactive Command Surface Recovery completed.
 SPINE.25 Hot State Case Session / Context Integration completed.
 SPINE.26 Hot State Projection Freshness Integration completed.
 SPINE.27 Hot State CLI + Manual Validation completed.
-SPINE.28 Hot State Freeze current.
+SPINE.28 Hot State Freeze completed.
+SPINE.28A Repository Identity Cutover current.
 ```
 
 Next:
 
 ```text
-SPINE.29 LMDB Record Plane Doctrine + Schema.
+SPINE.28B Internal Source Surface Cleanup.
 ```
 
 Foundation status:
@@ -64,6 +67,7 @@ projection freshness policy active
 consumer-aware model/operator freshness posture active
 hot-state CLI manual validation active
 hot-state block frozen
+repository identity cutover active
 ```
 
 ## Current Layout
@@ -153,32 +157,45 @@ LMDB begins at SPINE.29 as the durable record lookup plane. It will not replace
 hot state. Hot state remains the live liveness/freshness surface and may be
 rebuilt or refreshed from durable residue.
 
-Old `yai` residue for SPINE.21 was read-only inspected. The old `yai` worktree
-has an existing dirty `README.md`, so no old-yai files were modified. The
-extraction inventory records pack/materialization classifications.
+Repository identity:
 
-Old-yai residue for SPINE.23 was read-only inspected and classified in the
-extraction inventory. No old-yai source file was modified.
+```text
+YAI/yai     = canonical local AI operational control system
+YAI/yai-dev = development lab, concept mine, harness and scenario workspace
+```
 
-Old-yai residue for SPINE.24 was read-only inspected and classified in the
-extraction inventory. No old-yai source file was modified.
+The local directory rename is complete. Remote URLs are intentionally left
+unchanged until the GitHub repositories are renamed or confirmed.
 
-Old-yai command/runtime residue for SPINE.24A was read-only inspected and
-classified in the extraction inventory. No old-yai source file was modified.
+`yai-dev` residue for SPINE.21 was read-only inspected. No yai-dev source file
+was modified in that wave. The extraction inventory records
+pack/materialization classifications.
 
-Old-yai residue for SPINE.25 was read-only inspected and classified in the
-extraction inventory. No old-yai source file was modified.
+yai-dev residue for SPINE.23 was read-only inspected and classified in the
+extraction inventory. No yai-dev source file was modified.
 
-Old-yai residue for SPINE.26 was read-only inspected and classified in the
-extraction inventory. No old-yai source file was modified.
+yai-dev residue for SPINE.24 was read-only inspected and classified in the
+extraction inventory. No yai-dev source file was modified.
 
-Old-yai command/runtime residue for SPINE.27 was read-only inspected and
-classified in the extraction inventory. No old-yai source file was modified.
+yai-dev command/runtime residue for SPINE.24A was read-only inspected and
+classified in the extraction inventory. No yai-dev source file was modified.
 
-Old-yai hot-state/session/view residue for SPINE.28 was verified against
-SPINE.23-SPINE.27 classifications. No old-yai source file was modified.
+yai-dev residue for SPINE.25 was read-only inspected and classified in the
+extraction inventory. No yai-dev source file was modified.
 
-Future implementation waves must classify corresponding old-yai residue. A
+yai-dev residue for SPINE.26 was read-only inspected and classified in the
+extraction inventory. No yai-dev source file was modified.
+
+yai-dev command/runtime residue for SPINE.27 was read-only inspected and
+classified in the extraction inventory. No yai-dev source file was modified.
+
+yai-dev hot-state/session/view residue for SPINE.28 was verified against
+SPINE.23-SPINE.27 classifications. No yai-dev source file was modified.
+
+SPINE.28A updates active repo identity. `yai-dev` has a role note and remains
+the source for wave-coupled concept mining.
+
+Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,
 externalized, quarantined, marked compatibility-only, marked delete-later, left
 untouched with a reason, or explicitly deferred.

@@ -1,4 +1,4 @@
-//! Sys crate marker for the YAI Core engine FFI.
+//! Sys crate marker for the YAI engine FFI.
 //!
 //! NEW.10 exposes Rust engine functions through opaque handles, explicit
 //! alloc/free, integer status codes and schema-versioned byte records.

@@ -48,7 +48,7 @@ SPINE.20  local install layout: yai + yaid
 ```
 
 NEW.15 makes `cmd/yai` the canonical Rust technical command location. It does
-not make `yai-core` own Console UX.
+not make `yai` own Console UX.
 NEW.16 makes `cmd/yaid` the canonical C daemon entrypoint location and
 `system/daemon` the daemon support location.
 NEW.17 makes `system/` the active C implementation root. NEW.18 creates
@@ -59,7 +59,7 @@ support while Rust engine ownership matures.
 ## Non-goals
 
 Do not move source files in SPINE.1. Do not rename repos. Do not create install
-targets. Do not migrate old `yai` folders into `yai-core`.
+targets. Do not migrate `yai-dev` folders into `yai`.
 
 ## Related docs
 

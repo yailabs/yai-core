@@ -18,13 +18,13 @@ fast-path index and doctrine view. It does not replace the atomic ADRs.
 Maintain this file as the fast-path index for the current ADR set while keeping
 the numbered ADRs as the atomic records.
 
-SPINE.0 adds the four-repo doctrine: `yai-core` is the canonical new core,
-old `yai` is transition concept mine and future `ai-environment` material,
+SPINE.0 adds the four-repo doctrine: `yai` is the canonical new core,
+`yai-dev` is transition concept mine and `yai-dev` lab material,
 `interfaces` projects primitive truth through API/SDK/conformance, and `console`
 is an operator client over projections and interfaces.
 
-SPINE.0 also adopts wave-coupled extraction. Old `yai` is not ignored until a
-final cleanup wave. Each `yai-core` implementation wave that overlaps an old
+SPINE.0 also adopts wave-coupled extraction. `yai-dev` is not ignored until a
+final cleanup wave. Each `yai` implementation wave that overlaps an old
 concept must audit the corresponding old material, extract concepts only,
 implement the new primitive in the new grammar, update the extraction inventory
 and classify residue.
@@ -53,7 +53,7 @@ contexts operate on loaded case state. `case_ref`, `subject_ref` and receipt
 refs remain in persisted residue and boundary messages, but active runtime work
 uses `case_session` and `case_context`.
 
-SPINE.4 adds the Operational Observability & Evaluation Plane. YAI Core does
+SPINE.4 adds the Operational Observability & Evaluation Plane. YAI does
 not only control actions; it measures whether the case remains knowable enough
 for controlled action. The canonical quality vector is Case View Quality
 (`CVQ`).
@@ -114,15 +114,15 @@ observability/evaluation measures case-view quality
 Core truth exists through case-bound records, subject bindings, attempts,
 decisions, receipts, graph relations, memory and projections. Case-world
 material precedes subject behavior. The legacy `yai` repository is a concept
-mine. The `yai-core` repository is shaped by primitives, protocols and
+mine. The `yai` repository is shaped by primitives, protocols and
 receipts, not by old folder names.
 
 Four-repo ownership:
 
 ```text
-yai-core   owns core primitives and local operational control
-yai        remains transition concept mine until ai-environment canonicalization
-interfaces consumes yai-core truth and publishes schemas, SDK and conformance
+yai   owns core primitives and local operational control
+yai        remains transition concept mine until yai-dev canonicalization
+interfaces consumes yai truth and publishes schemas, SDK and conformance
 console    consumes projections and interfaces for human operator UX
 ```
 
@@ -136,14 +136,14 @@ CONSOLE.CANON.*
 PLATFORM.LATER.*
 ```
 
-Wave-coupled extraction keeps old `yai` useful without allowing old roots to
-re-grow inside `yai-core`. Useful non-core material is assigned to future
-`ai-environment` with `future_repo=ai-environment` and `action=externalize`.
+Wave-coupled extraction keeps `yai-dev` useful without allowing old roots to
+re-grow inside `yai`. Useful non-core material is assigned to future
+`yai-dev` with `future_repo=yai-dev` and `action=externalize`.
 
 Data-spine doctrine:
 
 ```text
-YAI Core is residue-first.
+YAI is residue-first.
 Store is not memory.
 Graph is not lineage.
 Index/query is not RAG.
@@ -222,7 +222,7 @@ do not implement NEW.1 from this file alone
 do not treat the old src roots as migration targets
 do not rename yai during SPINE.0
 do not let interfaces or console define core semantics independently
-do not postpone all old-yai residue handling to a final cleanup pass
+do not postpone all yai-dev residue handling to a final cleanup pass
 do not begin core AI behavior validation with an agent framework
 do not turn L0 provider scouting into canonical core validation
 ```

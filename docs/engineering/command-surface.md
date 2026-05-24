@@ -1,6 +1,6 @@
 # Command Surface
 
-This is the active operator command index for `yai-core`.
+This is the active operator command index for `yai`.
 
 Rule:
 
@@ -20,10 +20,10 @@ and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 |---|---|---|---|---|
 | `YAI_HOME` | resolved runtime home | `yai doctor` | `target/debug/yai doctor` | `filesystem-target.md`, `testing.md` |
 | runtime dirs | resolved `run/store/log/tmp/cases/sockets/config` | `yai doctor` | `target/debug/yai doctor` | `filesystem-target.md` |
-| install paths | Makefile install map | `make print-install-paths` | `make print-install-paths PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test` | `filesystem-target.md` |
-| local install | binaries plus runtime dirs | `make install-local` | `make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test` | `testing.md` |
-| local uninstall | remove installed binaries only | `make uninstall-local` | `make uninstall-local PREFIX=/tmp/yai-core-install-test` | `testing.md` |
-| local doctor | installed binary/path diagnostic | `make doctor-local` | `make doctor-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test` | `testing.md` |
+| install paths | Makefile install map | `make print-install-paths` | `make print-install-paths PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test` | `filesystem-target.md` |
+| local install | binaries plus runtime dirs | `make install-local` | `make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test` | `testing.md` |
+| local uninstall | remove installed binaries only | `make uninstall-local` | `make uninstall-local PREFIX=/tmp/yai-install-test` | `testing.md` |
+| local doctor | installed binary/path diagnostic | `make doctor-local` | `make doctor-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test` | `testing.md` |
 
 `yai doctor` is the canonical runtime path view. There is no separate
 `yai runtime paths` command in SPINE.24A.
@@ -32,20 +32,20 @@ and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 
 | Primitive | View | Command | Manual test | Docs |
 |---|---|---|---|---|
-| `yaid` binary | daemon version | `yaid --version` | `/tmp/yai-core-install-test/bin/yaid --version` | `testing.md` |
-| local socket | daemon foreground endpoint | `yaid --socket <path> --foreground` | `yaid --socket /tmp/yai-core-home-test/run/yaid.sock --foreground` | `filesystem-target.md` |
-| daemon liveness | status response | `yai daemon status --socket <path>` | `yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock` | `testing.md` |
-| daemon metadata | daemon info response | `yai daemon info --socket <path>` | `yai daemon info --socket /tmp/yai-core-home-test/run/yaid.sock` | `testing.md` |
-| minimum loop | daemon-backed control loop | `yai daemon run-minimum-loop --socket <path>` | `yai daemon run-minimum-loop --socket /tmp/yai-core-home-test/run/yaid.sock` | `testing.md` |
-| filesystem loop | daemon-backed filesystem loop | `yai daemon run-filesystem-loop --socket <path>` | `yai daemon run-filesystem-loop --socket /tmp/yai-core-home-test/run/yaid.sock` | `testing.md` |
-| shutdown | daemon stop request | `yai daemon shutdown --socket <path>` | `yai daemon shutdown --socket /tmp/yai-core-home-test/run/yaid.sock` | `testing.md` |
+| `yaid` binary | daemon version | `yaid --version` | `/tmp/yai-install-test/bin/yaid --version` | `testing.md` |
+| local socket | daemon foreground endpoint | `yaid --socket <path> --foreground` | `yaid --socket /tmp/yai-home-test/run/yaid.sock --foreground` | `filesystem-target.md` |
+| daemon liveness | status response | `yai daemon status --socket <path>` | `yai daemon status --socket /tmp/yai-home-test/run/yaid.sock` | `testing.md` |
+| daemon metadata | daemon info response | `yai daemon info --socket <path>` | `yai daemon info --socket /tmp/yai-home-test/run/yaid.sock` | `testing.md` |
+| minimum loop | daemon-backed control loop | `yai daemon run-minimum-loop --socket <path>` | `yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock` | `testing.md` |
+| filesystem loop | daemon-backed filesystem loop | `yai daemon run-filesystem-loop --socket <path>` | `yai daemon run-filesystem-loop --socket /tmp/yai-home-test/run/yaid.sock` | `testing.md` |
+| shutdown | daemon stop request | `yai daemon shutdown --socket <path>` | `yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock` | `testing.md` |
 
 ## Hot State Commands
 
 | Primitive | View | Command | Manual test | Docs |
 |---|---|---|---|---|
 | hot state | live cache status | `yai hot status` | `target/debug/yai hot status` | `hot-state-plane.md`, `data-plane-roadmap.md` |
-| hot snapshot path | snapshot source | `yai hot status` | `YAI_HOME=/tmp/yai-core-home-test yai hot status` | `filesystem-target.md` |
+| hot snapshot path | snapshot source | `yai hot status` | `YAI_HOME=/tmp/yai-home-test yai hot status` | `filesystem-target.md` |
 | snapshot schema | `yai.hot_state.v1` validation | `yai hot status` | valid daemon snapshot after `run-minimum-loop` | `hot-state-plane.md` |
 | missing snapshot | unavailable reason | `yai hot status` | `rm -f $YAI_HOME/run/hot-state.json; yai hot status` | `testing.md` |
 | invalid snapshot | unavailable reason | `yai hot status` | `printf '{broken\n' > $YAI_HOME/run/hot-state.json; yai hot status` | `testing.md` |
@@ -136,16 +136,16 @@ therefore through `make check`.
 Manual install matrix:
 
 ```sh
-rm -rf /tmp/yai-core-install-test /tmp/yai-core-home-test
-make install-local PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
-PATH=/tmp/yai-core-install-test/bin:$PATH yai --version
-PATH=/tmp/yai-core-install-test/bin:$PATH yai info
-PATH=/tmp/yai-core-install-test/bin:$PATH yai doctor
-PATH=/tmp/yai-core-install-test/bin:$PATH yai hot status
-/tmp/yai-core-install-test/bin/yaid --version
-make uninstall-local PREFIX=/tmp/yai-core-install-test
-test ! -e /tmp/yai-core-install-test/bin/yai
-test ! -e /tmp/yai-core-install-test/bin/yaid
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai --version
+PATH=/tmp/yai-install-test/bin:$PATH yai info
+PATH=/tmp/yai-install-test/bin:$PATH yai doctor
+PATH=/tmp/yai-install-test/bin:$PATH yai hot status
+/tmp/yai-install-test/bin/yaid --version
+make uninstall-local PREFIX=/tmp/yai-install-test
+test ! -e /tmp/yai-install-test/bin/yai
+test ! -e /tmp/yai-install-test/bin/yaid
 ```
 
 `uninstall-local` removes installed binaries. It does not delete `YAI_HOME`.
@@ -155,22 +155,22 @@ test ! -e /tmp/yai-core-install-test/bin/yaid
 Daemon and hot-state recipe:
 
 ```sh
-mkdir -p /tmp/yai-core-home-test/run
-/tmp/yai-core-install-test/bin/yaid \
-  --socket /tmp/yai-core-home-test/run/yaid.sock \
+mkdir -p /tmp/yai-home-test/run
+/tmp/yai-install-test/bin/yaid \
+  --socket /tmp/yai-home-test/run/yaid.sock \
   --foreground &
 DAEMON_PID=$!
 
-PATH=/tmp/yai-core-install-test/bin:$PATH \
-  yai daemon status --socket /tmp/yai-core-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH \
+  yai daemon status --socket /tmp/yai-home-test/run/yaid.sock
 
-PATH=/tmp/yai-core-install-test/bin:$PATH \
-  yai daemon run-minimum-loop --socket /tmp/yai-core-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH \
+  yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock
 
-PATH=/tmp/yai-core-install-test/bin:$PATH yai hot status
+PATH=/tmp/yai-install-test/bin:$PATH yai hot status
 
-PATH=/tmp/yai-core-install-test/bin:$PATH \
-  yai daemon shutdown --socket /tmp/yai-core-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH \
+  yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock
 
 wait $DAEMON_PID
 ```
@@ -179,7 +179,7 @@ Expected key output:
 
 ```text
 hot_state: active
-snapshot: /tmp/yai-core-home-test/run/hot-state.json
+snapshot: /tmp/yai-home-test/run/hot-state.json
 schema: yai.hot_state.v1
 case_session: active
 case_context: active
@@ -190,11 +190,11 @@ freshness_policy: usable
 Snapshot edge cases:
 
 ```sh
-rm -f /tmp/yai-core-home-test/run/hot-state.json
-PATH=/tmp/yai-core-install-test/bin:$PATH yai hot status
+rm -f /tmp/yai-home-test/run/hot-state.json
+PATH=/tmp/yai-install-test/bin:$PATH yai hot status
 
-printf '{broken\n' > /tmp/yai-core-home-test/run/hot-state.json
-PATH=/tmp/yai-core-install-test/bin:$PATH yai hot status
+printf '{broken\n' > /tmp/yai-home-test/run/hot-state.json
+PATH=/tmp/yai-install-test/bin:$PATH yai hot status
 ```
 
 Expected key output:

@@ -7,50 +7,50 @@ This contract applies to every future implementation wave.
 Core rule:
 
 ```text
-A wave is not complete until the corresponding old-yai residue has been classified.
+A wave is not complete until the corresponding yai-dev residue has been classified.
 ```
 
-If the concept already exists in old `yai`, the wave must either absorb it,
-rewrite it, split it, externalize it to future `ai-environment`, quarantine it,
+If the concept already exists in `yai-dev`, the wave must either absorb it,
+rewrite it, split it, externalize it to `yai-dev` lab, quarantine it,
 mark it `compat_only`, mark it `delete_later`, or explicitly defer it. Leaving
 old material ambiguous is not allowed.
 
 ## Required Operating Sequence
 
 ```text
-OLD-YAI READ
+YAI-DEV READ
 EXTRACTION
-YAI-CORE IMPLEMENTATION
-OLD-YAI RESIDUE NORMALIZATION
+YAI IMPLEMENTATION
+YAI-DEV RESIDUE NORMALIZATION
 INVENTORY UPDATE
 VALIDATION
 ```
 
-An implementation wave must not be only additive inside `yai-core` when the
-touched concept already exists in old `yai`.
+An implementation wave must not be only additive inside `yai` when the
+touched concept already exists in `yai-dev`.
 
 ## Repository Scope
 
 Primary repo:
 
 ```text
-yai-core
+yai
 ```
 
 Secondary repo when the wave requires it:
 
 ```text
-../yai
+../yai-dev
 ```
 
 Do not touch `interfaces` or `console` unless the delivery explicitly says so.
 
 ## Dirty Worktree Protection
 
-Before touching old `yai`, run:
+Before touching `yai-dev`, run:
 
 ```text
-git -C ../yai status --short
+git -C ../yai-dev status --short
 ```
 
 If there are user or unknown changes in paths the wave would modify:
@@ -68,7 +68,7 @@ Every relevant wave must include an extraction decision table with:
 ```text
 old path
 extracted concept
-target yai-core root
+target yai root
 action
 future_repo
 status
@@ -92,8 +92,8 @@ leave_untouched
 Allowed future repos:
 
 ```text
-yai-core
-ai-environment
+yai
+yai-dev
 interfaces
 console
 none
@@ -113,9 +113,9 @@ deferred
 complete
 ```
 
-## Old-Yai Residue Normalization
+## YAI-dev Residue Normalization
 
-Useful old material absorbed into `yai-core` must be normalized in old `yai` as
+Useful old material absorbed into `yai` must be normalized in `yai-dev` as
 one of:
 
 ```text
@@ -132,7 +132,7 @@ Material that is agentic, experimental, harness-oriented, provider-lab,
 QA-lab, scenario-lab, workflow-lab or model-lab should usually be assigned to:
 
 ```text
-future_repo=ai-environment
+future_repo=yai-dev
 action=externalize
 ```
 
@@ -144,15 +144,15 @@ Do not delete silently. Deletion requires an inventory row and explicit
 If a wave changes both repos, prefer separate commits:
 
 ```text
-commit 1: yai-core implementation
-commit 2: old-yai residue normalization
+commit 1: yai implementation
+commit 2: yai-dev residue normalization
 ```
 
-Do not hide old-yai cleanup inside a yai-core commit.
+Do not hide yai-dev cleanup inside a yai commit.
 
 ## Lineage
 
-Every yai-core primitive derived from old material should name its source
+Every yai primitive derived from old material should name its source
 lineage when applicable:
 
 ```text
@@ -168,8 +168,8 @@ the new grammar.
 
 ```text
 no blind folder migration
-no old root recreation inside yai-core
-no unrelated old-yai cleanup
+no old root recreation inside yai
+no unrelated yai-dev cleanup
 no interface or console edits unless explicitly scoped
 no mixed unrelated commits
 ```

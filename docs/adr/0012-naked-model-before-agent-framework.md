@@ -7,7 +7,7 @@ rebase.
 
 ## Context
 
-YAI Core needs model/provider behavior evidence, but agent frameworks bring
+YAI needs model/provider behavior evidence, but agent frameworks bring
 their own planning loops, tool abstractions, memory assumptions and provider
 semantics. If the first AI experiment starts at the agent layer, the core cannot
 tell which behavior came from model output, projection shape, policy text,
@@ -25,7 +25,7 @@ framework integration.
 ```text
 model is treated as a case-bound subject
 model invocation/output enters through projection, claim, receipt and memory
-agent frameworks are later ai-environment/adapters
+agent frameworks are later yai-dev/adapters
 ```
 
 L0 provider scouting can begin immediately outside the core. It can generate
@@ -64,8 +64,8 @@ implement model runner
 implement provider registry
 create model carrier
 create policy packs
-create ai-environment repo
-touch old yai
+create yai-dev repo
+touch yai-dev
 touch interfaces
 touch console
 ```

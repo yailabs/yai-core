@@ -110,8 +110,8 @@ backend.
 
 ```text
 system/reconcile -> split: system/engine_bridge + engine/yai-engine/src/reconcile
-../yai/src/substrate/signals/* -> reconcile or memory concept evidence
-../yai/src/analytics/* -> reconcile/index/memory evidence or ai-environment
+../yai-dev/src/substrate/signals/* -> reconcile or memory concept evidence
+../yai-dev/src/analytics/* -> reconcile/index/memory evidence or yai-dev
 ```
 
 No reconciliation implementation moves in NEW.13.

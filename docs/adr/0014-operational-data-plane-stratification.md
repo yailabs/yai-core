@@ -12,7 +12,7 @@ plane map before backend rules are tightened.
 
 ## Decision
 
-YAI Core uses stratified operational data planes:
+YAI uses stratified operational data planes:
 
 ```text
 hot/shared memory

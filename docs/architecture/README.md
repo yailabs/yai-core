@@ -1,6 +1,6 @@
 # Architecture
 
-This folder defines the canonical architecture of the future YAI Core.
+This folder defines the canonical architecture of the future YAI.
 
 It must stay technical and operational. Commercial positioning belongs in
 `../product/`. Extraction details and filesystem plans belong in
@@ -69,4 +69,4 @@ repo-split.md
 
 ## Non-Goals
 
-YAI Core is not an agent framework, workflow engine, TUI, assistant, cloud platform, compliance certificate, or replacement for existing AI stacks.
+YAI is not an agent framework, workflow engine, TUI, assistant, cloud platform, compliance certificate, or replacement for existing AI stacks.

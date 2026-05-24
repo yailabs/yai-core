@@ -6,7 +6,7 @@ spine and operational data-plane notes, which are archived under
 
 ## Doctrine
 
-YAI Core is residue-first.
+YAI is residue-first.
 
 ```text
 journal = replay/audit

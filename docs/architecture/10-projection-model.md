@@ -272,8 +272,8 @@ bridges without turning projection into UI state.
 
 ```text
 system/projection -> split: system/engine_bridge + engine/yai-engine/src/projection
-../yai/src/substrate/views/* -> engine/projection concept evidence
-../yai/src/case/surface/* -> projection/console future, not system UX
+../yai-dev/src/substrate/views/* -> engine/projection concept evidence
+../yai-dev/src/case/surface/* -> projection/console future, not system UX
 ```
 
 No projection implementation moves in NEW.13.

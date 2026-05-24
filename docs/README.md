@@ -1,28 +1,29 @@
-# YAI Core Documentation Spine
+# YAI Documentation Spine
 
 Status: DOC.CORE.0 canonical documentation freeze.
 
-This folder is the documentation spine for this NEW.0 `yai-core` skeleton.
+This folder is the active documentation spine for `yai`, the canonical local
+AI operational control system.
 
-Not created in NEW.0:
-
-```text
-ai-environment/
-cloud/team/
-runtime loop
-production carriers
-Rust crates
-```
-
-Existing sibling repos observed in the workspace:
+Workspace siblings:
 
 ```text
-console/
+yai-dev/
 interfaces/
+studio/
+console/
 ```
 
-This package does not move old source files, change `interfaces`, change
-`console`, or refactor the legacy `src/` tree.
+Not owned by this repository:
+
+```text
+cloud/team/
+public SDK truth
+product client UX
+```
+
+This package does not move `yai-dev` source files, change `interfaces`, change
+`studio`, change `console`, or migrate lab roots into the core.
 
 DOC.NEW.0 created the canonical package. DOC.NEW.1 turned the core outline into
 machine contracts. DOC.CORE.0 freezes naming, cross-links, guard checks and

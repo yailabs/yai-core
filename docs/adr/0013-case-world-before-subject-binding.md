@@ -13,7 +13,7 @@ than accessory.
 
 ## Decision
 
-YAI Core constructs case-world material before subject behavior.
+YAI constructs case-world material before subject behavior.
 
 ```text
 ingest -> case_world -> case_domain -> case_attachment -> case_binding -> subject

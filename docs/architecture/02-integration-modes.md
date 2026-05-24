@@ -1,6 +1,6 @@
 # Integration Modes
 
-YAI Core supports six integration/control modes. The same primitives can exist
+YAI supports six integration/control modes. The same primitives can exist
 in every mode, but the guarantee is different. Product, projection and audit
 language must preserve the mode label.
 

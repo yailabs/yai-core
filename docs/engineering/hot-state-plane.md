@@ -175,6 +175,6 @@ receipt_to_model_visible_ms
 
 ## Old-YAI Extraction
 
-SPINE.23 mines old runtime/session/working/view concepts from old `yai`
+SPINE.23 mines old runtime/session/working/view concepts from `yai-dev`
 read-only. The extracted semantics are active runtime state, session state,
 working context, pending operation state, view freshness and continuity.

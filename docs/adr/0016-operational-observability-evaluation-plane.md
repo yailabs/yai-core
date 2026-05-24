@@ -15,7 +15,7 @@ enough for controlled action.
 
 ## Decision
 
-YAI Core treats Operational Observability & Evaluation as a cross-cutting
+YAI treats Operational Observability & Evaluation as a cross-cutting
 plane.
 
 It derives diagnostic, temporal, epistemic and behavioral facts from

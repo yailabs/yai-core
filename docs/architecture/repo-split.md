@@ -2,74 +2,73 @@
 
 The YAI workspace is split by ownership, not by UI or product packaging.
 
-## Current Transition Workspace
+## Current Workspace
 
 ```text
 YAI/
-├── yai/        # old/current concept mine, future ai-environment material
-├── yai-core/   # canonical local AI operational control core
-├── interfaces/ # projection/API/SDK/conformance
+├── yai/        # canonical local AI operational control system
+├── yai-dev/    # development lab, concept mine, harness and scenario workspace
+├── interfaces/ # contracts, APIs, SDK and conformance
+├── studio/     # product client workspace, not touched by this repo
 └── console/    # operator terminal/client UX
 ```
 
-`yai-core` is a sibling to `yai`, not nested inside `yai`.
-
-## Canonical Future Workspace
-
-```text
-YAI/
-├── yai-core/
-├── ai-environment/
-├── interfaces/
-└── console/
-```
-
-`yai` is not renamed during SPINE.0. It is declared transition concept mine and
-future `ai-environment` source. A physical rename is a later dedicated wave.
+`yai` is the product/core system. `yai-dev` is the workshop and lab: old
+concepts, experiments, provider labs, agentic QA, scenarios, workflows and
+release rehearsal material live there until a SPINE wave explicitly extracts
+or normalizes them.
 
 ## Ownership
 
 ```text
-yai-core   = canonical new core and local AI operational control core
-yai        = old/current repo; concept mine and future ai-environment material
-interfaces = projection/API/SDK/conformance over yai-core primitive truth
-console    = operator client / TUI / human UX over projections and interfaces
+yai       = canonical local AI operational control system
+yai-dev   = development lab, concept mine, harness and workshop
+interfaces= contracts/API/SDK/conformance over yai truth
+studio    = official product client surface
+console   = operator client / TUI / human UX over projections and interfaces
 ```
 
-`yai` is not the future core and must not be migrated folder-by-folder into
-`yai-core`. `interfaces` must not define core semantics independently.
-`console` must not own daemon, store, control, memory or carrier semantics.
+`yai-dev` is not migrated folder-by-folder into `yai`. Useful material is
+mined by explicit SPINE waves, rewritten in the current grammar and classified
+in the extraction inventory.
+
+`interfaces`, `studio` and `console` do not own daemon, store, control, memory,
+carrier, case-world or projection truth.
 
 ## Order
 
 ```text
 core first
-interfaces second
-console later
-platform last
+interfaces contracts second
+studio/client surfaces downstream
+console/operator UX downstream
+platform later
 ```
 
-`interfaces` projects protocol and SDK truth from core operations. `console`
-consumes operations and projections. Neither owns core semantics.
-
-## Canonical Wave Families
+## Wave Families
 
 ```text
-CORE.NEW.*       yai-core implementation
-ENV.CANON.*      yai to ai-environment canonicalization
-INTF.CANON.*     interfaces canonicalization against yai-core
-CONSOLE.CANON.*  console canonicalization against yai-core/interfaces
+SPINE.*          yai implementation
+DEV.*            yai-dev lab, harness and residue normalization
+INTF.SPINE.*     interfaces canonicalization against yai
+STUDIO.SPINE.*   studio product client over interfaces/yai
+CONSOLE.CANON.*  console canonicalization against projections/interfaces
 PLATFORM.LATER.* cloud/team/platform deferred line
 ```
 
-The canonical roadmap lives in:
+The active `yai` roadmap lives in:
 
 ```text
 ../engineering/four-repo-roadmap.md
 ```
 
+The interface and studio roadmap lives in:
+
+```text
+../../interfaces/docs/intf-studio-spine.md
+```
+
 ## Non-Goal
 
-Do not recreate `yai-core` as a subfolder of `yai`. Do not keep two active copies
-of New Core docs. Do not create `ai-environment`, rename `yai`, or make
-`yai-core` depend on old `yai` in the roadmap rebase wave.
+Do not recreate `yai-dev` roots inside `yai`. Do not keep two active copies of
+core docs. Do not make `yai` depend on `yai-dev`.

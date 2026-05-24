@@ -1,11 +1,11 @@
 # YAI Import Map
 
 Purpose: track small, spine-safe imports from the broader `yai` repository into
-`yai-core`.
+`yai`.
 
 ## Rule
 
-`yai` is a source of mature vocabulary and experiments. `yai-core` only imports
+`yai` is a source of mature vocabulary and experiments. `yai` only imports
 pieces that can become canonical local-control primitives under:
 
 ```text
@@ -30,7 +30,7 @@ case operational binding
 projection and authority posture
 ```
 
-Implemented in `yai-core` as:
+Implemented in `yai` as:
 
 ```text
 include/yai/case/case_world.h

@@ -35,8 +35,8 @@ unsafe extern "C" {
 }
 
 fn print_info() {
-    println!("yai: technical YAI Core control command");
-    println!("status: SPINE.27 Hot State CLI + Manual Validation");
+    println!("yai: technical YAI control command");
+    println!("status: SPINE.28A Repository Identity Cutover");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");

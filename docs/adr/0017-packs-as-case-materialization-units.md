@@ -6,13 +6,13 @@ Accepted for SPINE.21.
 
 ## Context
 
-Pack-like material exists in old `yai` as case packs, case materialization,
+Pack-like material exists in `yai-dev` as case packs, case materialization,
 case policy, domain scope, model frame packs, source material, projections,
 agent roles and capability bundles. Without a canonical boundary, this material
 could collapse into marketplace product language, prompt bundles, templates,
 agent execution or loose folders.
 
-YAI Core needs the concept before hot state, record, graph, fact, projection
+YAI needs the concept before hot state, record, graph, fact, projection
 and memory planes mature, because those planes must know that pack material is
 case-world material.
 
@@ -59,7 +59,7 @@ no pack runtime
 no pack registry backend
 no cloud sync
 no agent pack execution
-no old-yai source copy
+no yai-dev source copy
 ```
 
 ## Related Docs

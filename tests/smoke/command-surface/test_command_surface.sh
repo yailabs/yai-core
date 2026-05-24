@@ -2,8 +2,8 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../../.." && pwd)
-YAI_HOME=${YAI_HOME:-"/tmp/yai-core-spine24a-home-$$"}
-PREFIX=${PREFIX:-"/tmp/yai-core-spine24a-install-$$"}
+YAI_HOME=${YAI_HOME:-"/tmp/yai-spine24a-home-$$"}
+PREFIX=${PREFIX:-"/tmp/yai-spine24a-install-$$"}
 export YAI_HOME
 
 YAI_BIN="$ROOT/target/debug/yai"
@@ -46,7 +46,7 @@ printf 'command_surface:doctrine-checks ok\n'
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "yai: technical YAI Core control command"
+require_line "$info" "yai: technical YAI control command"
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_status: unavailable"
 printf 'command_surface:runtime-info ok\n'

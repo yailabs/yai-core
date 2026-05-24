@@ -100,7 +100,7 @@ Not everything attached has authority.
 model interpretation is not case truth
 terminal interface is not execution authority
 provider is not policy truth
-ai-environment process is not core owner
+yai-dev process is not core owner
 ```
 
 A provider, model, terminal, operator, filesystem sandbox and policy pack can

@@ -89,8 +89,8 @@ classifies the remaining C data logic as `keep_temporarily` versus Rust
 NEW.14 moved only the Rust engine crates:
 
 ```text
-crates/yai-core-engine     -> engine/yai-engine
-crates/yai-core-engine-sys -> engine/yai-engine-ffi
+crates/yai-engine     -> engine/yai-engine
+crates/yai-engine-sys -> engine/yai-engine-ffi
 ```
 
 NEW.15 then moved the command to `cmd/yai` and removed `crates/`. The C ABI, C

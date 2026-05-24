@@ -9,12 +9,12 @@ if [ ! -d "$ROOT/docs" ]; then
 fi
 
 if [ -e "$ROOT/Documentation" ]; then
-  printf 'legacy Documentation tree found inside yai-core: %s/Documentation\n' "$ROOT" >&2
+  printf 'legacy Documentation tree found inside yai: %s/Documentation\n' "$ROOT" >&2
   exit 1
 fi
 
 if [ -e "$ROOT/docs/internal/architecture/core-spine/new-core/docs" ]; then
-  printf 'old active docs copy still exists inside yai-core docs/internal\n' >&2
+  printf 'old active docs copy still exists inside yai docs/internal\n' >&2
   exit 1
 fi
 

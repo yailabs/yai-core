@@ -4,7 +4,7 @@ Status: accepted.
 
 ## Decision
 
-YAI Core treats hot state as the live operational cache of a case session.
+YAI treats hot state as the live operational cache of a case session.
 
 Hot state is not truth. It may be rebuilt from durable residue and exists to
 reduce world-to-view latency, track projection freshness and expose current

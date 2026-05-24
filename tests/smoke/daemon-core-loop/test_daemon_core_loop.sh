@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-run_dir="/tmp/yai-core-daemon-core-loop-$$"
+run_dir="/tmp/yai-daemon-core-loop-$$"
 socket_path="$run_dir/yaid.sock"
 log_path="$run_dir/yaid.log"
 

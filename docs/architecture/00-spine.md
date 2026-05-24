@@ -1,8 +1,8 @@
-# YAI Core Spine
+# YAI Spine
 
 Status: SPINE.4 canonical spine.
 
-YAI Core is a local AI operational control core.
+YAI is a local AI operational control core.
 
 It builds case worlds, binds operational subjects to cases, captures operation
 attempts, materializes policy into machine gates, emits control decisions,
@@ -14,7 +14,7 @@ behavior, active runtime operates through case sessions and contexts, projection
 is a live versioned cognitive view, and operational observability/evaluation is
 now a first-class plane.
 
-Core truth is residue-based. YAI Core owns operational truth only through
+Core truth is residue-based. YAI owns operational truth only through
 case-bound records, case-world material, subject bindings, attempts, decisions,
 receipts, graph relations, memory and projections. It does not own external
 system truth unless the external system binds or reports through YAI protocols.
@@ -199,7 +199,7 @@ them, it is outside the core doctrine even if it uses the right names.
 | memory | residue has been consolidated under scope | repo write pattern remembered for case |
 | projection | live controlled view is served to a consumer | audit packet or model context |
 
-YAI Core does not convert claims into receipts by wording. Claims become
+YAI does not convert claims into receipts by wording. Claims become
 evidence only through ingest, binding, provenance and store records.
 
 ## Evidence, Receipt And Memory
@@ -217,7 +217,7 @@ paths and decisions. It is not raw storage and not a context pack.
 ## Data Spine Doctrine
 
 ```text
-YAI Core is residue-first.
+YAI is residue-first.
 Store is not memory.
 Graph is not lineage.
 Index/query is not RAG.
@@ -283,7 +283,7 @@ cost
 
 ## Control Guarantee Model
 
-YAI Core must never overclaim control.
+YAI must never overclaim control.
 
 | Mode | Core can claim | Core cannot claim |
 |---|---|---|
@@ -300,13 +300,16 @@ and product language must preserve the guarantee label.
 ## Repository Split
 
 ```text
-yai-core   = canonical local AI operational control core
-yai        = old/current concept mine, future ai-environment material
-interfaces = projection/API/SDK/conformance
-console    = operator terminal/client UX
+yai       = canonical local AI operational control system
+yai-dev   = development lab, concept mine, harness and scenario workspace
+interfaces= contracts/API/SDK/conformance
+studio    = official product client surface
+console   = operator terminal/client UX
 ```
 
-`yai-core` is a workspace sibling to `yai`, not nested inside `yai`.
+`yai` is a workspace sibling to `yai-dev`, not nested inside it. `yai-dev`
+does not own core truth; it provides material to extract, rewrite, classify or
+externalize through explicit SPINE waves.
 
 ## Implementation Order
 
@@ -321,6 +324,8 @@ NEW.19: Makefile/build/guards realignment
 SPINE.20: local runtime layout
 SPINE.21: pack materialization doctrine
 SPINE.23-SPINE.80: hot, record, graph, fact, projection, memory, reconcile and observability data planes
+SPINE.28A: repository identity cutover to yai + yai-dev
+SPINE.28B: internal source surface cleanup
 Rust operational data spine behind C FFI
 ```
 
@@ -339,7 +344,7 @@ query projection
 
 ## Non-Goals
 
-YAI Core is not an agent framework, workflow engine, product CLI, TUI, general
+YAI is not an agent framework, workflow engine, product CLI, TUI, general
 assistant, cloud platform, model provider, SDK surface, compliance certificate
 or dashboard.
 
@@ -347,5 +352,5 @@ Do not migrate old roots as folders. Do not make Console or Interfaces the
 product root for core truth.
 
 SPINE.3R must not implement a model runner, provider registry, model carrier,
-policy packs, backend databases, shared memory or `ai-environment` repo. It
-must not touch old `yai`, `interfaces` or `console`.
+policy packs, backend databases or shared memory. Future waves must not touch
+`yai-dev`, `interfaces`, `studio` or `console` unless explicitly scoped.

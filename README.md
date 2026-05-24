@@ -1,5 +1,5 @@
 <!--
-YAI Core
+YAI
 
 Copyright (c) 2026 Francesco Maiomascio.
 All rights reserved.
@@ -29,7 +29,7 @@ a commercial license.
   ![License](https://img.shields.io/badge/license-community%20source-374151?style=flat&labelColor=1f2937)
 </div>
 
-YAI Core is a local AI operational control core.
+YAI is a local AI operational control core.
 
 It binds operational subjects into cases, governs attempted operations through
 machine policy gates, records receipts for effects, derives operational memory,
@@ -39,9 +39,9 @@ systems.
 YAI is not another intelligence layer.
 YAI is the operational control layer around intelligence.
 
-## What YAI Core Is
+## What YAI Is
 
-YAI Core owns the local machine-level control and operational-memory engine for
+YAI owns the local machine-level control and operational-memory engine for
 AI-mediated work.
 
 It treats work as a bounded operational domain, called a case. Inside a case,
@@ -63,9 +63,9 @@ carriers, structured receipts, durable records, graph-backed reconstruction,
 operational memory, controlled projections, divergence reconciliation and case
 view quality.
 
-## What YAI Core Is Not
+## What YAI Is Not
 
-YAI Core is not:
+YAI is not:
 
 * an agent framework;
 * a workflow engine;
@@ -76,10 +76,10 @@ YAI Core is not:
 
 It does not own external agents, business workflows, model providers, cloud
 platform behavior, public SDK surfaces, business systems, or client
-applications. Those systems may integrate with YAI Core, but the repository's
+applications. Those systems may integrate with YAI, but the repository's
 identity remains the local control engine.
 
-YAI Core is also not a generic policy engine, generic audit logger, or runtime
+YAI is also not a generic policy engine, generic audit logger, or runtime
 monitor. Policy, auditability, and observation matter because they are part of
 operational control, not because the core is reducible to any one of them.
 
@@ -92,7 +92,7 @@ context -> model -> tool -> observation -> memory
 ```
 
 That loop is useful, but it makes the model conversation look like the system
-boundary. YAI Core moves the boundary to operational control:
+boundary. YAI moves the boundary to operational control:
 
 ```text
 case world -> residue -> data planes -> live projection -> control -> receipt -> graph/memory/reconcile -> observability -> next action
@@ -208,7 +208,7 @@ command.
 
 ## Integration Modes
 
-YAI Core integrates with surrounding systems through four control postures.
+YAI integrates with surrounding systems through four control postures.
 
 `observed`
 : YAI sees an operation after, alongside, or around execution. It can bind the
@@ -248,7 +248,7 @@ candidates.
 The model does not own authority, execution, receipts, operational memory,
 continuity, policy enforcement, or case truth.
 
-Stronger models make YAI Core more useful, not obsolete. Better inference
+Stronger models make YAI more useful, not obsolete. Better inference
 improves classification, planning, summarization, projection, review, and
 recovery, but operational authority remains in the control layer around
 intelligence.
@@ -284,7 +284,7 @@ controlled operation and structured residue.
 
 Policy in a prompt is not enforcement.
 
-YAI Core materializes policy into machine control through policy sources,
+YAI materializes policy into machine control through policy sources,
 policy material, policy claims, policy rules, case bindings, gates, decisions,
 obligations, receipts, and policy memory.
 
@@ -347,7 +347,7 @@ the current case projection; transcript records remain audit material, not raw
 chat memory.
 
 SPINE.6A compresses active engineering docs. SPINE.6B makes future
-implementation waves bidirectional: if the touched concept exists in old `yai`,
+implementation waves bidirectional: if the touched concept exists in `yai-dev`,
 the wave must extract or rewrite useful material, classify the old residue,
 update inventory and keep commit boundaries clear. SPINE.20 adds local runtime
 layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
@@ -365,7 +365,7 @@ projection and memory backends begin.
 
 Earlier or adjacent concepts are absorbed into the control spine:
 
-* agents -> external subjects and AI-environment participants;
+* agents -> external subjects and YAI-dev participants;
 * capabilities -> op effect classes and control gates;
 * models -> model subjects, model carriers, projections, and model output claims;
 * runtime -> daemon and effect carriers;

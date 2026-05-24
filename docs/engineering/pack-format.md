@@ -21,7 +21,7 @@ pack/
 └── tests/
 ```
 
-This shape is a format contract, not a source tree to create in `yai-core`
+This shape is a format contract, not a source tree to create in `yai`
 during SPINE.21.
 
 ## Minimal Manifest Example
@@ -98,7 +98,7 @@ retirement
 
 `identity` includes stable id and display name. `kind`, `owner`, `version` and
 `status` define classification and lifecycle posture. `compatibility` declares
-the minimum YAI Core version and any later schema compatibility.
+the minimum YAI version and any later schema compatibility.
 
 `domains`, `materials`, `policies`, `projection_rules`, `authority_scopes`,
 `procedures`, `templates`, `output_schemas`, `memory_seeds`, `actors`, `tools`

@@ -9,7 +9,7 @@ carrier, control and ABI boundary under target `system/`.
 Doctrine:
 
 ```text
-YAI Core is residue-first.
+YAI is residue-first.
 Store is not memory.
 Graph is not lineage.
 Index/query is not RAG.

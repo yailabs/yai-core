@@ -59,7 +59,7 @@ software release, audit/evidence, research and coding.
 : Stable demonstration pack used for docs, tests, demos and conformance.
 
 `experimental`
-: Lab material, usually future ai-environment material, not stable core pack.
+: Lab material, usually `yai-dev` lab material, not stable core pack.
 
 `compat`
 : Historical or legacy pack-like material retained only for transition.
@@ -77,8 +77,8 @@ pack.procedure     -> future case_procedure / procedure_record
 pack.template      -> case_attachment or projection material
 pack.output_schema -> projection/output contract
 pack.memory_seed   -> memory seed / future memory candidate
-pack.actor         -> future subject/actor posture, usually ai-environment if agentic
-pack.tool          -> future tool/carrier/ai-environment material
+pack.actor         -> future subject/actor posture, usually yai-dev if agentic
+pack.tool          -> future tool/carrier/yai-dev material
 pack.fixture       -> observability/evaluation fixture
 ```
 
@@ -197,6 +197,6 @@ no pack registry backend
 no pack runtime
 no pack execution engine
 no agent pack runtime
-no copying old yai packs wholesale
-no pack directories under yai-core source in SPINE.21
+no copying yai-dev packs wholesale
+no pack directories under yai source in SPINE.21
 ```

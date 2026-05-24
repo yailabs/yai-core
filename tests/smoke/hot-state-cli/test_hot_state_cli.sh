@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../../.." && pwd)
-YAI_HOME=${YAI_HOME:-"/tmp/yai-core-spine27-home-$$"}
+YAI_HOME=${YAI_HOME:-"/tmp/yai-spine27-home-$$"}
 export YAI_HOME
 
 YAI_BIN="$ROOT/target/debug/yai"
@@ -34,7 +34,7 @@ mkdir -p "$YAI_HOME/run"
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.27 Hot State CLI + Manual Validation"
+require_line "$info" "status: SPINE.28A Repository Identity Cutover"
 
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_path: $HOT"

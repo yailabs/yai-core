@@ -1,8 +1,8 @@
-# Three-Repo Roadmap
+# Repository Roadmap
 
 This is the active engineering roadmap for the current YAI core transition.
 
-From SPINE.20 onward, `yai-core` uses one linear progression. Macro names are
+From SPINE.20 onward, `yai` uses one linear progression. Macro names are
 labels inside a wave, not a second calendar.
 
 The `interfaces` repo is no longer governed inside this roadmap. Its canonical
@@ -25,8 +25,8 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.28 hot state freeze. | SPINE.29 LMDB Record Plane Doctrine + Schema. |
-| `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.28A repository identity cutover. | SPINE.28B Internal Source Surface Cleanup. |
+| `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
 `interfaces` has been removed from this roadmap because it now owns a dedicated
@@ -48,7 +48,7 @@ projection, query, Rust engine integration, daemon IPC, daemon-backed loop,
 target layout, Rust/C source movement, engine bridge split, case-world records,
 live case context, observability doctrine, interaction threads and build/guard
 realignment. SPINE.6A compressed engineering docs. SPINE.6B made
-bidirectional old-yai extraction and residue normalization mandatory for future
+bidirectional yai-dev extraction and residue normalization mandatory for future
 implementation waves. SPINE.20 established the local `YAI_HOME` runtime layout
 and install/uninstall/doctor targets. SPINE.20A rebased the active roadmap so
 pack materialization becomes the next canonical spine step. SPINE.21 made
@@ -69,10 +69,12 @@ SPINE.26 makes projection freshness consumer-aware: model/agent views require
 stricter refresh posture than operator, audit and debug views. SPINE.27
 stabilizes the manual command surface for `yai hot status`, `yai doctor` and
 `yai projection inspect`. SPINE.28 freezes hot state as a non-authoritative live
-cache before durable LMDB record-plane work begins.
+cache before durable LMDB record-plane work begins. SPINE.28A renames the
+canonical core repository to `yai` and the old concept-mine repository to
+`yai-dev`.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.29.
+delivery is SPINE.28B.
 
 ## Canonical Macro Labels
 
@@ -94,17 +96,17 @@ These labels describe impact. They are not numbered workstreams.
 
 ## Operational Wave Contract
 
-Future implementation waves operate on both `yai-core` and corresponding old
-`yai` residue when the touched concept already exists there.
+Future implementation waves operate on both `yai` and corresponding `yai-dev`
+residue when the touched concept already exists there.
 
 Required rule:
 
 ```text
-A wave is not complete until the corresponding old-yai residue has been classified.
+A wave is not complete until the corresponding yai-dev residue has been classified.
 ```
 
 Each relevant SPINE.N must read the old files, extract or rewrite useful
-concepts into the new grammar, update inventory, normalize old-yai residue and
+concepts into the new grammar, update inventory, normalize yai-dev residue and
 validate. Details live in `wave-template.md` and
 `operational-extraction-contract.md`.
 
@@ -165,6 +167,8 @@ SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         done
 SPINE.28  Hot State Freeze                                          done
+SPINE.28A Repository Identity Cutover                                done
+SPINE.28B Internal Source Surface Cleanup                            planned
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
 SPINE.30  LMDB Record Write Path                                    planned
@@ -268,7 +272,7 @@ SPINE.115 Protocol Fixtures from Core Evidence                      planned
 SPINE.116 Interfaces Handoff Prep                                   planned
 SPINE.117 Core Conformance Harness                                  planned
 SPINE.118 Console Projection Handoff Prep                           planned
-SPINE.119 AI-Environment Harness Prep                               planned
+SPINE.119 YAI-dev Harness Prep                                      planned
 SPINE.120 Local Core Milestone Freeze                               planned
 ```
 
@@ -285,11 +289,11 @@ changes no command surface, it must say so explicitly.
 
 ## External Repo Tracks
 
-These tracks remain later and downstream from this `yai-core` roadmap:
+These tracks remain later and downstream from this `yai` roadmap:
 
 | Track | Meaning |
 |---|---|
-| ENV.CANON | Turn old `yai` into future `ai-environment` concept mine, lab and harness. |
+| DEV | Keep `yai-dev` as lab, workshop, concept mine, provider/scenario harness and release rehearsal space. |
 | CONSOLE.CANON | Align operator UX to projections and interfaces. |
 
 The `interfaces` track is no longer listed here. It is governed by the dedicated
@@ -301,8 +305,8 @@ docs/intf-studio-spine.md
 
 ## Non-Goals
 
-This roadmap does not rename repos, create `ai-environment`, touch `console`,
-implement data planes, or make archived docs active again.
+This roadmap does not touch `interfaces`, `console` or `yai-studio`, implement
+data planes, or make archived docs active again.
 
 It also does not govern the `interfaces` roadmap anymore. The `interfaces`
 repo now owns its own INTF + STUDIO spine at:

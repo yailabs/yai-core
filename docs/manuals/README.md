@@ -1,7 +1,7 @@
 # Manuals
 
 This folder contains operator-facing runbooks for validating and debugging
-`yai-core` behavior.
+`yai` behavior.
 
 Manuals do not define architecture, protocol contracts or product claims. They
 describe concrete local procedures for running the current core implementation

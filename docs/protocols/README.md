@@ -1,6 +1,6 @@
 # Protocols
 
-This folder defines first protocol shapes for the future YAI Core. These are not final public API contracts. Public API, SDK and conformance truth will belong to `interfaces`.
+This folder defines first protocol shapes for the future YAI. These are not final public API contracts. Public API, SDK and conformance truth will belong to `interfaces`.
 
 Each protocol must preserve the machine spine:
 

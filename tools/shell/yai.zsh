@@ -1,4 +1,4 @@
-# yai-core zsh integration.
+# yai zsh integration.
 #
 # Source this file once in a terminal. It keeps the normal `yai ...` command
 # shape, while allowing `yai case enter ...` to update the parent shell prompt.

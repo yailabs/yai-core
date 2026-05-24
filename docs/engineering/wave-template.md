@@ -9,8 +9,8 @@ Purpose:
   What this wave changes and why.
 
 Repos touched:
-  yai-core
-  old yai if residue normalization is required
+  yai
+  yai-dev if residue normalization is required
 
 Spine coverage:
   WORLD / RESIDUE / DATA / VIEW / CONTROL / MEMORY / RECONCILE / HOST / MODEL / OBSERVABILITY / EXTERNAL
@@ -21,7 +21,7 @@ Scope:
 Non-goals:
   Explicit exclusions.
 
-Old-yai source audit:
+yai-dev source audit:
   exact paths inspected
   files read
   concepts extracted
@@ -32,13 +32,13 @@ Old-yai source audit:
 Extraction decision table:
   old path
   extracted concept
-  target yai-core root
+  target yai root
   action: absorb / rewrite / split / externalize / quarantine / compat_only / delete_later / migrated_concept / leave_untouched
-  future_repo: yai-core / ai-environment / interfaces / console / none
+  future_repo: yai / yai-dev / interfaces / console / none
   status: planned / inspected / imported / rewritten / externalized / archived / blocked_by_dirty_worktree / deferred / complete
   notes
 
-YAI-core implementation:
+YAI implementation:
   new files
   changed files
   moved files
@@ -73,16 +73,16 @@ Command Surface:
   Rule:
     If no commands changed, state explicitly: no command surface change.
 
-Old-yai residue normalization:
+yai-dev residue normalization:
   what was marked historical
   what was moved to archive
-  what was documented as externalized to ai-environment
+  what was documented as externalized to yai-dev
   what was left temporarily and why
   what must not be touched because user/other changes exist
 
 Inventory update:
   docs/internal/extraction-inventory.tsv rows changed
-  old-yai inventory rows changed if that repo is touched
+  yai-dev inventory rows changed if that repo is touched
 
 Case-world impact:
   domains
@@ -150,15 +150,15 @@ Validation:
   known caveats
 
 Commit boundaries:
-  yai-core commit
-  yai cleanup commit if old yai was modified
+  yai commit
+  yai-dev cleanup commit if yai-dev was modified
   no mixed unrelated changes
 ```
 
 Operational rule:
 
 ```text
-A wave is not complete until the corresponding old-yai residue has been classified.
+A wave is not complete until the corresponding yai-dev residue has been classified.
 ```
 
 Detailed rules live in `operational-extraction-contract.md`.

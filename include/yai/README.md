@@ -1,3 +1,3 @@
 # yai
 
-Public C ABI include root for YAI Core.
+Public C ABI include root for YAI.

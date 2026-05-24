@@ -16,4 +16,4 @@ what memory is safe to carry forward
 
 Existing agent frameworks tend to own planning, tool routing or context assembly. They usually do not provide a local, case-bound control core that can sit beside multiple stacks and produce durable operational evidence.
 
-YAI Core addresses this gap by making attempts, decisions, effects, receipts, graph edges, memory and projections first-class machine objects.
+YAI addresses this gap by making attempts, decisions, effects, receipts, graph edges, memory and projections first-class machine objects.

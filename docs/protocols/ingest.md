@@ -1,6 +1,6 @@
 # Ingest Protocol
 
-Purpose: normalize material entering YAI Core.
+Purpose: normalize material entering YAI.
 
 ## Inputs
 

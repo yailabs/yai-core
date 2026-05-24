@@ -63,11 +63,11 @@ if ! grep -q 'SPINE.27 Hot State CLI + Manual Validation' "$ROOT/docs/engineerin
 fi
 
 for term in \
-  'Old-yai source audit' \
+  'yai-dev source audit' \
   'Extraction decision table' \
-  'YAI-core implementation' \
+  'YAI implementation' \
   'Command Surface' \
-  'Old-yai residue normalization' \
+  'yai-dev residue normalization' \
   'Inventory update' \
   'Case-world impact' \
   'Data-plane impact' \
@@ -84,7 +84,7 @@ do
   fi
 done
 
-if ! grep -q 'An implementation wave must not be only additive inside `yai-core`' "$ROOT/docs/engineering/operational-extraction-contract.md"; then
+if ! grep -q 'An implementation wave must not be only additive inside `yai`' "$ROOT/docs/engineering/operational-extraction-contract.md"; then
   printf 'operational extraction additive-only guard missing\n' >&2
   exit 1
 fi

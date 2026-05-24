@@ -141,7 +141,7 @@ of certified compliance.
 
 | Step | Product | Buyer | Proof |
 |---|---|---|---|
-| 1 | YAI Core Developer / Local | developers and AI engineering teams | local attempt -> decision -> receipt loop |
+| 1 | YAI Developer / Local | developers and AI engineering teams | local attempt -> decision -> receipt loop |
 | 2 | YAI Integration Kit | teams with existing agents/tools/workflows | adapters speak core primitives |
 | 3 | Operational Memory / Audit Pack | teams not ready for enforcement | observed mode reconstruction and gaps |
 | 4 | Professional / Team | teams running repeated AI workflows | multi-case memory, policy packs, exports |

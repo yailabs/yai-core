@@ -1,3 +1,3 @@
 # proto
 
-Schema and fixture skeleton for YAI Core protocol records.
+Schema and fixture skeleton for YAI protocol records.

@@ -1,9 +1,9 @@
 # Wedges
 
 Initial wedges must be close enough to test and broad enough to prove the model.
-All wedges start from `yai-core` as the control core. `interfaces` packages the
+All wedges start from `yai` as the control core. `interfaces` packages the
 projection/API/SDK boundary around the wedge, and `console` provides operator
-inspection. The old `yai` repo is source material for environment scenarios, not
+inspection. The `yai-dev` repo is source material for environment scenarios, not
 the product root.
 
 ## Agentic Coding / Local AI Workstation

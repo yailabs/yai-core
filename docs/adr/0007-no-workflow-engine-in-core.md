@@ -6,14 +6,14 @@ Accepted for DOC.NEW.1.
 
 ## Context
 
-Workflow systems can produce important operational effects, but making YAI Core
+Workflow systems can produce important operational effects, but making YAI
 own workflow execution would turn the core into an orchestrator. The core must
 control and reconstruct attempts around workflows without becoming the workflow
 engine.
 
 ## Decision
 
-YAI Core does not implement a workflow engine.
+YAI does not implement a workflow engine.
 
 ## Consequences
 

@@ -5,6 +5,10 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
+SPINE.28A completes the repository identity cutover. `YAI/yai` is now the
+canonical local AI operational control system, and `YAI/yai-dev` is the
+development lab, concept mine, harness and scenario workspace.
+
 SPINE.20 adds the local runtime layout after SPINE.6B made bidirectional
 extraction mandatory for future implementation waves. SPINE.20A rebases the
 active roadmap so pack materialization is canonized before filesystem freeze
@@ -15,8 +19,9 @@ Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. SPINE.20, SPINE.20A and
-SPINE.21 are complete. Next: SPINE.22 Filesystem Refactor Milestone Freeze.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.28
+are complete, and SPINE.28A is the current identity cutover. Next: SPINE.28B
+Internal Source Surface Cleanup.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -32,7 +37,7 @@ case-local capture through `/transcript on` and derived prompt memory through
 The filesystem manual case now separates `policy_rule`, `projection_rule`,
 `authority_scope`, and `model_interpretation` records so model claims can be
 checked against authoritative case residue instead of treated as core truth.
-Case verticalization has started inside `yai-core`: the C ABI now has
+Case verticalization has started inside `yai`: the C ABI now has
 `case_domain`, `case_attachment`, and `case_binding` primitives and matching
 record kinds. The filesystem manual case emits those records before subjects
 and policies, so a model participant sees an operational case world rather than
@@ -52,7 +57,7 @@ NEW.18C adds `interaction_thread`, `interaction_turn` and
 `/thread new`, `/thread list`, `/thread use` and `/thread archive`; a new
 thread resets the conversational lane without deleting journal/audit history.
 SPINE.6A removes active parallel scheduling from engineering docs. SPINE.6B
-requires future implementation waves to classify corresponding old-yai residue.
+requires future implementation waves to classify corresponding yai-dev residue.
 Macro labels such as `WORLD`, `DATA`, `VIEW` and `OBSERVABILITY` remain impact
 labels inside one linear SPINE.N roadmap. `docs/engineering/four-repo-roadmap.md`
 is the primary operator reference.
@@ -66,8 +71,8 @@ NEW.14 is the first physical filesystem refactor wave. It moves only the Rust
 engine crates:
 
 ```text
-crates/yai-core-engine     -> engine/yai-engine
-crates/yai-core-engine-sys -> engine/yai-engine-ffi
+crates/yai-engine     -> engine/yai-engine
+crates/yai-engine-sys -> engine/yai-engine-ffi
 ```
 
 That old `crates/` path is now historical; `crates/` is removed after NEW.15.
@@ -132,10 +137,10 @@ SPINE.6A is the engineering docs compression wave. It makes
 `docs/engineering/four-repo-roadmap.md` the only active roadmap, archives wave
 records/maps/superseded plans, and starts future scheduling at SPINE.20.
 
-SPINE.6B is the operational wave contract. It makes old-yai source audit,
-extraction, yai-core implementation, old-yai residue normalization, inventory
+SPINE.6B is the operational wave contract. It makes yai-dev source audit,
+extraction, yai implementation, yai-dev residue normalization, inventory
 update and validation mandatory for future implementation waves when the
-touched concept already exists in old `yai`.
+touched concept already exists in `yai-dev`.
 
 SPINE.20 is the local runtime layout wave. It adds `install-local`,
 `uninstall-local`, `doctor-local`, `print-install-paths`, expands `yai doctor`

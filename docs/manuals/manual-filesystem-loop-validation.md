@@ -34,8 +34,8 @@ agent harness work.
 
 ```bash
 set -eu
-export PREFIX=/tmp/yai-core-install-test
-export YAI_HOME=/tmp/yai-core-home-test
+export PREFIX=/tmp/yai-install-test
+export YAI_HOME=/tmp/yai-home-test
 export PATH="$PREFIX/bin:$PATH"
 export YAI_SOCKET="$YAI_HOME/run/yaid.sock"
 
@@ -95,7 +95,7 @@ build/yaid --version
 Expected before daemon activity:
 
 ```text
-status: SPINE.27 Hot State CLI + Manual Validation
+status: SPINE.28A Repository Identity Cutover
 hot_state_path:
 hot_state_status: unavailable
 hot_state_schema_status: missing
@@ -119,7 +119,7 @@ yaid --version
 Expected:
 
 ```text
-YAI_HOME: /tmp/yai-core-home-test
+YAI_HOME: /tmp/yai-home-test
 runtime_layout_status: ok
 hot_state: unavailable
 reason: missing_snapshot
@@ -130,7 +130,7 @@ reason: missing_snapshot
 ```bash
 mkdir -p "$YAI_HOME/run"
 
-yaid --socket "$YAI_SOCKET" --foreground > /tmp/yai-core-command-surface-yaid.log 2>&1 &
+yaid --socket "$YAI_SOCKET" --foreground > /tmp/yai-command-surface-yaid.log 2>&1 &
 DAEMON_PID=$!
 
 sleep 1
@@ -821,7 +821,7 @@ projection, I have no authority to..."
 Preserve:
 
 - date and host;
-- current branch and short git status for `yai-core`;
+- current branch and short git status for `yai`;
 - Terminal 1 provider readiness lines;
 - Terminal 2 daemon output;
 - Terminal 3 case setup output;
