@@ -35,6 +35,8 @@ const char *yai_carrier_outcome_to_string(yai_carrier_outcome_t outcome) {
         return "waiting_agent";
     case YAI_CARRIER_OUTCOME_NOT_ATTEMPTED:
         return "not_attempted";
+    case YAI_CARRIER_OUTCOME_MISMATCH:
+        return "mismatch";
     case YAI_CARRIER_OUTCOME_UNKNOWN:
         return "unknown";
     default:
@@ -53,5 +55,6 @@ yai_carrier_outcome_t yai_carrier_outcome_from_string(const char *value) {
     if (strcmp(value, "waiting_operator") == 0) return YAI_CARRIER_OUTCOME_WAITING_OPERATOR;
     if (strcmp(value, "waiting_agent") == 0) return YAI_CARRIER_OUTCOME_WAITING_AGENT;
     if (strcmp(value, "not_attempted") == 0) return YAI_CARRIER_OUTCOME_NOT_ATTEMPTED;
+    if (strcmp(value, "mismatch") == 0) return YAI_CARRIER_OUTCOME_MISMATCH;
     return YAI_CARRIER_OUTCOME_UNKNOWN;
 }

@@ -101,6 +101,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | process signal dry-run | no-effect signal planning | `yai process signal --pid <pid> --signal TERM --dry-run` | `target/debug/yai process signal --pid $$ --signal TERM --dry-run` | `process-carrier-signal-control.md`, `testing.md` |
 | host process observation | independent host probe | `yai observe process --pid <pid>` | `target/debug/yai observe process --pid 1` | `host-observation-probe.md`, `testing.md` |
 | host process comparison | expected/observed mismatch view | `yai observe compare-process --pid <pid> --expected running|stopped` | `target/debug/yai observe compare-process --pid 1 --expected stopped` | `host-observation-probe.md`, `testing.md` |
+| carrier coverage matrix | family/mode/outcome coverage visibility | `yai carrier coverage [--family <family>] [--mode <mode>]` | `target/debug/yai carrier coverage --family process` | `carrier-coverage-matrix.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -210,13 +211,24 @@ carrier_families:
 - network_http
 - database
 - repository_git
+- service
+- endpoint
+- socket
+- listener
 - model_provider
 - observation
 - review
 
 current_status:
-  filesystem: implemented_minimal
-  process: planned
+  filesystem: implemented_minimal carrier.v1
+  process: implemented_minimal
+  network_http: planned
+  database: planned
+  repository_git: planned
+  service: skeleton
+  endpoint: skeleton
+  socket: skeleton
+  listener: skeleton
 
 gate_outcomes:
 - allow
@@ -399,6 +411,63 @@ silent_repair: false
 
 `yai process observe` is the process carrier surface. `yai observe process` is
 the independent host probe surface.
+
+SPINE.33F adds carrier coverage visibility:
+
+```text
+yai carrier coverage
+carrier_coverage:
+- family: filesystem
+  controlled: active_minimal
+  observed: skeleton
+  imported: planned
+  execution_available: true
+  receipt_required: yes
+
+- family: process
+  controlled: active_minimal
+  observed: active_minimal
+  imported: planned
+  execution_available: true_limited
+  receipt_required: yes
+
+- family: database
+  controlled: skeleton
+  observed: skeleton
+  imported: skeleton
+  execution_available: false
+  receipt_required: yes
+
+yai carrier coverage --family process
+family: process
+controlled: active_minimal
+observed: active_minimal
+imported: planned
+execution_available: true_limited
+execution_scope: test_owned_or_safe_policy_only
+receipt_required: yes
+carrier_contract: carrier.v1
+supported_outcomes:
+- executed
+- blocked
+- failed
+- mismatch
+- observed
+
+yai carrier coverage --family unknown
+family: unknown
+controlled: unsupported
+observed: unsupported
+imported: unsupported
+execution_available: false
+receipt_required: no
+```
+
+Coverage modes are `controlled`, `observed` and `imported`. They are not
+outcomes. Coverage outcomes include `executed`, `blocked`, `failed`,
+`mismatch`, `observed` and `not_attempted`. Skeleton carriers are visible but
+must report `execution_available: false`; the carrier coverage matrix is no
+fake execution.
 
 ## Projection Commands
 

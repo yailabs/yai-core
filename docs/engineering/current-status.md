@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33E Host Observation Probe v0 / Bypass Verification.
+Status: SPINE.33F Carrier Coverage Matrix + Mode Taxonomy.
 
 ## Completed Foundation
 
@@ -41,7 +41,9 @@ carrier.v1 and adapts the filesystem carrier as the first minimal contract
 example. SPINE.33D adds process carrier v0 with test-owned signal control and
 blocked arbitrary PID behavior. SPINE.33E adds independent host observation
 probe v0, expected/observed process comparison and divergence candidate
-posture.
+posture. SPINE.33F adds the carrier coverage matrix, controlled/observed/imported
+mode taxonomy and visible skeleton coverage for non-process carrier families
+without adding fake execution.
 
 Current:
 
@@ -70,6 +72,7 @@ SPINE.33B Operation Dispatch + Multiplex v0 completed.
 SPINE.33C Carrier Contract v1 + Filesystem Adapter completed.
 SPINE.33D Process Carrier v0 / Signal Control completed.
 SPINE.33E Host Observation Probe v0 / Bypass Verification completed.
+SPINE.33F Carrier Coverage Matrix + Mode Taxonomy completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -77,7 +80,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.33F Carrier Receipt / Divergence Hardening.
+SPINE.33G Non-Process Carrier Skeletons.
 ```
 
 Foundation status:
@@ -110,6 +113,7 @@ LMDB subject/receipt indexes active
 LMDB CLI manual validation active
 control/carrier substrate primitives active
 host observation probe active
+carrier coverage matrix active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -310,6 +314,10 @@ SPINE.33E read-only inspected yai-dev process observer, runtime probe, watch
 plan/session, observation view, host-mediated/native probe and recovery residue
 for host observation and bypass mismatch posture. No `yai-dev` source file was
 modified.
+
+SPINE.33F read-only inspected yai-dev boundary subject, provider, observation
+subject and carrier residue for carrier family coverage, mode taxonomy and
+skeleton posture. No `yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

@@ -598,12 +598,16 @@ carrier_families:
 - network_http
 - database
 - repository_git
+- service
+- endpoint
+- socket
+- listener
 - model_provider
 - observation
 - review
 current_status:
-  filesystem: implemented_minimal
-  process: planned
+  filesystem: implemented_minimal carrier.v1
+  process: implemented_minimal
 gate_outcomes:
 - allow
 - deny
@@ -797,6 +801,59 @@ result: matched
 result: mismatch
 divergence_candidate: expected_stopped_but_running
 silent_repair: false
+```
+
+## SPINE.33F Carrier Coverage Matrix Loop
+
+```text
+carrier mode enum/string roundtrip
+carrier coverage table includes all required families
+controlled/observed/imported modes are visible
+filesystem controlled path is active_minimal
+process controlled and observed paths are active_minimal
+network_http/database/repository_git/service/endpoint/socket/listener are skeletons
+unknown is unsupported
+skeleton carrier families do not execute
+```
+
+`tests/smoke/carrier-coverage-matrix/test_carrier_coverage_matrix.c` proves
+the C ABI table. The CLI smoke checks representative family filters.
+
+```text
+make check-carrier-coverage-matrix
+make smoke-spine33f
+target/debug/yai carrier coverage
+target/debug/yai carrier coverage --family filesystem
+target/debug/yai carrier coverage --family process
+target/debug/yai carrier coverage --family database
+target/debug/yai carrier coverage --family unknown
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage --family filesystem
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage --family process
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage --family database
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier coverage --family unknown
+```
+
+Expected key lines:
+
+```text
+carrier_coverage:
+family: filesystem
+controlled: active_minimal
+family: process
+observed: active_minimal
+family: database
+controlled: skeleton
+execution_available: false
+family: unknown
+controlled: unsupported
 ```
 
 ## SPINE.28 Hot State Freeze Loop

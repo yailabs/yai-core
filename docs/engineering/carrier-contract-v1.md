@@ -54,3 +54,7 @@ added in this wave.
 SPINE.33D adds process carrier v0 after this filesystem adapter. It follows
 carrier.v1, but real signals are restricted to test-owned processes and
 arbitrary PID attempts are blocked.
+
+SPINE.33F records filesystem as active_minimal coverage and keeps future
+carrier families visible as skeleton/planned/unsupported surfaces until they
+implement the contract.

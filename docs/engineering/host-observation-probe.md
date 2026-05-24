@@ -37,3 +37,6 @@ observation independent:
 yai process observe = process carrier surface
 yai observe process = host_probe observation surface
 ```
+
+SPINE.33F records process observed mode as active_minimal and leaves other
+observed families skeleton/planned until specific probes exist.

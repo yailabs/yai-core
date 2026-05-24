@@ -190,7 +190,9 @@ This repository currently contains:
 - Current command docs cover hot-state and record-store inspection.
 - LMDB record-store commands are manually validated through `yai store status`,
   `yai store summary` and `yai store record get/list`.
-- Control/carrier substrate posture is inspectable through `yai carrier families`.
+- Control/carrier substrate posture is inspectable through `yai carrier families`,
+  `yai carrier lanes`, `yai carrier inspect`, process/observation commands and
+  `yai carrier coverage`.
 - Some C data-plane paths remain transitional while Rust engine ownership is
   consolidated.
 

@@ -91,3 +91,7 @@ SPINE.33E separates this from the independent host probe surface:
 yai process observe = process carrier surface
 yai observe process = independent host observation surface
 ```
+
+SPINE.33F records process as `controlled: active_minimal` and
+`observed: active_minimal` in the carrier coverage matrix. That coverage remains
+limited to safe/test-owned signal paths and independent process observation.

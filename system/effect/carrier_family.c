@@ -27,6 +27,14 @@ const char *yai_carrier_family_to_string(yai_carrier_family_t family) {
         return "database";
     case YAI_CARRIER_FAMILY_REPOSITORY_GIT:
         return "repository_git";
+    case YAI_CARRIER_FAMILY_SERVICE:
+        return "service";
+    case YAI_CARRIER_FAMILY_ENDPOINT:
+        return "endpoint";
+    case YAI_CARRIER_FAMILY_SOCKET:
+        return "socket";
+    case YAI_CARRIER_FAMILY_LISTENER:
+        return "listener";
     case YAI_CARRIER_FAMILY_MODEL_PROVIDER:
         return "model_provider";
     case YAI_CARRIER_FAMILY_OBSERVATION:
@@ -49,6 +57,10 @@ yai_carrier_family_t yai_carrier_family_from_string(const char *value) {
     if (strcmp(value, "network_http") == 0) return YAI_CARRIER_FAMILY_NETWORK_HTTP;
     if (strcmp(value, "database") == 0) return YAI_CARRIER_FAMILY_DATABASE;
     if (strcmp(value, "repository_git") == 0) return YAI_CARRIER_FAMILY_REPOSITORY_GIT;
+    if (strcmp(value, "service") == 0) return YAI_CARRIER_FAMILY_SERVICE;
+    if (strcmp(value, "endpoint") == 0) return YAI_CARRIER_FAMILY_ENDPOINT;
+    if (strcmp(value, "socket") == 0) return YAI_CARRIER_FAMILY_SOCKET;
+    if (strcmp(value, "listener") == 0) return YAI_CARRIER_FAMILY_LISTENER;
     if (strcmp(value, "model_provider") == 0) return YAI_CARRIER_FAMILY_MODEL_PROVIDER;
     if (strcmp(value, "observation") == 0) return YAI_CARRIER_FAMILY_OBSERVATION;
     if (strcmp(value, "review") == 0) return YAI_CARRIER_FAMILY_REVIEW;

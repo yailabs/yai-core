@@ -37,3 +37,7 @@ workflows in this wave.
 SPINE.33E adds a separate host probe. Process carrier observation remains a
 carrier surface; host probe observation is independent and reports
 `enforcement: none`.
+
+SPINE.33F records process coverage as controlled and observed active_minimal.
+Execution remains limited to safe/test-owned signal paths; the coverage matrix
+does not broaden process authority.

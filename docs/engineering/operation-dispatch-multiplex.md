@@ -54,3 +54,7 @@ behavior must update:
 docs/manuals/manual-filesystem-loop-validation.it.ipynb
 docs/manuals/manual-filesystem-loop-validation.md
 ```
+
+SPINE.33F adds the carrier coverage matrix above this route surface. Route
+planning names a lane; coverage reports mode/status/outcome posture and keeps
+skeleton carriers non-executable.

@@ -153,3 +153,7 @@ only active-minimal lane and becomes the first carrier contract adapter.
 SPINE.33D activates process_lane minimally for process observation, dry-run
 signal planning and test-owned signal control. It remains guarded by the no
 arbitrary kill rule.
+
+SPINE.33F layers the carrier coverage matrix on top of route planning. Carrier
+lanes say where an operation would go; coverage says which modes and outcomes
+are currently active, skeleton, planned or unsupported.

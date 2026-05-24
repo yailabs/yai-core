@@ -85,3 +85,7 @@ make smoke-spine33a
 make smoke-spine33b
 make smoke-spine33c
 ```
+
+SPINE.33F adds `yai carrier coverage` as the coverage matrix over this
+vocabulary. It makes every carrier family visible across controlled, observed
+and imported modes without claiming fake execution.

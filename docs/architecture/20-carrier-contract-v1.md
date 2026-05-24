@@ -109,3 +109,7 @@ receipt_required: yes
 `interposed` is the honest guarantee mode for SPINE.33C because YAI mediates
 the filesystem read/write path and assembles evidence/receipt material through
 the filesystem carrier. It is not claiming kernel-level embedded enforcement.
+
+SPINE.33F records filesystem as `controlled: active_minimal` in the carrier
+coverage matrix and keeps other non-filesystem families visible without fake
+execution.

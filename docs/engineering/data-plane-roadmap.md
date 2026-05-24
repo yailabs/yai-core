@@ -63,7 +63,10 @@ SPINE.33B Operation Dispatch + Multiplex v0                         done
 SPINE.33C Carrier Contract v1 + Filesystem Adapter                  done
 SPINE.33D Process Carrier v0 / Signal Control                      done
 SPINE.33E Host Observation Probe v0 / Bypass Check                 done
-SPINE.33F Carrier Receipt / Divergence Hardening                   planned
+SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
+SPINE.33G Non-Process Carrier Skeletons                            planned
+SPINE.33H Carrier Outcome Harness                                  planned
+SPINE.33I Carrier Receipt / Divergence Hardening                   planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned

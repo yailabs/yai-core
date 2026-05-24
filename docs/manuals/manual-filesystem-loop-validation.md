@@ -986,6 +986,44 @@ divergence_candidate: expected_stopped_but_running
 silent_repair: false
 ```
 
+## Carrier Coverage Matrix
+
+SPINE.33F makes every carrier family visible across controlled, observed and
+imported modes. This section is visibility only. It does not execute
+non-filesystem/non-process carriers.
+
+```bash
+yai carrier coverage
+yai carrier coverage --family filesystem
+yai carrier coverage --family process
+yai carrier coverage --family database
+yai carrier coverage --family unknown
+```
+
+Expected posture:
+
+```text
+controlled
+observed
+imported
+family: filesystem
+controlled: active_minimal
+family: process
+observed: active_minimal
+family: database
+controlled: skeleton
+execution_available: false
+family: unknown
+controlled: unsupported
+```
+
+Modes are not outcomes: `controlled`, `observed` and `imported` say how YAI
+relates to an effect surface. Outcomes such as `executed`, `blocked`, `failed`
+and `mismatch` say what happened or what posture was observed. Database,
+network, repository, service, endpoint, socket, listener, model provider and
+review surfaces are visible here, but they are not executable carriers in this
+wave.
+
 ## Shutdown
 
 ```bash

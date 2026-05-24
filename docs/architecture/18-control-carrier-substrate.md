@@ -133,3 +133,7 @@ yai carrier families
 
 The command is inspectable vocabulary/status only. It does not execute a
 carrier and does not claim readiness for planned carrier families.
+
+SPINE.33F extends this vocabulary with `service`, `endpoint`, `socket` and
+`listener` and makes all carrier families visible in the carrier coverage
+matrix. Visibility in `yai carrier coverage` is not execution readiness.

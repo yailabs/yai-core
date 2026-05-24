@@ -28,7 +28,8 @@ typedef enum yai_carrier_outcome {
     YAI_CARRIER_OUTCOME_WAITING_OPERATOR = 6,
     YAI_CARRIER_OUTCOME_WAITING_AGENT = 7,
     YAI_CARRIER_OUTCOME_NOT_ATTEMPTED = 8,
-    YAI_CARRIER_OUTCOME_UNKNOWN = 9
+    YAI_CARRIER_OUTCOME_MISMATCH = 9,
+    YAI_CARRIER_OUTCOME_UNKNOWN = 10
 } yai_carrier_outcome_t;
 
 const char *yai_carrier_outcome_to_string(yai_carrier_outcome_t outcome);

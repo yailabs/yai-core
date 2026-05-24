@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33E Host Observation Probe v0 / Bypass Verification");
+    println!("status: SPINE.33F Carrier Coverage Matrix + Mode Taxonomy");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -62,7 +62,9 @@ fn print_info() {
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
-    println!("carrier_substrate: carrier.v1 filesystem and process adapters; host probe v0");
+    println!(
+        "carrier_substrate: carrier coverage matrix; carrier.v1 filesystem/process; host probe v0"
+    );
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -214,6 +216,7 @@ fn print_usage() {
     println!("       yai carrier families");
     println!("       yai carrier lanes");
     println!("       yai carrier route --family <carrier_family>");
+    println!("       yai carrier coverage [--family <carrier_family>] [--mode controlled|observed|imported]");
     println!("       yai carrier inspect filesystem|process");
     println!("       yai process observe --pid <pid>");
     println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
@@ -230,6 +233,10 @@ fn print_carrier_families() {
     println!("- network_http");
     println!("- database");
     println!("- repository_git");
+    println!("- service");
+    println!("- endpoint");
+    println!("- socket");
+    println!("- listener");
     println!("- model_provider");
     println!("- observation");
     println!("- review");
@@ -240,6 +247,10 @@ fn print_carrier_families() {
     println!("  network_http: planned");
     println!("  database: planned");
     println!("  repository_git: planned");
+    println!("  service: skeleton");
+    println!("  endpoint: skeleton");
+    println!("  socket: skeleton");
+    println!("  listener: skeleton");
     println!("  model_provider: planned");
     println!("  observation: planned");
     println!("  review: planned");
@@ -274,7 +285,324 @@ fn print_carrier_families() {
     println!("next:");
     println!("  inspect_lanes: yai carrier lanes");
     println!("  inspect_route: yai carrier route --family <family>");
+    println!("  inspect_coverage: yai carrier coverage");
     println!("  inspect_contract: yai carrier inspect filesystem");
+}
+
+#[derive(Clone, Copy)]
+struct CarrierCoverage {
+    family: &'static str,
+    controlled: &'static str,
+    observed: &'static str,
+    imported: &'static str,
+    execution_available: &'static str,
+    execution_scope: &'static str,
+    receipt_required: &'static str,
+    carrier_contract: &'static str,
+    outcomes: &'static [(&'static str, &'static str)],
+    note: &'static str,
+}
+
+const CARRIER_COVERAGE: &[CarrierCoverage] = &[
+    CarrierCoverage {
+        family: "filesystem",
+        controlled: "active_minimal",
+        observed: "skeleton",
+        imported: "planned",
+        execution_available: "true",
+        execution_scope: "filesystem_sandbox_only",
+        receipt_required: "yes",
+        carrier_contract: "carrier.v1",
+        outcomes: &[
+            ("executed", "supported"),
+            ("blocked", "supported"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+            ("observed", "supported"),
+        ],
+        note: "filesystem carrier.v1 active-minimal",
+    },
+    CarrierCoverage {
+        family: "process",
+        controlled: "active_minimal",
+        observed: "active_minimal",
+        imported: "planned",
+        execution_available: "true_limited",
+        execution_scope: "test_owned_or_safe_policy_only",
+        receipt_required: "yes",
+        carrier_contract: "carrier.v1",
+        outcomes: &[
+            ("executed", "supported"),
+            ("blocked", "supported"),
+            ("failed", "supported"),
+            ("mismatch", "supported"),
+            ("observed", "supported"),
+        ],
+        note: "process carrier controls only safe/test-owned signal paths",
+    },
+    CarrierCoverage {
+        family: "network_http",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no network execution",
+    },
+    CarrierCoverage {
+        family: "database",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no database execution",
+    },
+    CarrierCoverage {
+        family: "repository_git",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no git execution",
+    },
+    CarrierCoverage {
+        family: "service",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no service lifecycle control",
+    },
+    CarrierCoverage {
+        family: "endpoint",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no endpoint execution",
+    },
+    CarrierCoverage {
+        family: "socket",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no socket control",
+    },
+    CarrierCoverage {
+        family: "listener",
+        controlled: "skeleton",
+        observed: "skeleton",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("executed", "planned"),
+            ("blocked", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+        ],
+        note: "visible skeleton; no listener control",
+    },
+    CarrierCoverage {
+        family: "model_provider",
+        controlled: "skeleton",
+        observed: "planned",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("observed", "planned"),
+            ("failed", "planned"),
+            ("mismatch", "planned"),
+            ("not_attempted", "supported"),
+        ],
+        note: "visible skeleton; no model provider carrier execution",
+    },
+    CarrierCoverage {
+        family: "observation",
+        controlled: "unsupported",
+        observed: "active_minimal",
+        imported: "planned",
+        execution_available: "false",
+        execution_scope: "observation_only",
+        receipt_required: "yes",
+        carrier_contract: "host_probe.v0",
+        outcomes: &[
+            ("observed", "supported"),
+            ("mismatch", "supported"),
+            ("failed", "planned"),
+            ("not_attempted", "supported"),
+        ],
+        note: "observation is not effect execution",
+    },
+    CarrierCoverage {
+        family: "review",
+        controlled: "unsupported",
+        observed: "unsupported",
+        imported: "skeleton",
+        execution_available: "false",
+        execution_scope: "review_lane_only",
+        receipt_required: "yes",
+        carrier_contract: "planned",
+        outcomes: &[
+            ("deferred", "planned"),
+            ("waiting_operator", "planned"),
+            ("waiting_agent", "planned"),
+            ("not_attempted", "supported"),
+        ],
+        note: "review is not machine effect execution",
+    },
+    CarrierCoverage {
+        family: "unknown",
+        controlled: "unsupported",
+        observed: "unsupported",
+        imported: "unsupported",
+        execution_available: "false",
+        execution_scope: "none",
+        receipt_required: "no",
+        carrier_contract: "none",
+        outcomes: &[("not_attempted", "supported")],
+        note: "unsupported/unclassified family",
+    },
+];
+
+fn print_coverage_entry(entry: &CarrierCoverage, list_item: bool, mode_filter: Option<&str>) {
+    if list_item {
+        println!("- family: {}", entry.family);
+        println!("  controlled: {}", entry.controlled);
+        println!("  observed: {}", entry.observed);
+        println!("  imported: {}", entry.imported);
+        println!("  execution_available: {}", entry.execution_available);
+        println!("  receipt_required: {}", entry.receipt_required);
+        println!("  outcomes:");
+        for (outcome, support) in entry.outcomes {
+            println!("    {outcome}: {support}");
+        }
+        println!("  note: {}", entry.note);
+        println!();
+        return;
+    }
+    println!("family: {}", entry.family);
+    match mode_filter {
+        Some("controlled") => println!("controlled: {}", entry.controlled),
+        Some("observed") => println!("observed: {}", entry.observed),
+        Some("imported") => println!("imported: {}", entry.imported),
+        _ => {
+            println!("controlled: {}", entry.controlled);
+            println!("observed: {}", entry.observed);
+            println!("imported: {}", entry.imported);
+        }
+    }
+    println!("execution_available: {}", entry.execution_available);
+    println!("execution_scope: {}", entry.execution_scope);
+    println!("receipt_required: {}", entry.receipt_required);
+    println!("carrier_contract: {}", entry.carrier_contract);
+    println!("supported_outcomes:");
+    for (outcome, support) in entry.outcomes {
+        if *support == "supported" {
+            println!("- {outcome}");
+        }
+    }
+    println!("note: {}", entry.note);
+}
+
+fn carrier_coverage(args: &[String]) -> Result<(), String> {
+    let family_filter = optional_arg(args, "--family");
+    let mode_filter = optional_arg(args, "--mode");
+    if let Some(mode) = mode_filter.as_deref() {
+        if mode != "controlled" && mode != "observed" && mode != "imported" {
+            return Err("--mode must be controlled, observed or imported".to_string());
+        }
+    }
+    if let Some(family) = family_filter {
+        let entry = CARRIER_COVERAGE
+            .iter()
+            .find(|entry| entry.family == family)
+            .unwrap_or_else(|| {
+                CARRIER_COVERAGE
+                    .last()
+                    .expect("coverage table is non-empty")
+            });
+        print_coverage_entry(entry, false, mode_filter.as_deref());
+        return Ok(());
+    }
+    println!("carrier_coverage:");
+    for entry in CARRIER_COVERAGE {
+        if let Some(mode) = mode_filter.as_deref() {
+            let status = match mode {
+                "controlled" => entry.controlled,
+                "observed" => entry.observed,
+                "imported" => entry.imported,
+                _ => "unknown",
+            };
+            println!("- family: {}", entry.family);
+            println!("  {mode}: {status}");
+            println!("  execution_available: {}", entry.execution_available);
+            println!("  receipt_required: {}", entry.receipt_required);
+            println!();
+        } else {
+            print_coverage_entry(entry, true, None);
+        }
+    }
+    Ok(())
 }
 
 #[derive(Clone, Copy)]
@@ -2586,7 +2914,7 @@ fn provider_chat_completion(
     prompt: &str,
 ) -> Result<String, String> {
     let url = parse_http_url(&config.base_url)?;
-    let mut system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Speak in terms of authority granted by the current case projection, not physical host capability. Prefer phrases like `according to the current projection, I have no authority to...` over absolute `I cannot...` claims. Your outputs are claims/proposals/model interpretations, not authoritative case state, YAI decisions, policy rules, receipts or filesystem effects. subject:linenoise-terminal is only a display/input surface and never owns execution or decision authority. Any proposed action must become an op_attempt and pass through control/carrier before any effect. Do not claim raw journal, filesystem, shell, environment, API-key or out-of-case memory access unless explicitly provided by the participant view.".to_string();
+    let mut system_prompt = "You are the case-bound model provider subject inside YAI. Answer only from the supplied YAI participant view and the operator prompt. Use a natural, direct style: start with the answer, avoid boilerplate openings, and do not begin every response with phrases like `according to the current projection`. Speak in terms of authority granted by the current case projection when authority matters, especially for refusals, missing access, proposed actions or boundary explanations. In those cases, prefer bounded authority language such as `the participant view does not grant authority to...` over absolute physical-capability claims. For ordinary factual answers, cite the visible record refs or record kinds when useful instead of repeating the authority preamble. Format for terminal reading with short paragraphs or compact bullets, and keep technical identifiers unchanged. Your outputs are claims/proposals/model interpretations, not authoritative case state, YAI decisions, policy rules, receipts or filesystem effects. subject:linenoise-terminal is only a display/input surface and never owns execution or decision authority. Any proposed action must become an op_attempt and pass through control/carrier before any effect. Do not claim raw journal, filesystem, shell, environment, API-key or out-of-case memory access unless explicitly provided by the participant view.".to_string();
     if config.language_mode == "auto" {
         system_prompt.push_str(" Respond in the same natural language as the operator prompt. Do not translate technical identifiers, record kinds, subject refs, case refs, decision ids, receipt ids, command names or code spans.");
     }
@@ -3801,6 +4129,12 @@ fn main() {
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("route") => {
             if let Err(error) = carrier_route(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("coverage") => {
+            if let Err(error) = carrier_coverage(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

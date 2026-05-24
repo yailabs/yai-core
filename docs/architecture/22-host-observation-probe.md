@@ -86,3 +86,7 @@ observation_is_enforcement: false
 
 `yai process observe` remains the process carrier surface. `yai observe process`
 is the independent host probe surface.
+
+SPINE.33F makes that boundary visible in `yai carrier coverage`: process
+observation is active_minimal, while other observed modes are skeleton or
+planned until their probes exist.

@@ -22,6 +22,7 @@ for file in \
   docs/architecture/20-carrier-contract-v1.md \
   docs/architecture/21-process-carrier-signal-control.md \
   docs/architecture/22-host-observation-probe.md \
+  docs/architecture/23-carrier-coverage-matrix.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -34,6 +35,7 @@ for file in \
   docs/engineering/operation-dispatch-multiplex.md \
   docs/engineering/process-carrier-signal-control.md \
   docs/engineering/host-observation-probe.md \
+  docs/engineering/carrier-coverage-matrix.md \
   docs/engineering/data-plane-roadmap.md \
   docs/engineering/extraction-plan.md \
   docs/engineering/file-header-standard.md \
@@ -57,6 +59,7 @@ for file in \
   docs/adr/0022-carrier-contract-v1.md \
   docs/adr/0023-process-carrier-signal-control.md \
   docs/adr/0024-host-observation-probe.md \
+  docs/adr/0025-carrier-coverage-matrix.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do
