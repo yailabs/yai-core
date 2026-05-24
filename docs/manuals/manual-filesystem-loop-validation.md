@@ -42,6 +42,44 @@ export YAI_SOCKET="$YAI_HOME/run/yaid.sock"
 rm -rf "$PREFIX" "$YAI_HOME"
 ```
 
+### Policy Pack Fixture Checkpoint
+
+SPINE.21 makes packs case materialization units, but there is no `yai pack`
+runtime command yet. For this manual, policy pack material is staged as
+versioned fixture input and `yai daemon run-filesystem-loop` materializes the
+corresponding case residue:
+
+```text
+policy pack fixture
+-> subject:policy-pack
+-> policy_rule / projection_rule / authority_scope
+-> provider/model/terminal participation
+```
+
+Stage the manual policy fixtures before daemon case activity:
+
+```bash
+PACK_SRC="$PWD/docs/manuals/examples/filesystem-loop/policy-packs"
+PACK_DST="$YAI_HOME/cases/manual-filesystem-loop/policy-packs"
+
+mkdir -p "$PACK_DST"
+cp "$PACK_SRC"/*.json "$PACK_DST"/
+
+python -m json.tool "$PACK_DST/filesystem-sandbox-policy.json" >/dev/null
+python -m json.tool "$PACK_DST/model-case-projection-policy.json" >/dev/null
+python -m json.tool "$PACK_DST/linenoise-terminal-interface-policy.json" >/dev/null
+
+ls "$PACK_DST"
+```
+
+Expected:
+
+```text
+filesystem-sandbox-policy.json
+linenoise-terminal-interface-policy.json
+model-case-projection-policy.json
+```
+
 ### Dev Binary Checks
 
 ```bash
@@ -328,7 +366,51 @@ tail -n 80 "$YAID_LOG" >&2 || true
 exit 1
 ```
 
+## Case Pack Material Checkpoint
+
+Before attaching provider subjects or running prompt labs, stage the policy pack
+fixtures for this case. This is not a pack installer; it is the manual evidence
+that represents the pack material SPINE.21 says must be materialized into the
+case before external provider participation is trusted.
+
+```bash
+set -eu
+PACK_SRC="$PWD/docs/manuals/examples/filesystem-loop/policy-packs"
+PACK_DST="$YAI_RUN/policy-packs"
+
+mkdir -p "$PACK_DST"
+cp "$PACK_SRC"/*.json "$PACK_DST"/
+
+python -m json.tool "$PACK_DST/filesystem-sandbox-policy.json" >/dev/null
+python -m json.tool "$PACK_DST/model-case-projection-policy.json" >/dev/null
+python -m json.tool "$PACK_DST/linenoise-terminal-interface-policy.json" >/dev/null
+
+ls "$PACK_DST"
+```
+
+Expected fixture set:
+
+```text
+filesystem-sandbox-policy.json
+linenoise-terminal-interface-policy.json
+model-case-projection-policy.json
+```
+
+Current implementation note:
+
+```text
+run-filesystem-loop materializes this manual pack posture into journal records.
+It creates subject:policy-pack, policy_rule, projection_rule, authority_scope
+and graph evidence before the LAN provider prompt path is used.
+```
+
 ## Mac: Run Filesystem Loop
+
+`yai daemon run-filesystem-loop --socket "$YAI_SOCKET"` asks the running `yaid`
+daemon to build the manual filesystem case, materialize the policy/projection
+fixture posture, bind the case subjects, run the read/block/allowed-write loop,
+persist journal residue and update hot state. It is the current case creation
+and fixture materialization command for this manual.
 
 ```bash
 set -eu
@@ -336,9 +418,14 @@ test -S "$YAI_SOCKET" && echo "socket ok: $YAI_SOCKET" || exit 1
 
 yai daemon status --socket "$YAI_SOCKET" || exit 1
 yai daemon info --socket "$YAI_SOCKET" || exit 1
-yai daemon run-filesystem-loop --socket "$YAI_SOCKET" || exit 1
 
-JOURNAL="$(find build/tmp -type f -path '*/filesystem/journal.jsonl' | sort | tail -n 1)"
+FILESYSTEM_OUTPUT="$(yai daemon run-filesystem-loop --socket "$YAI_SOCKET")"
+printf '%s\n' "$FILESYSTEM_OUTPUT"
+
+JOURNAL="$(printf '%s\n' "$FILESYSTEM_OUTPUT" | sed -n 's/.*"journal_path":"\([^"]*\)".*/\1/p')"
+if [ -z "$JOURNAL" ]; then
+  JOURNAL="$(find build/tmp -type f -path '*/filesystem/journal.jsonl' | sort | tail -n 1)"
+fi
 echo "JOURNAL=$JOURNAL"
 test -f "$JOURNAL" || exit 1
 ```
@@ -364,9 +451,29 @@ graph_edges: 3
 memory_candidates: 1
 ```
 
+Confirm that pack-derived case material is present before provider attach:
+
+```bash
+grep -E \
+  'subject:policy-pack|policy:manual-filesystem-sandbox-v0|projection_rule:model-context-only|authority_scope:model' \
+  "$JOURNAL"
+```
+
+Expected evidence:
+
+```text
+subject:policy-pack
+policy:manual-filesystem-sandbox-v0
+projection_rule:model-context-only
+authority_scope:model
+```
+
 ## Attach LAN Provider To Case
 
 Important: when the provider runs on another LAN host, `.yai/env` must contain the LAN URL, not `127.0.0.1`.
+Do not attach the LAN provider until the pack-derived evidence check above has
+shown `subject:policy-pack`, policy, projection and authority material in the
+case journal.
 
 ```bash
 set -eu

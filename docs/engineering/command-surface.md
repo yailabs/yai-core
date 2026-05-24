@@ -8,10 +8,11 @@ Rule:
 A primitive that cannot be inspected is not operational yet.
 ```
 
-This file maps SPINE.20-SPINE.27 primitives to their current view, command,
+This file maps SPINE.20-SPINE.28 primitives to their current view, command,
 manual test and documentation surface. It does not define new core semantics.
 The operator-facing runbook is `docs/manuals/manual-filesystem-loop-validation.md`
-with notebook companion `docs/manuals/manual-filesystem-loop-validation.ipynb`.
+with notebook companions `docs/manuals/manual-filesystem-loop-validation.ipynb`
+and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 
 ## Runtime Commands
 
@@ -72,6 +73,13 @@ value. `freshness_policy` is the canonical field.
 
 There is no `yai hot status --json` convention in SPINE.27.
 
+SPINE.28 freezes this command surface before LMDB work. The stable hot-state
+operator fields are `hot_state`, `snapshot`, `schema`, `case_session`,
+`case_world`, `case_context`, `projection`, `stale_reason`,
+`freshness_policy`, `updated_at`, plus latest decision/receipt refs when
+available. LMDB will add durable record lookup later; it will not replace
+`yai hot status`.
+
 ## Projection Commands
 
 | Primitive | View | Command | Manual test | Docs |
@@ -102,10 +110,14 @@ hot-state source.
 | Primitive | View | Command | Manual test | Docs |
 |---|---|---|---|---|
 | pack doctrine | required pack doctrine doc/phrases | `make check-pack-doctrine` | `make check-pack-doctrine` | `pack-format.md`, `pack-roadmap.md` |
+| manual policy pack fixtures | staged pack material before provider attach | shell copy/JSON validation in manual | `cp docs/manuals/examples/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/` | `manual-filesystem-loop-validation.md` |
+| pack-derived case residue | materialized policy/projection/authority records | `yai daemon run-filesystem-loop --socket <path>` | `grep subject:policy-pack "$JOURNAL"` | `manual-filesystem-loop-validation.md` |
 | active docs | canonical engineering doc set | `make check-docs` | `make check-docs` | `README.md` |
 
 Pack runtime commands are not implemented yet. SPINE.21 only provides pack
-doctrine and guards.
+doctrine and guards. The filesystem loop manual stages policy pack fixtures and
+the daemon loop materializes their current posture into journal records for the
+manual case. Do not document a `yai pack` command until the pack runtime exists.
 
 ## Foundation / Layout Checks
 
@@ -199,4 +211,5 @@ Automated retroactive coverage:
 ```sh
 make smoke-spine24a
 make smoke-spine27
+make check-hot-state-freeze
 ```

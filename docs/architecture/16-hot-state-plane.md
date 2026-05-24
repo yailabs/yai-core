@@ -2,7 +2,8 @@
 
 SPINE.23 introduces the first live data plane. SPINE.24 hardens the runtime
 snapshot lifecycle. SPINE.25 connects that snapshot to live case session and
-case context lifecycle.
+case context lifecycle. SPINE.28 freezes the hot-state block before LMDB record
+plane work begins.
 
 Hot state is not truth. It is the live operational cache of an active case
 session: what case is current, which context and thread are active, which
@@ -48,6 +49,18 @@ full memory
 audit packet
 policy truth
 ```
+
+Freeze rule:
+
+```text
+hot state is not truth
+journal remains replay/audit
+LMDB will not replace hot state
+```
+
+The next durable lookup plane starts at SPINE.29. Hot state remains the current
+liveness and freshness surface, and may be rebuilt or refreshed from durable
+residue.
 
 ## Freshness
 
@@ -119,4 +132,16 @@ SPINE.26 adds consumer-aware policy over these fields:
 ```text
 model/agent -> usable, refresh_required or blocked_for_model
 operator/audit/debug -> usable or refresh_recommended
+```
+
+Freeze checklist:
+
+```text
+case_session_status documented
+case_world_status documented
+case_context_status documented
+projection_freshness documented
+projection_stale_reason documented
+freshness_policy visible through commands
+missing_snapshot and invalid_snapshot remain non-crashing status cases
 ```

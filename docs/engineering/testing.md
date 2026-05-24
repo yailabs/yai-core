@@ -90,6 +90,8 @@ target/debug/yai hot status
 ```text
 runtime/install path commands are inspectable
 pack and foundation guards are callable directly
+manual policy pack fixtures are staged before provider attach
+daemon filesystem loop materializes subject:policy-pack and policy/projection/authority residue
 yai doctor reports runtime and hot-state status
 yai hot status handles missing, corrupt and valid snapshots
 daemon status/info/minimum-loop commands are reachable
@@ -110,6 +112,19 @@ target/debug/yai doctor
 target/debug/yai hot status
 build/yaid --version
 ```
+
+Manual pack fixture checkpoint:
+
+```text
+cp docs/manuals/examples/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/
+python -m json.tool "$YAI_RUN/policy-packs/filesystem-sandbox-policy.json"
+yai daemon run-filesystem-loop --socket "$YAI_SOCKET"
+grep 'subject:policy-pack' "$JOURNAL"
+grep 'policy:manual-filesystem-sandbox-v0' "$JOURNAL"
+```
+
+This proves the current manual posture. It does not imply a `yai pack`
+runtime command exists.
 
 ## SPINE.25 Hot State Session/Context Loop
 
@@ -168,11 +183,12 @@ projection inspect exposes projection_freshness/stale_reason/freshness_policy/fr
 `tests/smoke/hot-state-cli/test_hot_state_cli.sh` proves the stable manual
 surface for hot state and projection freshness.
 
-The operator-facing runbook and notebook for this command surface are:
+The operator-facing runbook and notebooks for this command surface are:
 
 ```text
 docs/manuals/manual-filesystem-loop-validation.md
 docs/manuals/manual-filesystem-loop-validation.ipynb
+docs/manuals/manual-filesystem-loop-validation.it.ipynb
 ```
 
 ```text
@@ -196,6 +212,60 @@ case_context: active
 projection: fresh|stale
 freshness_policy: usable|refresh_recommended|refresh_required|blocked_for_model|unknown
 freshness_source: hot_state|projection_record
+```
+
+## SPINE.28 Hot State Freeze Loop
+
+```text
+hot state remains explicitly non-authoritative
+snapshot schema remains yai.hot_state.v1
+missing_snapshot and invalid_snapshot remain documented status cases
+case_session/case_world/case_context fields remain diagnostic cache
+projection_freshness/stale_reason/freshness_policy remain visible
+hot-state smoke suite remains in make smoke/check
+LMDB boundary states durable lookup will not replace hot state
+```
+
+SPINE.28 is a freeze, not a feature wave. It validates that SPINE.23 through
+SPINE.27 remain stable before SPINE.29 starts the LMDB record plane.
+
+```text
+make check-hot-state-freeze
+make smoke-spine23
+make smoke-spine24
+make smoke-spine24a
+make smoke-spine25
+make smoke-spine26
+make smoke-spine27
+```
+
+Manual minimum matrix:
+
+```text
+target/debug/yai doctor
+target/debug/yai hot status
+yai daemon run-minimum-loop --socket <socket>
+yai daemon run-filesystem-loop --socket <socket>
+yai hot status
+yai projection inspect --journal <journal>
+rm -f $YAI_HOME/run/hot-state.json && yai hot status
+printf '{broken\n' > $YAI_HOME/run/hot-state.json && yai hot status
+```
+
+Expected key lines:
+
+```text
+hot_state: active
+schema: yai.hot_state.v1
+case_session:
+case_world:
+case_context:
+projection:
+freshness_policy:
+hot_state: unavailable
+reason: missing_snapshot
+hot_state: unavailable
+reason: invalid_snapshot
 ```
 
 ## NEW.1 Minimum Loop

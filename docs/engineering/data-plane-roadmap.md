@@ -49,8 +49,8 @@ SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.24  Hot State Runtime Snapshot                                done
 SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 done
-SPINE.27  Hot State CLI + Manual Validation                         active v1
-SPINE.28  Hot State Freeze                                          planned
+SPINE.27  Hot State CLI + Manual Validation                         done
+SPINE.28  Hot State Freeze                                          done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
 SPINE.30  LMDB Record Write Path                                    planned
@@ -178,6 +178,26 @@ make smoke-spine24a
 `docs/engineering/command-surface.md` maps the hot-state primitive, snapshot
 schema, missing/corrupt snapshot handling and daemon-backed status path to
 manual commands and expected output.
+
+SPINE.28 freezes the hot-state block:
+
+```text
+hot state remains non-authoritative
+snapshot schema remains yai.hot_state.v1
+doctor/hot/projection command surface remains stable
+missing/corrupt/valid snapshot behavior remains explicit
+case_session/case_world/case_context/participant fields remain diagnostic cache
+freshness_policy remains the model/operator freshness posture field
+```
+
+LMDB boundary:
+
+```text
+Hot state is the live cache and may be rebuilt or refreshed from durable residue.
+SPINE.29 begins the durable record plane.
+LMDB will not replace hot state.
+LMDB will become durable lookup; hot state remains current liveness/freshness surface.
+```
 
 ## Rules
 

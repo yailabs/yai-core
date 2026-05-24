@@ -123,7 +123,8 @@ yai projection inspect --journal <path> --consumer model
 
 The command-surface baseline is integrated into the filesystem loop manual and
 notebook under `docs/manuals/manual-filesystem-loop-validation.md` and
-`docs/manuals/manual-filesystem-loop-validation.ipynb`.
+`docs/manuals/manual-filesystem-loop-validation.ipynb`, with Italian companion
+`docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 
 ## Computational Model
 
@@ -178,7 +179,8 @@ and reconstruction material.
 case world/context lifecycle, active interaction thread, participant view,
 freshness, stale reason and latest residue refs. Hot state is not truth; it is
 rebuilt from durable residue and currently snapshots to
-`YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`.
+`YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`. SPINE.28 freezes
+this cache/diagnostic surface before LMDB durable record lookup starts.
 
 `graph`
 : Relationships between subjects, operations, decisions, receipts, policies,

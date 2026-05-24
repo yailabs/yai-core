@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.27 hot state CLI manual validation. | SPINE.28 Hot State Freeze. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.28 hot state freeze. | SPINE.29 LMDB Record Plane Doctrine + Schema. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -68,10 +68,11 @@ thread, participant view and decision/receipt-driven projection staleness.
 SPINE.26 makes projection freshness consumer-aware: model/agent views require
 stricter refresh posture than operator, audit and debug views. SPINE.27
 stabilizes the manual command surface for `yai hot status`, `yai doctor` and
-`yai projection inspect`.
+`yai projection inspect`. SPINE.28 freezes hot state as a non-authoritative live
+cache before durable LMDB record-plane work begins.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.28.
+delivery is SPINE.29.
 
 ## Canonical Macro Labels
 
@@ -163,7 +164,7 @@ SPINE.24A Retroactive Command Surface Recovery                      done
 SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         done
-SPINE.28  Hot State Freeze                                          planned
+SPINE.28  Hot State Freeze                                          done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
 SPINE.30  LMDB Record Write Path                                    planned

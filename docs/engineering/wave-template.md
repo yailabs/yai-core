@@ -65,8 +65,10 @@ Command Surface:
     command-surface.md updated when a wave exposes or changes an operator view
   Manual runbook/notebook:
     docs/manuals/manual-filesystem-loop-validation.md and
-    docs/manuals/manual-filesystem-loop-validation.ipynb updated when command
-    behavior, expected output or manual workflow changes
+    docs/manuals/manual-filesystem-loop-validation.ipynb and
+    docs/manuals/manual-filesystem-loop-validation.it.ipynb updated when command
+    behavior, pack materialization order, expected output or manual workflow
+    changes
 
   Rule:
     If no commands changed, state explicitly: no command surface change.

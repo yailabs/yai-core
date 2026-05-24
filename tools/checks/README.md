@@ -1,3 +1,4 @@
-# checks
+# Checks
 
-Guard scripts for the NEW.0 skeleton.
+Guard scripts for source layout, active documentation, pack doctrine,
+foundation freeze and hot-state freeze.

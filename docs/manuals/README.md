@@ -22,14 +22,17 @@ and preserving evidence from those runs.
 
 ## Command Update Rule
 
-When a wave adds, removes or changes an operator command, update all three
+When a wave adds, removes or changes an operator command, update all four
 surfaces in the same delivery:
 
 ```text
 docs/engineering/command-surface.md
 docs/manuals/manual-filesystem-loop-validation.md
 docs/manuals/manual-filesystem-loop-validation.ipynb
+docs/manuals/manual-filesystem-loop-validation.it.ipynb
 ```
 
 The filesystem loop manual is the single active manual test path. It owns both
-the command-surface baseline and the provider/case prompt workflow.
+the command-surface baseline and the provider/case prompt workflow. If command
+or pack materialization steps change, update the Markdown runbook and both
+notebooks together.

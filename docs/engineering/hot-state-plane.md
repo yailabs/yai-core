@@ -4,11 +4,24 @@ SPINE.23 implements hot state v0. SPINE.24 hardens the runtime snapshot.
 SPINE.25 integrates the snapshot with case session and case context lifecycle.
 SPINE.26 adds consumer-aware projection freshness policy. SPINE.27 makes the
 hot-state and projection freshness command surface stable for manual
-inspection.
+inspection. SPINE.28 freezes this block before LMDB record-plane work begins.
 
 Hot state is the live operational cache for a case session. It is not durable
 truth and it does not replace journal, records, graph, facts, memory or
 reconcile.
+
+SPINE.28 freezes the current boundary:
+
+```text
+hot state is not truth
+journal remains replay/audit
+snapshot schema remains yai.hot_state.v1
+LMDB will not replace hot state
+```
+
+LMDB begins at SPINE.29 as durable record lookup. Hot state remains the
+current liveness/freshness surface and may be rebuilt or refreshed from durable
+residue.
 
 ## Runtime Shape
 
@@ -135,6 +148,18 @@ Changed commands:
 Manual tests:
   yai doctor
   yai hot status
+```
+
+Freeze validation:
+
+```text
+make check-hot-state-freeze
+make smoke-spine23
+make smoke-spine24
+make smoke-spine24a
+make smoke-spine25
+make smoke-spine26
+make smoke-spine27
 ```
 
 ## Future Timing
