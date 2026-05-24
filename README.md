@@ -1,443 +1,233 @@
 <!--
-YAI
+YAI Core
 
 Copyright (c) 2026 Francesco Maiomascio.
 All rights reserved.
 
-This file is part of the YAI Community Source Tree.
+This file is part of the source-available YAI Core repository.
 Use, copying, modification, distribution, and production operation
-are governed by the repository licensing documents, including LICENSE and the
-reference documents under docs/.
+are governed by the repository licensing documents, including LICENSE.md and
+docs/legal.md.
 
-Development and non-production use is permitted under the applicable
-YAI license terms. Production, organizational, persistent,
-collaborative, customer-affecting, or business-critical use requires
-a commercial license.
+Public source access is provided for technical evaluation and review. Commercial
+use, redistribution, hosted use, sublicensing, incorporation into third-party
+products, or production use requires explicit written permission unless another
+file or component license says otherwise.
 -->
 
 <div align="center">
   <img src="docs/reference/figures/brand/yai-transp.png" alt="YAI" width="220" />
 
-  <strong>local AI operational control core</strong>
+  <strong>local control runtime for case-bound AI operation</strong>
   <br />
-  <span>Cases, subjects, control gates, receipts, and operational memory for local AI systems.</span>
+  <span>Cases, subjects, policy gates, receipts, records, projections, and operational memory.</span>
 
   <br />
 
   ![Runtime](https://img.shields.io/badge/runtime-local-0f766e?style=flat&labelColor=1f2937)
-  ![Core](https://img.shields.io/badge/core-operational%20control-475569?style=flat&labelColor=1f2937)
-  ![License](https://img.shields.io/badge/license-community%20source-374151?style=flat&labelColor=1f2937)
+  ![Core](https://img.shields.io/badge/core-case%2Fcontrol-475569?style=flat&labelColor=1f2937)
+  ![License](https://img.shields.io/badge/license-source--available-374151?style=flat&labelColor=1f2937)
 </div>
 
-YAI is a local AI operational control core.
+# YAI Core
 
-It binds operational subjects into cases, governs attempted operations through
-machine policy gates, records receipts for effects, derives operational memory,
-and serves controlled projections back to models, agents, operators, and
-systems.
+YAI is a local control runtime for case-bound AI operation. It gives model,
+provider, tool, operator, and system activity an operational boundary: what
+case it belongs to, what subjects it affects, what policy applies, what was
+allowed or blocked, what receipt was produced, and what record, projection, or
+memory can be derived from the result.
 
-YAI is not another intelligence layer.
-YAI is the operational control layer around intelligence.
+## Status
+
+YAI Core is an early source-available technical repository. It is public for
+technical evaluation and review, not production use, unless a specific written
+permission or component license says otherwise.
+
+The command and test surface is still stabilizing. The legal posture is defined
+in [LICENSE.md](LICENSE.md) and summarized in [docs/legal.md](docs/legal.md).
+
+## Why This Exists
+
+Model output increasingly crosses into tools, files, services, memory,
+workflow state, operator decisions, and provider calls. Once that happens, the
+technical problem is no longer only whether a model generated a good answer.
+
+The runtime needs to know which case the activity belongs to, which subject or
+provider boundary it touched, which policy applied, what was allowed or
+blocked, what evidence was produced, and what state can safely be projected
+back into future work.
+
+YAI exists to make that boundary explicit and inspectable on a local machine.
 
 ## What YAI Is
 
-YAI owns the local machine-level control and operational-memory engine for
-AI-mediated work.
+YAI treats work as bounded cases. A case is the operational frame that gives
+subjects, providers, attempted operations, policy decisions, receipts, records,
+projections, and memory a shared context.
 
-It treats work as a bounded operational domain, called a case. Inside a case,
-observable or controllable subjects can be named, related, governed, affected,
-observed, and remembered. An attempted operation against those subjects becomes
-an `op`: material that must be bound to a case, evaluated against policy,
-passed through gates, executed or observed through carriers, and recorded with
-receipts.
+Subjects are things inside or around a case: files, services, repositories,
+providers, operators, tools, models, processes, or external systems. Providers
+are treated as participants at a boundary, not as authority over the case.
 
-The mature operational spine is:
+An attempted operation is evaluated through control material: policy gates,
+decisions, obligations, and effect or observation boundaries. The result should
+leave a receipt and durable record that can be inspected later.
 
-```text
-world formation -> operational residue -> live/durable data planes -> controlled projection -> model/operator/carrier behavior -> receipt/evidence -> graph/memory/reconcile -> observability/evaluation -> next projection/action
-```
+Projection and memory are derived from operational residue. They are views over
+case state, not substitutes for the records and receipts that explain what
+happened.
 
-This gives local AI systems a durable operational layer for case-bound
-worlds, subjects, operation attempts, policy gates, control decisions, effect
-carriers, structured receipts, durable records, graph-backed reconstruction,
-operational memory, controlled projections, divergence reconciliation and case
-view quality.
+## Design Bet
+
+- The model is not the system boundary; the case is the operational boundary.
+- Provider and model output is candidate material, not authority.
+- Receipts and durable records are first-class runtime material.
+- Projection and memory should be derived from operational residue, not free
+  text alone.
+- Provider engines remain separate and can be local, remote, custom, or mocked.
+- Enforcement strength depends on the boundary YAI actually owns or observes.
 
 ## What YAI Is Not
 
 YAI is not:
 
-* an agent framework;
-* a workflow engine;
-* a model provider;
-* a cloud platform;
-* a TUI;
-* a replacement for existing systems.
+- an inference engine
+- a model provider
+- a chatbot framework
+- a generic agent framework
+- a workflow builder
+- a cloud platform
+- a TUI or client application
+- a generic policy engine
+- a generic audit logger
 
-It does not own external agents, business workflows, model providers, cloud
-platform behavior, public SDK surfaces, business systems, or client
-applications. Those systems may integrate with YAI, but the repository's
-identity remains the local control engine.
+Inference engines and model servers remain external providers. `llama.cpp`,
+Ollama, vLLM, MLX, DS4, custom servers, and remote APIs may sit around a YAI
+case, but YAI does not replace them and this README does not claim tested
+support for each provider.
 
-YAI is also not a generic policy engine, generic audit logger, or runtime
-monitor. Policy, auditability, and observation matter because they are part of
-operational control, not because the core is reducible to any one of them.
+## Execution Boundary
 
-## Architectural Thesis
-
-Most AI systems begin with a model loop:
+When a subject, provider, operator, model, tool, or system attempts work inside
+a case, YAI tries to turn that activity into inspectable operational material:
 
 ```text
-context -> model -> tool -> observation -> memory
+input/proposal -> case binding -> subject/effect boundary -> control decision -> effect or observation -> receipt -> record -> projection/memory
 ```
 
-That loop is useful, but it makes the model conversation look like the system
-boundary. YAI moves the boundary to operational control:
+The important steps are concrete: bind the activity to a case, identify the
+subject and effect boundary, evaluate control material, allow, block,
+constrain, observe, or import the result, write a receipt, update durable
+records, and derive the projection or memory that later participants may see.
+
+## Core Model
 
 ```text
-case world -> residue -> data planes -> live projection -> control -> receipt -> graph/memory/reconcile -> observability -> next action
+case -> subject/provider -> attempted operation -> control decision -> effect/observation -> receipt -> record -> projection/memory
 ```
 
-Model output is candidate material, not authority. A model can propose,
-classify, summarize, estimate, route, explain, or generate evidence candidates.
-The core decides what an attempted operation means, what policy applies, which
-gates must fire, whether an effect is executed or blocked, what receipt proves
-the result, and how the operation changes memory and future projections.
-
-Authority, execution, receipts, memory, and continuity remain outside the
-model. Future work is scheduled only through the linear SPINE.20+ roadmap in
-`docs/engineering/four-repo-roadmap.md`.
-
-The canonical operator command inventory is
-`docs/engineering/command-surface.md`. It maps runtime layout, daemon, hot
-state, record-store status, projection, pack doctrine and foundation checks to
-commands, manual tests and expected output.
-
-The active source-surface boundary is `docs/engineering/source-surface.md`.
-`system/` is not a second data engine; Rust data-plane ownership targets
-`engine/yai-engine`, while current C data roots are transitional shims.
-
-The hot-state manual surface is:
-
-```text
-yai doctor
-yai hot status
-yai store status
-yai store summary
-yai store record get <record_id>
-yai store record list --kind <record_kind> --limit 10
-yai store record list --case <case_ref> --limit 10
-yai store record list --subject <subject_ref> --limit 10
-yai store record list --receipt <receipt_ref> --limit 10
-yai projection inspect --journal <path> --consumer model
-```
-
-The command-surface baseline is integrated into the filesystem loop manual and
-notebook under `docs/manuals/manual-filesystem-loop-validation.md` and
-`docs/manuals/manual-filesystem-loop-validation.ipynb`, with Italian companion
-`docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
-
-## Computational Model
-
-`case`
-: A bounded operational control domain. A case gives subjects, operations,
-policies, receipts, records, graph edges, memory, projections, and divergence a
-shared operational frame. In the C ABI this now includes case-domain,
-case-attachment, and case-binding residue so the case is a small operational
-world, not only a `case_ref` on records.
-
-`pack`
-: A case materialization unit. A pack can materialize methods, procedures,
-policies, templates, projection rules, output schemas, memory seeds,
-actors/tools and validation fixtures into a case. A pack is not a marketplace
-product, DLC, prompt bundle or runtime executor.
-
-`subject`
-: An observable or controllable entity bound to a case. A subject may be a file,
-process, repository, service, model, agent, operator, external system, document,
-resource, or domain object.
-
-`op`
-: An attempted operation against one or more subjects. An op is not trusted
-because it came from a model, agent, tool, operator, script, or remote system;
-it becomes operationally meaningful only after case binding and control.
-
-`control`
-: Policy materialization, gates, decisions, constraints, and obligations for an
-op. Control translates applicable policy and case state into machine decisions.
-
-`effect`
-: Execution or observation of an operation through a carrier. An effect may
-write, read, call, invoke, import, classify, block, observe, or reconcile.
-
-`carrier`
-: The mechanism that executes or observes an effect at a boundary. Carriers may
-be local process, filesystem, provider, model, IPC, shell, adapter, or imported
-receipt boundaries.
-
-`receipt`
-: Structured proof of execution, observation, block, failure, constraint,
-imported result, or recovery posture. A receipt is not a generic log line; it
-connects an effect to case state, subjects, policy, decision, records, and
-graph.
-
-`store`
-: Durable operational records, sources, receipts, policy snapshots, journals,
-and reconstruction material.
-
-`hot state`
-: Live runtime cache for the active case session, current projection frame,
-case world/context lifecycle, active interaction thread, participant view,
-freshness, stale reason and latest residue refs. Hot state is not truth; it is
-rebuilt from durable residue and currently snapshots to
-`YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`. SPINE.28 freezes
-this cache/diagnostic surface before LMDB durable record lookup starts.
-
-`record store`
-: Durable indexed record lookup under `YAI_HOME/store/lmdb`. LMDB is durable
-record lookup, not hot state, journal replay, graph truth, analytical facts or
-memory. SPINE.29 defines schema `yai.record.v1` and logical keys such as
-`record:id`, `record:case`, `record:kind` and `record:subject`. SPINE.30 writes
-daemon-loop journal records into `records_by_id`, `records_by_case` and
-`records_by_kind` and exposes `yai store summary`. SPINE.31 reads those
-records with `yai store record get`, `yai store record list --case` and
-`yai store record list --kind`; missing LMDB reports status and missing records
-return `record: not_found`. SPINE.32 adds derived `records_by_subject` and
-`records_by_receipt` indexes plus matching list filters.
-
-`graph`
-: Relationships between subjects, operations, decisions, receipts, policies,
-records, projections, memory, and divergence. The graph preserves operational
-structure for reconstruction and controlled query.
-
-`memory`
-: Operational memory derived from records, decisions, receipts, effects,
-policies, projections, divergences, and graph structure.
-
-`projection`
-: A controlled view served to models, agents, operators, APIs, audit surfaces,
-or external systems. A projection is scoped material, not ownership of truth.
-
-`reconcile`
-: Divergence detection, recovery, and compensation when expected state and
-observed state differ.
-
-`daemon`
-: The local resident service. `yaid` is the local daemon.
-
-`ctl`
-: The local technical command surface. `yai` is the canonical local technical
-command.
-
-## Integration Modes
-
-YAI integrates with surrounding systems through four control postures.
-
-`observed`
-: YAI sees an operation after, alongside, or around execution. It can bind the
-event to a case, classify returned material, import or produce receipts, update
-records, derive memory, and detect divergence. It cannot claim full enforcement
-over a boundary it did not control.
-
-`interposed`
-: YAI sits on the local path before an effect is executed. It can apply gates,
-decisions, constraints, obligations, blocks, and receipt requirements at that
-local boundary.
-
-`carrier-owned`
-: YAI owns the carrier that executes or observes the effect. This gives the
-core the strongest local enforcement posture because execution and receipt
-production share a controlled boundary.
-
-`embedded`
-: YAI control logic runs inside a host system, adapter, service, or runtime
-boundary. Enforcement strength depends on the host integration contract and the
-material returned as receipts.
-
-If YAI does not own the carrier or run on the remote side, it cannot claim full
-enforcement. It can still control the local boundary, classify returned
-material, import receipts, preserve records, update graph and memory, and
-reconcile divergence.
-
-## Models Boundary
-
-Models are central, but not sovereign.
-
-Model invocation is itself an operation. A model receives a controlled
-projection, produces candidate material, and returns claims that may become
-proposals, summaries, classifications, routes, explanations, or evidence
-candidates.
-
-The model does not own authority, execution, receipts, operational memory,
-continuity, policy enforcement, or case truth.
-
-Stronger models make YAI more useful, not obsolete. Better inference
-improves classification, planning, summarization, projection, review, and
-recovery, but operational authority remains in the control layer around
-intelligence.
-
-## Memory Model
-
-YAI operational memory is distinct from other AI memory forms.
-
-`model parametric memory`
-: Information encoded in model weights. It is broad, opaque, and not
-case-bound operational state.
-
-`prompt/context memory`
-: Material placed into a model invocation. It is a projection for a task, not
-durable authority or continuity.
-
-`retrieval memory`
-: Retrieved documents, chunks, embeddings, or indexes. It helps assemble
-context, but retrieval alone does not prove what happened.
-
-`agent memory`
-: Notes, summaries, plans, preferences, or task-local history held by an agent.
-It may support behavior, but it does not define operational truth.
-
-`YAI operational memory`
-: The case-bound memory of subjects, operations, decisions, receipts, effects,
-policies, records, projections, divergences, and graph structure.
-
-YAI operational memory is not another knowledge base. It is memory derived from
-controlled operation and structured residue.
-
-## Policy And Control
-
-Policy in a prompt is not enforcement.
-
-YAI materializes policy into machine control through policy sources,
-policy material, policy claims, policy rules, case bindings, gates, decisions,
-obligations, receipts, and policy memory.
-
-A prompt can describe policy. It cannot enforce policy. Enforcement requires a
-machine boundary that can bind the attempted operation, evaluate applicable
-rules, emit a control decision, constrain or block the effect, and record a
-receipt.
-
-## Repository Shape
-
-The filesystem doctrine separates ABI, system boundary, operational data, local
-binaries, schemas, documentation, validation, and developer tools.
-
-```text
-include/  public and system ABI contracts
-system/   C and system plane: daemon, host boundary, carriers, control shell, FFI bridges
-engine/   Rust operational data spine: hot state, store, graph, index, memory, query, projection, reconcile
-cmd/      local binaries: yai and yaid
-proto/    schemas, fixtures, and protocol material
-docs/     architecture, protocols, engineering notes, and ADRs
-tests/    unit, integration, conformance, smoke, and adversarial tests
-tools/    checks, probes, validation, and developer utilities
-packaging/ package source material
-examples/ non-authoritative examples
-vendor/   vendored support code
-```
-
-Current refactor state: NEW.18 has centralized the Rust engine C shim under
-`system/engine_bridge`. The C data-spine folders under
-`system/{store,graph,index,memory,projection,reconcile}` are transitional
-`keep_temporarily` smoke paths; Rust `engine/yai-engine` is the target owner of
-store, journal, record codec, graph, index/query, memory, projection,
-reconcile, retention, and integrity logic.
-
-SPINE.3R adds the case-world and live data-plane doctrine. NEW.19 guard
-realignment is done. Case-world material precedes subject behavior:
-
-```text
-case_world -> case_domain -> case_attachment -> case_binding -> case_session -> case_context -> subject
-```
-
-Projection is not a summary. It is a versioned cognitive view over the
-operational data planes of a case. SPINE.4 adds Operational Observability &
-Evaluation: YAI measures whether the case view is fresh, causal, provenanced,
-coherent, complete, replayable and useful enough for controlled behavior.
-Shared memory, LMDB, Ladybug, DuckDB, observability records and debug commands
-are planned-not-created backend waves, not current implementations.
-
-NEW.18B adds the live case context boundary: refs identify durable material,
-while sessions and contexts operate on loaded case state.
-
-The canonical case-view quality vector is `CVQ`: freshness,
-causal_completeness, provenance_sufficiency, projection_consistency,
-authority_alignment, memory_basis_quality, divergence_exposure, delta_accuracy
-and cost.
-
-NEW.18C separates journal replay/audit from active model context. The prompt
-surface now uses an active interaction thread plus participant view frame over
-the current case projection; transcript records remain audit material, not raw
-chat memory.
-
-SPINE.6A compresses active engineering docs. SPINE.6B makes future
-implementation waves bidirectional: if the touched concept exists in `yai-dev`,
-the wave must extract or rewrite useful material, classify the old residue,
-update inventory and keep commit boundaries clear. SPINE.20 adds local runtime
-layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
-`YAI_HOME/log`, `YAI_HOME/tmp`, `YAI_HOME/cases`, `YAI_HOME/sockets` and
-`YAI_HOME/config`. SPINE.20A rebases the active linear roadmap so SPINE.21 is
-Pack Materialization Doctrine before filesystem freeze and data-plane
-implementation. SPINE.21 defines packs as case materialization units; no pack
-runtime, installer, registry backend or marketplace is implemented. SPINE.22
-freezes the filesystem/runtime foundation. SPINE.23-SPINE.26 introduce and
-harden hot state as a non-authoritative live case/session/context cache with
-consumer-aware projection freshness policy before record, graph, fact,
-projection and memory backends begin. SPINE.29 defines LMDB as the durable
-indexed record lookup plane. SPINE.30 adds the LMDB write path. SPINE.31 adds
-record read/query over id, case and kind indexes. SPINE.32 adds subject and
-receipt indexes. SPINE.33 owns CLI/manual validation hardening.
-
-### Absorbed Concepts
-
-Earlier or adjacent concepts are absorbed into the control spine:
-
-* agents -> external subjects and YAI-dev participants;
-* capabilities -> op effect classes and control gates;
-* models -> model subjects, model carriers, projections, and model output claims;
-* runtime -> daemon and effect carriers;
-* substrate -> store, graph, index, memory, and projection;
-* lineage -> graph, receipts, and reconstruction;
-* workflow -> external procedure and case progress, not the core engine.
-
-## Local Operation
-
-`yaid`
-: The local daemon. It is the resident service boundary for local control,
-carrier coordination, records, receipts, and operational memory.
-
-`yai`
-: The canonical local technical command. It is the local control and inspection
-surface for operators and developer workflows.
-
-The README is not a command reference. Operational manuals and reference
-documents own detailed command behavior.
-
-## Validation
-
-Stable repository validation entrypoints:
-
-```text
+- `case`: bounded operational context.
+- `subject/provider`: entity or boundary participating in the case.
+- `attempted operation`: proposed action or observation.
+- `control decision`: allow, block, constrain, or require obligations.
+- `effect/observation`: local execution, boundary call, import, or observation.
+- `receipt`: structured evidence of what happened.
+- `record`: durable material used for reconstruction and inspection.
+- `projection/memory`: controlled views and derived operational memory.
+
+## Current Validation
+
+Repository-level entrypoints:
+
+```sh
 make info
 make check
 ```
 
-## Documentation Pointers
+Deeper runtime and manual validation lives in the engineering and manual docs.
+The README is not the full command reference.
 
-Start with:
+The current command surface is documented in
+[docs/engineering/command-surface.md](docs/engineering/command-surface.md).
+It includes local runtime and inspection commands such as `yai doctor`,
+`yai hot status`, `yai store status`, daemon status/info calls, and smoke-test
+paths. Treat that document as the current command reference rather than this
+README.
+
+## Current Implementation Surface
+
+This repository currently contains the local command and daemon source, the C
+system boundary, the Rust operational data engine under consolidation, and
+smoke/manual validation material.
+
+- `cmd/` contains local binaries such as `yai` and `yaid`.
+- `system/` contains the C daemon, host-boundary, control, carrier, bridge, and
+  transitional shim surface.
+- `engine/` contains the Rust operational data engine being consolidated.
+- Hot-state and record-store inspection are documented in the current command
+  surface.
+- Smoke and manual validation exist, but command and test surfaces are still
+  being stabilized.
+
+## Repository Layout
 
 ```text
-docs/architecture/00-spine.md
-docs/architecture/01-terminology.md
-docs/architecture/04-subject-model.md
-docs/architecture/06-control-policy-model.md
-docs/engineering/four-repo-roadmap.md
-docs/engineering/filesystem-target.md
-docs/engineering/data-plane-roadmap.md
-docs/engineering/wave-template.md
-docs/engineering/operational-extraction-contract.md
-docs/engineering/current-status.md
-docs/status/implementation-status.md
+include/    public and system ABI headers
+system/     C system boundary: daemon, host boundary, carriers, control, FFI bridges
+engine/     Rust operational data engine
+cmd/        local binaries: yai and yaid
+proto/      schemas, fixtures, and protocol material
+docs/       architecture, engineering notes, ADRs, legal notes
+tests/      smoke and validation tests
+tools/      checks and developer utilities
+vendor/     vendored support code
+examples/   examples when present
+packaging/  packaging material when present
 ```
 
-Implementation status and roadmap material belong in status or roadmap
-documents, not in this README.
+Some C data-plane paths are transitional while Rust engine ownership is being
+consolidated. The current source boundary is described in
+[docs/engineering/source-surface.md](docs/engineering/source-surface.md).
+
+## Documentation
+
+- [Documentation index](docs/index.md)
+- [Legal posture](docs/legal.md)
+- [Command surface](docs/engineering/command-surface.md)
+- [Source surface](docs/engineering/source-surface.md)
+- [Testing](docs/engineering/testing.md)
+- [Filesystem loop manual](docs/manuals/manual-filesystem-loop-validation.md)
+- [Architecture notes](docs/architecture/README.md)
+
+These documents still include older internal planning and implementation
+material. The public documentation surface is being split into shorter focused
+pages after this README pass.
+
+## License And Contributions
+
+YAI Core is source-available, not open source by default. Source access is for
+technical evaluation and review unless another file or component explicitly
+grants different rights.
+
+- [LICENSE.md](LICENSE.md)
+- [NOTICE.md](NOTICE.md)
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [SECURITY.md](SECURITY.md)
+- [docs/legal.md](docs/legal.md)
+
+Technical feedback is welcome. Broad external contribution is not open yet
+unless maintainers explicitly scope the change.
+
+## Current Limitations
+
+- Early repository; not production-ready unless explicitly stated.
+- Command and test surfaces are still stabilizing.
+- Public docs are being separated from older architecture, manual, and planning
+  material.
+- Provider/backend mentions should not be read as tested provider breadth.
+- Data-plane ownership is still being consolidated between transitional C paths
+  and the Rust engine.
+- No DS4 integration is claimed by this README.
+- Commercial or public launch use still requires legal review and explicit
+  permission under the source-available posture.

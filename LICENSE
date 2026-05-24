@@ -1,48 +1,6 @@
-YAI Community Source License Notice
+YAI Core license information lives in LICENSE.md.
 
-Copyright (c) YAI Labs and contributors.
-
-This repository is published as the YAI Community Source Tree.
-
-YAI is free for development / non-production. Production shorthand: commercial license required for production / organizational use.
-
-Subject to the precedence rules below, first-party YAI material in this repository is made available for development, experimentation, evaluation, research, prototyping, learning, contribution, and other non-production use.
-
-Source access does not automatically grant production rights. Production, organizational, persistent, collaborative, customer-affecting, or business-critical use of YAI requires a commercial license from YAI Labs or another written agreement authorized by YAI Labs.
-
-This notice is intended to describe the repository's community source licensing posture. It is not a substitute for a signed commercial license, and it should not be read as detailed legal advice.
-
-## Allowed Community Source Use
-
-You may use the repository for non-production purposes such as:
-
-- local experimentation
-- research
-- learning
-- prototyping
-- evaluation
-- internal development
-- demo environments
-- non-live testing
-- contribution to the community source tree
-
-## Commercial Production Use
-
-A commercial license is required when YAI is used for production, organizational, persistent, collaborative, or business-critical purposes, including live workflows, team-shared runtime usage, online or remote operational deployment, organizational decision support, customer-affecting flows, or real review, authority, or governance operations.
-
-Self-managed posture: self-managed deployment is compatible with commercial production licensing. Operating YAI on your own infrastructure does not remove the need for a commercial license when the use is production or organizational.
-
-## Notice Precedence
-
-Some files contain explicit SPDX identifiers or are third-party material. The interpretation order is:
-
-1. explicit per-file SPDX identifiers or file-level license notices
-2. third-party license notices shipped with vendored, embedded, or externally sourced dependencies
-3. this repository-level notice for first-party files that do not carry a more specific license header
-
-Third-party material under `vendor/`, `tools/third_party/`, or other explicitly marked third-party surfaces remains governed by its own license terms.
-
-## Additional Terms
-
-See `LICENSING.md` for the repository licensing model and usage definitions.
-See `COMMERCIAL.md` for commercial production licensing posture.
+This compatibility file is kept for tools and readers that expect a root
+LICENSE file. See LICENSE.md for the repository source-available license notice,
+docs/legal.md for a plain-language summary, and THIRD_PARTY_NOTICES.md for
+third-party component notices.
