@@ -121,6 +121,10 @@ yai hot status
 yai projection inspect --journal <path> --consumer model
 ```
 
+The manual runbook and notebook for this command surface live under
+`docs/manuals/manual-command-surface-validation.md` and
+`docs/manuals/manual-command-surface-validation.ipynb`.
+
 ## Computational Model
 
 `case`

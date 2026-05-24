@@ -10,6 +10,8 @@ A primitive that cannot be inspected is not operational yet.
 
 This file maps SPINE.20-SPINE.27 primitives to their current view, command,
 manual test and documentation surface. It does not define new core semantics.
+The operator-facing runbook is `docs/manuals/manual-command-surface-validation.md`
+with notebook companion `docs/manuals/manual-command-surface-validation.ipynb`.
 
 ## Runtime Commands
 

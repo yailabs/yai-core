@@ -168,6 +168,13 @@ projection inspect exposes projection_freshness/stale_reason/freshness_policy/fr
 `tests/smoke/hot-state-cli/test_hot_state_cli.sh` proves the stable manual
 surface for hot state and projection freshness.
 
+The operator-facing runbook and notebook for this command surface are:
+
+```text
+docs/manuals/manual-command-surface-validation.md
+docs/manuals/manual-command-surface-validation.ipynb
+```
+
 ```text
 make smoke-spine27
 target/debug/yai --version

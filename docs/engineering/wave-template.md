@@ -63,6 +63,10 @@ Command Surface:
     command docs, testing docs or manual runbooks changed
   Primitive/view/command mapping:
     command-surface.md updated when a wave exposes or changes an operator view
+  Manual runbook/notebook:
+    docs/manuals/manual-command-surface-validation.md and
+    docs/manuals/manual-command-surface-validation.ipynb updated when command
+    behavior or expected output changes
 
   Rule:
     If no commands changed, state explicitly: no command surface change.

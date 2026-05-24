@@ -23,6 +23,9 @@ for file in \
   docs/engineering/pack-roadmap.md \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
+  docs/manuals/manual-command-surface-validation.md \
+  docs/manuals/manual-command-surface-validation.ipynb \
+  docs/manuals/README.md \
   docs/adr/0017-packs-as-case-materialization-units.md \
   docs/adr/0018-hot-state-is-not-truth.md \
   docs/product/positioning.md \
