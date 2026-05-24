@@ -8,7 +8,7 @@ Rule:
 A primitive that cannot be inspected is not operational yet.
 ```
 
-This file maps SPINE.20-SPINE.31 primitives to their current view, command,
+This file maps SPINE.20-SPINE.32 primitives to their current view, command,
 manual test and documentation surface. It does not define new core semantics.
 The operator-facing runbook is `docs/manuals/manual-filesystem-loop-validation.md`
 with notebook companions `docs/manuals/manual-filesystem-loop-validation.ipynb`
@@ -89,14 +89,16 @@ available. LMDB will add durable record lookup later; it will not replace
 | record get | LMDB id lookup | `yai store record get <record_id>` | `target/debug/yai store record get rec:new12-min-receipt` | `lmdb-record-plane.md`, `testing.md` |
 | record list by case | LMDB case index scan | `yai store record list --case <case_ref> [--limit <N>]` | `target/debug/yai store record list --case case:new12-daemon --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | record list by kind | LMDB kind index scan | `yai store record list --kind <record_kind> [--limit <N>]` | `target/debug/yai store record list --kind receipt --limit 10` | `lmdb-record-plane.md`, `testing.md` |
+| record list by subject | LMDB subject index scan | `yai store record list --subject <subject_ref> [--limit <N>]` | `target/debug/yai store record list --subject subject:filesystem-sandbox --limit 20` | `lmdb-record-plane.md`, `testing.md` |
+| record list by receipt | LMDB receipt index scan | `yai store record list --receipt <receipt_ref> [--limit <N>]` | `target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
 `yai store summary` for aggregate write-path validation. SPINE.31 adds
 read-only `yai store record get` and `yai store record list` over the id, case
-and kind indexes. Future subcommands can extend the same surface with
-`yai store rebuild status`.
+and kind indexes. SPINE.32 extends list with subject and receipt filters.
+Future subcommands can extend the same surface with `yai store rebuild status`.
 
 Required fields:
 
@@ -121,6 +123,8 @@ record_store_path: <YAI_HOME>/store/lmdb
 records_total: N
 records_by_case: N
 records_by_kind: N
+records_by_subject: N
+records_by_receipt: N
 ```
 
 Required `yai store record get <record_id>` fields for a found record:
@@ -147,12 +151,15 @@ Required list modes:
 ```text
 yai store record list --case <case_ref> [--limit <N>]
 yai store record list --kind <record_kind> [--limit <N>]
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
 ```
 
-Both list modes report `records_total` for the matching index and print
-summary rows with `record_id`, `record_kind` and `case_ref`. If LMDB is
-missing, uninitialized or unavailable, record read commands print the record
-store status fields and do not synthesize records from journal.
+List modes report `records_total` for the matching index and print summary rows
+with `record_id`, `record_kind` and `case_ref`. Subject and receipt indexes are
+derived from structured record fields only. If LMDB is missing, uninitialized
+or unavailable, record read commands print the record store status fields and
+do not synthesize records from journal.
 
 ## Projection Commands
 
@@ -221,6 +228,8 @@ PATH=/tmp/yai-install-test/bin:$PATH yai doctor
 PATH=/tmp/yai-install-test/bin:$PATH yai store status
 PATH=/tmp/yai-install-test/bin:$PATH yai store summary
 PATH=/tmp/yai-install-test/bin:$PATH yai store record list --kind receipt --limit 10
+PATH=/tmp/yai-install-test/bin:$PATH yai store record list --subject subject:filesystem-sandbox --limit 20
+PATH=/tmp/yai-install-test/bin:$PATH yai store record list --receipt receipt:new12-fs-write --limit 10
 PATH=/tmp/yai-install-test/bin:$PATH yai store record get rec:new12-min-receipt
 PATH=/tmp/yai-install-test/bin:$PATH yai hot status
 /tmp/yai-install-test/bin/yaid --version

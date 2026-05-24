@@ -127,6 +127,8 @@ yai store summary
 yai store record get <record_id>
 yai store record list --kind <record_kind> --limit 10
 yai store record list --case <case_ref> --limit 10
+yai store record list --subject <subject_ref> --limit 10
+yai store record list --receipt <receipt_ref> --limit 10
 yai projection inspect --journal <path> --consumer model
 ```
 
@@ -200,7 +202,8 @@ daemon-loop journal records into `records_by_id`, `records_by_case` and
 `records_by_kind` and exposes `yai store summary`. SPINE.31 reads those
 records with `yai store record get`, `yai store record list --case` and
 `yai store record list --kind`; missing LMDB reports status and missing records
-return `record: not_found`.
+return `record: not_found`. SPINE.32 adds derived `records_by_subject` and
+`records_by_receipt` indexes plus matching list filters.
 
 `graph`
 : Relationships between subjects, operations, decisions, receipts, policies,
@@ -381,8 +384,8 @@ harden hot state as a non-authoritative live case/session/context cache with
 consumer-aware projection freshness policy before record, graph, fact,
 projection and memory backends begin. SPINE.29 defines LMDB as the durable
 indexed record lookup plane. SPINE.30 adds the LMDB write path. SPINE.31 adds
-record read/query over id, case and kind indexes. SPINE.32 owns expanded
-subject, receipt, projection and time indexes.
+record read/query over id, case and kind indexes. SPINE.32 adds subject and
+receipt indexes. SPINE.33 owns CLI/manual validation hardening.
 
 ### Absorbed Concepts
 

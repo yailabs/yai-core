@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.31 LMDB Record Read / Query Path.
+Status: SPINE.32 LMDB Case / Subject / Receipt Indexes.
 
 ## Completed Foundation
 
@@ -30,7 +30,8 @@ Rust LMDB write path, mirrors daemon-loop journal records into
 `records_by_id`, `records_by_case` and `records_by_kind`, and keeps the journal
 as replay/audit source. SPINE.31 adds direct record get/list commands over the
 LMDB id, case and kind indexes without adding a query planner or journal
-fallback reads.
+fallback reads. SPINE.32 adds subject and receipt indexes as derived views over
+stored record envelopes.
 
 Current:
 
@@ -51,13 +52,14 @@ SPINE.28A Repository Identity Cutover completed.
 SPINE.28B Internal Source Surface Cleanup completed.
 SPINE.29 LMDB Record Plane Doctrine + Schema completed.
 SPINE.30 LMDB Record Write Path completed.
-SPINE.31 LMDB Record Read / Query Path current.
+SPINE.31 LMDB Record Read / Query Path completed.
+SPINE.32 LMDB Case / Subject / Receipt Indexes current.
 ```
 
 Next:
 
 ```text
-SPINE.32 LMDB Case / Subject / Receipt Indexes.
+SPINE.33 LMDB CLI + Manual Validation.
 ```
 
 Foundation status:
@@ -86,6 +88,7 @@ record store status surface active
 LMDB record write path active
 record store summary surface active
 LMDB record read/query surface active
+LMDB subject/receipt indexes active
 ```
 
 ## Current Layout
@@ -169,7 +172,7 @@ than operator, audit and debug views. SPINE.27 makes `yai hot status`,
 SPINE.28 freezes this surface as a non-authoritative live cache boundary.
 True OS shared memory/mmap, expanded LMDB indexes, Ladybug, DuckDB, projection deltas,
 memory consolidation, cross-plane reconcile and observability/evaluation facts remain
-future SPINE.32-SPINE.80 work. Pack
+future SPINE.33-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -182,8 +185,9 @@ rebuilt or refreshed from durable residue.
 `record_store_status: missing|not_initialized|ready|unavailable` and
 `record_store_path: <YAI_HOME>/store/lmdb`. `ready` means the LMDB environment
 opened and schema metadata exists. `yai store summary` reports aggregate
-counts. `yai store record get <record_id>` and `yai store record list --case`
-or `--kind` read from LMDB only; missing or uninitialized LMDB reports status
+counts, including subject and receipt index counts. `yai store record get
+<record_id>` and `yai store record list --case`, `--kind`, `--subject` or
+`--receipt` read from LMDB only; missing or uninitialized LMDB reports status
 instead of fabricating journal-backed records.
 
 Source surface:
@@ -253,6 +257,10 @@ residue for write-path posture. No `yai-dev` source file was modified.
 
 SPINE.31 read-only inspected yai-dev query, index, store and records residue
 for read/query posture. No `yai-dev` source file was modified.
+
+SPINE.32 read-only inspected yai-dev index, query, records, store and
+operational receipt residue for subject/receipt index posture. No `yai-dev`
+source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

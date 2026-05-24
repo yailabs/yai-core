@@ -8,6 +8,9 @@ journal replay/audit.
 SPINE.31 LMDB Record Read / Query Path adds direct CLI reads over the LMDB id,
 case and kind indexes.
 
+SPINE.32 LMDB Case / Subject / Receipt Indexes adds derived subject and receipt
+indexes over structured record fields.
+
 Doctrine:
 
 ```text
@@ -76,7 +79,8 @@ schema_meta
 ```
 
 SPINE.30 implements `records_by_id`, `records_by_case`, `records_by_kind` and
-`schema_meta`. Remaining indexes stay planned for SPINE.32+.
+`schema_meta`. SPINE.32 implements `records_by_subject` and
+`records_by_receipt`. Remaining projection/time/meta indexes stay planned.
 
 ## Key Grammar
 
@@ -227,17 +231,40 @@ Missing records return `record: not_found`. Missing, uninitialized or
 unavailable LMDB environments return record-store status fields and do not
 fabricate journal-backed reads.
 
+## SPINE.32 Subject / Receipt Indexes
+
+SPINE.32 adds:
+
+```text
+records_by_subject record:subject:<subject_ref>:<record_id> -> record_id
+records_by_receipt record:receipt:<receipt_ref>:<record_id> -> record_id
+```
+
+Only structured `subject_ref` and `receipt_id` fields are indexed. The writer
+does not parse free-text payloads and does not invent refs.
+
+The CLI reads these indexes through:
+
+```text
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
+```
+
+No-result queries return `records_total: 0` and `- none`. Missing,
+uninitialized or unavailable LMDB environments still return record-store status
+fields and do not fall back to journal.
+
 ## Delivery Boundary
 
 SPINE.30 adds the LMDB dependency, opens the environment, writes records by id
 and minimal case/kind indexes, and exposes aggregate summary counts. SPINE.31
-adds record get/list over those indexes. It does not add journal replay,
-graph/fact/memory backends, expanded secondary indexes or projection deltas.
+adds record get/list over those indexes. SPINE.32 adds subject/receipt
+secondary indexes. It does not add journal replay, graph/fact/memory backends,
+projection/time indexes or projection deltas.
 
 Next:
 
 ```text
-SPINE.32 LMDB Case / Subject / Receipt Indexes
 SPINE.33 LMDB CLI + Manual Validation
 SPINE.34 LMDB Record Plane Freeze
 ```

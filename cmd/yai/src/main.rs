@@ -37,7 +37,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.31 LMDB Record Read / Query Path");
+    println!("status: SPINE.32 LMDB Case / Subject / Receipt Indexes");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -166,6 +166,8 @@ fn print_usage() {
     println!("       yai store record get <record_id>");
     println!("       yai store record list --case <case_ref> [--limit <N>]");
     println!("       yai store record list --kind <record_kind> [--limit <N>]");
+    println!("       yai store record list --subject <subject_ref> [--limit <N>]");
+    println!("       yai store record list --receipt <receipt_ref> [--limit <N>]");
     println!("       yai store tail --journal <path>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
@@ -248,6 +250,8 @@ fn print_store_summary() -> Result<(), String> {
         println!("records_total: 0");
         println!("records_by_case: 0");
         println!("records_by_kind: 0");
+        println!("records_by_subject: 0");
+        println!("records_by_receipt: 0");
         return Ok(());
     }
     let store = LmdbRecordStore::open(&status.path)?;
@@ -255,6 +259,8 @@ fn print_store_summary() -> Result<(), String> {
     println!("records_total: {}", summary.records_total);
     println!("records_by_case: {}", summary.records_by_case);
     println!("records_by_kind: {}", summary.records_by_kind);
+    println!("records_by_subject: {}", summary.records_by_subject);
+    println!("records_by_receipt: {}", summary.records_by_receipt);
     Ok(())
 }
 
@@ -303,8 +309,19 @@ fn store_record_get(args: &[String]) -> Result<(), String> {
 fn store_record_list(args: &[String]) -> Result<(), String> {
     let case_ref = optional_arg(args, "--case");
     let record_kind = optional_arg(args, "--kind");
-    if case_ref.is_some() == record_kind.is_some() {
-        return Err("provide exactly one of --case <case_ref> or --kind <record_kind>".to_string());
+    let subject_ref = optional_arg(args, "--subject");
+    let receipt_ref = optional_arg(args, "--receipt");
+    let filter_count = [
+        case_ref.is_some(),
+        record_kind.is_some(),
+        subject_ref.is_some(),
+        receipt_ref.is_some(),
+    ]
+    .into_iter()
+    .filter(|present| *present)
+    .count();
+    if filter_count != 1 {
+        return Err("provide exactly one of --case, --kind, --subject or --receipt".to_string());
     }
     let limit = parse_limit(args)?;
     let status = LmdbRecordStore::status(record_store_path());
@@ -317,13 +334,21 @@ fn store_record_list(args: &[String]) -> Result<(), String> {
         let result = store.list_records_by_case(case_ref, limit)?;
         println!("case_ref: {case_ref}");
         result
-    } else {
-        let record_kind = record_kind.as_deref().unwrap_or_default();
+    } else if let Some(record_kind) = record_kind.as_deref() {
         if RecordKind::from_str(record_kind).is_none() {
             return Err(format!("unknown record kind: {record_kind}"));
         }
         let result = store.list_records_by_kind(record_kind, limit)?;
         println!("record_kind: {record_kind}");
+        result
+    } else if let Some(subject_ref) = subject_ref.as_deref() {
+        let result = store.list_records_by_subject(subject_ref, limit)?;
+        println!("subject_ref: {subject_ref}");
+        result
+    } else {
+        let receipt_ref = receipt_ref.as_deref().unwrap_or_default();
+        let result = store.list_records_by_receipt(receipt_ref, limit)?;
+        println!("receipt_ref: {receipt_ref}");
         result
     };
     println!("records_total: {}", result.records_total);

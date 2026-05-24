@@ -34,7 +34,7 @@ mkdir -p "$YAI_HOME/run"
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.31 LMDB Record Read / Query Path"
+require_line "$info" "status: SPINE.32 LMDB Case / Subject / Receipt Indexes"
 
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_path: $HOT"

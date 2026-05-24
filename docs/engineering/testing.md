@@ -400,6 +400,37 @@ payload:
 record: not_found
 ```
 
+## SPINE.32 LMDB Subject / Receipt Index Loop
+
+```text
+filesystem loop writes records to LMDB
+store summary reports records_by_subject and records_by_receipt
+store record list --subject reads records_by_subject and resolves records_by_id
+store record list --receipt reads records_by_receipt and resolves records_by_id
+missing subject returns records_total: 0
+missing LMDB reports record_store_status instead of journal-only fake reads
+```
+
+`tests/smoke/record-store-subject-receipt-indexes/test_record_store_subject_receipt_indexes.sh`
+proves the subject/receipt index surface.
+
+```text
+make smoke-spine32
+target/debug/yai store record list --subject subject:filesystem-sandbox --limit 20
+target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10
+target/debug/yai store record list --subject subject:missing --limit 10
+```
+
+Expected key lines:
+
+```text
+records_by_subject: <non-zero>
+records_by_receipt: <non-zero>
+subject_ref: subject:filesystem-sandbox
+receipt_ref: receipt:new12-fs-write
+records_total: 0
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

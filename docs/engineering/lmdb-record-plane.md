@@ -2,7 +2,7 @@
 
 SPINE.29 freezes the record-plane contract. SPINE.30 implements the first LMDB
 write path. SPINE.31 adds the first read/query path over the id, case and kind
-indexes.
+indexes. SPINE.32 adds derived subject and receipt indexes.
 
 ## Operator Doctrine
 
@@ -28,6 +28,8 @@ yai store summary
 yai store record get <record_id>
 yai store record list --case <case_ref> [--limit <N>]
 yai store record list --kind <record_kind> [--limit <N>]
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
 ```
 
 Future commands can extend this shape:
@@ -64,6 +66,8 @@ record_store_path: <YAI_HOME>/store/lmdb
 records_total: N
 records_by_case: N
 records_by_kind: N
+records_by_subject: N
+records_by_receipt: N
 ```
 
 `yai store record get <record_id>` reads `records_by_id` and prints the
@@ -75,6 +79,12 @@ record returns `record: not_found`.
 
 `yai store record list --kind <record_kind> [--limit <N>]` scans
 `records_by_kind` and resolves matching ids through `records_by_id`.
+
+`yai store record list --subject <subject_ref> [--limit <N>]` scans
+`records_by_subject` and resolves matching ids through `records_by_id`.
+
+`yai store record list --receipt <receipt_ref> [--limit <N>]` scans
+`records_by_receipt` and resolves matching ids through `records_by_id`.
 
 If the LMDB environment is missing, uninitialized or unavailable, get/list
 commands print record-store status fields. They do not read from journal as a
@@ -146,11 +156,16 @@ records_by_case -> records_by_id
 records_by_kind -> records_by_id
 ```
 
-SPINE.32+ will add:
+SPINE.32 adds:
 
 ```text
 records_by_subject
 records_by_receipt
+```
+
+SPINE.33+ will add:
+
+```text
 records_by_projection
 records_by_time
 record_meta
@@ -189,6 +204,11 @@ record query grammar, kind filters, case filters, record listing and index/read
 path posture. The old material stays concept evidence; no `yai-dev` file is
 mutated.
 
+SPINE.32 read-only inspected query, index, store, records and operational
+receipt material for subject indexes, receipt lookup, record relationship
+indexes, query filters and index consistency posture. The old material stays
+concept evidence; no `yai-dev` file is mutated.
+
 ## Write Path
 
 The Rust engine owns the LMDB backend via the `lmdb` crate. The C daemon still
@@ -199,6 +219,8 @@ journals into LMDB by loading the emitted JSONL and writing:
 record:id:<record_id> -> yai.record.v1 envelope
 record:case:<case_ref>:<record_id> -> record_id
 record:kind:<record_kind>:<record_id> -> record_id
+record:subject:<subject_ref>:<record_id> -> record_id
+record:receipt:<receipt_ref>:<record_id> -> record_id
 meta:schema -> yai.record.v1
 meta:rebuild -> not_started
 ```
@@ -215,6 +237,7 @@ make check-lmdb-record-plane-doctrine
 make smoke-spine29
 make smoke-spine30
 make smoke-spine31
+make smoke-spine32
 ```
 
 They are integrated into:

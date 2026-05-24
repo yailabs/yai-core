@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.31 LMDB record read/query path. | SPINE.32 LMDB Case / Subject / Receipt Indexes. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.32 LMDB subject/receipt indexes. | SPINE.33 LMDB CLI + Manual Validation. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -80,10 +80,11 @@ the Rust LMDB write path, minimal `records_by_id`, `records_by_case` and
 `records_by_kind` indexes, `yai store summary` and daemon-loop mirroring from
 journal to LMDB. SPINE.31 adds `yai store record get` and
 `yai store record list` over the id, case and kind indexes without adding
-journal fallback reads.
+journal fallback reads. SPINE.32 adds derived subject and receipt indexes plus
+CLI list filters for both.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.32.
+delivery is SPINE.33.
 
 ## Canonical Macro Labels
 
@@ -182,7 +183,7 @@ SPINE.28B Internal Source Surface Cleanup                            done
 SPINE.29  LMDB Record Plane Doctrine + Schema                       done
 SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             done
-SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
+SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 

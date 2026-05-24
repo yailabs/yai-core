@@ -41,6 +41,8 @@ pub struct RecordStoreSummary {
     pub records_total: usize,
     pub records_by_case: usize,
     pub records_by_kind: usize,
+    pub records_by_subject: usize,
+    pub records_by_receipt: usize,
 }
 
 pub struct LmdbRecordStore {
@@ -48,6 +50,8 @@ pub struct LmdbRecordStore {
     records_by_id: Database,
     records_by_case: Database,
     records_by_kind: Database,
+    records_by_subject: Database,
+    records_by_receipt: Database,
     schema_meta: Database,
 }
 
@@ -72,7 +76,7 @@ impl LmdbRecordStore {
         fs::create_dir_all(path)
             .map_err(|error| format!("failed to create {}: {error}", path.display()))?;
         let env = Environment::new()
-            .set_max_dbs(8)
+            .set_max_dbs(10)
             .set_map_size(MAP_SIZE)
             .open(path)
             .map_err(|error| format!("failed to open LMDB env {}: {error}", path.display()))?;
@@ -85,6 +89,12 @@ impl LmdbRecordStore {
         let records_by_kind = env
             .create_db(Some("records_by_kind"), DatabaseFlags::empty())
             .map_err(|error| format!("failed to open records_by_kind: {error}"))?;
+        let records_by_subject = env
+            .create_db(Some("records_by_subject"), DatabaseFlags::empty())
+            .map_err(|error| format!("failed to open records_by_subject: {error}"))?;
+        let records_by_receipt = env
+            .create_db(Some("records_by_receipt"), DatabaseFlags::empty())
+            .map_err(|error| format!("failed to open records_by_receipt: {error}"))?;
         let schema_meta = env
             .create_db(Some("schema_meta"), DatabaseFlags::empty())
             .map_err(|error| format!("failed to open schema_meta: {error}"))?;
@@ -93,6 +103,8 @@ impl LmdbRecordStore {
             records_by_id,
             records_by_case,
             records_by_kind,
+            records_by_subject,
+            records_by_receipt,
             schema_meta,
         };
         store.ensure_schema()?;
@@ -153,6 +165,8 @@ impl LmdbRecordStore {
             records_total: count_entries(&txn, self.records_by_id)?,
             records_by_case: count_entries(&txn, self.records_by_case)?,
             records_by_kind: count_entries(&txn, self.records_by_kind)?,
+            records_by_subject: count_entries(&txn, self.records_by_subject)?,
+            records_by_receipt: count_entries(&txn, self.records_by_receipt)?,
         })
     }
 
@@ -191,6 +205,32 @@ impl LmdbRecordStore {
             .map_err(|error| format!("failed to start LMDB kind index read: {error}"))?;
         let prefix = format!("record:kind:{record_kind}:");
         self.list_records_by_index(&txn, self.records_by_kind, &prefix, limit)
+    }
+
+    pub fn list_records_by_subject(
+        &self,
+        subject_ref: &str,
+        limit: usize,
+    ) -> Result<RecordListResult, String> {
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB subject index read: {error}"))?;
+        let prefix = format!("record:subject:{subject_ref}:");
+        self.list_records_by_index(&txn, self.records_by_subject, &prefix, limit)
+    }
+
+    pub fn list_records_by_receipt(
+        &self,
+        receipt_ref: &str,
+        limit: usize,
+    ) -> Result<RecordListResult, String> {
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB receipt index read: {error}"))?;
+        let prefix = format!("record:receipt:{receipt_ref}:");
+        self.list_records_by_index(&txn, self.records_by_receipt, &prefix, limit)
     }
 
     fn ensure_schema(&self) -> Result<(), String> {
@@ -242,6 +282,30 @@ impl LmdbRecordStore {
             WriteFlags::empty(),
         )
         .map_err(|error| format!("failed to write records_by_kind {}: {error}", record.id))?;
+        if !record.subject_ref.is_empty() && record.subject_ref != "subject:none" {
+            let subject_key = format!("record:subject:{}:{}", record.subject_ref, record.id);
+            txn.put(
+                self.records_by_subject,
+                &subject_key,
+                &record.id,
+                WriteFlags::empty(),
+            )
+            .map_err(|error| {
+                format!("failed to write records_by_subject {}: {error}", record.id)
+            })?;
+        }
+        if !record.receipt_id.is_empty() {
+            let receipt_key = format!("record:receipt:{}:{}", record.receipt_id, record.id);
+            txn.put(
+                self.records_by_receipt,
+                &receipt_key,
+                &record.id,
+                WriteFlags::empty(),
+            )
+            .map_err(|error| {
+                format!("failed to write records_by_receipt {}: {error}", record.id)
+            })?;
+        }
         Ok(())
     }
 
@@ -289,7 +353,7 @@ impl LmdbRecordStore {
     fn schema_ready(path: &Path) -> Result<bool, ()> {
         let mut builder = Environment::new();
         builder
-            .set_max_dbs(8)
+            .set_max_dbs(10)
             .set_map_size(MAP_SIZE)
             .set_flags(EnvironmentFlags::READ_ONLY);
         let env = builder.open(path).map_err(|_| ())?;

@@ -56,7 +56,7 @@ SPINE.28B Internal Source Surface Cleanup                            done
 SPINE.29  LMDB Record Plane Doctrine + Schema                       done
 SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             done
-SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
+SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
@@ -252,8 +252,24 @@ missing record returns record: not_found
 missing or uninitialized LMDB reports status instead of fake journal reads
 ```
 
-It does not add subject, receipt, projection or time indexes. Those remain
-SPINE.32+ work.
+It does not add subject, receipt, projection or time indexes. Subject and
+receipt indexes are added by SPINE.32; projection and time remain later work.
+
+SPINE.32 LMDB Case / Subject / Receipt Indexes adds:
+
+```text
+records_by_subject
+records_by_receipt
+record:subject:<subject_ref>:<record_id> -> record_id
+record:receipt:<receipt_ref>:<record_id> -> record_id
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
+records_by_subject and records_by_receipt summary counts
+missing subject or receipt query returns records_total: 0
+```
+
+These indexes are derived lookup views over structured record fields. They are
+not new truth and they do not create a journal fallback read path.
 
 Source surface boundary:
 

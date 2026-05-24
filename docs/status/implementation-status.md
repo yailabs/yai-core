@@ -5,8 +5,8 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.31 completes the first LMDB record read/query path after SPINE.30 added
-the write path and SPINE.29 defined the record-plane doctrine. `YAI/yai` is the canonical local AI operational control
+SPINE.32 completes LMDB subject and receipt indexes after SPINE.31 added the
+first read/query path. `YAI/yai` is the canonical local AI operational control
 system, and `YAI/yai-dev` is the development lab, concept mine, harness and
 scenario workspace.
 
@@ -20,8 +20,8 @@ Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.31
-are complete. Next: SPINE.32 LMDB Case / Subject / Receipt Indexes.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.32
+are complete. Next: SPINE.33 LMDB CLI + Manual Validation.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -43,7 +43,8 @@ record kinds. The filesystem manual case emits those records before subjects
 and policies, so a model participant sees an operational case world rather than
 a flat journal label. Registry persistence, SHM, DuckDB, Ladybug and full
 runtime carrier enforcement remain planned-not-created in this repository. LMDB
-now has a first write and read/query path for record lookup copies, not replay.
+now has a first write and read/query path for record lookup copies, including
+subject and receipt indexes, not replay.
 SPINE.3R also keeps shared memory, DuckDB, Ladybug and live projection delta
 implementation planned-not-created until dedicated data-plane waves.
 NEW.18B normalizes the active case posture: `case_ref`, `subject_ref` and
