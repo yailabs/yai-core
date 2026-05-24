@@ -89,6 +89,10 @@ and route planning, still without adding a queue or execution.
 See [19-operation-dispatch-multiplex.md](19-operation-dispatch-multiplex.md)
 for the lane grammar.
 
+SPINE.33C adds [20-carrier-contract-v1.md](20-carrier-contract-v1.md), which
+defines the common carrier.v1 contract and adapts filesystem as the first
+active-minimal carrier adapter.
+
 ## Receipt Guarantee Mode
 
 Receipt guarantee mode says how strongly YAI can attest evidence:

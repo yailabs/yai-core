@@ -62,6 +62,13 @@ yai carrier route --family process
 yai carrier route --family unknown
 ```
 
+SPINE.33C extends the substrate with carrier.v1 and filesystem contract
+inspection:
+
+```text
+yai carrier inspect filesystem
+```
+
 Manual inspection:
 
 ```text
@@ -73,6 +80,8 @@ Validation:
 ```text
 make check-control-carrier-substrate
 make check-operation-dispatch-multiplex
+make check-carrier-contract-v1
 make smoke-spine33a
 make smoke-spine33b
+make smoke-spine33c
 ```

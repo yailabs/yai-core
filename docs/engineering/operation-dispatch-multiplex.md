@@ -42,6 +42,10 @@ means the lane is known and a future carrier contract can target it. It does
 not mean a process, network, database, repository, model or observation effect
 can be executed.
 
+SPINE.33C adds carrier.v1 above this plan surface. Dispatch still chooses the
+lane; the carrier contract defines how an active carrier must observe, execute
+or observe, capture evidence, assemble/validate receipts and record residue.
+
 Manual filesystem-loop validation must stay aligned with this path. Any future
 carrier/control wave that changes CLI, dispatch, gate, carrier or receipt
 behavior must update:

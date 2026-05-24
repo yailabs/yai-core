@@ -60,7 +60,8 @@ SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              done
 SPINE.33A Control / Carrier Substrate Primitives                    done
 SPINE.33B Operation Dispatch + Multiplex v0                         done
-SPINE.33C Carrier Contract v1 + Filesystem Adapter                  planned
+SPINE.33C Carrier Contract v1 + Filesystem Adapter                  done
+SPINE.33D Process Carrier v0 / Signal Control                      planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -319,6 +320,20 @@ yai carrier route --family <family>
 Dispatch remains separate from decision and execution. Carrier lanes are
 inspectable route targets, not a single global queue, and every SPINE.33B route
 reports `execution_performed: false`.
+
+SPINE.33C Carrier Contract v1 + Filesystem Adapter adds:
+
+```text
+carrier.v1
+carrier outcome
+carrier receipt posture
+filesystem carrier contract mapping
+yai carrier inspect filesystem
+```
+
+Filesystem becomes the first active-minimal carrier.v1 adapter. Read maps to
+observed, blocked write maps to blocked, allowed write maps to executed and the
+guarantee mode is documented as interposed.
 
 Source surface boundary:
 

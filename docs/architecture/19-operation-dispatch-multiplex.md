@@ -146,3 +146,6 @@ execution_performed: false
 SPINE.33B does not implement a queue, worker, process signal, host probe,
 network request, database call, git mutation, model invocation or receipt
 hardening.
+
+SPINE.33C builds on this route plan with `carrier.v1`. Filesystem remains the
+only active-minimal lane and becomes the first carrier contract adapter.

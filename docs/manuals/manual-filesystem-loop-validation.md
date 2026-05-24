@@ -151,6 +151,40 @@ unknown family is not_supported
 execution_performed remains false in SPINE.33B
 ```
 
+### Carrier Contract v1 / Filesystem Adapter
+
+SPINE.33C makes filesystem the first carrier.v1 adapter. Read maps to observed,
+blocked write maps to blocked and allowed write maps to executed. Process,
+network, database, git and model carriers remain planned.
+
+```bash
+target/debug/yai carrier inspect filesystem
+target/debug/yai carrier route --family filesystem
+```
+
+After the filesystem loop has run, inspect receipt records:
+
+```bash
+yai store record list --kind filesystem_receipt --limit 10
+```
+
+Expected key lines:
+
+```text
+carrier: filesystem
+contract: carrier.v1
+status: active_minimal
+receipt_required: yes
+read: observed
+write: decision_required
+pre_state_observation: supported
+post_state_observation: supported
+evidence_capture: supported
+receipt_validation: supported
+guarantee_mode: interposed
+record_kind: filesystem_receipt
+```
+
 ### Installed Runtime Checks
 
 ```bash

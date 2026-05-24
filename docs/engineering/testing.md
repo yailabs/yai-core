@@ -676,6 +676,54 @@ The filesystem loop manual and notebook include these commands as dispatch
 planning, not execution. Process lane is planned, filesystem lane is
 active_minimal and execution remains false in SPINE.33B.
 
+## SPINE.33C Carrier Contract Filesystem Loop
+
+```text
+carrier_contract:carrier.v1
+carrier_outcome roundtrip
+carrier_receipt init
+filesystem carrier declares carrier.v1
+filesystem supports read observed
+filesystem supports write decision_required
+filesystem receipt mapping covers observed/blocked/executed
+no process/network/database/git/model execution occurs
+```
+
+`tests/smoke/carrier-contract-filesystem/test_carrier_contract_filesystem.c`
+proves the C ABI contract primitives and filesystem receipt mapping.
+
+```text
+make check-carrier-contract-v1
+make smoke-spine33c
+target/debug/yai carrier inspect filesystem
+target/debug/yai carrier route --family filesystem
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier inspect filesystem
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier route --family filesystem
+```
+
+Expected key lines:
+
+```text
+carrier: filesystem
+contract: carrier.v1
+status: active_minimal
+receipt_required: yes
+read: observed
+write: decision_required
+pre_state_observation: supported
+post_state_observation: supported
+evidence_capture: supported
+receipt_validation: supported
+guarantee_mode: interposed
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

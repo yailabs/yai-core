@@ -1,5 +1,6 @@
 #include "yai/effect/filesystem_carrier.h"
 
+#include "yai/effect/carrier_contract.h"
 #include "yai/effect/effect_hash.h"
 
 #include <stdio.h>
@@ -46,6 +47,17 @@ int yai_filesystem_path_is_inside_sandbox(const char *sandbox_root,
     }
 
     return path[sandbox_len] == '\0' || path[sandbox_len] == '/';
+}
+
+const char *yai_filesystem_carrier_contract_version(void) {
+    return YAI_CARRIER_CONTRACT_V1;
+}
+
+yai_status_t yai_filesystem_carrier_receipt_from_effect_receipt(
+    const yai_effect_receipt_t *effect_receipt,
+    yai_carrier_receipt_t *out
+) {
+    return yai_carrier_receipt_from_effect_receipt(effect_receipt, out);
 }
 
 static yai_status_t yai_filesystem_receipt_init(const char *receipt_id,

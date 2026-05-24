@@ -95,6 +95,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
 | carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
 | carrier route plan | no-execution route inspection | `yai carrier route --family <family>` | `target/debug/yai carrier route --family filesystem` | `operation-dispatch-multiplex.md`, `testing.md` |
+| carrier contract inspection | filesystem carrier.v1 posture | `yai carrier inspect filesystem` | `target/debug/yai carrier inspect filesystem` | `carrier-contract-v1.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -296,6 +297,30 @@ carrier is not free tool invocation
 receipt is not logging
 dispatch is separate from decision
 dispatch is separate from execution
+```
+
+SPINE.33C adds filesystem carrier contract inspection:
+
+```text
+yai carrier inspect filesystem
+
+carrier: filesystem
+carrier_family: filesystem
+contract: carrier.v1
+status: active_minimal
+lane: filesystem_lane
+dispatch_status: routable
+supports:
+  read: observed
+  write: decision_required
+receipt_required: yes
+pre_state_observation: supported
+post_state_observation: supported
+evidence_capture: supported
+receipt_assembly: supported
+receipt_validation: supported
+residue_recording: supported
+guarantee_mode: interposed
 ```
 
 ## Projection Commands

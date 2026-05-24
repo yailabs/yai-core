@@ -125,10 +125,12 @@ The current carrier substrate exposes inspectable families and dispatch lanes:
 yai carrier families
 yai carrier lanes
 yai carrier route --family filesystem
+yai carrier inspect filesystem
 ```
 
-These commands plan routing only. They do not execute process, network,
-database, repository, model or observation carriers.
+These commands expose routing and the active-minimal filesystem carrier
+contract. They do not execute process, network, database, repository, model or
+observation carriers.
 
 - `input/proposal`: candidate material from a model, provider, operator, tool,
   script, or system.

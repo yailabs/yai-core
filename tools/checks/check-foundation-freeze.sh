@@ -35,6 +35,7 @@ done
 allowed_docs='
 README.md
 agent-operating-appendix.md
+carrier-contract-v1.md
 command-surface.md
 control-carrier-rebase.md
 current-status.md

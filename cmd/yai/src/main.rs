@@ -52,7 +52,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33B Operation Dispatch + Multiplex v0");
+    println!("status: SPINE.33C Carrier Contract v1 + Filesystem Adapter");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -60,7 +60,7 @@ fn print_info() {
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
-    println!("carrier_substrate: vocabulary, dispatch lanes and route plans; no fake execution");
+    println!("carrier_substrate: carrier.v1 filesystem adapter; no fake non-filesystem execution");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -212,6 +212,7 @@ fn print_usage() {
     println!("       yai carrier families");
     println!("       yai carrier lanes");
     println!("       yai carrier route --family <carrier_family>");
+    println!("       yai carrier inspect filesystem|process");
     println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -228,7 +229,7 @@ fn print_carrier_families() {
     println!("- review");
     println!();
     println!("current_status:");
-    println!("  filesystem: implemented_minimal");
+    println!("  filesystem: implemented_minimal carrier.v1");
     println!("  process: planned");
     println!("  network_http: planned");
     println!("  database: planned");
@@ -267,6 +268,7 @@ fn print_carrier_families() {
     println!("next:");
     println!("  inspect_lanes: yai carrier lanes");
     println!("  inspect_route: yai carrier route --family <family>");
+    println!("  inspect_contract: yai carrier inspect filesystem");
 }
 
 #[derive(Clone, Copy)]
@@ -427,6 +429,55 @@ fn carrier_route(args: &[String]) -> Result<(), String> {
     println!("execution_performed: false");
     println!("receipt_requirement: not_available");
     Ok(())
+}
+
+fn carrier_inspect(args: &[String]) -> Result<(), String> {
+    let name = args
+        .first()
+        .filter(|value| !value.starts_with("--"))
+        .ok_or_else(|| "carrier name is required".to_string())?;
+    match name.as_str() {
+        "filesystem" => {
+            println!("carrier: filesystem");
+            println!("carrier_family: filesystem");
+            println!("contract: carrier.v1");
+            println!("status: active_minimal");
+            println!("lane: filesystem_lane");
+            println!("dispatch_status: routable");
+            println!("supports:");
+            println!("  read: observed");
+            println!("  write: decision_required");
+            println!("receipt_required: yes");
+            println!("pre_state_observation: supported");
+            println!("post_state_observation: supported");
+            println!("evidence_capture: supported");
+            println!("receipt_assembly: supported");
+            println!("receipt_validation: supported");
+            println!("residue_recording: supported");
+            println!("guarantee_mode: interposed");
+            println!("process_execution: not_supported");
+            println!("network_execution: not_supported");
+            Ok(())
+        }
+        "process" => {
+            println!("carrier: process");
+            println!("carrier_family: process");
+            println!("contract: planned");
+            println!("status: planned");
+            println!("lane: process_lane");
+            println!("dispatch_status: routable");
+            println!("execution_performed: false");
+            println!("receipt_required: yes");
+            Ok(())
+        }
+        _ => {
+            println!("carrier: unknown");
+            println!("status: not_supported");
+            println!("dispatch_status: not_supported");
+            println!("execution_performed: false");
+            Ok(())
+        }
+    }
 }
 
 fn yai_home() -> PathBuf {
@@ -3599,6 +3650,12 @@ fn main() {
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("route") => {
             if let Err(error) = carrier_route(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("inspect") => {
+            if let Err(error) = carrier_inspect(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

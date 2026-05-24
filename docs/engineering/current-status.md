@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33B Operation Dispatch + Multiplex v0.
+Status: SPINE.33C Carrier Contract v1 + Filesystem Adapter.
 
 ## Completed Foundation
 
@@ -36,7 +36,9 @@ operator validation matrix before the record-plane freeze. SPINE.33A adds the
 first control/carrier substrate primitives for carrier family, gate outcome,
 dispatch status, receipt guarantee mode and host observation posture. SPINE.33B
 adds no-execution carrier lanes and route plans so carrier families can be
-mapped to dispatch posture without executing effects.
+mapped to dispatch posture without executing effects. SPINE.33C defines
+carrier.v1 and adapts the filesystem carrier as the first minimal contract
+example.
 
 Current:
 
@@ -62,6 +64,7 @@ SPINE.32 LMDB Case / Subject / Receipt Indexes completed.
 SPINE.33 LMDB CLI + Manual Validation completed.
 SPINE.33A Control / Carrier Substrate Primitives completed.
 SPINE.33B Operation Dispatch + Multiplex v0 completed.
+SPINE.33C Carrier Contract v1 + Filesystem Adapter completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -69,7 +72,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.33C Carrier Contract v1 + Filesystem Adapter.
+SPINE.33D Process Carrier v0 / Signal Control.
 ```
 
 Foundation status:
@@ -288,6 +291,10 @@ control/carrier posture. No `yai-dev` source file was modified.
 SPINE.33B read-only inspected yai-dev carrier loop, queue gate/view, execution
 stage/enforcement and subject boundary residue for dispatch/multiplex posture.
 No `yai-dev` source file was modified.
+
+SPINE.33C read-only inspected yai-dev host-mediated/native carrier,
+controlled action, operational receipt, execution record and decision/receipt
+contract residue for carrier.v1 posture. No `yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,
