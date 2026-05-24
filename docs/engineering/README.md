@@ -17,6 +17,9 @@ docs/archive/engineering/
 Archived documents are evidence. They are not active roadmap, layout or
 delivery authority.
 
+Every archived Markdown file must carry the historical banner. Old names may
+exist only inside archive records, never as active doctrine.
+
 ## Active Files
 
 ```text

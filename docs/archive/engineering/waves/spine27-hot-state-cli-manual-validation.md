@@ -1,3 +1,5 @@
+Historical/superseded engineering record. Not an active source of truth.
+
 Historical engineering record. Not an active source of truth.
 
 # SPINE.27 - Hot State CLI + Manual Validation

@@ -1,3 +1,5 @@
+Historical/superseded engineering record. Not an active source of truth.
+
 # SPINE.26 Hot State Projection Freshness Integration
 
 Historical engineering record. Not an active source of truth.

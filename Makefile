@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-repository-identity check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -126,6 +126,7 @@ check-docs:
 	@./tools/checks/check-doc-required-files.sh
 	@./tools/checks/check-doc-no-old-root-language.sh
 	@./tools/checks/check-repository-identity.sh
+	@./tools/checks/check-archive-historical-records.sh
 	@./tools/checks/check-pack-doctrine.sh
 	@./tools/checks/check-foundation-freeze.sh
 	@./tools/checks/check-hot-state-doctrine.sh
@@ -133,6 +134,9 @@ check-docs:
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
+
+check-archive-historical-records:
+	@./tools/checks/check-archive-historical-records.sh
 
 check-source-surface-clean:
 	@./tools/checks/check-source-surface-clean.sh

@@ -1,3 +1,5 @@
+Historical/superseded engineering record. Not an active source of truth.
+
 # SPINE.25 Hot State Case Session / Context Integration
 
 Historical engineering record. Not an active source of truth.
