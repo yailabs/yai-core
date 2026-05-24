@@ -7,6 +7,7 @@
 
 #define YAI_HOT_ID_MAX 64
 #define YAI_HOT_REF_MAX 96
+#define YAI_HOT_STATUS_MAX 32
 #define YAI_HOT_REASON_MAX 64
 #define YAI_HOT_FRESHNESS_MAX 16
 #define YAI_HOT_SNAPSHOT_SCHEMA "yai.hot_state.v1"
@@ -35,8 +36,12 @@ typedef struct yai_hot_snapshot {
     char case_ref[YAI_HOT_REF_MAX];
     char case_session_id[YAI_HOT_ID_MAX];
     char case_context_id[YAI_HOT_ID_MAX];
+    char case_session_status[YAI_HOT_STATUS_MAX];
+    char case_world_status[YAI_HOT_STATUS_MAX];
+    char case_context_status[YAI_HOT_STATUS_MAX];
     unsigned long case_version;
     char active_thread_id[YAI_HOT_ID_MAX];
+    char participant_view_frame_id[YAI_HOT_ID_MAX];
     char current_projection_id[YAI_HOT_ID_MAX];
     char previous_projection_id[YAI_HOT_ID_MAX];
     char last_record_id[YAI_HOT_ID_MAX];

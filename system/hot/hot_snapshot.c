@@ -108,14 +108,18 @@ yai_status_t yai_hot_snapshot_json(const yai_hot_snapshot_t *snapshot,
     dirty_flags_json(snapshot->dirty_flags, dirty_flags, sizeof(dirty_flags));
     written = snprintf(buffer,
                        buffer_size,
-                       "{\"schema\":\"%s\",\"hot_state_id\":\"%s\",\"case_ref\":\"%s\",\"case_session_id\":\"%s\",\"case_context_id\":\"%s\",\"case_version\":%lu,\"active_thread_id\":\"%s\",\"current_projection_id\":\"%s\",\"previous_projection_id\":\"%s\",\"last_record_id\":\"%s\",\"last_decision_id\":\"%s\",\"last_receipt_id\":\"%s\",\"last_model_interpretation_id\":\"%s\",\"last_divergence_id\":\"%s\",\"pending_op_count\":%lu,\"pending_obligation_count\":%lu,\"carrier_lock_count\":%lu,\"projection_freshness\":\"%s\",\"projection_stale_reason\":\"%s\",\"dirty_flags\":[%s],\"updated_at_unix_ms\":%llu}\n",
+                       "{\"schema\":\"%s\",\"hot_state_id\":\"%s\",\"case_ref\":\"%s\",\"case_session_id\":\"%s\",\"case_context_id\":\"%s\",\"case_session_status\":\"%s\",\"case_world_status\":\"%s\",\"case_context_status\":\"%s\",\"case_version\":%lu,\"active_thread_id\":\"%s\",\"participant_view_frame_id\":\"%s\",\"current_projection_id\":\"%s\",\"previous_projection_id\":\"%s\",\"last_record_id\":\"%s\",\"last_decision_id\":\"%s\",\"last_receipt_id\":\"%s\",\"last_model_interpretation_id\":\"%s\",\"last_divergence_id\":\"%s\",\"pending_op_count\":%lu,\"pending_obligation_count\":%lu,\"carrier_lock_count\":%lu,\"projection_freshness\":\"%s\",\"projection_stale_reason\":\"%s\",\"dirty_flags\":[%s],\"updated_at_unix_ms\":%llu}\n",
                        YAI_HOT_SNAPSHOT_SCHEMA,
                        snapshot->hot_state_id,
                        snapshot->case_ref,
                        snapshot->case_session_id,
                        snapshot->case_context_id,
+                       snapshot->case_session_status,
+                       snapshot->case_world_status,
+                       snapshot->case_context_status,
                        snapshot->case_version,
                        snapshot->active_thread_id,
+                       snapshot->participant_view_frame_id,
                        snapshot->current_projection_id,
                        snapshot->previous_projection_id,
                        snapshot->last_record_id,
@@ -138,7 +142,7 @@ yai_status_t yai_hot_snapshot_json(const yai_hot_snapshot_t *snapshot,
 
 yai_status_t yai_hot_snapshot_write_json(const yai_hot_snapshot_t *snapshot,
                                          const char *path) {
-    char buffer[2048];
+    char buffer[3072];
     char tmp_path[512];
     FILE *file = 0;
     if (path == 0 || path[0] == '\0') {

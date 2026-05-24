@@ -158,6 +158,7 @@ and reconstruction material.
 
 `hot state`
 : Live runtime cache for the active case session, current projection frame,
+case world/context lifecycle, active interaction thread, participant view,
 freshness, stale reason and latest residue refs. Hot state is not truth; it is
 rebuilt from durable residue and currently snapshots to
 `YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`.
@@ -336,8 +337,9 @@ layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
 Pack Materialization Doctrine before filesystem freeze and data-plane
 implementation. SPINE.21 defines packs as case materialization units; no pack
 runtime, installer, registry backend or marketplace is implemented. SPINE.22
-freezes the filesystem/runtime foundation before hot state, record, graph,
-fact, projection and memory backends begin.
+freezes the filesystem/runtime foundation. SPINE.23-SPINE.25 introduce and
+harden hot state as a non-authoritative live case/session/context cache before
+record, graph, fact, projection and memory backends begin.
 
 ### Absorbed Concepts
 

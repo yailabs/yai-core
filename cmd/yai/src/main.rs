@@ -36,7 +36,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: SPINE.24");
+    println!("status: SPINE.25");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -125,6 +125,16 @@ fn print_doctor() {
     println!("hot_state_status: {}", hot_status.status);
     println!("hot_state_schema_status: {}", hot_status.schema_status);
     println!("hot_state_readable: {}", hot_status.readable);
+    if let Some(content) = hot_status.content.as_deref() {
+        println!(
+            "case_session_status: {}",
+            json_string_or(content, "case_session_status", "unknown")
+        );
+        println!(
+            "case_context_status: {}",
+            json_string_or(content, "case_context_status", "unknown")
+        );
+    }
     println!(
         "runtime_layout_status: {}",
         if runtime_layout_ok {
@@ -226,6 +236,9 @@ fn validate_hot_snapshot(content: &str) -> bool {
         "case_ref",
         "case_session_id",
         "case_context_id",
+        "case_session_status",
+        "case_world_status",
+        "case_context_status",
         "projection_freshness",
         "projection_stale_reason",
     ];
@@ -286,6 +299,11 @@ fn print_hot_status() -> Result<(), String> {
         println!("snapshot_path: {}", path.display());
         println!("snapshot_status: {}", status.status);
         println!("schema: unknown");
+        println!("case_session: unknown");
+        println!("case_world: unknown");
+        println!("case_context: unknown");
+        println!("active_thread: unknown");
+        println!("participant_view: unknown");
         println!("projection: unknown");
         println!("stale_reason: unknown");
         return Ok(());
@@ -301,24 +319,12 @@ fn print_hot_status() -> Result<(), String> {
     println!("snapshot_status: active");
     println!("schema: {}", json_string_or(content, "schema", "unknown"));
     println!("case: {}", json_string_or(&content, "case_ref", "unknown"));
-    let case_session_status = if json_string_field(content, "case_session_id")
-        .map(|value| !value.is_empty())
-        .unwrap_or(false)
-    {
-        "active"
-    } else {
-        "unknown"
-    };
-    let case_context_status = if json_string_field(content, "case_context_id")
-        .map(|value| !value.is_empty())
-        .unwrap_or(false)
-    {
-        "active"
-    } else {
-        "unknown"
-    };
+    let case_session_status = json_string_or(content, "case_session_status", "unknown");
+    let case_world_status = json_string_or(content, "case_world_status", "unknown");
+    let case_context_status = json_string_or(content, "case_context_status", "unknown");
     println!("session: {case_session_status}");
     println!("case_session: {case_session_status}");
+    println!("case_world: {case_world_status}");
     println!("context: {case_context_status}");
     println!("case_context: {case_context_status}");
     println!(
@@ -328,6 +334,14 @@ fn print_hot_status() -> Result<(), String> {
     println!(
         "case_context_id: {}",
         json_string_or(content, "case_context_id", "unknown")
+    );
+    println!(
+        "active_thread: {}",
+        json_string_or(content, "active_thread_id", "none")
+    );
+    println!(
+        "participant_view: {}",
+        json_string_or(content, "participant_view_frame_id", "none")
     );
     println!(
         "case_version: {}",

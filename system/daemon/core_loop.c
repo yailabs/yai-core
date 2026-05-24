@@ -247,6 +247,7 @@ yai_status_t yai_daemon_run_minimum_loop(const yai_daemon_ipc_request_t *request
     if (yai_hot_state_init(&hot_state) != YAI_OK ||
         yai_hot_state_set_case(&hot_state, case_ref.case_id.value) != YAI_OK ||
         yai_hot_state_set_session(&hot_state, "session:new12-minimum") != YAI_OK ||
+        yai_hot_state_set_case_world_loaded(&hot_state) != YAI_OK ||
         yai_hot_state_set_context(&hot_state, "case_context:minimum") != YAI_OK) {
         return YAI_ERR_INVALID;
     }

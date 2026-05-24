@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.24 hot state runtime snapshot. | SPINE.25 Hot State Case Session / Context Integration. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.25 hot state case session/context integration. | SPINE.26 Hot State Projection Freshness Integration. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -42,9 +42,11 @@ SPINE.23-SPINE.64 plan into smaller implementable SPINE.23-SPINE.120
 deliveries and makes command surface declaration mandatory.
 SPINE.24 hardens the hot-state runtime snapshot as schema
 `yai.hot_state.v1`, temp-and-rename writes and missing/corrupt status handling.
+SPINE.25 links hot state to case session, case world, case context, active
+thread, participant view and decision/receipt-driven projection staleness.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.25.
+delivery is SPINE.26.
 
 ## Canonical Macro Labels
 
@@ -121,8 +123,8 @@ partial coverage: SPINE.26 Hot State Projection Freshness Integration
 partial coverage: SPINE.27 Hot State CLI + Manual Validation
 ```
 
-The next implementation wave is still SPINE.24, but it must reconcile what was
-already implemented in SPINE.23 before adding new behavior.
+SPINE.24 and SPINE.25 reconcile the partial hot-state behavior already landed
+in SPINE.23 and make it explicit, validated and manually inspectable.
 
 ```text
 SPINE.20  Local Runtime Layout                                      done
@@ -132,7 +134,7 @@ SPINE.22  Filesystem & Runtime Layout Freeze                        done
 SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.23A Roadmap Expansion + Command-Test Contract                 done
 SPINE.24  Hot State Runtime Snapshot                                done
-SPINE.25  Hot State Case Session / Context Integration              planned
+SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 planned
 SPINE.27  Hot State CLI + Manual Validation                         planned
 SPINE.28  Hot State Freeze                                          planned

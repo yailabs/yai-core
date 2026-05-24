@@ -25,6 +25,7 @@ yai_status_t yai_case_session_open(yai_case_session_t *session,
     if (yai_hot_state_init(&session->hot_state) != YAI_OK ||
         yai_hot_state_set_case(&session->hot_state, case_ref->case_id.value) != YAI_OK ||
         yai_hot_state_set_session(&session->hot_state, session_id) != YAI_OK ||
+        yai_hot_state_set_case_world_loaded(&session->hot_state) != YAI_OK ||
         yai_hot_state_set_context(&session->hot_state, "case_context:active") != YAI_OK) {
         return YAI_ERR_INVALID;
     }

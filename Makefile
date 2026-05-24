@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-pack-doctrine check-foundation-freeze check-hot-state-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke check clean
+.PHONY: info check-layout check-docs check-pack-doctrine check-foundation-freeze check-hot-state-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine25 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -90,14 +90,15 @@ SMOKE_CASE_CONTEXT := $(BUILD_DIR)/test_case_context
 SMOKE_INTERACTION_THREAD := $(BUILD_DIR)/test_interaction_thread
 SMOKE_HOT_STATE := $(BUILD_DIR)/test_hot_state
 SMOKE_HOT_STATE_SNAPSHOT := tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh
+SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: SPINE.24 Hot State Runtime Snapshot\n"
+	@printf "status: SPINE.25 Hot State Case Session / Context Integration\n"
 	@printf "completed: SPINE.20 Local Runtime Layout; SPINE.21 Pack Materialization Doctrine; SPINE.22 Filesystem & Runtime Layout Freeze; SPINE.23 Hot State Doctrine + ABI; SPINE.23A Roadmap Expansion + Command-Test Contract\n"
-	@printf "next: SPINE.25 Hot State Case Session / Context Integration\n"
+	@printf "next: SPINE.26 Hot State Projection Freshness Integration\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -197,7 +198,11 @@ $(SMOKE_HOT_STATE): tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE)
+$(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY) -o "$@"
+
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_HOT_STATE_SESSION)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -307,7 +312,10 @@ smoke-spine23: $(SMOKE_HOT_STATE)
 smoke-spine24: $(YAID) build-rust
 	@$(SMOKE_HOT_STATE_SNAPSHOT)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24
+smoke-spine25: $(SMOKE_HOT_STATE_SESSION)
+	@$(SMOKE_HOT_STATE_SESSION)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine25
 
 check: check-layout check-docs build smoke
 

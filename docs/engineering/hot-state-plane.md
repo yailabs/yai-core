@@ -1,6 +1,7 @@
 # Hot State Plane
 
 SPINE.23 implements hot state v0. SPINE.24 hardens the runtime snapshot.
+SPINE.25 integrates the snapshot with case session and case context lifecycle.
 
 Hot state is the live operational cache for a case session. It is not durable
 truth and it does not replace journal, records, graph, facts, memory or
@@ -34,8 +35,12 @@ hot_state_id
 case_ref
 case_session_id
 case_context_id
+case_session_status
+case_world_status
+case_context_status
 case_version
 active_thread_id
+participant_view_frame_id
 current_projection_id
 previous_projection_id
 last_record_id
@@ -96,6 +101,17 @@ yai hot status
 `yai doctor` reports hot-state path/readiness. `yai hot status` reads the local
 snapshot and reports active case, session, context, freshness, stale reason and
 latest residue refs.
+
+SPINE.25 extends `yai hot status` with case-world, active-thread and
+participant-view status:
+
+```text
+case_session: active|inactive|unknown
+case_world: loaded|not_loaded|unknown
+case_context: active|inactive|unknown
+active_thread: <id>|none|unknown
+participant_view: <frame_id>|none|unknown
+```
 
 Command surface:
 

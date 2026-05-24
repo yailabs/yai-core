@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.24 Hot State Runtime Snapshot.
+Status: SPINE.25 Hot State Case Session / Context Integration.
 
 ## Completed Foundation
 
@@ -14,6 +14,8 @@ pack doctrine guards and the operational extraction contract before data-plane
 implementation begins. SPINE.23 adds the first live hot-state plane. SPINE.23A
 expands the linear roadmap and adds the mandatory command surface contract for
 future deliveries. SPINE.24 hardens the runtime hot-state snapshot lifecycle.
+SPINE.25 links that snapshot to case session, case world and case context
+lifecycle.
 
 Current:
 
@@ -24,13 +26,14 @@ SPINE.21 Pack Materialization Doctrine completed.
 SPINE.22 Filesystem & Runtime Layout Freeze completed.
 SPINE.23 Hot State Doctrine + ABI completed.
 SPINE.23A Roadmap Expansion + Command-Test Contract completed.
-SPINE.24 Hot State Runtime Snapshot current.
+SPINE.24 Hot State Runtime Snapshot completed.
+SPINE.25 Hot State Case Session / Context Integration current.
 ```
 
 Next:
 
 ```text
-SPINE.25 Hot State Case Session / Context Integration.
+SPINE.26 Hot State Projection Freshness Integration.
 ```
 
 Foundation status:
@@ -46,6 +49,7 @@ expanded linear roadmap active
 command surface contract active
 hot-state snapshot v1 active
 hot-state snapshot missing/corrupt handling active
+hot-state session/context lifecycle fields active
 ```
 
 ## Current Layout
@@ -116,10 +120,12 @@ The current data plane remains partly journal-backed and partly transitional C
 smoke support. SPINE.23 implements hot-state semantics and a daemon-owned
 `YAI_HOME/run/hot-state.json` snapshot, not durable truth. SPINE.24 makes the
 snapshot schema `yai.hot_state.v1`, writes through temp-and-rename, and makes
-`yai hot status` handle missing and corrupt snapshots. True OS shared
-memory/mmap, LMDB, Ladybug, DuckDB,
+`yai hot status` handle missing and corrupt snapshots. SPINE.25 makes the
+snapshot carry `case_session_status`, `case_world_status`,
+`case_context_status`, `active_thread_id` and `participant_view_frame_id`.
+True OS shared memory/mmap, LMDB, Ladybug, DuckDB,
 projection deltas, memory consolidation, cross-plane reconcile and
-observability/evaluation facts remain future SPINE.24-SPINE.80 work. Pack
+observability/evaluation facts remain future SPINE.26-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -132,6 +138,9 @@ Old-yai residue for SPINE.23 was read-only inspected and classified in the
 extraction inventory. No old-yai source file was modified.
 
 Old-yai residue for SPINE.24 was read-only inspected and classified in the
+extraction inventory. No old-yai source file was modified.
+
+Old-yai residue for SPINE.25 was read-only inspected and classified in the
 extraction inventory. No old-yai source file was modified.
 
 Future implementation waves must classify corresponding old-yai residue. A

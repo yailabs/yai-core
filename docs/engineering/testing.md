@@ -85,6 +85,29 @@ target/debug/yai daemon run-minimum-loop --socket <socket>
 target/debug/yai hot status
 ```
 
+## SPINE.25 Hot State Session/Context Loop
+
+```text
+initialize hot state
+activate case_session
+mark case_world loaded
+activate case_context
+select interaction thread
+build participant view frame
+mark decision and receipt stale projection
+refresh projection to fresh
+copy snapshot with session/context fields
+```
+
+`tests/smoke/hot-state-session/test_hot_state_session.c` proves that the
+runtime cache carries session, world, context, active thread and participant
+view fields without becoming durable truth.
+
+```text
+make smoke-spine25
+yai hot status
+```
+
 ## NEW.1 Minimum Loop
 
 ```text

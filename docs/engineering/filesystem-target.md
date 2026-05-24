@@ -123,6 +123,16 @@ schema: yai.hot_state.v1
 write: temp file then rename
 ```
 
+SPINE.25 makes the snapshot case-session aware:
+
+```text
+case_session_status
+case_world_status
+case_context_status
+active_thread_id
+participant_view_frame_id
+```
+
 ## Transitional Caveats
 
 The C data-spine folders under `system/{store,graph,index,memory,projection,reconcile}`

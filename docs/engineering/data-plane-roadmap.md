@@ -46,8 +46,8 @@ to be implementable and manually verifiable on its own.
 
 ```text
 SPINE.23  Hot State Doctrine + ABI                                  done
-SPINE.24  Hot State Runtime Snapshot                                active v1
-SPINE.25  Hot State Case Session / Context Integration              planned
+SPINE.24  Hot State Runtime Snapshot                                done
+SPINE.25  Hot State Case Session / Context Integration              active v1
 SPINE.26  Hot State Projection Freshness Integration                 planned
 SPINE.27  Hot State CLI + Manual Validation                         planned
 SPINE.28  Hot State Freeze                                          planned
@@ -136,6 +136,18 @@ write path = hot-state.json.tmp then rename to hot-state.json
 missing snapshot = hot_state unavailable / missing_snapshot
 corrupt snapshot = hot_state unavailable / invalid_snapshot
 valid snapshot = hot_state active
+```
+
+SPINE.25 links hot state to the live case lifecycle:
+
+```text
+case_session_status = active|inactive|unknown
+case_world_status = loaded|not_loaded|unknown
+case_context_status = active|inactive|unknown
+active_thread_id = current selected interaction thread when known
+participant_view_frame_id = current assembled participant view frame when known
+decision/receipt changes mark projection stale
+projection refresh marks projection fresh
 ```
 
 ## Rules
