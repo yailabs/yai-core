@@ -37,7 +37,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.30 LMDB Record Write Path");
+    println!("status: SPINE.31 LMDB Record Read / Query Path");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -163,6 +163,9 @@ fn print_usage() {
     println!("usage: yai [--version|info|doctor]");
     println!("       yai store status");
     println!("       yai store summary");
+    println!("       yai store record get <record_id>");
+    println!("       yai store record list --case <case_ref> [--limit <N>]");
+    println!("       yai store record list --kind <record_kind> [--limit <N>]");
     println!("       yai store tail --journal <path>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
@@ -253,6 +256,99 @@ fn print_store_summary() -> Result<(), String> {
     println!("records_by_case: {}", summary.records_by_case);
     println!("records_by_kind: {}", summary.records_by_kind);
     Ok(())
+}
+
+fn print_non_ready_record_store(status: &yai_core_engine::store::lmdb::RecordStoreStatus) {
+    println!("record_store_backend: {}", status.backend);
+    println!("record_store_status: {}", status.status.as_str());
+    println!("record_store_path: {}", status.path.display());
+}
+
+fn store_record_get(args: &[String]) -> Result<(), String> {
+    let record_id = args
+        .first()
+        .filter(|value| !value.starts_with("--"))
+        .ok_or_else(|| "record id is required".to_string())?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let Some(record) = store.get_record_by_id(record_id)? else {
+        println!("record: not_found");
+        return Ok(());
+    };
+    println!("schema: {}", record.schema);
+    println!("record_id: {}", record.record_id);
+    println!("record_kind: {}", record.record_kind);
+    println!("case_ref: {}", record.case_ref);
+    println!(
+        "source: {}",
+        json_string_or(&record.raw_json, "plane", "unknown")
+    );
+    println!(
+        "source_ref: {}",
+        json_string_or(&record.raw_json, "ref", "unknown")
+    );
+    println!("payload:");
+    println!(
+        "summary: {}",
+        json_string_or(&record.raw_json, "summary", "unknown")
+    );
+    println!("envelope: {}", record.raw_json);
+    Ok(())
+}
+
+fn store_record_list(args: &[String]) -> Result<(), String> {
+    let case_ref = optional_arg(args, "--case");
+    let record_kind = optional_arg(args, "--kind");
+    if case_ref.is_some() == record_kind.is_some() {
+        return Err("provide exactly one of --case <case_ref> or --kind <record_kind>".to_string());
+    }
+    let limit = parse_limit(args)?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let result = if let Some(case_ref) = case_ref.as_deref() {
+        let result = store.list_records_by_case(case_ref, limit)?;
+        println!("case_ref: {case_ref}");
+        result
+    } else {
+        let record_kind = record_kind.as_deref().unwrap_or_default();
+        if RecordKind::from_str(record_kind).is_none() {
+            return Err(format!("unknown record kind: {record_kind}"));
+        }
+        let result = store.list_records_by_kind(record_kind, limit)?;
+        println!("record_kind: {record_kind}");
+        result
+    };
+    println!("records_total: {}", result.records_total);
+    println!("records:");
+    if result.records.is_empty() {
+        println!("- none");
+    } else {
+        for record in result.records {
+            println!("- record_id: {}", record.record_id);
+            println!("  record_kind: {}", record.record_kind);
+            println!("  case_ref: {}", record.case_ref);
+        }
+    }
+    Ok(())
+}
+
+fn parse_limit(args: &[String]) -> Result<usize, String> {
+    let limit = optional_arg(args, "--limit").unwrap_or_else(|| "20".to_string());
+    let parsed = limit
+        .parse::<usize>()
+        .map_err(|_| format!("invalid --limit value: {limit}"))?;
+    if parsed == 0 {
+        return Err("--limit must be greater than zero".to_string());
+    }
+    Ok(parsed)
 }
 
 fn json_string_field(content: &str, key: &str) -> Option<String> {
@@ -3055,6 +3151,24 @@ fn main() {
         Some("store") if args.get(1).map(String::as_str) == Some("status") => print_store_status(),
         Some("store") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = print_store_summary() {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("store")
+            if args.get(1).map(String::as_str) == Some("record")
+                && args.get(2).map(String::as_str) == Some("get") =>
+        {
+            if let Err(error) = store_record_get(&args[3..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("store")
+            if args.get(1).map(String::as_str) == Some("record")
+                && args.get(2).map(String::as_str) == Some("list") =>
+        {
+            if let Err(error) = store_record_list(&args[3..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

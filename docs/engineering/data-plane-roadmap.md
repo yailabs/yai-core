@@ -55,7 +55,7 @@ SPINE.28B Internal Source Surface Cleanup                            done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       done
 SPINE.30  LMDB Record Write Path                                    done
-SPINE.31  LMDB Record Read / Query Path                             planned
+SPINE.31  LMDB Record Read / Query Path                             done
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
 SPINE.33  LMDB CLI + Manual Validation                              planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
@@ -238,6 +238,22 @@ daemon loops mirror their journal records into LMDB after journal write succeeds
 
 Journal remains replay/audit. LMDB write errors are explicit command failures
 after the daemon loop response has preserved the journal path.
+
+SPINE.31 LMDB Record Read / Query Path adds:
+
+```text
+yai store record get <record_id>
+yai store record list --case <case_ref> [--limit <N>]
+yai store record list --kind <record_kind> [--limit <N>]
+records_by_id read path
+records_by_case -> records_by_id listing
+records_by_kind -> records_by_id listing
+missing record returns record: not_found
+missing or uninitialized LMDB reports status instead of fake journal reads
+```
+
+It does not add subject, receipt, projection or time indexes. Those remain
+SPINE.32+ work.
 
 Source surface boundary:
 

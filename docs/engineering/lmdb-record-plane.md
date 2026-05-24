@@ -1,7 +1,8 @@
 # LMDB Record Plane
 
 SPINE.29 freezes the record-plane contract. SPINE.30 implements the first LMDB
-write path.
+write path. SPINE.31 adds the first read/query path over the id, case and kind
+indexes.
 
 ## Operator Doctrine
 
@@ -19,18 +20,19 @@ YAI_HOME/store/lmdb
 
 `yai store status` is the readiness command because `store` is already the
 runtime durable data root and LMDB is the record-plane backend under it.
-SPINE.30 adds aggregate summary only:
+SPINE.30 adds aggregate summary. SPINE.31 adds record reads:
 
 ```text
 yai store status
 yai store summary
+yai store record get <record_id>
+yai store record list --case <case_ref> [--limit <N>]
+yai store record list --kind <record_kind> [--limit <N>]
 ```
 
 Future commands can extend this shape:
 
 ```text
-yai store record get <record_id>
-yai store record list --case <case_ref>
 yai store rebuild status
 ```
 
@@ -64,7 +66,19 @@ records_by_case: N
 records_by_kind: N
 ```
 
-It is not a read/query API. SPINE.31 owns record get/list/query.
+`yai store record get <record_id>` reads `records_by_id` and prints the
+`yai.record.v1` envelope fields plus a compact payload summary. A missing
+record returns `record: not_found`.
+
+`yai store record list --case <case_ref> [--limit <N>]` scans
+`records_by_case` and resolves matching ids through `records_by_id`.
+
+`yai store record list --kind <record_kind> [--limit <N>]` scans
+`records_by_kind` and resolves matching ids through `records_by_id`.
+
+If the LMDB environment is missing, uninitialized or unavailable, get/list
+commands print record-store status fields. They do not read from journal as a
+fallback and they do not fake records.
 
 ## Schema And Keyspace
 
@@ -124,6 +138,14 @@ records_by_kind
 schema_meta
 ```
 
+SPINE.31 reads:
+
+```text
+records_by_id
+records_by_case -> records_by_id
+records_by_kind -> records_by_id
+```
+
 SPINE.32+ will add:
 
 ```text
@@ -162,6 +184,11 @@ SPINE.30 also read-only inspected the same store/record/query/execution receipt
 areas for write-path posture. The old material stays concept evidence; no
 `yai-dev` file is mutated.
 
+SPINE.31 read-only inspected query, index, store and records material for
+record query grammar, kind filters, case filters, record listing and index/read
+path posture. The old material stays concept evidence; no `yai-dev` file is
+mutated.
+
 ## Write Path
 
 The Rust engine owns the LMDB backend via the `lmdb` crate. The C daemon still
@@ -187,6 +214,7 @@ SPINE.29-SPINE.30 guards:
 make check-lmdb-record-plane-doctrine
 make smoke-spine29
 make smoke-spine30
+make smoke-spine31
 ```
 
 They are integrated into:

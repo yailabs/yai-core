@@ -5,6 +5,9 @@ SPINE.29 defines the durable record lookup plane.
 SPINE.30 LMDB Record Write Path adds the first LMDB write path while preserving
 journal replay/audit.
 
+SPINE.31 LMDB Record Read / Query Path adds direct CLI reads over the LMDB id,
+case and kind indexes.
+
 Doctrine:
 
 ```text
@@ -204,17 +207,36 @@ LMDB write failure is explicit. A daemon loop response still names the journal
 path; the CLI then reports record-store import failure instead of silently
 pretending the record plane is current.
 
+## SPINE.31 Read / Query Path
+
+SPINE.31 makes the record plane inspectable from the CLI:
+
+```text
+yai store record get <record_id>
+yai store record list --case <case_ref> [--limit <N>]
+yai store record list --kind <record_kind> [--limit <N>]
+```
+
+`get` reads `records_by_id`. `list --case` scans `records_by_case` and resolves
+matching record ids through `records_by_id`. `list --kind` scans
+`records_by_kind` and resolves matching record ids through `records_by_id`.
+
+The read path is intentionally small. It does not add a query planner, journal
+replay, subject/receipt/projection/time indexes or graph/fact/memory joins.
+Missing records return `record: not_found`. Missing, uninitialized or
+unavailable LMDB environments return record-store status fields and do not
+fabricate journal-backed reads.
+
 ## Delivery Boundary
 
 SPINE.30 adds the LMDB dependency, opens the environment, writes records by id
-and minimal case/kind indexes, and exposes aggregate summary counts. It does
-not add record get/list query commands, journal replay, graph/fact/memory
-backends or projection deltas.
+and minimal case/kind indexes, and exposes aggregate summary counts. SPINE.31
+adds record get/list over those indexes. It does not add journal replay,
+graph/fact/memory backends, expanded secondary indexes or projection deltas.
 
 Next:
 
 ```text
-SPINE.31 LMDB Record Read / Query Path
 SPINE.32 LMDB Case / Subject / Receipt Indexes
 SPINE.33 LMDB CLI + Manual Validation
 SPINE.34 LMDB Record Plane Freeze

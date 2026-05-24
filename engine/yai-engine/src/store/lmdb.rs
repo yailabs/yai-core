@@ -1,8 +1,8 @@
 use crate::journal::Journal;
 use crate::record::Record;
 use lmdb::{
-    Cursor, Database, DatabaseFlags, Environment, EnvironmentFlags, RoTransaction, RwTransaction,
-    Transaction, WriteFlags,
+    Cursor, Database, DatabaseFlags, Environment, EnvironmentFlags, Error, RoTransaction,
+    RwTransaction, Transaction, WriteFlags,
 };
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -49,6 +49,21 @@ pub struct LmdbRecordStore {
     records_by_case: Database,
     records_by_kind: Database,
     schema_meta: Database,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StoredRecordEnvelope {
+    pub raw_json: String,
+    pub schema: String,
+    pub record_id: String,
+    pub record_kind: String,
+    pub case_ref: String,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct RecordListResult {
+    pub records_total: usize,
+    pub records: Vec<StoredRecordEnvelope>,
 }
 
 impl LmdbRecordStore {
@@ -141,6 +156,43 @@ impl LmdbRecordStore {
         })
     }
 
+    pub fn get_record_by_id(
+        &self,
+        record_id: &str,
+    ) -> Result<Option<StoredRecordEnvelope>, String> {
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB record read: {error}"))?;
+        self.get_record_by_id_txn(&txn, record_id)
+    }
+
+    pub fn list_records_by_case(
+        &self,
+        case_ref: &str,
+        limit: usize,
+    ) -> Result<RecordListResult, String> {
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB case index read: {error}"))?;
+        let prefix = format!("record:case:{case_ref}:");
+        self.list_records_by_index(&txn, self.records_by_case, &prefix, limit)
+    }
+
+    pub fn list_records_by_kind(
+        &self,
+        record_kind: &str,
+        limit: usize,
+    ) -> Result<RecordListResult, String> {
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB kind index read: {error}"))?;
+        let prefix = format!("record:kind:{record_kind}:");
+        self.list_records_by_index(&txn, self.records_by_kind, &prefix, limit)
+    }
+
     fn ensure_schema(&self) -> Result<(), String> {
         let mut txn = self
             .env
@@ -193,6 +245,47 @@ impl LmdbRecordStore {
         Ok(())
     }
 
+    fn get_record_by_id_txn(
+        &self,
+        txn: &RoTransaction<'_>,
+        record_id: &str,
+    ) -> Result<Option<StoredRecordEnvelope>, String> {
+        let id_key = format!("record:id:{record_id}");
+        match txn.get(self.records_by_id, &id_key) {
+            Ok(value) => StoredRecordEnvelope::from_bytes(value).map(Some),
+            Err(Error::NotFound) => Ok(None),
+            Err(error) => Err(format!("failed to read records_by_id {record_id}: {error}")),
+        }
+    }
+
+    fn list_records_by_index(
+        &self,
+        txn: &RoTransaction<'_>,
+        db: Database,
+        prefix: &str,
+        limit: usize,
+    ) -> Result<RecordListResult, String> {
+        let mut cursor = txn
+            .open_ro_cursor(db)
+            .map_err(|error| format!("failed to open LMDB index cursor: {error}"))?;
+        let mut result = RecordListResult::default();
+        for (key, value) in cursor.iter() {
+            if !key.starts_with(prefix.as_bytes()) {
+                continue;
+            }
+            result.records_total += 1;
+            if result.records.len() >= limit {
+                continue;
+            }
+            let record_id = std::str::from_utf8(value)
+                .map_err(|error| format!("invalid LMDB index record id: {error}"))?;
+            if let Some(record) = self.get_record_by_id_txn(txn, record_id)? {
+                result.records.push(record);
+            }
+        }
+        Ok(result)
+    }
+
     fn schema_ready(path: &Path) -> Result<bool, ()> {
         let mut builder = Environment::new();
         builder
@@ -210,9 +303,32 @@ impl LmdbRecordStore {
     }
 }
 
+impl StoredRecordEnvelope {
+    fn from_bytes(value: &[u8]) -> Result<Self, String> {
+        let raw_json = std::str::from_utf8(value)
+            .map_err(|error| format!("invalid LMDB record envelope utf8: {error}"))?
+            .to_string();
+        Ok(Self {
+            schema: json_string_field(&raw_json, "schema").unwrap_or_default(),
+            record_id: json_string_field(&raw_json, "record_id").unwrap_or_default(),
+            record_kind: json_string_field(&raw_json, "record_kind").unwrap_or_default(),
+            case_ref: json_string_field(&raw_json, "case_ref").unwrap_or_default(),
+            raw_json,
+        })
+    }
+}
+
 fn count_entries(txn: &RoTransaction<'_>, db: Database) -> Result<usize, String> {
     let mut cursor = txn
         .open_ro_cursor(db)
         .map_err(|error| format!("failed to open LMDB cursor: {error}"))?;
     Ok(cursor.iter().count())
+}
+
+fn json_string_field(content: &str, key: &str) -> Option<String> {
+    let marker = format!("\"{key}\":\"");
+    let start = content.find(&marker)? + marker.len();
+    let rest = &content[start..];
+    let end = rest.find('"')?;
+    Some(rest[..end].to_string())
 }

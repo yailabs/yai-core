@@ -41,7 +41,7 @@ hot state
 | `daemon ipc` | `yai` can reach resident `yaid` over local IPC |
 | `daemon loop` | `yaid` can serve bounded core loops over local IPC |
 | `hot state` | active case/session/projection freshness is visible without treating journal as the live surface |
-| `record store` | LMDB lookup status is visible without faking write-path readiness |
+| `record store` | LMDB lookup status, writes and reads are visible without faking readiness or journal-backed records |
 
 ## SPINE.23 Hot State Loop
 
@@ -335,6 +335,70 @@ records_by_kind: 8
 In sandboxed command runners, daemon IPC smoke tests may need to run outside
 the default sandbox because they connect to local Unix sockets. That is an
 execution-environment caveat, not a change to the architecture.
+
+## SPINE.31 LMDB Record Read / Query Path Loop
+
+```text
+write records to LMDB through the daemon loop import path
+store summary shows non-zero records
+store record list --kind reads records_by_kind and resolves records_by_id
+store record list --case reads records_by_case and resolves records_by_id
+store record get reads records_by_id
+missing record returns record: not_found
+missing LMDB reports record_store_status instead of journal-only fake reads
+```
+
+`tests/smoke/record-store-read-query/test_record_store_read_query.sh` proves
+the read/query surface.
+
+```text
+make smoke-spine31
+target/debug/yai store record list --kind receipt --limit 10
+target/debug/yai store record list --case case:new12-daemon --limit 10
+target/debug/yai store record get rec:new12-min-receipt
+target/debug/yai store record get rec:missing
+```
+
+Manual installed-loop check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+
+mkdir -p /tmp/yai-home-test/run
+/tmp/yai-install-test/bin/yaid --socket /tmp/yai-home-test/run/yaid.sock --foreground &
+DAEMON_PID=$!
+sleep 1
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store summary
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --kind receipt --limit 10
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --case case:new12-daemon --limit 10
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record get rec:new12-min-receipt
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record get rec:missing
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock
+wait $DAEMON_PID
+```
+
+Expected key lines:
+
+```text
+record_store_status: ready
+records_total: 8
+record_kind: receipt
+case_ref: case:new12-daemon
+schema: yai.record.v1
+payload:
+record: not_found
+```
 
 ## SPINE.28 Hot State Freeze Loop
 
