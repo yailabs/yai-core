@@ -27,6 +27,8 @@ control shell and engine bridge.
 developer utilities. `packaging/` owns package source material. `examples/`
 owns non-authoritative examples. `vendor/` owns vendored support code.
 
+Source ownership details live in `docs/engineering/source-surface.md`.
+
 Pack format doctrine lives under `docs/engineering/pack-format.md`. SPINE.21
 does not create pack source roots, pack registries, pack installer paths or
 pack runtime directories.
@@ -40,9 +42,13 @@ lib/
 crates/
 daemon/
 ctl/
+system/ingest/
+include/yai/ingest/
 ```
 
 Historical references are archived under `docs/archive/engineering/`.
+`system/ingest` and `include/yai/ingest` were README-only placeholders and are
+archived until ingest implementation begins.
 
 ## Local Runtime Layout
 

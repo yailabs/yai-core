@@ -1,6 +1,12 @@
 # index
 
-Transitional role: C bootstrap implementation for initial query and retrieval
+Transitional C shim.
+
+This directory exists to keep current ABI/smoke paths working until the Rust
+engine owns this plane. Do not add new long-term data-plane logic here.
+Future ownership: engine/yai-engine.
+
+Current role: C bootstrap implementation for initial query and retrieval
 boundaries.
 
 Target role:

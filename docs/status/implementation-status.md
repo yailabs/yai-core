@@ -5,9 +5,10 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.28A completes the repository identity cutover. `YAI/yai` is now the
-canonical local AI operational control system, and `YAI/yai-dev` is the
-development lab, concept mine, harness and scenario workspace.
+SPINE.28B completes the internal source surface cleanup after the repository
+identity cutover. `YAI/yai` is now the canonical local AI operational control
+system, and `YAI/yai-dev` is the development lab, concept mine, harness and
+scenario workspace.
 
 SPINE.20 adds the local runtime layout after SPINE.6B made bidirectional
 extraction mandatory for future implementation waves. SPINE.20A rebases the
@@ -19,9 +20,8 @@ Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.28
-are complete, and SPINE.28A is the current identity cutover. Next: SPINE.28B
-Internal Source Surface Cleanup.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.28B
+are complete. Next: SPINE.29 LMDB Record Plane Doctrine + Schema.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits

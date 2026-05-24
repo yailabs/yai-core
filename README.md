@@ -113,6 +113,10 @@ The canonical operator command inventory is
 state, projection, pack doctrine and foundation checks to commands, manual
 tests and expected output.
 
+The active source-surface boundary is `docs/engineering/source-surface.md`.
+`system/` is not a second data engine; Rust data-plane ownership targets
+`engine/yai-engine`, while current C data roots are transitional shims.
+
 The hot-state manual surface is:
 
 ```text

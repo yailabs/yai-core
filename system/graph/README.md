@@ -1,6 +1,12 @@
 # graph
 
-Transitional role: C bootstrap implementation for graph edge contracts and
+Transitional C shim.
+
+This directory exists to keep current ABI/smoke paths working until the Rust
+engine owns this plane. Do not add new long-term data-plane logic here.
+Future ownership: engine/yai-engine.
+
+Current role: C bootstrap implementation for graph edge contracts and
 reconstruction hooks.
 
 Target role:

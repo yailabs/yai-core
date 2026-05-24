@@ -31,6 +31,7 @@ hot-state-plane.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md
+source-surface.md
 testing.md
 wave-template.md
 ```

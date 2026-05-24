@@ -1,7 +1,13 @@
 # reconcile
 
-Transitional role: C bootstrap implementation for divergence and recovery
-posture records.
+Transitional C shim.
+
+This directory exists to keep current ABI/smoke paths working until the Rust
+engine owns this plane. Do not add new long-term data-plane logic here.
+Future ownership: engine/yai-engine.
+
+Current role: C bootstrap implementation for divergence and recovery posture
+records.
 
 Target role:
 

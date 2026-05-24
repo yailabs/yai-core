@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.28A Repository Identity Cutover.
+Status: SPINE.28B Internal Source Surface Cleanup.
 
 ## Completed Foundation
 
@@ -22,7 +22,8 @@ operator, audit and debug consumers. SPINE.27 stabilizes the manual CLI surface
 for hot state, doctor diagnostics and projection freshness inspection. SPINE.28
 freezes the hot-state block before LMDB record plane work begins. SPINE.28A
 renames the canonical core repository to `yai` and the concept-mine/lab
-repository to `yai-dev`.
+repository to `yai-dev`. SPINE.28B removes local virtualenv roots, archives
+README-only ingest placeholders and marks transitional C data shims clearly.
 
 Current:
 
@@ -39,13 +40,14 @@ SPINE.25 Hot State Case Session / Context Integration completed.
 SPINE.26 Hot State Projection Freshness Integration completed.
 SPINE.27 Hot State CLI + Manual Validation completed.
 SPINE.28 Hot State Freeze completed.
-SPINE.28A Repository Identity Cutover current.
+SPINE.28A Repository Identity Cutover completed.
+SPINE.28B Internal Source Surface Cleanup current.
 ```
 
 Next:
 
 ```text
-SPINE.28B Internal Source Surface Cleanup.
+SPINE.29 LMDB Record Plane Doctrine + Schema.
 ```
 
 Foundation status:
@@ -68,6 +70,7 @@ consumer-aware model/operator freshness posture active
 hot-state CLI manual validation active
 hot-state block frozen
 repository identity cutover active
+source surface cleanup active
 ```
 
 ## Current Layout
@@ -131,6 +134,7 @@ pack-roadmap.md
 testing.md
 wave-template.md
 operational-extraction-contract.md
+source-surface.md
 ```
 
 ## Known Caveats
@@ -156,6 +160,24 @@ data-plane root but does not create those backends.
 LMDB begins at SPINE.29 as the durable record lookup plane. It will not replace
 hot state. Hot state remains the live liveness/freshness surface and may be
 rebuilt or refreshed from durable residue.
+
+Source surface:
+
+```text
+system/ is not a second data engine
+engine/ is the Rust data spine target
+system/{store,graph,index,memory,projection,reconcile} are transitional C shims
+system/ingest and include/yai/ingest are archived placeholders until ingest work
+```
+
+Local virtualenv roots are ignored and blocked:
+
+```text
+venv/
+.venv/
+env/
+ENV/
+```
 
 Repository identity:
 
@@ -194,6 +216,9 @@ SPINE.23-SPINE.27 classifications. No yai-dev source file was modified.
 
 SPINE.28A updates active repo identity. `yai-dev` has a role note and remains
 the source for wave-coupled concept mining.
+
+SPINE.28B is internal `yai` source hygiene only. No `yai-dev` source file was
+modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

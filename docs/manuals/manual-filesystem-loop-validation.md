@@ -95,7 +95,7 @@ build/yaid --version
 Expected before daemon activity:
 
 ```text
-status: SPINE.28A Repository Identity Cutover
+status: SPINE.28B Internal Source Surface Cleanup
 hot_state_path:
 hot_state_status: unavailable
 hot_state_schema_status: missing

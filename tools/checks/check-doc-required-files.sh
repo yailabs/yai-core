@@ -21,6 +21,7 @@ for file in \
   docs/engineering/operational-extraction-contract.md \
   docs/engineering/pack-format.md \
   docs/engineering/pack-roadmap.md \
+  docs/engineering/source-surface.md \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
   docs/manuals/README.md \

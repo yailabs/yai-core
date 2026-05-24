@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-repository-identity check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -99,9 +99,9 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.28A Repository Identity Cutover\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.28A Repository Identity Cutover\n"
-	@printf "next: SPINE.28B Internal Source Surface Cleanup\n"
+	@printf "status: SPINE.28B Internal Source Surface Cleanup\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.28B Internal Source Surface Cleanup\n"
+	@printf "next: SPINE.29 LMDB Record Plane Doctrine + Schema\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -119,6 +119,7 @@ check-layout:
 	@./tools/checks/check-no-old-roots.sh
 	@./tools/checks/check-required-layout.sh
 	@./tools/checks/check-source-placement.sh
+	@./tools/checks/check-source-surface-clean.sh
 
 check-docs:
 	@./tools/checks/check-doc-canonical-location.sh
@@ -132,6 +133,9 @@ check-docs:
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
+
+check-source-surface-clean:
+	@./tools/checks/check-source-surface-clean.sh
 
 check-pack-doctrine:
 	@./tools/checks/check-pack-doctrine.sh

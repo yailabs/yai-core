@@ -124,10 +124,12 @@ manual case. Do not document a `yai pack` command until the pack runtime exists.
 | Primitive | View | Command | Manual test | Docs |
 |---|---|---|---|---|
 | source layout | no old active roots | `make check-layout` | `make check-layout` | `filesystem-target.md` |
+| source surface | no venv roots, no README-only source roots, transitional C shims marked | `make check-source-surface-clean` | `make check-source-surface-clean` | `source-surface.md` |
 | foundation freeze | freeze guard | `make check-foundation-freeze` | `make check-foundation-freeze` | `current-status.md` |
 | full docs guard | active doc requirements | `make check-docs` | `make check-docs` | `README.md` |
 | full check | layout, docs, build, smoke | `make check` | `make check` | `testing.md` |
 
+`make check-source-surface-clean` is integrated through `make check-layout`.
 `make check-foundation-freeze` is integrated through `make check-docs`, and
 therefore through `make check`.
 

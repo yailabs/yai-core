@@ -25,7 +25,7 @@ for dir in tests/unit tests/integration tests/adversarial tests/smoke; do
   require_dir "$dir"
 done
 
-for root in base ingest subject case op control effect store index graph memory projection reconcile; do
+for root in base subject case op control effect store index graph memory projection reconcile; do
   require_dir "include/yai/$root"
   require_dir "system/$root"
 done

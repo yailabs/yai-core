@@ -1,8 +1,10 @@
 build/
 target/
-.yai-core/
 .yai/
 .venv/
+venv/
+env/
+ENV/
 
 *.o
 *.a

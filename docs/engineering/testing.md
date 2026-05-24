@@ -104,6 +104,7 @@ operator surface for SPINE.20-SPINE.24.
 ```text
 make smoke-spine24a
 make print-install-paths PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+make check-source-surface-clean
 make check-pack-doctrine
 make check-foundation-freeze
 target/debug/yai --version
@@ -125,6 +126,29 @@ grep 'policy:manual-filesystem-sandbox-v0' "$JOURNAL"
 
 This proves the current manual posture. It does not imply a `yai pack`
 runtime command exists.
+
+## SPINE.28B Source Surface Cleanup
+
+```text
+system/ is not a second data engine
+engine/ is the Rust data spine target
+venv/.venv/env/ENV are blocked from the repo
+system/ingest and include/yai/ingest stay archived until ingest work
+transitional C data shims carry a standard banner
+```
+
+Manual check:
+
+```text
+make check-source-surface-clean
+find . -maxdepth 2 -type d -name "venv" -o -name ".venv"
+```
+
+Expected:
+
+```text
+check-source-surface-clean: ok
+```
 
 ## SPINE.25 Hot State Session/Context Loop
 

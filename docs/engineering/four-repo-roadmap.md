@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.28A repository identity cutover. | SPINE.28B Internal Source Surface Cleanup. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.28B internal source surface cleanup. | SPINE.29 LMDB Record Plane Doctrine + Schema. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -71,10 +71,12 @@ stabilizes the manual command surface for `yai hot status`, `yai doctor` and
 `yai projection inspect`. SPINE.28 freezes hot state as a non-authoritative live
 cache before durable LMDB record-plane work begins. SPINE.28A renames the
 canonical core repository to `yai` and the old concept-mine repository to
-`yai-dev`.
+`yai-dev`. SPINE.28B removes local virtualenv roots, archives README-only
+ingest placeholders and marks transitional C data shims as temporary engine
+drain surfaces.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.28B.
+delivery is SPINE.29.
 
 ## Canonical Macro Labels
 
@@ -168,7 +170,7 @@ SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         done
 SPINE.28  Hot State Freeze                                          done
 SPINE.28A Repository Identity Cutover                                done
-SPINE.28B Internal Source Surface Cleanup                            planned
+SPINE.28B Internal Source Surface Cleanup                            done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
 SPINE.30  LMDB Record Write Path                                    planned

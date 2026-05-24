@@ -34,7 +34,7 @@ mkdir -p "$YAI_HOME/run"
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.28A Repository Identity Cutover"
+require_line "$info" "status: SPINE.28B Internal Source Surface Cleanup"
 
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_path: $HOT"

@@ -51,6 +51,7 @@ SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         done
 SPINE.28  Hot State Freeze                                          done
+SPINE.28B Internal Source Surface Cleanup                            done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
 SPINE.30  LMDB Record Write Path                                    planned
@@ -197,6 +198,14 @@ Hot state is the live cache and may be rebuilt or refreshed from durable residue
 SPINE.29 begins the durable record plane.
 LMDB will not replace hot state.
 LMDB will become durable lookup; hot state remains current liveness/freshness surface.
+```
+
+Source surface boundary:
+
+```text
+system/{store,graph,index,memory,projection,reconcile} are transitional C shims.
+engine/yai-engine is the future data-plane owner.
+LMDB work must not treat system/store as final durable record ownership.
 ```
 
 ## Rules
