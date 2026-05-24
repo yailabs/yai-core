@@ -121,9 +121,9 @@ yai hot status
 yai projection inspect --journal <path> --consumer model
 ```
 
-The manual runbook and notebook for this command surface live under
-`docs/manuals/manual-command-surface-validation.md` and
-`docs/manuals/manual-command-surface-validation.ipynb`.
+The command-surface baseline is integrated into the filesystem loop manual and
+notebook under `docs/manuals/manual-filesystem-loop-validation.md` and
+`docs/manuals/manual-filesystem-loop-validation.ipynb`.
 
 ## Computational Model
 
