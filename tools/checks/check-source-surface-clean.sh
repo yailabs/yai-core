@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - source surface cleanliness guard
+#
+# Purpose:
+#   Keep local environment roots and archived placeholders out of active source.
+#
+# Scope:
+#   Checks environment directories, ingest placeholders and transitional banners.
+#
+# Non-goals:
+#   Does not enforce every source file header.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

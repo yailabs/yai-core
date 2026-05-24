@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - archive historical record guard
+#
+# Purpose:
+#   Ensure archived Markdown records are visibly historical.
+#
+# Scope:
+#   Scans docs/archive Markdown files for the required first-line banner.
+#
+# Non-goals:
+#   Does not validate active documentation content.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

@@ -48,7 +48,9 @@ These directories keep current ABI and smoke paths working. They are not the
 future home of durable data-plane logic. New long-term data-plane logic belongs
 under `engine/yai-engine`.
 
-REPO.HYGIENE.1 applies explicit transitional shim banners to these roots.
+REPO.HYGIENE.1 applies explicit ownership notes to the principal source,
+command, test and guard surfaces and keeps the transitional shim banners active
+on these roots.
 
 ## Public ABI Roots
 

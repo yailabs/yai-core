@@ -1,10 +1,10 @@
 <!--
-YAI Core
+YAI
 
 Copyright (c) 2026 Francesco Maiomascio.
 All rights reserved.
 
-This file is part of the source-available YAI Core repository.
+This file is part of the source-available YAI repository.
 Use, copying, modification, distribution, and production operation
 are governed by the repository licensing documents, including LICENSE.md and
 docs/legal.md.
@@ -29,9 +29,9 @@ file or component license says otherwise.
   ![License](https://img.shields.io/badge/license-source--available-374151?style=flat&labelColor=1f2937)
 </div>
 
-# YAI Core
+# YAI
 
-YAI Core is a local runtime for binding AI-mediated activity to operational
+YAI is a local runtime for binding AI-mediated activity to operational
 cases. It does not run models. It controls the boundary around model, provider,
 tool, operator, and system activity: which case it belongs to, which subjects
 it touches, which policy applies, what was allowed or blocked, what receipt was
@@ -40,7 +40,7 @@ result.
 
 ## Status
 
-YAI Core is an early source-available repository. It is public for technical
+YAI is an early source-available repository. It is public for technical
 evaluation and review, and is not production-ready unless explicitly stated.
 
 The command and test surface is still stabilizing. The legal posture is defined
@@ -208,7 +208,7 @@ public documentation surface is being split into shorter focused pages.
 
 ## License And Contributions
 
-YAI Core is source-available, not open source by default. Source access is for
+YAI is source-available, not open source by default. Source access is for
 technical evaluation and review unless another file or component explicitly
 grants different rights.
 

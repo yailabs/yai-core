@@ -60,6 +60,22 @@ make check-file-header-standard
 make check-docs
 ```
 
+## REPO.HYGIENE.1 Ownership Surface Loop
+
+```text
+Makefile has ownership/status comments
+tools/checks/*.sh have YAI purpose headers
+transitional shim READMEs retain Transitional C shim banners
+engine/README.md names Rust operational data engine ownership
+system/README.md names C host/system implementation
+tests/smoke/README.md names smoke-test ownership
+```
+
+```text
+make check-file-header-standard
+make check-docs
+```
+
 ## SPINE.23 Hot State Loop
 
 ```text

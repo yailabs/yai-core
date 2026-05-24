@@ -1,3 +1,17 @@
+//! YAI - journal model
+//!
+//! Purpose:
+//!   Keep append/load helpers for JSONL operational residue.
+//!
+//! Ownership:
+//!   In-engine journal collection and JSONL persistence helpers.
+//!
+//! Boundary:
+//!   Does not own LMDB indexes, hot-state freshness or replay rebuild policy.
+//!
+//! Status:
+//!   active
+
 use crate::record::Record;
 use std::fs;
 use std::io;

@@ -1,4 +1,15 @@
 #!/bin/sh
+# YAI - foundation freeze guard
+#
+# Purpose:
+#   Keep the post-foundation source and docs surface compact and intentional.
+#
+# Scope:
+#   Checks required roots, forbidden roots, active engineering docs and wave
+#   template contract terms.
+#
+# Non-goals:
+#   Does not build or run runtime tests.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

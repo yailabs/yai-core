@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - old source root guard
+#
+# Purpose:
+#   Prevent retired source roots from reappearing in the active repository.
+#
+# Scope:
+#   Checks top-level, include and system roots for forbidden old names.
+#
+# Non-goals:
+#   Does not inspect archived historical docs.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

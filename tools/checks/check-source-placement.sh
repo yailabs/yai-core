@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - source placement guard
+#
+# Purpose:
+#   Prevent active source from returning to retired bootstrap roots.
+#
+# Scope:
+#   Checks forbidden roots and canonical source placement.
+#
+# Non-goals:
+#   Does not validate implementation semantics.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

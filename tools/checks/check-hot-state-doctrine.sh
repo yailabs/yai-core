@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - hot-state doctrine guard
+#
+# Purpose:
+#   Ensure active docs preserve the hot-state boundary.
+#
+# Scope:
+#   Checks required hot-state docs for doctrine phrases.
+#
+# Non-goals:
+#   Does not validate runtime snapshot contents.
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"

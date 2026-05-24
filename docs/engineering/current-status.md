@@ -53,14 +53,15 @@ SPINE.28B Internal Source Surface Cleanup completed.
 SPINE.29 LMDB Record Plane Doctrine + Schema completed.
 SPINE.30 LMDB Record Write Path completed.
 SPINE.31 LMDB Record Read / Query Path completed.
-SPINE.32 LMDB Case / Subject / Receipt Indexes current.
-REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix current.
+SPINE.32 LMDB Case / Subject / Receipt Indexes completed.
+REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
+REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup current.
 ```
 
 Next:
 
 ```text
-REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup.
+SPINE.33 LMDB CLI + Manual Validation.
 ```
 
 Foundation status:
@@ -92,6 +93,7 @@ LMDB record read/query surface active
 LMDB subject/receipt indexes active
 file/header ownership standard active
 agent operating appendix active
+principal ownership headers and READMEs active
 ```
 
 ## Current Layout

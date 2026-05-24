@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - repository identity guard
+#
+# Purpose:
+#   Prevent active surfaces from drifting back to old repository names.
+#
+# Scope:
+#   Scans active source and docs roots, excluding historical archives.
+#
+# Non-goals:
+#   Does not edit or rename repositories.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
@@ -41,6 +51,7 @@ do
       --exclude-dir=build \
       --exclude-dir=target \
       --exclude-dir=docs/archive \
+      --exclude-dir=repo-readiness \
       "$PATTERN" "$ROOT/$path" >>"$HITS" 2>/dev/null || true
   fi
 done

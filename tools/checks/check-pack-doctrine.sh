@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - pack doctrine guard
+#
+# Purpose:
+#   Ensure pack materialization remains documented before runtime expansion.
+#
+# Scope:
+#   Checks pack docs, ADR and inventory for required doctrine terms.
+#
+# Non-goals:
+#   Does not implement or validate a pack runtime.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

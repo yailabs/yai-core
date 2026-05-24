@@ -1,3 +1,18 @@
+//! YAI - control CLI
+//!
+//! Purpose:
+//!   Provide the local technical control command for runtime inspection, daemon
+//!   requests and record-plane operator views.
+//!
+//! Ownership:
+//!   Command parsing and user-facing text output for `yai`.
+//!
+//! Boundary:
+//!   Does not own core data-plane truth, daemon internals or public SDK shape.
+//!
+//! Status:
+//!   active
+
 use std::ffi::{CStr, CString};
 use std::fmt::Write as FmtWrite;
 use std::fs::{self, OpenOptions};

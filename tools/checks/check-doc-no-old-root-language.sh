@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - old root language guard
+#
+# Purpose:
+#   Prevent active target docs from reintroducing retired root names.
+#
+# Scope:
+#   Checks selected active architecture/filesystem docs for path-like old roots.
+#
+# Non-goals:
+#   Does not scan historical archives.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

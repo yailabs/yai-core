@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - required layout guard
+#
+# Purpose:
+#   Ensure the canonical source and documentation roots exist.
+#
+# Scope:
+#   Checks required directories and anchor files.
+#
+# Non-goals:
+#   Does not verify file ownership headers.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

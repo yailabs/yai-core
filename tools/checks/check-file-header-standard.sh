@@ -4,15 +4,15 @@ set -eu
 # YAI - file header standard guard
 #
 # Purpose:
-#   Ensure the repository has an active ownership/header standard before broad
-#   header application starts.
+#   Ensure the repository has an active ownership/header standard and that the
+#   principal ownership surfaces carry short agent-readable notes.
 #
 # Scope:
-#   Checks the doctrine docs and wave/extraction references required by
-#   REPO.HYGIENE.0.
+#   Checks doctrine docs, wave/extraction references, top-level build surface,
+#   guard headers and principal directory READMEs.
 #
 # Non-goals:
-#   This guard does not yet enforce headers across every source file.
+#   This guard does not yet enforce headers across every .c, .h or .rs file.
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 
@@ -36,6 +36,11 @@ require_file "docs/engineering/file-header-standard.md"
 require_file "docs/engineering/agent-operating-appendix.md"
 require_file "docs/engineering/wave-template.md"
 require_file "docs/engineering/operational-extraction-contract.md"
+require_file "Makefile"
+require_file "engine/README.md"
+require_file "system/README.md"
+require_file "tools/checks/README.md"
+require_file "tests/smoke/README.md"
 
 require_phrase "docs/engineering/file-header-standard.md" "Purpose"
 require_phrase "docs/engineering/file-header-standard.md" "Ownership"
@@ -45,5 +50,23 @@ require_phrase "docs/engineering/agent-operating-appendix.md" "Before Editing"
 require_phrase "docs/engineering/agent-operating-appendix.md" "A file is not ready for agent modification"
 require_phrase "docs/engineering/wave-template.md" "File/header impact"
 require_phrase "docs/engineering/operational-extraction-contract.md" "agent-operating-appendix.md"
+require_phrase "Makefile" "YAI - local build and validation surface"
+require_phrase "engine/README.md" "Rust operational data engine"
+require_phrase "system/README.md" "C host/system implementation"
+require_phrase "tools/checks/README.md" "Guard scripts should carry a short"
+require_phrase "tests/smoke/README.md" "Smoke tests prove current behavior"
+
+for dir in system/store system/graph system/index system/memory system/projection system/reconcile; do
+  require_file "$dir/README.md"
+  require_phrase "$dir/README.md" "Transitional C shim"
+  require_phrase "$dir/README.md" "Future ownership: engine/yai-engine"
+done
+
+for script in "$ROOT"/tools/checks/*.sh; do
+  if ! grep -Fq "YAI -" "$script"; then
+    printf 'missing YAI purpose header in guard: %s\n' "${script#$ROOT/}" >&2
+    exit 1
+  fi
+done
 
 printf 'file-header-standard: ok\n'

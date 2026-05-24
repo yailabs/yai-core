@@ -1,3 +1,19 @@
+//! YAI - LMDB record store
+//!
+//! Purpose:
+//!   Provide durable indexed record lookup for normalized record envelopes.
+//!
+//! Ownership:
+//!   LMDB environment opening, record writes, summary counts and record index
+//!   reads.
+//!
+//! Boundary:
+//!   Does not own journal replay/audit truth, hot-state freshness, graph truth
+//!   or analytical facts.
+//!
+//! Status:
+//!   active
+
 use crate::journal::Journal;
 use crate::record::Record;
 use lmdb::{

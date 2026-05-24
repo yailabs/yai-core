@@ -1,3 +1,17 @@
+//! YAI - journal query helpers
+//!
+//! Purpose:
+//!   Filter in-memory journal records for current smoke/query surfaces.
+//!
+//! Ownership:
+//!   Lightweight record filtering over loaded journal residue.
+//!
+//! Boundary:
+//!   Does not own LMDB query planning or future graph/fact query semantics.
+//!
+//! Status:
+//!   active
+
 use crate::journal::Journal;
 use crate::record::{Record, RecordKind};
 

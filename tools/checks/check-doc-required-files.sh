@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - required docs guard
+#
+# Purpose:
+#   Ensure the active documentation set needed by current waves exists.
+#
+# Scope:
+#   Checks required active docs, manuals and ADR files.
+#
+# Non-goals:
+#   Does not validate every doc phrase.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

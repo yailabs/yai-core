@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - LMDB record-plane doctrine guard
+#
+# Purpose:
+#   Ensure active docs preserve LMDB as durable indexed record lookup.
+#
+# Scope:
+#   Checks LMDB record-plane docs, ADR and command surface references.
+#
+# Non-goals:
+#   Does not open LMDB or validate record contents.
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"

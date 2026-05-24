@@ -1,3 +1,18 @@
+//! YAI - record model
+//!
+//! Purpose:
+//!   Define normalized operational records and their JSON encodings.
+//!
+//! Ownership:
+//!   Record kind taxonomy and record envelope serialization used by the Rust
+//!   engine.
+//!
+//! Boundary:
+//!   Does not own LMDB storage, journal file IO or graph semantics.
+//!
+//! Status:
+//!   active
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RecordKind {
     Case,

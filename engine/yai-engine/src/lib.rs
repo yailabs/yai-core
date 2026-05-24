@@ -1,3 +1,18 @@
+//! YAI - Rust operational data engine
+//!
+//! Purpose:
+//!   Host Rust-side residue, projection, query, hot-state and record-plane
+//!   modules.
+//!
+//! Ownership:
+//!   Rust operational data engine module graph and public crate exports.
+//!
+//! Boundary:
+//!   Does not own C ABI declarations or daemon process lifecycle.
+//!
+//! Status:
+//!   active
+
 pub mod ffi;
 pub mod graph;
 pub mod hot;

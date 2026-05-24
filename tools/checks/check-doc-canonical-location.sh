@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - canonical docs location guard
+#
+# Purpose:
+#   Prevent active documentation from drifting back into legacy roots.
+#
+# Scope:
+#   Checks canonical docs directory presence and known obsolete docs copies.
+#
+# Non-goals:
+#   Does not classify archive contents.
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)

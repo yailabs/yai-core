@@ -1,4 +1,14 @@
 #!/bin/sh
+# YAI - hot-state freeze guard
+#
+# Purpose:
+#   Ensure the frozen hot-state docs and command surface remain present.
+#
+# Scope:
+#   Checks active docs for freeze phrases and command/status references.
+#
+# Non-goals:
+#   Does not run daemon hot-state smoke tests.
 set -eu
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
