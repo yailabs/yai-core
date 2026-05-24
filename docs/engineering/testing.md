@@ -85,6 +85,32 @@ target/debug/yai daemon run-minimum-loop --socket <socket>
 target/debug/yai hot status
 ```
 
+## SPINE.24A Command Surface Recovery Loop
+
+```text
+runtime/install path commands are inspectable
+pack and foundation guards are callable directly
+yai doctor reports runtime and hot-state status
+yai hot status handles missing, corrupt and valid snapshots
+daemon status/info/minimum-loop commands are reachable
+command surface inventory maps primitive -> view -> command -> manual test -> docs
+```
+
+`tests/smoke/command-surface/test_command_surface.sh` proves the retroactive
+operator surface for SPINE.20-SPINE.24.
+
+```text
+make smoke-spine24a
+make print-install-paths PREFIX=/tmp/yai-core-install-test YAI_HOME=/tmp/yai-core-home-test
+make check-pack-doctrine
+make check-foundation-freeze
+target/debug/yai --version
+target/debug/yai info
+target/debug/yai doctor
+target/debug/yai hot status
+build/yaid --version
+```
+
 ## SPINE.25 Hot State Session/Context Loop
 
 ```text

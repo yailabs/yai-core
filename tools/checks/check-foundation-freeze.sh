@@ -23,6 +23,7 @@ done
 
 allowed_docs='
 README.md
+command-surface.md
 current-status.md
 data-plane-roadmap.md
 extraction-plan.md

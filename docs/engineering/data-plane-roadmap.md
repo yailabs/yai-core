@@ -159,6 +159,18 @@ projection inspect exposes freshness_policy and source
 prompt path warns when model-visible projection needs refresh
 ```
 
+Current command views:
+
+```text
+yai hot status
+yai doctor
+make smoke-spine24a
+```
+
+`docs/engineering/command-surface.md` maps the hot-state primitive, snapshot
+schema, missing/corrupt snapshot handling and daemon-backed status path to
+manual commands and expected output.
+
 ## Rules
 
 The journal must remain in the system, but it must recede from the primary

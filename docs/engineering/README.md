@@ -21,6 +21,7 @@ delivery authority.
 
 ```text
 README.md
+command-surface.md
 current-status.md
 data-plane-roadmap.md
 extraction-plan.md
@@ -34,9 +35,10 @@ testing.md
 wave-template.md
 ```
 
-`wave-template.md` is the short operator template for future SPINE.N delivery
-boxes. `operational-extraction-contract.md` is the detailed rule set for
-bidirectional old-yai extraction and residue normalization.
+`command-surface.md` is the canonical operator command index. `wave-template.md`
+is the short operator template for future SPINE.N delivery boxes.
+`operational-extraction-contract.md` is the detailed rule set for bidirectional
+old-yai extraction and residue normalization.
 
 ## Rules
 

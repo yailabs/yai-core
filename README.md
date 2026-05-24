@@ -108,6 +108,11 @@ Authority, execution, receipts, memory, and continuity remain outside the
 model. Future work is scheduled only through the linear SPINE.20+ roadmap in
 `docs/engineering/four-repo-roadmap.md`.
 
+The canonical operator command inventory is
+`docs/engineering/command-surface.md`. It maps runtime layout, daemon, hot
+state, projection, pack doctrine and foundation checks to commands, manual
+tests and expected output.
+
 ## Computational Model
 
 `case`

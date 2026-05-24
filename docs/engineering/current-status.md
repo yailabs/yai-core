@@ -14,6 +14,8 @@ pack doctrine guards and the operational extraction contract before data-plane
 implementation begins. SPINE.23 adds the first live hot-state plane. SPINE.23A
 expands the linear roadmap and adds the mandatory command surface contract for
 future deliveries. SPINE.24 hardens the runtime hot-state snapshot lifecycle.
+SPINE.24A maps SPINE.20-SPINE.24 primitives to command views, manual tests and
+expected output.
 SPINE.25 links that snapshot to case session, case world and case context
 lifecycle. SPINE.26 defines the projection freshness policy used by model,
 operator, audit and debug consumers.
@@ -28,6 +30,7 @@ SPINE.22 Filesystem & Runtime Layout Freeze completed.
 SPINE.23 Hot State Doctrine + ABI completed.
 SPINE.23A Roadmap Expansion + Command-Test Contract completed.
 SPINE.24 Hot State Runtime Snapshot completed.
+SPINE.24A Retroactive Command Surface Recovery completed.
 SPINE.25 Hot State Case Session / Context Integration completed.
 SPINE.26 Hot State Projection Freshness Integration current.
 ```
@@ -49,6 +52,7 @@ operational extraction contract active
 hot state v0 active
 expanded linear roadmap active
 command surface contract active
+command surface inventory active
 hot-state snapshot v1 active
 hot-state snapshot missing/corrupt handling active
 hot-state session/context lifecycle fields active
@@ -105,6 +109,7 @@ ctl/
 
 ```text
 README.md
+command-surface.md
 current-status.md
 data-plane-roadmap.md
 extraction-plan.md
@@ -144,6 +149,9 @@ extraction inventory. No old-yai source file was modified.
 
 Old-yai residue for SPINE.24 was read-only inspected and classified in the
 extraction inventory. No old-yai source file was modified.
+
+Old-yai command/runtime residue for SPINE.24A was read-only inspected and
+classified in the extraction inventory. No old-yai source file was modified.
 
 Old-yai residue for SPINE.25 was read-only inspected and classified in the
 extraction inventory. No old-yai source file was modified.

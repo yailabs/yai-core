@@ -12,6 +12,7 @@ for file in \
   docs/architecture/06-control-policy-model.md \
   docs/engineering/README.md \
   docs/engineering/current-status.md \
+  docs/engineering/command-surface.md \
   docs/engineering/data-plane-roadmap.md \
   docs/engineering/extraction-plan.md \
   docs/engineering/filesystem-target.md \

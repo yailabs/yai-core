@@ -61,6 +61,8 @@ Command Surface:
     exact key lines expected from manual commands
   Command docs updated:
     command docs, testing docs or manual runbooks changed
+  Primitive/view/command mapping:
+    command-surface.md updated when a wave exposes or changes an operator view
 
   Rule:
     If no commands changed, state explicitly: no command surface change.

@@ -133,6 +133,18 @@ active_thread_id
 participant_view_frame_id
 ```
 
+Canonical runtime path and command views:
+
+```text
+make print-install-paths
+make doctor-local
+yai doctor
+yai hot status
+```
+
+The operator command inventory for runtime layout, installed binaries, daemon
+socket and hot-state snapshot lives in `docs/engineering/command-surface.md`.
+
 ## Transitional Caveats
 
 The C data-spine folders under `system/{store,graph,index,memory,projection,reconcile}`

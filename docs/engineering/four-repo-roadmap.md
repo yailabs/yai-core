@@ -61,6 +61,8 @@ SPINE.23-SPINE.64 plan into smaller implementable SPINE.23-SPINE.120
 deliveries and makes command surface declaration mandatory.
 SPINE.24 hardens the hot-state runtime snapshot as schema
 `yai.hot_state.v1`, temp-and-rename writes and missing/corrupt status handling.
+SPINE.24A retroactively maps SPINE.20-SPINE.24 primitives to canonical command
+views, manual command tests and expected output lines.
 SPINE.25 links hot state to case session, case world, case context, active
 thread, participant view and decision/receipt-driven projection staleness.
 SPINE.26 makes projection freshness consumer-aware: model/agent views require
@@ -155,6 +157,7 @@ SPINE.22  Filesystem & Runtime Layout Freeze                        done
 SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.23A Roadmap Expansion + Command-Test Contract                 done
 SPINE.24  Hot State Runtime Snapshot                                done
+SPINE.24A Retroactive Command Surface Recovery                      done
 SPINE.25  Hot State Case Session / Context Integration              done
 SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         planned
