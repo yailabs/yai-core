@@ -31,5 +31,6 @@ does not decide liveness, current view or projection freshness.
 Graph, facts and memory may reference LMDB records, but LMDB does not own causal
 semantics, analytical facts or memory consolidation.
 
-SPINE.30 may implement the write path against this doctrine without adding
-record taxonomy or keyspace decisions ad hoc.
+SPINE.30 implements the first write path against this doctrine without adding
+record taxonomy or keyspace decisions ad hoc. Read/query APIs remain a later
+decision surface.

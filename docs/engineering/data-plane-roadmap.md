@@ -54,7 +54,7 @@ SPINE.28  Hot State Freeze                                          done
 SPINE.28B Internal Source Surface Cleanup                            done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       done
-SPINE.30  LMDB Record Write Path                                    planned
+SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             planned
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
 SPINE.33  LMDB CLI + Manual Validation                              planned
@@ -221,11 +221,23 @@ record_store_status: missing|not_initialized|unavailable
 record_store_path: <YAI_HOME>/store/lmdb
 ```
 
-`ready` is not a SPINE.29 status. The LMDB write path begins in:
+`ready` is not a SPINE.29 status.
+
+SPINE.30 LMDB Record Write Path adds:
 
 ```text
-SPINE.30 LMDB Record Write Path
+LMDB crate dependency in the Rust engine
+open/create record_env at YAI_HOME/store/lmdb
+write records_by_id
+write records_by_case
+write records_by_kind
+schema_meta/meta:schema = yai.record.v1
+yai store summary = aggregate counts only
+daemon loops mirror their journal records into LMDB after journal write succeeds
 ```
+
+Journal remains replay/audit. LMDB write errors are explicit command failures
+after the daemon loop response has preserved the journal path.
 
 Source surface boundary:
 

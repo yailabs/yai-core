@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -96,14 +96,15 @@ SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
 SMOKE_PROJECTION_FRESHNESS := $(BUILD_DIR)/test_projection_freshness
 SMOKE_HOT_STATE_CLI := tests/smoke/hot-state-cli/test_hot_state_cli.sh
 SMOKE_RECORD_STORE_CLI := tests/smoke/record-store-cli/test_record_store_cli.sh
+SMOKE_RECORD_STORE_WRITE := tests/smoke/record-store-write/test_record_store_write.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.29 LMDB Record Plane Doctrine + Schema\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.29 LMDB Record Plane Doctrine + Schema\n"
-	@printf "next: SPINE.30 LMDB Record Write Path\n"
+	@printf "status: SPINE.30 LMDB Record Write Path\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.30 LMDB Record Write Path\n"
+	@printf "next: SPINE.31 LMDB Record Read / Query Path\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -361,7 +362,10 @@ smoke-spine27: $(YAID) build-rust
 smoke-spine29: build-rust
 	@$(SMOKE_RECORD_STORE_CLI)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29
+smoke-spine30: $(YAID) build-rust
+	@$(SMOKE_RECORD_STORE_WRITE)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30
 
 check: check-layout check-docs build smoke
 

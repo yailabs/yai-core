@@ -5,8 +5,8 @@ status notes that do not belong in the stable repository README.
 
 ## Current Position
 
-SPINE.28B completes the internal source surface cleanup after the repository
-identity cutover. `YAI/yai` is now the canonical local AI operational control
+SPINE.30 completes the first LMDB record write path after SPINE.29 defined the
+record-plane doctrine. `YAI/yai` is the canonical local AI operational control
 system, and `YAI/yai-dev` is the development lab, concept mine, harness and
 scenario workspace.
 
@@ -20,8 +20,8 @@ Status: NEW.18 completed the engine bridge split. NEW.18.FIX removed stale
 post-NEW.18 layout drift and status drift. NEW.18A completed the case-world
 binding record vertical slice. NEW.18B adds live `case_context` and
 `case_session` semantics while preserving durable refs. SPINE.3R, SPINE.4,
-NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.28B
-are complete. Next: SPINE.29 LMDB Record Plane Doctrine + Schema.
+NEW.18C and NEW.19 are complete foundation history. SPINE.20 through SPINE.30
+are complete. Next: SPINE.31 LMDB Record Read / Query Path.
 
 Model-in-case status: the daemon filesystem loop emits model subject, policy
 and model-context projection evidence. `yai case enter` admits
@@ -41,10 +41,11 @@ Case verticalization has started inside `yai`: the C ABI now has
 `case_domain`, `case_attachment`, and `case_binding` primitives and matching
 record kinds. The filesystem manual case emits those records before subjects
 and policies, so a model participant sees an operational case world rather than
-a flat journal label. Registry persistence, SHM, LMDB, DuckDB, Ladybug and full
-runtime carrier enforcement remain planned-not-created in this repository.
-SPINE.3R also keeps shared memory, LMDB, DuckDB, Ladybug and live projection
-delta implementation planned-not-created until dedicated data-plane waves.
+a flat journal label. Registry persistence, SHM, DuckDB, Ladybug and full
+runtime carrier enforcement remain planned-not-created in this repository. LMDB
+now has a first write path for record lookup copies, not read/query or replay.
+SPINE.3R also keeps shared memory, DuckDB, Ladybug and live projection delta
+implementation planned-not-created until dedicated data-plane waves.
 NEW.18B normalizes the active case posture: `case_ref`, `subject_ref` and
 receipt refs remain durable boundary material, while runtime operation uses a
 loaded `case_context` inside a `case_session`.

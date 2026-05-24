@@ -1,7 +1,9 @@
 # LMDB Record Plane
 
-SPINE.29 defines the durable record lookup plane before any LMDB write path is
-implemented.
+SPINE.29 defines the durable record lookup plane.
+
+SPINE.30 LMDB Record Write Path adds the first LMDB write path while preserving
+journal replay/audit.
 
 Doctrine:
 
@@ -45,8 +47,8 @@ SPINE.29 defines and may create only:
 YAI_HOME/store/lmdb/
 ```
 
-The command and install path do not open LMDB, create records or claim
-readiness.
+SPINE.30 opens that directory as an LMDB environment, writes schema metadata
+and stores indexed record copies.
 
 ## Environment And Namespaces
 
@@ -56,7 +58,7 @@ The logical environment name is:
 record_env
 ```
 
-Future named DBs or logical namespaces:
+Named DBs or logical namespaces:
 
 ```text
 records_by_id
@@ -70,8 +72,8 @@ record_meta
 schema_meta
 ```
 
-If SPINE.30 begins with a single physical DB, these names still define logical
-prefix ownership.
+SPINE.30 implements `records_by_id`, `records_by_case`, `records_by_kind` and
+`schema_meta`. Remaining indexes stay planned for SPINE.32+.
 
 ## Key Grammar
 
@@ -178,16 +180,40 @@ memory and hot state as needed, but does not move their ownership into LMDB.
 LMDB may contain refs used by graph, facts and memory. It must not own their
 derived semantics.
 
+## SPINE.30 Write Path
+
+SPINE.30 writes normalized record envelopes into LMDB after daemon loop journal
+records have been written. The journal remains append-only chronology and
+replay/audit source. LMDB receives durable indexed record copies.
+
+Minimum indexes:
+
+```text
+records_by_id      record:id:<record_id> -> yai.record.v1 envelope
+records_by_case    record:case:<case_ref>:<record_id> -> record_id
+records_by_kind    record:kind:<record_kind>:<record_id> -> record_id
+schema_meta        meta:schema -> yai.record.v1
+schema_meta        meta:rebuild -> not_started
+```
+
+`ready` means the LMDB environment opens and `meta:schema` is present with
+`yai.record.v1`. It does not mean replay, read/query, graph, facts or memory
+are implemented.
+
+LMDB write failure is explicit. A daemon loop response still names the journal
+path; the CLI then reports record-store import failure instead of silently
+pretending the record plane is current.
+
 ## Delivery Boundary
 
-SPINE.29 adds doctrine, schema, keyspace and status visibility. It does not add
-an LMDB dependency, open an environment, write records, read records, replay the
-journal or build graph/fact/memory backends.
+SPINE.30 adds the LMDB dependency, opens the environment, writes records by id
+and minimal case/kind indexes, and exposes aggregate summary counts. It does
+not add record get/list query commands, journal replay, graph/fact/memory
+backends or projection deltas.
 
 Next:
 
 ```text
-SPINE.30 LMDB Record Write Path
 SPINE.31 LMDB Record Read / Query Path
 SPINE.32 LMDB Case / Subject / Receipt Indexes
 SPINE.33 LMDB CLI + Manual Validation

@@ -173,6 +173,27 @@ impl Record {
         )
     }
 
+    pub fn to_record_plane_json(&self, source_ref: &str) -> String {
+        let subject_refs = if self.subject_ref.is_empty() || self.subject_ref == "subject:none" {
+            String::new()
+        } else {
+            format!("\"{}\"", escape_json(&self.subject_ref))
+        };
+        format!(
+            "{{\"schema\":\"yai.record.v1\",\"record_id\":\"{}\",\"record_kind\":\"{}\",\"case_ref\":\"{}\",\"subject_refs\":[{}],\"created_at_unix_ms\":0,\"source\":{{\"plane\":\"journal\",\"ref\":\"{}\"}},\"provenance_refs\":[],\"payload\":{{\"summary\":\"{}\",\"subject_ref\":\"{}\",\"attempt_id\":\"{}\",\"decision_id\":\"{}\",\"receipt_id\":\"{}\"}}}}",
+            escape_json(&self.id),
+            self.kind.as_str(),
+            escape_json(&self.case_ref),
+            subject_refs,
+            escape_json(source_ref),
+            escape_json(&self.summary),
+            escape_json(&self.subject_ref),
+            escape_json(&self.attempt_id),
+            escape_json(&self.decision_id),
+            escape_json(&self.receipt_id)
+        )
+    }
+
     pub fn from_jsonl(line: &str) -> Option<Self> {
         let schema = extract_json_string(line, "schema")?;
         if schema != "yai.store.record.v0" {

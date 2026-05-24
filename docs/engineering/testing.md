@@ -278,6 +278,64 @@ record_store_path: /tmp/yai-home-test/store/lmdb
 schema: yai.record.v1
 ```
 
+## SPINE.30 LMDB Record Write Path Loop
+
+```text
+LMDB env opens under YAI_HOME/store/lmdb
+daemon loop writes journal first
+CLI mirrors daemon journal records into LMDB
+records_by_id count is non-zero
+records_by_case index count is non-zero
+records_by_kind index count is non-zero
+store status reports ready only after schema metadata exists
+journal path still exists after LMDB mirror
+```
+
+`tests/smoke/record-store-write/test_record_store_write.sh` proves the write
+path and aggregate summary surface.
+
+```text
+make smoke-spine30
+target/debug/yai store status
+target/debug/yai store summary
+```
+
+Manual installed-loop check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store status
+
+mkdir -p /tmp/yai-home-test/run
+/tmp/yai-install-test/bin/yaid --socket /tmp/yai-home-test/run/yaid.sock --foreground &
+DAEMON_PID=$!
+sleep 1
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store status
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store summary
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock
+wait $DAEMON_PID
+```
+
+Expected key lines after the daemon loop:
+
+```text
+record_store_backend: lmdb
+record_store_status: ready
+records_total: 8
+records_by_case: 8
+records_by_kind: 8
+```
+
+In sandboxed command runners, daemon IPC smoke tests may need to run outside
+the default sandbox because they connect to local Unix sockets. That is an
+execution-environment caveat, not a change to the architecture.
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

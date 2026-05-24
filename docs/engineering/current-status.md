@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.29 LMDB Record Plane Doctrine + Schema.
+Status: SPINE.30 LMDB Record Write Path.
 
 ## Completed Foundation
 
@@ -25,7 +25,10 @@ renames the canonical core repository to `yai` and the concept-mine/lab
 repository to `yai-dev`. SPINE.28B removes local virtualenv roots, archives
 README-only ingest placeholders and marks transitional C data shims clearly.
 SPINE.29 defines LMDB as durable indexed record lookup under
-`YAI_HOME/store/lmdb` without implementing the write path.
+`YAI_HOME/store/lmdb` without implementing the write path. SPINE.30 adds the
+Rust LMDB write path, mirrors daemon-loop journal records into
+`records_by_id`, `records_by_case` and `records_by_kind`, and keeps the journal
+as replay/audit source.
 
 Current:
 
@@ -44,13 +47,14 @@ SPINE.27 Hot State CLI + Manual Validation completed.
 SPINE.28 Hot State Freeze completed.
 SPINE.28A Repository Identity Cutover completed.
 SPINE.28B Internal Source Surface Cleanup completed.
-SPINE.29 LMDB Record Plane Doctrine + Schema current.
+SPINE.29 LMDB Record Plane Doctrine + Schema completed.
+SPINE.30 LMDB Record Write Path current.
 ```
 
 Next:
 
 ```text
-SPINE.30 LMDB Record Write Path.
+SPINE.31 LMDB Record Read / Query Path.
 ```
 
 Foundation status:
@@ -76,6 +80,8 @@ repository identity cutover active
 source surface cleanup active
 LMDB record-plane doctrine active
 record store status surface active
+LMDB record write path active
+record store summary surface active
 ```
 
 ## Current Layout
@@ -157,9 +163,9 @@ SPINE.26 adds consumer-aware freshness policy so model/agent views are stricter
 than operator, audit and debug views. SPINE.27 makes `yai hot status`,
 `yai doctor` and `yai projection inspect` the stable manual inspection surface.
 SPINE.28 freezes this surface as a non-authoritative live cache boundary.
-True OS shared memory/mmap, LMDB writes/reads, Ladybug, DuckDB, projection deltas, memory
-consolidation, cross-plane reconcile and observability/evaluation facts remain
-future SPINE.30-SPINE.80 work. Pack
+True OS shared memory/mmap, LMDB read/query, Ladybug, DuckDB, projection deltas,
+memory consolidation, cross-plane reconcile and observability/evaluation facts remain
+future SPINE.31-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -169,9 +175,10 @@ hot state. Hot state remains the live liveness/freshness surface and may be
 rebuilt or refreshed from durable residue.
 
 `yai store status` reports `record_store_backend: lmdb`,
-`record_store_status: missing|not_initialized|unavailable` and
-`record_store_path: <YAI_HOME>/store/lmdb`. It must not report `ready` before a
-later LMDB schema initialization wave.
+`record_store_status: missing|not_initialized|ready|unavailable` and
+`record_store_path: <YAI_HOME>/store/lmdb`. `ready` means the LMDB environment
+opened and schema metadata exists. `yai store summary` reports aggregate counts
+only; SPINE.31 owns record read/query commands.
 
 Source surface:
 
@@ -234,6 +241,9 @@ modified.
 
 SPINE.29 read-only inspected yai-dev store, record, query, view, evidence and
 execution receipt residue. No `yai-dev` source file was modified.
+
+SPINE.30 read-only inspected yai-dev store, record, query and execution receipt
+residue for write-path posture. No `yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

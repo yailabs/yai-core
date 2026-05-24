@@ -70,6 +70,10 @@ SPINE.29 defines LMDB as durable indexed record lookup. hot state is not LMDB.
 journal remains replay/audit. LMDB is rebuildable from journal and does not own
 graph, fact or memory semantics.
 
+SPINE.30 adds the LMDB write path. The daemon loop still writes journal residue
+first; `yai` mirrors completed loop journals into LMDB id/case/kind indexes and
+fails explicitly if LMDB import fails.
+
 ## Decision Set
 
 | ADR | Decision | Effect |

@@ -66,8 +66,8 @@ record:id / record:case / record:kind / record:subject
 ```
 
 The runtime path is `YAI_HOME/store/lmdb`. The logical environment is
-`record_env`. SPINE.29 adds `yai store status`; it does not implement the LMDB
-write path.
+`record_env`. SPINE.29 adds `yai store status`. SPINE.30 adds the Rust LMDB
+write path and minimal id/case/kind indexes while keeping journal replay/audit.
 
 NEW.13 route:
 

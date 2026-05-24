@@ -118,8 +118,8 @@ $(YAI_HOME)/store/duckdb/
 
 SPINE.20 creates only the top-level runtime directories. SPINE.29 may create
 `YAI_HOME/store/lmdb` during install-local and reports it as
-`not_initialized`; it does not implement LMDB writes, Ladybug, DuckDB or shared
-memory.
+`not_initialized`. SPINE.30 initializes LMDB schema metadata on first write and
+then reports `ready`; it does not implement Ladybug, DuckDB or shared memory.
 
 SPINE.22 freezes this host/runtime layout. SPINE.23 adds
 `YAI_HOME/run/hot-state.json` as runtime cache material. It is not durable
@@ -151,6 +151,7 @@ make doctor-local
 yai doctor
 yai hot status
 yai store status
+yai store summary
 ```
 
 The operator command inventory for runtime layout, installed binaries, daemon

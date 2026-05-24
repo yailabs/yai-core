@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.29 LMDB record-plane doctrine and schema. | SPINE.30 LMDB Record Write Path. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.30 LMDB record write path. | SPINE.31 LMDB Record Read / Query Path. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -75,10 +75,13 @@ canonical core repository to `yai` and the old concept-mine repository to
 ingest placeholders and marks transitional C data shims as temporary engine
 drain surfaces. SPINE.29 defines LMDB as durable indexed record lookup under
 `YAI_HOME/store/lmdb`, adds `yai store status` and keeps hot state, journal,
-graph, facts and memory separate before the write path begins.
+graph, facts and memory separate before the write path begins. SPINE.30 adds
+the Rust LMDB write path, minimal `records_by_id`, `records_by_case` and
+`records_by_kind` indexes, `yai store summary` and daemon-loop mirroring from
+journal to LMDB.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.30.
+delivery is SPINE.31.
 
 ## Canonical Macro Labels
 
@@ -175,7 +178,7 @@ SPINE.28A Repository Identity Cutover                                done
 SPINE.28B Internal Source Surface Cleanup                            done
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       done
-SPINE.30  LMDB Record Write Path                                    planned
+SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             planned
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
 SPINE.33  LMDB CLI + Manual Validation                              planned

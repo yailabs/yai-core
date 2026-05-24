@@ -15,6 +15,7 @@ use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::{Record, RecordKind};
+use yai_core_engine::store::lmdb::{LmdbRecordStore, RecordStoreStatusKind};
 use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -36,7 +37,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.29 LMDB Record Plane Doctrine + Schema");
+    println!("status: SPINE.30 LMDB Record Write Path");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -161,6 +162,7 @@ fn print_doctor() {
 fn print_usage() {
     println!("usage: yai [--version|info|doctor]");
     println!("       yai store status");
+    println!("       yai store summary");
     println!("       yai store tail --journal <path>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
@@ -217,17 +219,11 @@ struct RecordStoreStatus {
 
 fn record_store_status() -> RecordStoreStatus {
     let path = record_store_path();
-    let status = if path.is_dir() {
-        "not_initialized"
-    } else if path.exists() {
-        "unavailable"
-    } else {
-        "missing"
-    };
+    let status = LmdbRecordStore::status(&path);
     RecordStoreStatus {
         path,
-        backend: "lmdb",
-        status,
+        backend: status.backend,
+        status: status.status.as_str(),
     }
 }
 
@@ -238,6 +234,25 @@ fn print_store_status() {
     println!("record_store_path: {}", status.path.display());
     println!("record_env: record_env");
     println!("schema: yai.record.v1");
+}
+
+fn print_store_summary() -> Result<(), String> {
+    let status = LmdbRecordStore::status(record_store_path());
+    println!("record_store_backend: {}", status.backend);
+    println!("record_store_status: {}", status.status.as_str());
+    println!("record_store_path: {}", status.path.display());
+    if status.status != RecordStoreStatusKind::Ready {
+        println!("records_total: 0");
+        println!("records_by_case: 0");
+        println!("records_by_kind: 0");
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let summary = store.summary()?;
+    println!("records_total: {}", summary.records_total);
+    println!("records_by_case: {}", summary.records_by_case);
+    println!("records_by_kind: {}", summary.records_by_kind);
+    Ok(())
 }
 
 fn json_string_field(content: &str, key: &str) -> Option<String> {
@@ -709,6 +724,25 @@ fn store_tail(args: &[String]) -> Result<(), String> {
     }
     println!("records: {count}");
     Ok(())
+}
+
+fn import_journal_to_record_store(journal_path: &std::path::Path) -> Result<(), String> {
+    let journal = Journal::load_jsonl(journal_path)
+        .map_err(|error| format!("record store import failed to load journal: {error}"))?;
+    let store = LmdbRecordStore::open(record_store_path()).map_err(|error| {
+        format!(
+            "record store import failed after journal write remained at {}: {error}",
+            journal_path.display()
+        )
+    })?;
+    store
+        .import_journal(&journal, &journal_path.display().to_string())
+        .map_err(|error| {
+            format!(
+                "record store import failed after journal write remained at {}: {error}",
+                journal_path.display()
+            )
+        })
 }
 
 fn projection_summary(args: &[String]) -> Result<(), String> {
@@ -2948,7 +2982,7 @@ fn engine_summary(args: &[String]) -> Result<(), String> {
 }
 
 #[cfg(unix)]
-fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
+fn daemon_request_response(args: &[String], request: &str) -> Result<String, String> {
     let socket = named_arg(args, "--socket")?;
     let mut stream = UnixStream::connect(&socket)
         .map_err(|error| format!("failed to connect {socket}: {error}"))?;
@@ -2959,8 +2993,26 @@ fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
     stream
         .read_to_string(&mut response)
         .map_err(|error| format!("failed to read response: {error}"))?;
+    Ok(response)
+}
+
+#[cfg(unix)]
+fn daemon_request(args: &[String], request: &str) -> Result<(), String> {
+    let response = daemon_request_response(args, request)?;
     print!("{response}");
     Ok(())
+}
+
+#[cfg(unix)]
+fn daemon_request_and_import_records(args: &[String], request: &str) -> Result<(), String> {
+    let response = daemon_request_response(args, request)?;
+    print!("{response}");
+    if extract_json_string_field(&response, "status").as_deref() != Some("completed") {
+        return Ok(());
+    }
+    let journal_path = extract_json_string_field(&response, "journal_path")
+        .ok_or_else(|| "daemon response did not include journal_path".to_string())?;
+    import_journal_to_record_store(&PathBuf::from(journal_path))
 }
 
 #[cfg(unix)]
@@ -2975,6 +3027,11 @@ fn daemon_request_with_journal(args: &[String], request: &str) -> Result<(), Str
 
 #[cfg(not(unix))]
 fn daemon_request(_args: &[String], _request: &str) -> Result<(), String> {
+    Err("daemon IPC is only implemented on Unix in NEW.11".to_string())
+}
+
+#[cfg(not(unix))]
+fn daemon_request_and_import_records(_args: &[String], _request: &str) -> Result<(), String> {
     Err("daemon IPC is only implemented on Unix in NEW.11".to_string())
 }
 
@@ -2996,6 +3053,12 @@ fn main() {
         Some("info") => print_info(),
         Some("doctor") => print_doctor(),
         Some("store") if args.get(1).map(String::as_str) == Some("status") => print_store_status(),
+        Some("store") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = print_store_summary() {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
         Some("store") if args.get(1).map(String::as_str) == Some("tail") => {
             if let Err(error) = store_tail(&args[2..]) {
                 eprintln!("{error}");
@@ -3117,7 +3180,7 @@ fn main() {
             }
         }
         Some("daemon") if args.get(1).map(String::as_str) == Some("run-minimum-loop") => {
-            if let Err(error) = daemon_request(
+            if let Err(error) = daemon_request_and_import_records(
                 &args[2..],
                 "run_minimum_loop request_id=yai-minimum case_ref=case:new12-daemon subject_ref=subject:repo-test",
             ) {
@@ -3126,7 +3189,7 @@ fn main() {
             }
         }
         Some("daemon") if args.get(1).map(String::as_str) == Some("run-filesystem-loop") => {
-            if let Err(error) = daemon_request(
+            if let Err(error) = daemon_request_and_import_records(
                 &args[2..],
                 "run_filesystem_loop request_id=yai-filesystem case_ref=case:new12-filesystem subject_ref=subject:filesystem-sandbox",
             ) {

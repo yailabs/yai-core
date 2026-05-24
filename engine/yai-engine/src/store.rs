@@ -2,6 +2,9 @@ use crate::journal::Journal;
 use crate::projection::ProjectionSummary;
 use crate::record::Record;
 
+#[path = "store/lmdb.rs"]
+pub mod lmdb;
+
 pub struct Store {
     journal: Journal,
 }

@@ -8,7 +8,7 @@ Rule:
 A primitive that cannot be inspected is not operational yet.
 ```
 
-This file maps SPINE.20-SPINE.29 primitives to their current view, command,
+This file maps SPINE.20-SPINE.30 primitives to their current view, command,
 manual test and documentation surface. It does not define new core semantics.
 The operator-facing runbook is `docs/manuals/manual-filesystem-loop-validation.md`
 with notebook companions `docs/manuals/manual-filesystem-loop-validation.ipynb`
@@ -85,10 +85,12 @@ available. LMDB will add durable record lookup later; it will not replace
 | Primitive | View | Command | Manual test | Docs |
 |---|---|---|---|---|
 | record store | LMDB record-plane readiness | `yai store status` | `target/debug/yai store status` | `lmdb-record-plane.md`, `data-plane-roadmap.md` |
+| record store summary | LMDB aggregate write-path counts | `yai store summary` | `target/debug/yai store summary` | `lmdb-record-plane.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 
-`yai store status` is the SPINE.29 command because `store` already names the
-durable data root and LMDB is the record-plane backend under it. Future
+`yai store status` is the readiness view because `store` already names the
+durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
+`yai store summary` for aggregate write-path validation. Future SPINE.31+
 subcommands can extend the same surface with `yai store record get`,
 `yai store record list --case` and `yai store rebuild status`.
 
@@ -96,15 +98,29 @@ Required fields:
 
 ```text
 record_store_backend: lmdb
-record_store_status: missing|not_initialized|unavailable
+record_store_status: missing|not_initialized|ready|unavailable
 record_store_path: <YAI_HOME>/store/lmdb
 record_env: record_env
 schema: yai.record.v1
 ```
 
 `missing` means `YAI_HOME/store/lmdb` is absent. `not_initialized` means the
-directory exists but no LMDB schema metadata has been initialized. `ready` must
-not be reported until a later wave implements the write path and schema guard.
+directory exists but no LMDB schema metadata has been initialized. `ready` means
+the LMDB environment opens and `schema_meta/meta:schema` is `yai.record.v1`.
+
+Required `yai store summary` fields:
+
+```text
+record_store_backend: lmdb
+record_store_status: ready|missing|not_initialized|unavailable
+record_store_path: <YAI_HOME>/store/lmdb
+records_total: N
+records_by_case: N
+records_by_kind: N
+```
+
+`yai store summary` is aggregate-only in SPINE.30. Record read/query commands
+belong to SPINE.31.
 
 ## Projection Commands
 
@@ -171,6 +187,7 @@ PATH=/tmp/yai-install-test/bin:$PATH yai --version
 PATH=/tmp/yai-install-test/bin:$PATH yai info
 PATH=/tmp/yai-install-test/bin:$PATH yai doctor
 PATH=/tmp/yai-install-test/bin:$PATH yai store status
+PATH=/tmp/yai-install-test/bin:$PATH yai store summary
 PATH=/tmp/yai-install-test/bin:$PATH yai hot status
 /tmp/yai-install-test/bin/yaid --version
 make uninstall-local PREFIX=/tmp/yai-install-test
@@ -242,6 +259,7 @@ Automated retroactive coverage:
 make smoke-spine24a
 make smoke-spine27
 make smoke-spine29
+make smoke-spine30
 make check-hot-state-freeze
 make check-lmdb-record-plane-doctrine
 ```
