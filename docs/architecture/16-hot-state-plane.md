@@ -1,6 +1,7 @@
 # Hot State Plane
 
-SPINE.23 introduces the first live data plane.
+SPINE.23 introduces the first live data plane. SPINE.24 hardens the runtime
+snapshot lifecycle.
 
 Hot state is not truth. It is the live operational cache of an active case
 session: what case is current, which context and thread are active, which
@@ -78,6 +79,15 @@ This creates the semantic boundary and a file-backed, mmap-ready layout
 contract. True OS shared memory is a later optimization, not a requirement for
 the v0 doctrine.
 
+The snapshot schema is:
+
+```text
+yai.hot_state.v1
+```
+
+The daemon writes through a temporary file and then renames it into place.
+Readers must handle missing and corrupt snapshots without crashing.
+
 ## Lifecycle
 
 When a case session becomes active, hot state is initialized from the loaded
@@ -87,3 +97,11 @@ Projection rebuild marks it fresh. Thread switch marks it stale with
 
 The daemon owns hot-state lifecycle for local runtime execution. The CLI may
 read the snapshot for diagnostics.
+
+Snapshot status:
+
+```text
+missing_snapshot -> hot_state unavailable
+invalid_snapshot -> hot_state unavailable
+valid snapshot -> hot_state active
+```

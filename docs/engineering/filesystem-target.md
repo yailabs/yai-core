@@ -115,6 +115,14 @@ SPINE.22 freezes this host/runtime layout. SPINE.23 adds
 `YAI_HOME/run/hot-state.json` as runtime cache material. It is not durable
 truth and may be rebuilt from residue.
 
+SPINE.24 hardens that runtime file as a schema-versioned snapshot:
+
+```text
+$(YAI_HOME)/run/hot-state.json
+schema: yai.hot_state.v1
+write: temp file then rename
+```
+
 ## Transitional Caveats
 
 The C data-spine folders under `system/{store,graph,index,memory,projection,reconcile}`

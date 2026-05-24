@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.23 hot state plane v0; SPINE.23A expands the linear roadmap and command-test contract. | SPINE.24 Hot State Runtime Snapshot. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.24 hot state runtime snapshot. | SPINE.25 Hot State Case Session / Context Integration. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -40,9 +40,11 @@ hot state as the first live data plane: an in-process cache plus
 `YAI_HOME/run/hot-state.json` snapshot. SPINE.23A expands the compressed
 SPINE.23-SPINE.64 plan into smaller implementable SPINE.23-SPINE.120
 deliveries and makes command surface declaration mandatory.
+SPINE.24 hardens the hot-state runtime snapshot as schema
+`yai.hot_state.v1`, temp-and-rename writes and missing/corrupt status handling.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.24.
+delivery is SPINE.25.
 
 ## Canonical Macro Labels
 
@@ -129,7 +131,7 @@ SPINE.21  Pack Materialization Doctrine                             done
 SPINE.22  Filesystem & Runtime Layout Freeze                        done
 SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.23A Roadmap Expansion + Command-Test Contract                 done
-SPINE.24  Hot State Runtime Snapshot                                planned
+SPINE.24  Hot State Runtime Snapshot                                done
 SPINE.25  Hot State Case Session / Context Integration              planned
 SPINE.26  Hot State Projection Freshness Integration                 planned
 SPINE.27  Hot State CLI + Manual Validation                         planned

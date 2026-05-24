@@ -62,6 +62,29 @@ make smoke-spine23
 yai hot status
 ```
 
+## SPINE.24 Hot State Snapshot Loop
+
+```text
+missing snapshot returns unavailable/missing_snapshot
+corrupt snapshot returns unavailable/invalid_snapshot
+daemon writes yai.hot_state.v1 snapshot
+yai hot status reports active snapshot
+yai doctor reports path, status, schema and readability
+no hot-state.json.tmp remains after write
+```
+
+`tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh` proves snapshot
+lifecycle behavior through the CLI.
+
+Manual command checks:
+
+```text
+target/debug/yai doctor
+target/debug/yai hot status
+target/debug/yai daemon run-minimum-loop --socket <socket>
+target/debug/yai hot status
+```
+
 ## NEW.1 Minimum Loop
 
 ```text

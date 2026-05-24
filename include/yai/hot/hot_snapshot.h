@@ -9,6 +9,7 @@
 #define YAI_HOT_REF_MAX 96
 #define YAI_HOT_REASON_MAX 64
 #define YAI_HOT_FRESHNESS_MAX 16
+#define YAI_HOT_SNAPSHOT_SCHEMA "yai.hot_state.v1"
 
 typedef enum yai_hot_freshness {
     YAI_HOT_FRESHNESS_FRESH = 0,

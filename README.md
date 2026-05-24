@@ -160,7 +160,7 @@ and reconstruction material.
 : Live runtime cache for the active case session, current projection frame,
 freshness, stale reason and latest residue refs. Hot state is not truth; it is
 rebuilt from durable residue and currently snapshots to
-`YAI_HOME/run/hot-state.json`.
+`YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`.
 
 `graph`
 : Relationships between subjects, operations, decisions, receipts, policies,

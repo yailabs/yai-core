@@ -36,7 +36,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: SPINE.23");
+    println!("status: SPINE.24");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -79,6 +79,7 @@ fn print_doctor() {
     ]
     .iter()
     .all(|path| path.is_dir());
+    let hot_status = hot_snapshot_status(&hot_state_path);
 
     println!("yai doctor: ok");
     println!("public_semantics: C ABI + core docs");
@@ -121,14 +122,9 @@ fn print_doctor() {
         }
     );
     println!("hot_state_path: {}", hot_state_path.display());
-    println!(
-        "hot_state_status: {}",
-        if hot_state_path.is_file() {
-            "present"
-        } else {
-            "missing"
-        }
-    );
+    println!("hot_state_status: {}", hot_status.status);
+    println!("hot_state_schema_status: {}", hot_status.schema_status);
+    println!("hot_state_readable: {}", hot_status.readable);
     println!(
         "runtime_layout_status: {}",
         if runtime_layout_ok {
@@ -209,79 +205,178 @@ fn json_string_or(content: &str, key: &str, fallback: &str) -> String {
         .unwrap_or_else(|| fallback.to_string())
 }
 
+struct HotSnapshotStatus {
+    status: &'static str,
+    reason: &'static str,
+    schema_status: &'static str,
+    readable: &'static str,
+    content: Option<String>,
+}
+
+fn validate_hot_snapshot(content: &str) -> bool {
+    let trimmed = content.trim();
+    if !trimmed.starts_with('{') || !trimmed.ends_with('}') {
+        return false;
+    }
+    if json_string_field(content, "schema").as_deref() != Some("yai.hot_state.v1") {
+        return false;
+    }
+    let required_strings = [
+        "hot_state_id",
+        "case_ref",
+        "case_session_id",
+        "case_context_id",
+        "projection_freshness",
+        "projection_stale_reason",
+    ];
+    if required_strings
+        .iter()
+        .any(|key| json_string_field(content, key).is_none())
+    {
+        return false;
+    }
+    let required_numbers = ["case_version", "updated_at_unix_ms"];
+    !required_numbers
+        .iter()
+        .any(|key| json_number_field(content, key).is_none())
+}
+
+fn hot_snapshot_status(path: &std::path::Path) -> HotSnapshotStatus {
+    if !path.is_file() {
+        return HotSnapshotStatus {
+            status: "unavailable",
+            reason: "missing_snapshot",
+            schema_status: "missing",
+            readable: "no",
+            content: None,
+        };
+    }
+    match fs::read_to_string(path) {
+        Ok(content) if validate_hot_snapshot(&content) => HotSnapshotStatus {
+            status: "active",
+            reason: "none",
+            schema_status: "ok",
+            readable: "yes",
+            content: Some(content),
+        },
+        Ok(content) => HotSnapshotStatus {
+            status: "unavailable",
+            reason: "invalid_snapshot",
+            schema_status: "invalid",
+            readable: "yes",
+            content: Some(content),
+        },
+        Err(_) => HotSnapshotStatus {
+            status: "unavailable",
+            reason: "unreadable_snapshot",
+            schema_status: "unknown",
+            readable: "no",
+            content: None,
+        },
+    }
+}
+
 fn print_hot_status() -> Result<(), String> {
     let path = hot_state_path();
-    if !path.is_file() {
-        println!("hot_state: missing");
-        println!("hot_state_path: {}", path.display());
+    let status = hot_snapshot_status(&path);
+    if status.status != "active" {
+        println!("hot_state: unavailable");
+        println!("reason: {}", status.reason);
+        println!("snapshot: {}", path.display());
+        println!("snapshot_path: {}", path.display());
+        println!("snapshot_status: {}", status.status);
+        println!("schema: unknown");
         println!("projection: unknown");
         println!("stale_reason: unknown");
         return Ok(());
     }
 
-    let content = fs::read_to_string(&path)
-        .map_err(|error| format!("failed to read {}: {error}", path.display()))?;
+    let content = status
+        .content
+        .as_deref()
+        .ok_or_else(|| "valid hot snapshot was not loaded".to_string())?;
     println!("hot_state: active");
+    println!("snapshot: {}", path.display());
+    println!("snapshot_path: {}", path.display());
+    println!("snapshot_status: active");
+    println!("schema: {}", json_string_or(content, "schema", "unknown"));
     println!("case: {}", json_string_or(&content, "case_ref", "unknown"));
+    let case_session_status = if json_string_field(content, "case_session_id")
+        .map(|value| !value.is_empty())
+        .unwrap_or(false)
+    {
+        "active"
+    } else {
+        "unknown"
+    };
+    let case_context_status = if json_string_field(content, "case_context_id")
+        .map(|value| !value.is_empty())
+        .unwrap_or(false)
+    {
+        "active"
+    } else {
+        "unknown"
+    };
+    println!("session: {case_session_status}");
+    println!("case_session: {case_session_status}");
+    println!("context: {case_context_status}");
+    println!("case_context: {case_context_status}");
     println!(
-        "session: {}",
-        if json_string_field(&content, "case_session_id")
-            .map(|value| !value.is_empty())
-            .unwrap_or(false)
-        {
-            "active"
-        } else {
-            "unknown"
-        }
+        "case_session_id: {}",
+        json_string_or(content, "case_session_id", "unknown")
     );
     println!(
-        "context: {}",
-        if json_string_field(&content, "case_context_id")
-            .map(|value| !value.is_empty())
-            .unwrap_or(false)
-        {
-            "active"
-        } else {
-            "unknown"
-        }
+        "case_context_id: {}",
+        json_string_or(content, "case_context_id", "unknown")
     );
     println!(
         "case_version: {}",
-        json_number_field(&content, "case_version").unwrap_or_else(|| "0".to_string())
+        json_number_field(content, "case_version").unwrap_or_else(|| "0".to_string())
     );
     println!(
         "projection: {}",
-        json_string_or(&content, "projection_freshness", "unknown")
+        json_string_or(content, "projection_freshness", "unknown")
+    );
+    println!(
+        "projection_freshness: {}",
+        json_string_or(content, "projection_freshness", "unknown")
     );
     println!(
         "stale_reason: {}",
-        json_string_or(&content, "projection_stale_reason", "unknown")
+        json_string_or(content, "projection_stale_reason", "unknown")
+    );
+    println!(
+        "projection_stale_reason: {}",
+        json_string_or(content, "projection_stale_reason", "unknown")
     );
     println!(
         "last_record: {}",
-        json_string_or(&content, "last_record_id", "none")
+        json_string_or(content, "last_record_id", "none")
     );
     println!(
         "last_decision: {}",
-        json_string_or(&content, "last_decision_id", "none")
+        json_string_or(content, "last_decision_id", "none")
     );
     println!(
         "last_receipt: {}",
-        json_string_or(&content, "last_receipt_id", "none")
+        json_string_or(content, "last_receipt_id", "none")
     );
     println!(
         "pending_ops: {}",
-        json_number_field(&content, "pending_op_count").unwrap_or_else(|| "0".to_string())
+        json_number_field(content, "pending_op_count").unwrap_or_else(|| "0".to_string())
     );
     println!(
         "pending_obligations: {}",
-        json_number_field(&content, "pending_obligation_count").unwrap_or_else(|| "0".to_string())
+        json_number_field(content, "pending_obligation_count").unwrap_or_else(|| "0".to_string())
     );
     println!(
         "carrier_locks: {}",
-        json_number_field(&content, "carrier_lock_count").unwrap_or_else(|| "0".to_string())
+        json_number_field(content, "carrier_lock_count").unwrap_or_else(|| "0".to_string())
     );
-    println!("hot_state_path: {}", path.display());
+    println!(
+        "updated_at: {}",
+        json_number_field(content, "updated_at_unix_ms").unwrap_or_else(|| "0".to_string())
+    );
     Ok(())
 }
 

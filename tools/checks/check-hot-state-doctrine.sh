@@ -25,8 +25,10 @@ require_file "docs/adr/0018-hot-state-is-not-truth.md"
 
 require_phrase "docs/architecture/16-hot-state-plane.md" "hot state is not truth"
 require_phrase "docs/architecture/16-hot-state-plane.md" "journal remains replay/audit"
+require_phrase "docs/architecture/16-hot-state-plane.md" "yai.hot_state.v1"
 require_phrase "docs/engineering/hot-state-plane.md" "projection freshness"
 require_phrase "docs/engineering/hot-state-plane.md" "stale reason"
+require_phrase "docs/engineering/hot-state-plane.md" "missing_snapshot"
 require_phrase "docs/adr/0018-hot-state-is-not-truth.md" "hot state is not truth"
 
 printf 'hot-state doctrine: ok\n'

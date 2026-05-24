@@ -1,6 +1,6 @@
 # Hot State Plane
 
-SPINE.23 implements hot state v0.
+SPINE.23 implements hot state v0. SPINE.24 hardens the runtime snapshot.
 
 Hot state is the live operational cache for a case session. It is not durable
 truth and it does not replace journal, records, graph, facts, memory or
@@ -11,11 +11,21 @@ reconcile.
 ```text
 in-process hot state
 YAI_HOME/run/hot-state.json
+schema: yai.hot_state.v1
+write: hot-state.json.tmp then rename
 future mmap/shared-memory compatible layout
 ```
 
 The snapshot path is local runtime state. It can be rebuilt from durable
 residue and is safe to treat as diagnostic/cache material.
+
+Snapshot lifecycle:
+
+```text
+missing -> hot_state: unavailable / reason: missing_snapshot
+corrupt -> hot_state: unavailable / reason: invalid_snapshot
+valid   -> hot_state: active
+```
 
 ## Required Fields
 
@@ -86,6 +96,18 @@ yai hot status
 `yai doctor` reports hot-state path/readiness. `yai hot status` reads the local
 snapshot and reports active case, session, context, freshness, stale reason and
 latest residue refs.
+
+Command surface:
+
+```text
+Changed commands:
+  yai hot status
+  yai doctor
+
+Manual tests:
+  yai doctor
+  yai hot status
+```
 
 ## Future Timing
 

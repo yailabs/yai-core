@@ -1,6 +1,9 @@
 #include "yai/hot/hot_snapshot.h"
 
 #include <stdio.h>
+#include <string.h>
+
+#include "yai/hot/hot_flags.h"
 
 const char *yai_hot_freshness_string(yai_hot_freshness_t freshness) {
     switch (freshness) {
@@ -13,6 +16,60 @@ const char *yai_hot_freshness_string(yai_hot_freshness_t freshness) {
     case YAI_HOT_FRESHNESS_UNKNOWN:
     default:
         return "unknown";
+    }
+}
+
+static void append_dirty_flag(char *buffer,
+                              size_t buffer_size,
+                              unsigned int *written_count,
+                              const char *name) {
+    size_t length = 0;
+    if (buffer == 0 || buffer_size == 0 || written_count == 0 || name == 0) {
+        return;
+    }
+    length = strlen(buffer);
+    if (*written_count > 0 && length + 1 < buffer_size) {
+        (void)snprintf(buffer + length, buffer_size - length, ",");
+        length = strlen(buffer);
+    }
+    if (length + strlen(name) + 3 < buffer_size) {
+        (void)snprintf(buffer + length, buffer_size - length, "\"%s\"", name);
+        *written_count += 1;
+    }
+}
+
+static void dirty_flags_json(unsigned int flags, char *buffer, size_t buffer_size) {
+    unsigned int written_count = 0;
+    if (buffer == 0 || buffer_size == 0) {
+        return;
+    }
+    buffer[0] = '\0';
+    if ((flags & YAI_HOT_DIRTY_RECORD) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "record_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_RECEIPT) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "receipt_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_GRAPH) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "graph_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_MEMORY) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "memory_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_PROJECTION) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "projection_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_AUTHORITY) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "authority_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_THREAD) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "thread_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_OBLIGATION) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "obligation_dirty");
+    }
+    if ((flags & YAI_HOT_DIRTY_CARRIER) != 0u) {
+        append_dirty_flag(buffer, buffer_size, &written_count, "carrier_dirty");
     }
 }
 
@@ -44,12 +101,15 @@ yai_status_t yai_hot_snapshot_json(const yai_hot_snapshot_t *snapshot,
                                    char *buffer,
                                    size_t buffer_size) {
     int written = 0;
+    char dirty_flags[256];
     if (snapshot == 0 || buffer == 0 || buffer_size == 0) {
         return YAI_ERR_INVALID;
     }
+    dirty_flags_json(snapshot->dirty_flags, dirty_flags, sizeof(dirty_flags));
     written = snprintf(buffer,
                        buffer_size,
-                       "{\"schema\":\"yai.hot_state.v0\",\"hot_state_id\":\"%s\",\"case_ref\":\"%s\",\"case_session_id\":\"%s\",\"case_context_id\":\"%s\",\"case_version\":%lu,\"active_thread_id\":\"%s\",\"current_projection_id\":\"%s\",\"previous_projection_id\":\"%s\",\"last_record_id\":\"%s\",\"last_decision_id\":\"%s\",\"last_receipt_id\":\"%s\",\"last_model_interpretation_id\":\"%s\",\"last_divergence_id\":\"%s\",\"pending_op_count\":%lu,\"pending_obligation_count\":%lu,\"carrier_lock_count\":%lu,\"projection_freshness\":\"%s\",\"projection_stale_reason\":\"%s\",\"dirty_flags\":%u,\"updated_at_unix_ms\":%llu}\n",
+                       "{\"schema\":\"%s\",\"hot_state_id\":\"%s\",\"case_ref\":\"%s\",\"case_session_id\":\"%s\",\"case_context_id\":\"%s\",\"case_version\":%lu,\"active_thread_id\":\"%s\",\"current_projection_id\":\"%s\",\"previous_projection_id\":\"%s\",\"last_record_id\":\"%s\",\"last_decision_id\":\"%s\",\"last_receipt_id\":\"%s\",\"last_model_interpretation_id\":\"%s\",\"last_divergence_id\":\"%s\",\"pending_op_count\":%lu,\"pending_obligation_count\":%lu,\"carrier_lock_count\":%lu,\"projection_freshness\":\"%s\",\"projection_stale_reason\":\"%s\",\"dirty_flags\":[%s],\"updated_at_unix_ms\":%llu}\n",
+                       YAI_HOT_SNAPSHOT_SCHEMA,
                        snapshot->hot_state_id,
                        snapshot->case_ref,
                        snapshot->case_session_id,
@@ -68,7 +128,7 @@ yai_status_t yai_hot_snapshot_json(const yai_hot_snapshot_t *snapshot,
                        snapshot->carrier_lock_count,
                        yai_hot_freshness_string(snapshot->projection_freshness),
                        yai_hot_stale_reason_string(snapshot->projection_stale_reason),
-                       snapshot->dirty_flags,
+                       dirty_flags,
                        snapshot->updated_at_unix_ms);
     if (written < 0 || (size_t)written >= buffer_size) {
         return YAI_ERR_BUFFER_TOO_SMALL;
@@ -79,6 +139,7 @@ yai_status_t yai_hot_snapshot_json(const yai_hot_snapshot_t *snapshot,
 yai_status_t yai_hot_snapshot_write_json(const yai_hot_snapshot_t *snapshot,
                                          const char *path) {
     char buffer[2048];
+    char tmp_path[512];
     FILE *file = 0;
     if (path == 0 || path[0] == '\0') {
         return YAI_ERR_INVALID;
@@ -86,11 +147,25 @@ yai_status_t yai_hot_snapshot_write_json(const yai_hot_snapshot_t *snapshot,
     if (yai_hot_snapshot_json(snapshot, buffer, sizeof(buffer)) != YAI_OK) {
         return YAI_ERR_BUFFER_TOO_SMALL;
     }
-    file = fopen(path, "w");
+    if (snprintf(tmp_path, sizeof(tmp_path), "%s.tmp", path) >= (int)sizeof(tmp_path)) {
+        return YAI_ERR_BUFFER_TOO_SMALL;
+    }
+    file = fopen(tmp_path, "w");
     if (file == 0) {
         return YAI_ERR_INVALID;
     }
-    fputs(buffer, file);
-    fclose(file);
+    if (fputs(buffer, file) < 0 || fflush(file) != 0) {
+        (void)fclose(file);
+        (void)remove(tmp_path);
+        return YAI_ERR_INVALID;
+    }
+    if (fclose(file) != 0) {
+        (void)remove(tmp_path);
+        return YAI_ERR_INVALID;
+    }
+    if (rename(tmp_path, path) != 0) {
+        (void)remove(tmp_path);
+        return YAI_ERR_INVALID;
+    }
     return YAI_OK;
 }

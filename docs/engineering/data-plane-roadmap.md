@@ -46,7 +46,7 @@ to be implementable and manually verifiable on its own.
 
 ```text
 SPINE.23  Hot State Doctrine + ABI                                  done
-SPINE.24  Hot State Runtime Snapshot                                planned
+SPINE.24  Hot State Runtime Snapshot                                active v1
 SPINE.25  Hot State Case Session / Context Integration              planned
 SPINE.26  Hot State Projection Freshness Integration                 planned
 SPINE.27  Hot State CLI + Manual Validation                         planned
@@ -127,6 +127,16 @@ stale reason = explicit invalidation posture
 
 The v0 implementation is in-process state plus a file-backed, mmap-ready
 snapshot contract. True OS shared memory is future work.
+
+SPINE.24 hardens the snapshot lifecycle:
+
+```text
+schema = yai.hot_state.v1
+write path = hot-state.json.tmp then rename to hot-state.json
+missing snapshot = hot_state unavailable / missing_snapshot
+corrupt snapshot = hot_state unavailable / invalid_snapshot
+valid snapshot = hot_state active
+```
 
 ## Rules
 
