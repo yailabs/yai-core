@@ -61,7 +61,8 @@ SPINE.33  LMDB CLI + Manual Validation                              done
 SPINE.33A Control / Carrier Substrate Primitives                    done
 SPINE.33B Operation Dispatch + Multiplex v0                         done
 SPINE.33C Carrier Contract v1 + Filesystem Adapter                  done
-SPINE.33D Process Carrier v0 / Signal Control                      planned
+SPINE.33D Process Carrier v0 / Signal Control                      done
+SPINE.33E Host Observation Probe v0 / Bypass Check                 planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -334,6 +335,19 @@ yai carrier inspect filesystem
 Filesystem becomes the first active-minimal carrier.v1 adapter. Read maps to
 observed, blocked write maps to blocked, allowed write maps to executed and the
 guarantee mode is documented as interposed.
+
+SPINE.33D Process Carrier v0 / Signal Control adds:
+
+```text
+process carrier.v1
+process observe
+process signal dry-run
+test-owned TERM/KILL smoke
+unsafe target blocking
+```
+
+Process signals are controlled effects, not shell commands. Real signal effects
+are limited to test-owned child processes in smoke/manual tests.
 
 Source surface boundary:
 

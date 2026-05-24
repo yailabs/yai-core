@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -72,6 +72,9 @@ C_SOURCES := \
 	system/effect/receipt.c \
 	system/effect/receipt_guarantee.c \
 	system/effect/carriers/filesystem_carrier.c \
+	system/effect/carriers/process_carrier.c \
+	system/effect/process_signal.c \
+	system/effect/process_state.c \
 	system/observation/host_observation.c \
 	system/memory/memory_kind.c \
 	system/memory/memory_scope.c \
@@ -116,6 +119,7 @@ SMOKE_HOT_STATE := $(BUILD_DIR)/test_hot_state
 SMOKE_CONTROL_CARRIER_SUBSTRATE := $(BUILD_DIR)/test_control_carrier_substrate
 SMOKE_OPERATION_DISPATCH_MULTIPLEX := $(BUILD_DIR)/test_operation_dispatch_multiplex
 SMOKE_CARRIER_CONTRACT_FILESYSTEM := $(BUILD_DIR)/test_carrier_contract_filesystem
+SMOKE_PROCESS_CARRIER := $(BUILD_DIR)/test_process_carrier
 SMOKE_HOT_STATE_SNAPSHOT := tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh
 SMOKE_COMMAND_SURFACE := tests/smoke/command-surface/test_command_surface.sh
 SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
@@ -131,9 +135,9 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.33C Carrier Contract v1 + Filesystem Adapter\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33C Carrier Contract v1 + Filesystem Adapter\n"
-	@printf "next: SPINE.33D Process Carrier v0 / Signal Control\n"
+	@printf "status: SPINE.33D Process Carrier v0 / Signal Control\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33D Process Carrier v0 / Signal Control\n"
+	@printf "next: SPINE.33E Host Observation Probe v0 / Bypass Check\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -169,6 +173,7 @@ check-docs:
 	@./tools/checks/check-control-carrier-substrate.sh
 	@./tools/checks/check-operation-dispatch-multiplex.sh
 	@./tools/checks/check-carrier-contract-v1.sh
+	@./tools/checks/check-process-carrier-signal-control.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -205,6 +210,9 @@ check-operation-dispatch-multiplex:
 
 check-carrier-contract-v1:
 	@./tools/checks/check-carrier-contract-v1.sh
+
+check-process-carrier-signal-control:
+	@./tools/checks/check-process-carrier-signal-control.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -282,6 +290,10 @@ $(SMOKE_CARRIER_CONTRACT_FILESYSTEM): tests/smoke/carrier-contract-filesystem/te
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/carrier-contract-filesystem/test_carrier_contract_filesystem.c $(C_LIBRARY) -o "$@"
 
+$(SMOKE_PROCESS_CARRIER): tests/smoke/process-carrier/test_process_carrier.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/process-carrier/test_process_carrier.c $(C_LIBRARY) -o "$@"
+
 $(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY) -o "$@"
@@ -290,7 +302,7 @@ $(SMOKE_PROJECTION_FRESHNESS): tests/smoke/projection-freshness/test_projection_
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -461,7 +473,14 @@ smoke-spine33c: $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(YAID) build-rust
 	@$(YAI_BIN) carrier inspect filesystem | grep -F -- "read: observed" >/dev/null
 	@$(YAI_BIN) carrier inspect filesystem | grep -F -- "write: decision_required" >/dev/null
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c
+smoke-spine33d: $(SMOKE_PROCESS_CARRIER) build-rust
+	@$(SMOKE_PROCESS_CARRIER)
+	@$(YAI_BIN) carrier inspect process | grep -F -- "carrier: process" >/dev/null
+	@$(YAI_BIN) carrier inspect process | grep -F -- "contract: carrier.v1" >/dev/null
+	@$(YAI_BIN) process signal --pid 999999 --signal TERM --dry-run | grep -F -- "carrier_attempted: false" >/dev/null
+	@$(YAI_BIN) process signal --pid 999999 --signal KILL | grep -F -- "reason: unsafe_process_target" >/dev/null
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d
 
 check: check-layout check-docs build smoke
 

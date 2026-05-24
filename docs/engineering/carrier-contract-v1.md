@@ -50,3 +50,7 @@ carrier outcome is not receipt guarantee mode
 
 No process, network, database, git, model or observation carrier execution is
 added in this wave.
+
+SPINE.33D adds process carrier v0 after this filesystem adapter. It follows
+carrier.v1, but real signals are restricted to test-owned processes and
+arbitrary PID attempts are blocked.

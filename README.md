@@ -126,11 +126,14 @@ yai carrier families
 yai carrier lanes
 yai carrier route --family filesystem
 yai carrier inspect filesystem
+yai carrier inspect process
+yai process observe --pid $$
+yai process signal --pid $$ --signal TERM --dry-run
 ```
 
 These commands expose routing and the active-minimal filesystem carrier
-contract. They do not execute process, network, database, repository, model or
-observation carriers.
+contract plus conservative process carrier inspection. They do not execute
+arbitrary process, network, database, repository, model or observation carriers.
 
 - `input/proposal`: candidate material from a model, provider, operator, tool,
   script, or system.

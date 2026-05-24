@@ -724,6 +724,44 @@ receipt_validation: supported
 guarantee_mode: interposed
 ```
 
+## SPINE.33D Process Carrier Signal Control Loop
+
+```text
+process carrier declares carrier.v1
+process observe reports running for test-owned child
+TERM dry-run is routable with carrier_attempted false
+TERM real signal executes only for test-owned child
+KILL real signal executes only for test-owned child
+unsafe external PID signal path is blocked
+no arbitrary kill
+```
+
+`tests/smoke/process-carrier/test_process_carrier.c` spawns child processes and
+uses the C process carrier directly for real TERM/KILL in test-owned scope.
+The CLI remains conservative and blocks arbitrary non-dry-run signal attempts.
+
+```text
+make check-process-carrier-signal-control
+make smoke-spine33d
+target/debug/yai carrier inspect process
+target/debug/yai carrier route --family process
+target/debug/yai process observe --pid $$
+target/debug/yai process signal --pid $$ --signal TERM --dry-run
+```
+
+Expected key lines:
+
+```text
+carrier: process
+contract: carrier.v1
+status: active_minimal
+platform: posix
+state: running
+carrier_attempted: false
+expected_receipt: process_signal_receipt
+reason: unsafe_process_target
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

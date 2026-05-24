@@ -185,6 +185,34 @@ guarantee_mode: interposed
 record_kind: filesystem_receipt
 ```
 
+### Process Carrier / Signal Control
+
+SPINE.33D exposes process carrier inspection, process observation and safe
+signal dry-run. Do not use this manual to kill arbitrary host processes.
+
+```bash
+target/debug/yai carrier inspect process
+target/debug/yai process observe --pid $$
+target/debug/yai process signal --pid $$ --signal TERM --dry-run
+```
+
+Expected key lines:
+
+```text
+carrier: process
+contract: carrier.v1
+status: active_minimal
+platform: posix
+process_ref: process:
+state: running
+owner_scope: external_observed
+dry_run: true
+carrier_attempted: false
+expected_receipt: process_signal_receipt
+```
+
+Real TERM/KILL remains smoke-test-only for test-owned child processes.
+
 ### Installed Runtime Checks
 
 ```bash

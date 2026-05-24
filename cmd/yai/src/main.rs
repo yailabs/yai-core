@@ -48,11 +48,13 @@ unsafe extern "C" {
     fn linenoiseFree(ptr: *mut c_void);
     fn linenoiseHistoryAdd(line: *const c_char) -> c_int;
     fn linenoiseHistorySetMaxLen(len: c_int) -> c_int;
+    #[cfg(unix)]
+    fn kill(pid: c_int, sig: c_int) -> c_int;
 }
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33C Carrier Contract v1 + Filesystem Adapter");
+    println!("status: SPINE.33D Process Carrier v0 / Signal Control");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -60,7 +62,7 @@ fn print_info() {
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
-    println!("carrier_substrate: carrier.v1 filesystem adapter; no fake non-filesystem execution");
+    println!("carrier_substrate: carrier.v1 filesystem and process adapters; no arbitrary kill");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -213,6 +215,8 @@ fn print_usage() {
     println!("       yai carrier lanes");
     println!("       yai carrier route --family <carrier_family>");
     println!("       yai carrier inspect filesystem|process");
+    println!("       yai process observe --pid <pid>");
+    println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
     println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -230,7 +234,7 @@ fn print_carrier_families() {
     println!();
     println!("current_status:");
     println!("  filesystem: implemented_minimal carrier.v1");
-    println!("  process: planned");
+    println!("  process: implemented_minimal");
     println!("  network_http: planned");
     println!("  database: planned");
     println!("  repository_git: planned");
@@ -301,7 +305,7 @@ const CARRIER_LANES: &[CarrierLane] = &[
     CarrierLane {
         lane: "process_lane",
         carrier_family: "process",
-        status: "planned",
+        status: "active_minimal",
         ordering_policy: "serial_per_case",
         capacity_policy: "single_inflight",
         lock_policy: "target_lock",
@@ -462,12 +466,21 @@ fn carrier_inspect(args: &[String]) -> Result<(), String> {
         "process" => {
             println!("carrier: process");
             println!("carrier_family: process");
-            println!("contract: planned");
-            println!("status: planned");
+            println!("contract: carrier.v1");
+            println!("status: active_minimal");
             println!("lane: process_lane");
             println!("dispatch_status: routable");
-            println!("execution_performed: false");
+            println!("supports:");
+            println!("  observe: observed");
+            println!("  signal_TERM: decision_required");
+            println!("  signal_KILL: test_owned_only");
             println!("receipt_required: yes");
+            println!("pre_state_observation: supported");
+            println!("post_state_observation: supported");
+            println!("evidence_capture: supported");
+            println!("receipt_validation: supported");
+            println!("guarantee_mode: interposed");
+            println!("platform: posix");
             Ok(())
         }
         _ => {
@@ -478,6 +491,73 @@ fn carrier_inspect(args: &[String]) -> Result<(), String> {
             Ok(())
         }
     }
+}
+
+fn parse_pid_arg(args: &[String]) -> Result<i32, String> {
+    let value = optional_arg(args, "--pid").ok_or_else(|| "--pid is required".to_string())?;
+    value
+        .parse::<i32>()
+        .map_err(|_| "--pid must be an integer".to_string())
+}
+
+#[cfg(unix)]
+fn process_state_for_pid(pid: i32) -> &'static str {
+    if pid <= 0 {
+        return "not_found";
+    }
+    let result = unsafe { kill(pid as c_int, 0) };
+    if result == 0 {
+        return "running";
+    }
+    let proc_path = PathBuf::from(format!("/proc/{pid}"));
+    if PathBuf::from("/proc").is_dir() && !proc_path.exists() {
+        return "not_found";
+    }
+    "unknown"
+}
+
+#[cfg(not(unix))]
+fn process_state_for_pid(_pid: i32) -> &'static str {
+    "unknown"
+}
+
+fn process_observe(args: &[String]) -> Result<(), String> {
+    let pid = parse_pid_arg(args)?;
+    let state = process_state_for_pid(pid);
+    println!("process_ref: process:{pid}");
+    println!("pid: {pid}");
+    println!("state: {state}");
+    println!("owner_scope: external_observed");
+    println!("carrier_family: process");
+    println!("outcome: observed");
+    println!("receipt_required: yes");
+    Ok(())
+}
+
+fn process_signal(args: &[String]) -> Result<(), String> {
+    let pid = parse_pid_arg(args)?;
+    let signal =
+        optional_arg(args, "--signal").ok_or_else(|| "--signal is required".to_string())?;
+    let signal = signal.to_uppercase();
+    let dry_run = args.iter().any(|arg| arg == "--dry-run");
+    println!("op: process.signal");
+    println!("pid: {pid}");
+    println!("signal: {signal}");
+    if dry_run {
+        println!("dry_run: true");
+        println!("carrier_family: process");
+        println!("lane: process_lane");
+        println!("dispatch_status: routable");
+        println!("decision_required: true");
+        println!("carrier_attempted: false");
+        println!("expected_receipt: process_signal_receipt");
+        return Ok(());
+    }
+    println!("decision: deny");
+    println!("carrier_attempted: false");
+    println!("outcome: blocked");
+    println!("reason: unsafe_process_target");
+    Ok(())
 }
 
 fn yai_home() -> PathBuf {
@@ -3668,6 +3748,18 @@ fn main() {
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("fs-write") => {
             if let Err(error) = carrier_fs_write(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("process") if args.get(1).map(String::as_str) == Some("observe") => {
+            if let Err(error) = process_observe(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("process") if args.get(1).map(String::as_str) == Some("signal") => {
+            if let Err(error) = process_signal(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

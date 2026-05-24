@@ -50,6 +50,7 @@ operation-dispatch-multiplex.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md
+process-carrier-signal-control.md
 source-surface.md
 testing.md
 wave-template.md

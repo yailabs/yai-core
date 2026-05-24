@@ -23,6 +23,10 @@ The filesystem carrier is the first carrier.v1 adapter. Process, network_http,
 database, repository_git, model_provider, observation and review lanes remain
 planned or non-executing.
 
+SPINE.33D adds process carrier v0 as the second active-minimal carrier.v1
+adapter. Its real signal effects are limited to test-owned child processes;
+arbitrary PID signals are blocked.
+
 ## Outcome Boundary
 
 Carrier outcome values:

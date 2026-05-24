@@ -96,6 +96,9 @@ available. LMDB will add durable record lookup later; it will not replace
 | carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
 | carrier route plan | no-execution route inspection | `yai carrier route --family <family>` | `target/debug/yai carrier route --family filesystem` | `operation-dispatch-multiplex.md`, `testing.md` |
 | carrier contract inspection | filesystem carrier.v1 posture | `yai carrier inspect filesystem` | `target/debug/yai carrier inspect filesystem` | `carrier-contract-v1.md`, `testing.md` |
+| process carrier inspection | process carrier.v1 posture | `yai carrier inspect process` | `target/debug/yai carrier inspect process` | `process-carrier-signal-control.md`, `testing.md` |
+| process observe | process state observation | `yai process observe --pid <pid>` | `target/debug/yai process observe --pid $$` | `process-carrier-signal-control.md`, `testing.md` |
+| process signal dry-run | no-effect signal planning | `yai process signal --pid <pid> --signal TERM --dry-run` | `target/debug/yai process signal --pid $$ --signal TERM --dry-run` | `process-carrier-signal-control.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -321,6 +324,53 @@ receipt_assembly: supported
 receipt_validation: supported
 residue_recording: supported
 guarantee_mode: interposed
+```
+
+SPINE.33D adds process carrier inspection and safe signal planning:
+
+```text
+yai carrier inspect process
+carrier: process
+carrier_family: process
+contract: carrier.v1
+status: active_minimal
+lane: process_lane
+supports:
+  observe: observed
+  signal_TERM: decision_required
+  signal_KILL: test_owned_only
+receipt_required: yes
+guarantee_mode: interposed
+platform: posix
+
+yai process observe --pid <pid>
+process_ref: process:<pid>
+pid: <pid>
+state: running|not_found|permission_denied|unknown
+owner_scope: external_observed
+carrier_family: process
+outcome: observed
+receipt_required: yes
+
+yai process signal --pid <pid> --signal TERM --dry-run
+op: process.signal
+pid: <pid>
+signal: TERM
+dry_run: true
+carrier_family: process
+lane: process_lane
+dispatch_status: routable
+decision_required: true
+carrier_attempted: false
+expected_receipt: process_signal_receipt
+```
+
+Unsafe non-dry-run process signals to arbitrary PIDs return:
+
+```text
+carrier_attempted: false
+outcome: blocked
+reason: unsafe_process_target
 ```
 
 ## Projection Commands

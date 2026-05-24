@@ -20,6 +20,7 @@ for file in \
   docs/architecture/18-control-carrier-substrate.md \
   docs/architecture/19-operation-dispatch-multiplex.md \
   docs/architecture/20-carrier-contract-v1.md \
+  docs/architecture/21-process-carrier-signal-control.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -30,6 +31,7 @@ for file in \
   docs/engineering/carrier-contract-v1.md \
   docs/engineering/control-carrier-rebase.md \
   docs/engineering/operation-dispatch-multiplex.md \
+  docs/engineering/process-carrier-signal-control.md \
   docs/engineering/data-plane-roadmap.md \
   docs/engineering/extraction-plan.md \
   docs/engineering/file-header-standard.md \
@@ -51,6 +53,7 @@ for file in \
   docs/adr/0020-control-carrier-substrate.md \
   docs/adr/0021-operation-dispatch-multiplex.md \
   docs/adr/0022-carrier-contract-v1.md \
+  docs/adr/0023-process-carrier-signal-control.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

@@ -149,3 +149,7 @@ hardening.
 
 SPINE.33C builds on this route plan with `carrier.v1`. Filesystem remains the
 only active-minimal lane and becomes the first carrier contract adapter.
+
+SPINE.33D activates process_lane minimally for process observation, dry-run
+signal planning and test-owned signal control. It remains guarded by the no
+arbitrary kill rule.
