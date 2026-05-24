@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33A control/carrier substrate primitives. | SPINE.33B Operation Dispatch + Multiplex v0. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33B operation dispatch multiplex v0. | SPINE.33C Carrier Contract v1 + Filesystem Adapter. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -186,7 +186,7 @@ SPINE.31  LMDB Record Read / Query Path                             done
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              done
 SPINE.33A Control / Carrier Substrate Primitives                    done
-SPINE.33B Operation Dispatch + Multiplex v0                         planned
+SPINE.33B Operation Dispatch + Multiplex v0                         done
 SPINE.33C Carrier Contract v1 + Filesystem Adapter                  planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 

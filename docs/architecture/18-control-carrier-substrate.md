@@ -82,8 +82,12 @@ not_supported
 unknown
 ```
 
-Dispatch status is not decision outcome and not receipt status. SPINE.33A only
-adds the vocabulary and a zeroed dispatch initializer; it does not add a queue.
+Dispatch status is not decision outcome and not receipt status. SPINE.33A adds
+the vocabulary and a zeroed dispatch initializer. SPINE.33B adds dispatch lanes
+and route planning, still without adding a queue or execution.
+
+See [19-operation-dispatch-multiplex.md](19-operation-dispatch-multiplex.md)
+for the lane grammar.
 
 ## Receipt Guarantee Mode
 

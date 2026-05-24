@@ -59,7 +59,7 @@ SPINE.31  LMDB Record Read / Query Path                             done
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              done
 SPINE.33A Control / Carrier Substrate Primitives                    done
-SPINE.33B Operation Dispatch + Multiplex v0                         planned
+SPINE.33B Operation Dispatch + Multiplex v0                         done
 SPINE.33C Carrier Contract v1 + Filesystem Adapter                  planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
@@ -305,6 +305,20 @@ yai carrier families
 It is a control/effect/observation substrate wave, not an LMDB behavior change.
 It makes decision not execution, carrier not free tool invocation, observation
 not enforcement and receipt not logging explicit before dispatch work begins.
+
+SPINE.33B Operation Dispatch + Multiplex v0 adds:
+
+```text
+dispatch lane
+dispatch plan
+dispatch multiplex route helper
+yai carrier lanes
+yai carrier route --family <family>
+```
+
+Dispatch remains separate from decision and execution. Carrier lanes are
+inspectable route targets, not a single global queue, and every SPINE.33B route
+reports `execution_performed: false`.
 
 Source surface boundary:
 

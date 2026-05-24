@@ -52,7 +52,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33A Control / Carrier Substrate Primitives");
+    println!("status: SPINE.33B Operation Dispatch + Multiplex v0");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -60,7 +60,7 @@ fn print_info() {
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
-    println!("carrier_substrate: vocabulary/status only; no fake execution");
+    println!("carrier_substrate: vocabulary, dispatch lanes and route plans; no fake execution");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -210,6 +210,8 @@ fn print_usage() {
     println!("       yai daemon journal-summary --socket <path> --journal <path>");
     println!("       yai daemon projection-summary --socket <path> --journal <path>");
     println!("       yai carrier families");
+    println!("       yai carrier lanes");
+    println!("       yai carrier route --family <carrier_family>");
     println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
 }
@@ -261,6 +263,170 @@ fn print_carrier_families() {
     println!("- carrier_owned");
     println!("- embedded");
     println!("- external_import");
+    println!();
+    println!("next:");
+    println!("  inspect_lanes: yai carrier lanes");
+    println!("  inspect_route: yai carrier route --family <family>");
+}
+
+#[derive(Clone, Copy)]
+struct CarrierLane {
+    lane: &'static str,
+    carrier_family: &'static str,
+    status: &'static str,
+    ordering_policy: &'static str,
+    capacity_policy: &'static str,
+    lock_policy: &'static str,
+    timeout_policy: &'static str,
+    retry_policy: &'static str,
+    receipt_requirement: &'static str,
+    dispatch_status: &'static str,
+}
+
+const CARRIER_LANES: &[CarrierLane] = &[
+    CarrierLane {
+        lane: "filesystem_lane",
+        carrier_family: "filesystem",
+        status: "active_minimal",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "case_lock",
+        timeout_policy: "normal",
+        retry_policy: "safe_retry",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "process_lane",
+        carrier_family: "process",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "target_lock",
+        timeout_policy: "normal",
+        retry_policy: "requires_review",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "network_http_lane",
+        carrier_family: "network_http",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "carrier_lock",
+        timeout_policy: "normal",
+        retry_policy: "requires_review",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "database_lane",
+        carrier_family: "database",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "target_lock",
+        timeout_policy: "normal",
+        retry_policy: "requires_review",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "repository_git_lane",
+        carrier_family: "repository_git",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "target_lock",
+        timeout_policy: "normal",
+        retry_policy: "requires_review",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "model_provider_lane",
+        carrier_family: "model_provider",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "carrier_lock",
+        timeout_policy: "normal",
+        retry_policy: "requires_review",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "observation_lane",
+        carrier_family: "observation",
+        status: "planned",
+        ordering_policy: "parallel_by_subject",
+        capacity_policy: "single_inflight",
+        lock_policy: "none",
+        timeout_policy: "normal",
+        retry_policy: "none",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+    CarrierLane {
+        lane: "review_lane",
+        carrier_family: "review",
+        status: "planned",
+        ordering_policy: "serial_per_case",
+        capacity_policy: "single_inflight",
+        lock_policy: "case_lock",
+        timeout_policy: "manual",
+        retry_policy: "manual_retry",
+        receipt_requirement: "required",
+        dispatch_status: "routable",
+    },
+];
+
+fn print_carrier_lanes() {
+    println!("carrier_lanes:");
+    for lane in CARRIER_LANES {
+        println!("- lane: {}", lane.lane);
+        println!("  carrier_family: {}", lane.carrier_family);
+        println!("  status: {}", lane.status);
+        println!("  ordering_policy: {}", lane.ordering_policy);
+        println!("  capacity_policy: {}", lane.capacity_policy);
+        println!("  lock_policy: {}", lane.lock_policy);
+        println!("  timeout_policy: {}", lane.timeout_policy);
+        println!("  retry_policy: {}", lane.retry_policy);
+        println!("  receipt_requirement: {}", lane.receipt_requirement);
+        println!("  execution_performed: false");
+        println!();
+    }
+}
+
+fn carrier_route(args: &[String]) -> Result<(), String> {
+    let family =
+        optional_arg(args, "--family").ok_or_else(|| "--family is required".to_string())?;
+    let family = family.as_str();
+    if let Some(lane) = CARRIER_LANES
+        .iter()
+        .find(|lane| lane.carrier_family == family && family != "unknown")
+    {
+        println!("carrier_family: {}", lane.carrier_family);
+        println!("lane: {}", lane.lane);
+        println!("dispatch_status: {}", lane.dispatch_status);
+        println!("lane_status: {}", lane.status);
+        println!("execution_performed: false");
+        println!("receipt_requirement: {}", lane.receipt_requirement);
+        println!("ordering_policy: {}", lane.ordering_policy);
+        println!("capacity_policy: {}", lane.capacity_policy);
+        println!("lock_policy: {}", lane.lock_policy);
+        println!("timeout_policy: {}", lane.timeout_policy);
+        println!("retry_policy: {}", lane.retry_policy);
+        return Ok(());
+    }
+    println!("carrier_family: unknown");
+    println!("lane: unknown_lane");
+    println!("dispatch_status: not_supported");
+    println!("lane_status: not_supported");
+    println!("execution_performed: false");
+    println!("receipt_requirement: not_available");
+    Ok(())
 }
 
 fn yai_home() -> PathBuf {
@@ -3427,6 +3593,15 @@ fn main() {
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("families") => {
             print_carrier_families();
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("lanes") => {
+            print_carrier_lanes();
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("route") => {
+            if let Err(error) = carrier_route(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("fs-read") => {
             if let Err(error) = carrier_fs_read(&args[2..]) {

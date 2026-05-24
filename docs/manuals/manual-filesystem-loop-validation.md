@@ -22,13 +22,14 @@ installed yai / yaid binaries
 yai doctor
 yai hot status
 daemon status/info/minimum/filesystem loops
+carrier family and dispatch lane inspection
 projection inspect freshness output
 missing/corrupt hot-state snapshots
 uninstall-local
 ```
 
-It does not validate LMDB, Ladybug, DuckDB, projection deltas, model carrier or
-agent harness work.
+It does not validate LMDB, Ladybug, DuckDB, projection deltas, model carrier
+execution or agent harness work.
 
 ### Setup
 
@@ -95,13 +96,59 @@ build/yaid --version
 Expected before daemon activity:
 
 ```text
-status: SPINE.28B Internal Source Surface Cleanup
+status: SPINE.33B Operation Dispatch + Multiplex v0
 hot_state_path:
 hot_state_status: unavailable
 hot_state_schema_status: missing
 hot_state_readable: no
 hot_state: unavailable
 reason: missing_snapshot
+```
+
+### Carrier And Dispatch Planning Inspection
+
+SPINE.33B exposes carrier routing as planning only. Run this before daemon
+activity to confirm the low-level control vocabulary is visible without
+executing a carrier:
+
+```bash
+target/debug/yai carrier families
+target/debug/yai carrier lanes
+target/debug/yai carrier route --family filesystem
+target/debug/yai carrier route --family process
+target/debug/yai carrier route --family unknown
+```
+
+Expected key lines:
+
+```text
+carrier_families:
+- filesystem
+- process
+- network_http
+- database
+- repository_git
+- model_provider
+- observation
+- review
+
+filesystem_lane
+process_lane
+network_http_lane
+dispatch_status: routable
+dispatch_status: not_supported
+execution_performed: false
+receipt_requirement: required
+```
+
+Interpretation:
+
+```text
+dispatch planning is not execution
+filesystem lane is active_minimal
+process lane is planned
+unknown family is not_supported
+execution_performed remains false in SPINE.33B
 ```
 
 ### Installed Runtime Checks

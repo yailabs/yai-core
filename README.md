@@ -119,6 +119,17 @@ a case, YAI tries to turn that activity into inspectable operational material:
 input/proposal -> case binding -> subject/provider boundary -> control decision -> effect/observation -> receipt -> record -> projection/memory
 ```
 
+The current carrier substrate exposes inspectable families and dispatch lanes:
+
+```bash
+yai carrier families
+yai carrier lanes
+yai carrier route --family filesystem
+```
+
+These commands plan routing only. They do not execute process, network,
+database, repository, model or observation carriers.
+
 - `input/proposal`: candidate material from a model, provider, operator, tool,
   script, or system.
 - `case binding`: assigns the activity to a bounded operational context.

@@ -620,6 +620,62 @@ receipt_guarantee_modes:
 - external_import
 ```
 
+## SPINE.33B Operation Dispatch Multiplex Loop
+
+```text
+dispatch lane enum/string roundtrip
+dispatch plan initializes as unknown/not_supported
+filesystem routes to filesystem_lane
+process routes to process_lane
+network_http routes to network_http_lane
+database routes to database_lane
+repository_git routes to repository_git_lane
+model_provider routes to model_provider_lane
+observation routes to observation_lane
+review routes to review_lane
+unknown family is not_supported
+execution_performed is false
+```
+
+`tests/smoke/operation-dispatch-multiplex/test_operation_dispatch_multiplex.c`
+proves the C ABI route helpers. The Makefile target also checks the CLI output.
+
+```text
+make check-operation-dispatch-multiplex
+make smoke-spine33b
+target/debug/yai carrier lanes
+target/debug/yai carrier route --family filesystem
+target/debug/yai carrier route --family process
+target/debug/yai carrier route --family unknown
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier lanes
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier route --family filesystem
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier route --family process
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier route --family unknown
+```
+
+Expected key lines:
+
+```text
+filesystem_lane
+process_lane
+network_http_lane
+dispatch_status: routable
+dispatch_status: not_supported
+execution_performed: false
+receipt_requirement: required
+```
+
+The filesystem loop manual and notebook include these commands as dispatch
+planning, not execution. Process lane is planned, filesystem lane is
+active_minimal and execution remains false in SPINE.33B.
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

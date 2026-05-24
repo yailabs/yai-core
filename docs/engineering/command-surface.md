@@ -93,6 +93,8 @@ available. LMDB will add durable record lookup later; it will not replace
 | record list by receipt | LMDB receipt index scan | `yai store record list --receipt <receipt_ref> [--limit <N>]` | `target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 | carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
+| carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
+| carrier route plan | no-execution route inspection | `yai carrier route --family <family>` | `target/debug/yai carrier route --family filesystem` | `operation-dispatch-multiplex.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -189,8 +191,9 @@ record store status fields and do not synthesize records from journal.
 ## Carrier Substrate Commands
 
 SPINE.33A adds `yai carrier families` as an inspectable vocabulary/status
-surface. It does not execute a carrier and it does not claim readiness for
-planned carrier families.
+surface. SPINE.33B adds `yai carrier lanes` and `yai carrier route --family
+<family>` as no-execution dispatch planning commands. These commands do not
+execute a carrier and do not claim readiness for planned carrier families.
 
 Required key output:
 
@@ -227,6 +230,63 @@ receipt_guarantee_modes:
 - external_import
 ```
 
+Dispatch lane inspection:
+
+```text
+yai carrier lanes
+
+carrier_lanes:
+- lane: filesystem_lane
+  carrier_family: filesystem
+  status: active_minimal
+  ordering_policy: serial_per_case
+  capacity_policy: single_inflight
+  lock_policy: case_lock
+  timeout_policy: normal
+  retry_policy: safe_retry
+  receipt_requirement: required
+  execution_performed: false
+
+- lane: process_lane
+  carrier_family: process
+  status: planned
+  ordering_policy: serial_per_case
+  capacity_policy: single_inflight
+  lock_policy: target_lock
+  timeout_policy: normal
+  retry_policy: requires_review
+  receipt_requirement: required
+  execution_performed: false
+```
+
+Route inspection:
+
+```text
+yai carrier route --family filesystem
+carrier_family: filesystem
+lane: filesystem_lane
+dispatch_status: routable
+lane_status: active_minimal
+execution_performed: false
+receipt_requirement: required
+
+yai carrier route --family process
+carrier_family: process
+lane: process_lane
+dispatch_status: routable
+lane_status: planned
+execution_performed: false
+receipt_requirement: required
+
+yai carrier route --family unknown
+carrier_family: unknown
+lane: unknown_lane
+dispatch_status: not_supported
+lane_status: not_supported
+execution_performed: false
+receipt_requirement: not_available
+```
+
 Boundary language:
 
 ```text
@@ -234,6 +294,8 @@ observation is not enforcement
 decision is not execution
 carrier is not free tool invocation
 receipt is not logging
+dispatch is separate from decision
+dispatch is separate from execution
 ```
 
 ## Projection Commands
