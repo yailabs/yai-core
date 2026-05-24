@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -138,6 +138,7 @@ check-docs:
 	@./tools/checks/check-hot-state-doctrine.sh
 	@./tools/checks/check-hot-state-freeze.sh
 	@./tools/checks/check-lmdb-record-plane-doctrine.sh
+	@./tools/checks/check-file-header-standard.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -147,6 +148,9 @@ check-archive-historical-records:
 
 check-source-surface-clean:
 	@./tools/checks/check-source-surface-clean.sh
+
+check-file-header-standard:
+	@./tools/checks/check-file-header-standard.sh
 
 check-pack-doctrine:
 	@./tools/checks/check-pack-doctrine.sh

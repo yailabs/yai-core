@@ -23,10 +23,12 @@ done
 
 allowed_docs='
 README.md
+agent-operating-appendix.md
 command-surface.md
 current-status.md
 data-plane-roadmap.md
 extraction-plan.md
+file-header-standard.md
 filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md

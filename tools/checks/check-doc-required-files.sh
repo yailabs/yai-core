@@ -11,10 +11,12 @@ for file in \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
   docs/engineering/README.md \
+  docs/engineering/agent-operating-appendix.md \
   docs/engineering/current-status.md \
   docs/engineering/command-surface.md \
   docs/engineering/data-plane-roadmap.md \
   docs/engineering/extraction-plan.md \
+  docs/engineering/file-header-standard.md \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
   docs/engineering/hot-state-plane.md \

@@ -12,6 +12,10 @@ system/ may keep C ABI, host, carrier, control, daemon and transitional shim
 code while current smoke paths depend on it.
 ```
 
+File ownership and boundary must be visible in a file header or owning README
+before an agent makes semantic changes. The standard is
+`file-header-standard.md`; the agent checklist is `agent-operating-appendix.md`.
+
 ## Active C System Roots
 
 ```text
@@ -43,6 +47,8 @@ system/reconcile     transitional C reconcile shim
 These directories keep current ABI and smoke paths working. They are not the
 future home of durable data-plane logic. New long-term data-plane logic belongs
 under `engine/yai-engine`.
+
+REPO.HYGIENE.1 applies explicit transitional shim banners to these roots.
 
 ## Public ABI Roots
 

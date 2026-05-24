@@ -20,6 +20,7 @@ rust engine
 daemon ipc
 daemon loop
 hot state
+file header standard
 ```
 
 ## Primitive Coverage
@@ -42,6 +43,22 @@ hot state
 | `daemon loop` | `yaid` can serve bounded core loops over local IPC |
 | `hot state` | active case/session/projection freshness is visible without treating journal as the live surface |
 | `record store` | LMDB lookup status, writes and reads are visible without faking readiness or journal-backed records |
+| `file header standard` | ownership/header doctrine exists before broad source header application |
+
+## REPO.HYGIENE.0 Header Standard Loop
+
+```text
+file-header-standard.md exists
+agent-operating-appendix.md exists
+wave-template requires File/header impact
+operational-extraction-contract references the agent appendix
+guard is integrated in check-docs
+```
+
+```text
+make check-file-header-standard
+make check-docs
+```
 
 ## SPINE.23 Hot State Loop
 

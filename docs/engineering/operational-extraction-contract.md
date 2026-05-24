@@ -4,6 +4,11 @@ Status: SPINE.6B active contract.
 
 This contract applies to every future implementation wave.
 
+Agent operating rules live in `agent-operating-appendix.md`. A future wave must
+identify ownership before editing files, keep legal/roadmap/source/feature
+changes in separate commits, and avoid long-term data-plane logic in
+transitional C shim roots.
+
 Core rule:
 
 ```text

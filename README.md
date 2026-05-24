@@ -144,6 +144,13 @@ make check
 Deeper runtime and manual validation lives in the engineering and manual docs.
 The README is not the full command reference.
 
+Agent-facing ownership rules live in:
+
+```text
+docs/engineering/file-header-standard.md
+docs/engineering/agent-operating-appendix.md
+```
+
 The current command surface is documented in
 [docs/engineering/command-surface.md](docs/engineering/command-surface.md).
 Treat that document as the current command reference until `docs/commands.md`

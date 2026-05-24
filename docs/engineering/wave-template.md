@@ -132,6 +132,15 @@ Observability/freshness impact:
   model behavior facts
   memory quality facts
 
+File/header impact:
+  new files requiring headers
+  files whose ownership changed
+  transitional shims touched
+  docs moved active/archive
+  agent-facing docs updated
+  owning README updated when a file header is intentionally omitted
+  file-header-standard.md followed
+
 Tests:
   unit
   smoke
