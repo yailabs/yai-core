@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -53,15 +53,20 @@ C_SOURCES := \
 	system/control/failure_mode.c \
 	system/control/policy_rule.c \
 	system/control/gate.c \
+	system/control/gate_outcome.c \
 	system/control/decision_basis.c \
 	system/control/decision.c \
 	system/control/obligation.c \
 	system/control/receipt_requirement.c \
 	system/daemon/daemon_status.c \
 	system/effect/carrier.c \
+	system/effect/carrier_family.c \
+	system/effect/dispatch.c \
 	system/effect/effect_hash.c \
 	system/effect/receipt.c \
+	system/effect/receipt_guarantee.c \
 	system/effect/carriers/filesystem_carrier.c \
+	system/observation/host_observation.c \
 	system/memory/memory_kind.c \
 	system/memory/memory_scope.c \
 	system/memory/memory_candidate.c \
@@ -102,6 +107,7 @@ SMOKE_RUST_ENGINE_R1 := $(BUILD_DIR)/test_rust_engine_r1
 SMOKE_CASE_CONTEXT := $(BUILD_DIR)/test_case_context
 SMOKE_INTERACTION_THREAD := $(BUILD_DIR)/test_interaction_thread
 SMOKE_HOT_STATE := $(BUILD_DIR)/test_hot_state
+SMOKE_CONTROL_CARRIER_SUBSTRATE := $(BUILD_DIR)/test_control_carrier_substrate
 SMOKE_HOT_STATE_SNAPSHOT := tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh
 SMOKE_COMMAND_SURFACE := tests/smoke/command-surface/test_command_surface.sh
 SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
@@ -117,9 +123,9 @@ SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.33 LMDB CLI + Manual Validation\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33 LMDB CLI + Manual Validation\n"
-	@printf "next: SPINE.34 LMDB Record Plane Freeze\n"
+	@printf "status: SPINE.33A Control / Carrier Substrate Primitives\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33A Control / Carrier Substrate Primitives\n"
+	@printf "next: SPINE.33B Operation Dispatch + Multiplex v0\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -152,6 +158,7 @@ check-docs:
 	@./tools/checks/check-hot-state-freeze.sh
 	@./tools/checks/check-lmdb-record-plane-doctrine.sh
 	@./tools/checks/check-file-header-standard.sh
+	@./tools/checks/check-control-carrier-substrate.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -179,6 +186,9 @@ check-hot-state-freeze:
 
 check-lmdb-record-plane-doctrine:
 	@./tools/checks/check-lmdb-record-plane-doctrine.sh
+
+check-control-carrier-substrate:
+	@./tools/checks/check-control-carrier-substrate.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -244,6 +254,10 @@ $(SMOKE_HOT_STATE): tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY) -o "$@"
 
+$(SMOKE_CONTROL_CARRIER_SUBSTRATE): tests/smoke/control-carrier-substrate/test_control_carrier_substrate.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/control-carrier-substrate/test_control_carrier_substrate.c $(C_LIBRARY) -o "$@"
+
 $(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY) -o "$@"
@@ -252,7 +266,7 @@ $(SMOKE_PROJECTION_FRESHNESS): tests/smoke/projection-freshness/test_projection_
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -393,7 +407,19 @@ smoke-spine32: $(YAID) build-rust
 smoke-spine33: $(YAID) build-rust
 	@$(SMOKE_RECORD_STORE_CLI_MANUAL)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33
+smoke-spine33a: $(SMOKE_CONTROL_CARRIER_SUBSTRATE) build-rust
+	@$(SMOKE_CONTROL_CARRIER_SUBSTRATE)
+	@$(YAI_BIN) carrier families | grep -F -- "carrier_families:" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- filesystem" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- process" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- network_http" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- database" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- repository_git" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- model_provider" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- observation" >/dev/null
+	@$(YAI_BIN) carrier families | grep -F -- "- review" >/dev/null
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a
 
 check: check-layout check-docs build smoke
 

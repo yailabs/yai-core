@@ -24,6 +24,7 @@ for file in \
   docs/engineering/agent-operating-appendix.md \
   docs/engineering/current-status.md \
   docs/engineering/command-surface.md \
+  docs/engineering/control-carrier-rebase.md \
   docs/engineering/data-plane-roadmap.md \
   docs/engineering/extraction-plan.md \
   docs/engineering/file-header-standard.md \
@@ -42,6 +43,7 @@ for file in \
   docs/manuals/manual-filesystem-loop-validation.it.ipynb \
   docs/adr/0017-packs-as-case-materialization-units.md \
   docs/adr/0018-hot-state-is-not-truth.md \
+  docs/adr/0020-control-carrier-substrate.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

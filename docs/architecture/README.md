@@ -63,6 +63,7 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 03C-interaction-thread-model.md
 16-hot-state-plane.md
 17-lmdb-record-plane.md
+18-control-carrier-substrate.md
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md

@@ -36,6 +36,7 @@ allowed_docs='
 README.md
 agent-operating-appendix.md
 command-surface.md
+control-carrier-rebase.md
 current-status.md
 data-plane-roadmap.md
 extraction-plan.md

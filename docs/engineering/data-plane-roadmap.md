@@ -58,6 +58,9 @@ SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             done
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
 SPINE.33  LMDB CLI + Manual Validation                              done
+SPINE.33A Control / Carrier Substrate Primitives                    done
+SPINE.33B Operation Dispatch + Multiplex v0                         planned
+SPINE.33C Carrier Contract v1 + Filesystem Adapter                  planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -287,6 +290,21 @@ The list output shape is `filter`, `filter_value`, `records_total`, `limit`
 and `records`. Missing records return `record: not_found`; zero-result lists
 return `records: none`; missing or uninitialized LMDB reports record-store
 status and does not fall back to the journal.
+
+SPINE.33A Control / Carrier Substrate Primitives adds:
+
+```text
+carrier family
+gate outcome
+dispatch status
+receipt guarantee mode
+host observation posture
+yai carrier families
+```
+
+It is a control/effect/observation substrate wave, not an LMDB behavior change.
+It makes decision not execution, carrier not free tool invocation, observation
+not enforcement and receipt not logging explicit before dispatch work begins.
 
 Source surface boundary:
 

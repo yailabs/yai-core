@@ -52,14 +52,15 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.32 LMDB Case / Subject / Receipt Indexes");
+    println!("status: SPINE.33A Control / Carrier Substrate Primitives");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
     println!("runtime_layout: YAI_HOME local runtime v0");
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
-    println!("record_store: YAI_HOME/store/lmdb planned LMDB lookup plane");
+    println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
+    println!("carrier_substrate: vocabulary/status only; no fake execution");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -208,8 +209,58 @@ fn print_usage() {
     println!("       yai daemon run-filesystem-loop --socket <path>");
     println!("       yai daemon journal-summary --socket <path> --journal <path>");
     println!("       yai daemon projection-summary --socket <path> --journal <path>");
+    println!("       yai carrier families");
     println!("       yai carrier fs-read --sandbox <sandbox> --path <path>");
     println!("       yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>");
+}
+
+fn print_carrier_families() {
+    println!("carrier_families:");
+    println!("- filesystem");
+    println!("- process");
+    println!("- network_http");
+    println!("- database");
+    println!("- repository_git");
+    println!("- model_provider");
+    println!("- observation");
+    println!("- review");
+    println!();
+    println!("current_status:");
+    println!("  filesystem: implemented_minimal");
+    println!("  process: planned");
+    println!("  network_http: planned");
+    println!("  database: planned");
+    println!("  repository_git: planned");
+    println!("  model_provider: planned");
+    println!("  observation: planned");
+    println!("  review: planned");
+    println!();
+    println!("gate_outcomes:");
+    println!("- allow");
+    println!("- deny");
+    println!("- defer");
+    println!("- observe_only");
+    println!("- require_review");
+    println!("- require_evidence");
+    println!("- require_redaction");
+    println!("- allow_with_constraints");
+    println!("- quarantine");
+    println!();
+    println!("dispatch_statuses:");
+    println!("- pending");
+    println!("- routable");
+    println!("- dispatched");
+    println!("- blocked");
+    println!("- deferred");
+    println!("- failed");
+    println!("- not_supported");
+    println!();
+    println!("receipt_guarantee_modes:");
+    println!("- observed");
+    println!("- interposed");
+    println!("- carrier_owned");
+    println!("- embedded");
+    println!("- external_import");
 }
 
 fn yai_home() -> PathBuf {
@@ -3373,6 +3424,9 @@ fn main() {
                 eprintln!("{error}");
                 std::process::exit(2);
             }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("families") => {
+            print_carrier_families();
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("fs-read") => {
             if let Err(error) = carrier_fs_read(&args[2..]) {

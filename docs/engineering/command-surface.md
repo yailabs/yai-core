@@ -92,6 +92,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | record list by subject | LMDB subject index scan | `yai store record list --subject <subject_ref> [--limit <N>]` | `target/debug/yai store record list --subject subject:filesystem-sandbox --limit 20` | `lmdb-record-plane.md`, `testing.md` |
 | record list by receipt | LMDB receipt index scan | `yai store record list --receipt <receipt_ref> [--limit <N>]` | `target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
+| carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -184,6 +185,56 @@ records: none
 Subject and receipt indexes are derived from structured record fields only. If
 LMDB is missing, uninitialized or unavailable, record read commands print the
 record store status fields and do not synthesize records from journal.
+
+## Carrier Substrate Commands
+
+SPINE.33A adds `yai carrier families` as an inspectable vocabulary/status
+surface. It does not execute a carrier and it does not claim readiness for
+planned carrier families.
+
+Required key output:
+
+```text
+carrier_families:
+- filesystem
+- process
+- network_http
+- database
+- repository_git
+- model_provider
+- observation
+- review
+
+current_status:
+  filesystem: implemented_minimal
+  process: planned
+
+gate_outcomes:
+- allow
+- deny
+- require_review
+- quarantine
+
+dispatch_statuses:
+- pending
+- not_supported
+
+receipt_guarantee_modes:
+- observed
+- interposed
+- carrier_owned
+- embedded
+- external_import
+```
+
+Boundary language:
+
+```text
+observation is not enforcement
+decision is not execution
+carrier is not free tool invocation
+receipt is not logging
+```
 
 ## Projection Commands
 

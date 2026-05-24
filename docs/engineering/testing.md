@@ -560,6 +560,66 @@ records_total: 0
 records: none
 ```
 
+## SPINE.33A Control / Carrier Substrate Loop
+
+```text
+carrier family enum/string roundtrip
+gate outcome enum/string roundtrip
+dispatch status enum/string roundtrip
+receipt guarantee mode enum/string roundtrip
+host observation posture enum/string roundtrip
+dispatch struct initializes as pending/unknown
+yai carrier families lists vocabulary and status without executing a carrier
+```
+
+`tests/smoke/control-carrier-substrate/test_control_carrier_substrate.c`
+proves the C ABI primitives. The Makefile target also checks the CLI output.
+
+```text
+make check-control-carrier-substrate
+make smoke-spine33a
+target/debug/yai carrier families
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier families
+```
+
+Expected key lines:
+
+```text
+carrier_families:
+- filesystem
+- process
+- network_http
+- database
+- repository_git
+- model_provider
+- observation
+- review
+current_status:
+  filesystem: implemented_minimal
+  process: planned
+gate_outcomes:
+- allow
+- deny
+- require_review
+- quarantine
+dispatch_statuses:
+- pending
+- not_supported
+receipt_guarantee_modes:
+- observed
+- interposed
+- carrier_owned
+- embedded
+- external_import
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

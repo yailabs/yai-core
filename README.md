@@ -106,7 +106,7 @@ YAI is not:
 - a generic audit logger
 
 Inference engines and model servers remain external providers. Systems such as
-`llama.cpp`, Ollama, vLLM, MLX, DS4, custom servers, or remote APIs may be used
+`llama.cpp`, Ollama, vLLM, MLX, custom servers, or remote APIs may be used
 around a YAI case, but this README does not claim tested support for each
 provider.
 
@@ -170,6 +170,7 @@ This repository currently contains:
 - Current command docs cover hot-state and record-store inspection.
 - LMDB record-store commands are manually validated through `yai store status`,
   `yai store summary` and `yai store record get/list`.
+- Control/carrier substrate posture is inspectable through `yai carrier families`.
 - Some C data-plane paths remain transitional while Rust engine ownership is
   consolidated.
 
@@ -197,6 +198,8 @@ The current source boundary is described in
 - [Documentation index](docs/index.md)
 - [Technical brief](docs/technical-brief.md)
 - [Quickstart](docs/quickstart.md)
+- [Test cases](docs/test-cases.md)
+- [Provider boundary](docs/providers.md)
 - [Architecture summary](docs/architecture.md)
 - [Glossary](docs/glossary.md)
 - [Legal posture](docs/legal.md)

@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33 LMDB CLI + Manual Validation.
+Status: SPINE.33A Control / Carrier Substrate Primitives.
 
 ## Completed Foundation
 
@@ -32,7 +32,9 @@ as replay/audit source. SPINE.31 adds direct record get/list commands over the
 LMDB id, case and kind indexes without adding a query planner or journal
 fallback reads. SPINE.32 adds subject and receipt indexes as derived views over
 stored record envelopes. SPINE.33 freezes the LMDB CLI output shape and manual
-operator validation matrix before the record-plane freeze.
+operator validation matrix before the record-plane freeze. SPINE.33A adds the
+first control/carrier substrate primitives for carrier family, gate outcome,
+dispatch status, receipt guarantee mode and host observation posture.
 
 Current:
 
@@ -56,6 +58,7 @@ SPINE.30 LMDB Record Write Path completed.
 SPINE.31 LMDB Record Read / Query Path completed.
 SPINE.32 LMDB Case / Subject / Receipt Indexes completed.
 SPINE.33 LMDB CLI + Manual Validation completed.
+SPINE.33A Control / Carrier Substrate Primitives completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -63,7 +66,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.34 LMDB Record Plane Freeze.
+SPINE.33B Operation Dispatch + Multiplex v0.
 ```
 
 Foundation status:
@@ -94,6 +97,7 @@ record store summary surface active
 LMDB record read/query surface active
 LMDB subject/receipt indexes active
 LMDB CLI manual validation active
+control/carrier substrate primitives active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -180,7 +184,7 @@ than operator, audit and debug views. SPINE.27 makes `yai hot status`,
 SPINE.28 freezes this surface as a non-authoritative live cache boundary.
 True OS shared memory/mmap, expanded LMDB indexes, Ladybug, DuckDB, projection deltas,
 memory consolidation, cross-plane reconcile and observability/evaluation facts remain
-future SPINE.34-SPINE.80 work. Pack
+future SPINE.33B-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -273,6 +277,10 @@ source file was modified.
 SPINE.33 read-only inspected yai-dev query, index and store residue for CLI
 lookup wording, zero-result posture and no-fallback query boundaries. No
 `yai-dev` source file was modified.
+
+SPINE.33A read-only inspected yai-dev runtime carrier, execution,
+observation, decision, boundary subject and queue/review residue for
+control/carrier posture. No `yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

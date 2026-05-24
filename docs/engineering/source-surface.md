@@ -27,6 +27,7 @@ system/effect        active C carrier/effect/receipt
 system/engine_bridge active C bridge to Rust engine
 system/hot           active C hot-state bridge/cache
 system/internal      active C internals
+system/observation   active C host observation posture
 system/op            active C operation attempt
 system/subject       active C subject/binding/state
 ```
