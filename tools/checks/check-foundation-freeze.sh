@@ -51,12 +51,12 @@ $name
   fi
 done
 
-if ! grep -q 'SPINE.23.*Hot State / Shared Memory Plane v0.*done' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
-  printf 'roadmap does not name SPINE.23 as completed hot-state sequence\n' >&2
+if ! grep -q 'SPINE.23.*Hot State Doctrine + ABI.*done' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
+  printf 'roadmap does not name SPINE.23 as completed hot-state doctrine sequence\n' >&2
   exit 1
 fi
 
-if ! grep -q 'SPINE.23 Hot State / Shared Memory Plane v0' "$ROOT/docs/engineering/current-status.md"; then
+if ! grep -q 'SPINE.23A Roadmap Expansion + Command-Test Contract' "$ROOT/docs/engineering/current-status.md"; then
   printf 'current-status does not name SPINE.23 hot state\n' >&2
   exit 1
 fi
@@ -65,6 +65,7 @@ for term in \
   'Old-yai source audit' \
   'Extraction decision table' \
   'YAI-core implementation' \
+  'Command Surface' \
   'Old-yai residue normalization' \
   'Inventory update' \
   'Case-world impact' \

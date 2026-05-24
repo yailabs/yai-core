@@ -48,6 +48,23 @@ YAI-core implementation:
   tests added
   derived_from_old_yai when applicable
 
+Command Surface:
+  Added commands:
+    every new command, or "none"
+  Changed commands:
+    every changed command, or "none"
+  Removed/deprecated commands:
+    every removed or deprecated command, or "none"
+  Manual command tests:
+    exact commands the operator should run manually
+  Expected outputs:
+    exact key lines expected from manual commands
+  Command docs updated:
+    command docs, testing docs or manual runbooks changed
+
+  Rule:
+    If no commands changed, state explicitly: no command surface change.
+
 Old-yai residue normalization:
   what was marked historical
   what was moved to archive

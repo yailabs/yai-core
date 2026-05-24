@@ -228,7 +228,7 @@ refs, records, receipts, graph, memory and divergence.
 
 L0 provider scouting can start immediately outside the core and can produce
 projection fixtures. SPINE.3R rebases implementation order so canonical
-model/provider work follows the SPINE.23-SPINE.32 data-plane foundation.
+model/provider work follows the SPINE.23-SPINE.80 data-plane foundation.
 Agent-framework projection work follows after naked model behavior is
 measurable.
 

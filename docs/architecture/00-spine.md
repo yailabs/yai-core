@@ -117,7 +117,7 @@ SPINE.2 defines when model/provider experiments become canonical:
 
 ```text
 L0 provider scouting can start immediately outside the core
-model/provider implementation follows the SPINE.23-SPINE.32 data-plane foundation
+model/provider implementation follows the SPINE.23-SPINE.80 data-plane foundation
 ```
 
 A model is not inside the core. A model is a case-bound subject with locality,
@@ -320,7 +320,7 @@ SPINE.3R: case world + live data plane rebase
 NEW.19: Makefile/build/guards realignment
 SPINE.20: local runtime layout
 SPINE.21: pack materialization doctrine
-SPINE.23-SPINE.32: hot, record, graph, fact, projection, memory and reconcile data planes
+SPINE.23-SPINE.80: hot, record, graph, fact, projection, memory, reconcile and observability data planes
 Rust operational data spine behind C FFI
 ```
 

@@ -41,17 +41,76 @@ records, graph, projection, memory or reconcile.
 
 ## Linear Delivery
 
+The data-plane roadmap uses the expanded SPINE sequence. Each entry is intended
+to be implementable and manually verifiable on its own.
+
 ```text
-SPINE.23 Hot State / Shared Memory Plane v0 - active v0
-SPINE.24 LMDB Record Backend v0 - next
-SPINE.25 Journal Replay to LMDB v0
-SPINE.26 Ladybug Graph Backend v0
-SPINE.27 DuckDB Fact Backend v0
-SPINE.28 Projection Delta / Live View v0
-SPINE.29 Memory Consolidation over Record + Graph + Facts v0
-SPINE.30 Reconcile over Hot / Store / Graph Consistency v0
-SPINE.31 Observability / Evaluation Facts v0
-SPINE.32 Data Plane Milestone Freeze
+SPINE.23  Hot State Doctrine + ABI                                  done
+SPINE.24  Hot State Runtime Snapshot                                planned
+SPINE.25  Hot State Case Session / Context Integration              planned
+SPINE.26  Hot State Projection Freshness Integration                 planned
+SPINE.27  Hot State CLI + Manual Validation                         planned
+SPINE.28  Hot State Freeze                                          planned
+
+SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
+SPINE.30  LMDB Record Write Path                                    planned
+SPINE.31  LMDB Record Read / Query Path                             planned
+SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
+SPINE.33  LMDB CLI + Manual Validation                              planned
+SPINE.34  LMDB Record Plane Freeze                                  planned
+
+SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
+SPINE.36  Journal Replay to LMDB                                    planned
+SPINE.37  Replay Idempotency + Schema Version Handling              planned
+SPINE.38  Replay Diagnostics / Rebuild Report                       planned
+SPINE.39  Journal Replay Freeze                                     planned
+
+SPINE.40  Ladybug Graph Doctrine + Schema                           planned
+SPINE.41  Ladybug Graph Write Path                                  planned
+SPINE.42  Ladybug Graph Query / Causal Path                         planned
+SPINE.43  Graph Rebuild from LMDB / Journal                         planned
+SPINE.44  Graph Diagnostics / Orphan Edge Checks                    planned
+SPINE.45  Graph Plane Freeze                                        planned
+
+SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
+SPINE.47  Receipt / Decision / Projection Facts                     planned
+SPINE.48  Model Behavior / Policy Outcome Facts                     planned
+SPINE.49  Memory / Divergence / Carrier Facts                       planned
+SPINE.50  Fact Reports + CLI Manual Validation                      planned
+SPINE.51  Fact Plane Freeze                                         planned
+
+SPINE.52  Live Projection Frame Schema                              planned
+SPINE.53  Projection Delta Schema                                   planned
+SPINE.54  Projection Freshness / Staleness Engine                   planned
+SPINE.55  Projection Authority / Redaction Alignment                planned
+SPINE.56  Projection Memory / Divergence Patch                      planned
+SPINE.57  Model-Visible Delta Smoke + CLI                           planned
+SPINE.58  Live Projection Freeze                                    planned
+
+SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
+SPINE.60  Receipt-Backed Memory Consolidation                       planned
+SPINE.61  Graph-Derived Memory Consolidation                        planned
+SPINE.62  Policy / Subject Scoped Memory                            planned
+SPINE.63  Memory Freshness / Confidence / Contradiction             planned
+SPINE.64  Memory Projection Rules + Quality Facts                   planned
+SPINE.65  Memory Consolidation Freeze                               planned
+
+SPINE.66  Cross-Plane Reconcile Doctrine                            planned
+SPINE.67  Hot vs Record Consistency                                 planned
+SPINE.68  Record vs Graph Consistency                               planned
+SPINE.69  Graph vs Memory Consistency                               planned
+SPINE.70  Projection Stale / Authority Overclaim Detection          planned
+SPINE.71  Reconcile Reports + CLI                                   planned
+SPINE.72  Reconcile Freeze                                          planned
+
+SPINE.73  Observability Facts Doctrine                              planned
+SPINE.74  Trace / Span Records                                      planned
+SPINE.75  Timing Samples                                            planned
+SPINE.76  Freshness / Case View Quality Facts                       planned
+SPINE.77  Model Behavior Facts                                      planned
+SPINE.78  Memory Quality Facts                                      planned
+SPINE.79  Observability Debug Commands                              planned
+SPINE.80  Data Plane Milestone Freeze                               planned
 ```
 
 ## Hot Plane v0

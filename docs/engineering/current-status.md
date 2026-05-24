@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.23 Hot State / Shared Memory Plane v0.
+Status: SPINE.23A Roadmap Expansion + Command-Test Contract.
 
 ## Completed Foundation
 
@@ -11,7 +11,9 @@ rebases the active roadmap so pack materialization becomes the next canonical
 spine step. SPINE.21 defines packs as first-class case materialization units.
 SPINE.22 freezes filesystem layout, runtime layout, compact engineering docs,
 pack doctrine guards and the operational extraction contract before data-plane
-implementation begins. SPINE.23 adds the first live hot-state plane.
+implementation begins. SPINE.23 adds the first live hot-state plane. SPINE.23A
+expands the linear roadmap and adds the mandatory command surface contract for
+future deliveries.
 
 Current:
 
@@ -20,13 +22,14 @@ SPINE.20 Local Runtime Layout completed.
 SPINE.20A Pack Roadmap Rebase completed.
 SPINE.21 Pack Materialization Doctrine completed.
 SPINE.22 Filesystem & Runtime Layout Freeze completed.
-SPINE.23 Hot State / Shared Memory Plane v0 current.
+SPINE.23 Hot State Doctrine + ABI completed.
+SPINE.23A Roadmap Expansion + Command-Test Contract current.
 ```
 
 Next:
 
 ```text
-SPINE.24 LMDB Record Backend v0.
+SPINE.24 Hot State Runtime Snapshot.
 ```
 
 Foundation status:
@@ -38,6 +41,8 @@ active docs compact
 pack doctrine guarded
 operational extraction contract active
 hot state v0 active
+expanded linear roadmap active
+command surface contract active
 ```
 
 ## Current Layout
@@ -106,12 +111,14 @@ operational-extraction-contract.md
 
 The current data plane remains partly journal-backed and partly transitional C
 smoke support. SPINE.23 implements hot-state semantics and a daemon-owned
-`YAI_HOME/run/hot-state.json` snapshot, not durable truth. True OS shared
-memory/mmap, LMDB, Ladybug, DuckDB, projection deltas, memory consolidation,
-cross-plane reconcile and observability/evaluation facts remain future
-SPINE.24-SPINE.32 work. Pack material is future data-plane input, but SPINE.21
-does not implement pack records or backends. SPINE.20 creates `YAI_HOME/store`
-as the future durable data-plane root but does not create those backends.
+`YAI_HOME/run/hot-state.json` snapshot, not durable truth. In the expanded
+roadmap, SPINE.23 is recorded as complete and as partial coverage for
+SPINE.24-SPINE.27. True OS shared memory/mmap, LMDB, Ladybug, DuckDB,
+projection deltas, memory consolidation, cross-plane reconcile and
+observability/evaluation facts remain future SPINE.24-SPINE.80 work. Pack
+material is future data-plane input, but SPINE.21 does not implement pack
+records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
+data-plane root but does not create those backends.
 
 Old `yai` residue for SPINE.21 was read-only inspected. The old `yai` worktree
 has an existing dirty `README.md`, so no old-yai files were modified. The

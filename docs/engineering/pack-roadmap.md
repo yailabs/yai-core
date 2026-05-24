@@ -76,23 +76,31 @@ marketplace.
 
 ## Delivery Order
 
+Pack materialization stays before the data-plane foundation, but the data-plane
+foundation now uses the expanded SPINE sequence. Packs feed hot state, records,
+graph, facts, projection and memory as those planes mature.
+
 ```text
 SPINE.21  Pack Materialization Doctrine
-SPINE.22  Filesystem Refactor Milestone Freeze
-SPINE.23  Hot State / Shared Memory Plane v0
-SPINE.24  LMDB Record Backend v0
-SPINE.25  Journal Replay to LMDB v0
-SPINE.26  Ladybug Graph Backend v0
-SPINE.27  DuckDB Fact Backend v0
-SPINE.28  Projection Delta / Live View v0
-SPINE.29  Memory Consolidation over Record + Graph + Facts v0
-SPINE.30  Reconcile over Hot / Store / Graph Consistency v0
-SPINE.31  Observability / Evaluation Facts v0
-SPINE.32  Data Plane Milestone Freeze
+SPINE.22  Filesystem & Runtime Layout Freeze
+SPINE.23  Hot State Doctrine + ABI
+SPINE.24  Hot State Runtime Snapshot
+SPINE.25  Hot State Case Session / Context Integration
+SPINE.26  Hot State Projection Freshness Integration
+SPINE.27  Hot State CLI + Manual Validation
+SPINE.28  Hot State Freeze
+SPINE.29  LMDB Record Plane Doctrine + Schema
+SPINE.34  LMDB Record Plane Freeze
+SPINE.39  Journal Replay Freeze
+SPINE.45  Graph Plane Freeze
+SPINE.51  Fact Plane Freeze
+SPINE.58  Live Projection Freeze
+SPINE.65  Memory Consolidation Freeze
+SPINE.72  Reconcile Freeze
+SPINE.80  Data Plane Milestone Freeze
 ```
 
-Later product and environment work may consume pack doctrine, but core truth
-stays in `yai-core`.
+The full active sequence lives in `four-repo-roadmap.md`.
 
 ## Deferred Work
 
