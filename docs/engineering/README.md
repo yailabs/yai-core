@@ -26,6 +26,7 @@ data-plane-roadmap.md
 extraction-plan.md
 filesystem-target.md
 four-repo-roadmap.md
+hot-state-plane.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md

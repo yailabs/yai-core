@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-pack-doctrine check-foundation-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke check clean
+.PHONY: info check-layout check-docs check-pack-doctrine check-foundation-freeze check-hot-state-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -24,6 +24,9 @@ C_SOURCES := \
 	system/internal/string_util.c \
 	system/base/id.c \
 	system/base/error.c \
+	system/hot/hot_flags.c \
+	system/hot/hot_snapshot.c \
+	system/hot/hot_state.c \
 	system/case/case_context.c \
 	system/case/interaction_thread.c \
 	system/case/participant_view.c \
@@ -85,16 +88,18 @@ SMOKE_QUERY_BOUNDARY := $(BUILD_DIR)/test_query_boundary
 SMOKE_RUST_ENGINE_R1 := $(BUILD_DIR)/test_rust_engine_r1
 SMOKE_CASE_CONTEXT := $(BUILD_DIR)/test_case_context
 SMOKE_INTERACTION_THREAD := $(BUILD_DIR)/test_interaction_thread
+SMOKE_HOT_STATE := $(BUILD_DIR)/test_hot_state
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai-core: local AI operational control core\n"
-	@printf "status: SPINE.22 Filesystem & Runtime Layout Freeze\n"
-	@printf "completed: SPINE.20 Local Runtime Layout; SPINE.21 Pack Materialization Doctrine\n"
-	@printf "next: SPINE.23 Hot State / Shared Memory Plane v0\n"
+	@printf "status: SPINE.23 Hot State / Shared Memory Plane v0\n"
+	@printf "completed: SPINE.20 Local Runtime Layout; SPINE.21 Pack Materialization Doctrine; SPINE.22 Filesystem & Runtime Layout Freeze\n"
+	@printf "next: SPINE.24 LMDB Record Backend v0\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
+	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
 	@printf "pack-doctrine: active docs/engineering/pack-format.md\n"
 	@printf "foundation-freeze: filesystem closed; runtime layout exists; active docs compact; extraction contract active\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
@@ -116,12 +121,16 @@ check-docs:
 	@./tools/checks/check-doc-no-old-root-language.sh
 	@./tools/checks/check-pack-doctrine.sh
 	@./tools/checks/check-foundation-freeze.sh
+	@./tools/checks/check-hot-state-doctrine.sh
 
 check-pack-doctrine:
 	@./tools/checks/check-pack-doctrine.sh
 
 check-foundation-freeze:
 	@./tools/checks/check-foundation-freeze.sh
+
+check-hot-state-doctrine:
+	@./tools/checks/check-hot-state-doctrine.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -183,7 +192,11 @@ $(SMOKE_INTERACTION_THREAD): tests/smoke/interaction-thread/test_interaction_thr
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/interaction-thread/test_interaction_thread.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD)
+$(SMOKE_HOT_STATE): tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/hot-state/test_hot_state.c $(C_LIBRARY) -o "$@"
+
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -240,6 +253,8 @@ doctor-local:
 	@printf "sockets_dir: %s\n" "$$(if [ -d "$(YAI_SOCKETS_DIR)" ]; then printf "%s" "$(YAI_SOCKETS_DIR)"; else printf "missing"; fi)"
 	@printf "config_dir: %s\n" "$$(if [ -d "$(YAI_CONFIG_DIR)" ]; then printf "%s" "$(YAI_CONFIG_DIR)"; else printf "missing"; fi)"
 	@printf "daemon_socket_default: %s\n" "$(YAI_DAEMON_SOCKET)"
+	@printf "hot_state_path: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
+	@printf "hot_state_status: %s\n" "$$(if [ -f "$(YAI_RUN_DIR)/hot-state.json" ]; then printf "present"; else printf "missing"; fi)"
 	@printf "runtime_layout_status: %s\n" "$$(if [ -d "$(YAI_RUN_DIR)" ] && [ -d "$(YAI_STORE_DIR)" ] && [ -d "$(YAI_LOG_DIR)" ] && [ -d "$(YAI_TMP_DIR)" ] && [ -d "$(YAI_CASES_DIR)" ] && [ -d "$(YAI_SOCKETS_DIR)" ] && [ -d "$(YAI_CONFIG_DIR)" ]; then printf "ok"; else printf "incomplete"; fi)"
 	@case ":$$PATH:" in *:"$(INSTALL_BINDIR)":*) printf "PATH_status: ok\n" ;; *) printf "PATH_status: warning add %s to PATH\n" "$(INSTALL_BINDIR)" ;; esac
 
@@ -285,7 +300,10 @@ smoke-new18b: $(SMOKE_CASE_CONTEXT)
 smoke-new18c: $(SMOKE_INTERACTION_THREAD)
 	@$(SMOKE_INTERACTION_THREAD)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c
+smoke-spine23: $(SMOKE_HOT_STATE)
+	@$(SMOKE_HOT_STATE)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23
 
 check: check-layout check-docs build smoke
 

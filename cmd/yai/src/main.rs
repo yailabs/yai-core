@@ -36,12 +36,13 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: SPINE.22");
+    println!("status: SPINE.23");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
     println!("runtime_layout: YAI_HOME local runtime v0");
     println!("foundation_freeze: filesystem_runtime_layout");
+    println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -56,6 +57,7 @@ fn print_doctor() {
     let sockets_dir = yai_home.join("sockets");
     let config_dir = yai_home.join("config");
     let socket = run_dir.join("yaid.sock");
+    let hot_state_path = run_dir.join("hot-state.json");
     let yai_path = std::env::current_exe()
         .map(|path| path.display().to_string())
         .unwrap_or_else(|_| "unknown".to_string());
@@ -118,6 +120,15 @@ fn print_doctor() {
             "not_present"
         }
     );
+    println!("hot_state_path: {}", hot_state_path.display());
+    println!(
+        "hot_state_status: {}",
+        if hot_state_path.is_file() {
+            "present"
+        } else {
+            "missing"
+        }
+    );
     println!(
         "runtime_layout_status: {}",
         if runtime_layout_ok {
@@ -147,6 +158,7 @@ fn print_usage() {
     println!("       yai query summary --journal <path>");
     println!("       yai query records --journal <path> [--kind <record_kind>] [--case <case_ref>] [--limit <N>]");
     println!("       yai engine summary --journal <path>");
+    println!("       yai hot status");
     println!("       yai daemon status --socket <path>");
     println!("       yai daemon info --socket <path>");
     println!("       yai daemon shutdown --socket <path>");
@@ -167,6 +179,110 @@ fn yai_home() -> PathBuf {
                 .unwrap_or_else(|| PathBuf::from("."))
                 .join(".yai")
         })
+}
+
+fn hot_state_path() -> PathBuf {
+    yai_home().join("run").join("hot-state.json")
+}
+
+fn json_string_field(content: &str, key: &str) -> Option<String> {
+    let marker = format!("\"{key}\":\"");
+    let start = content.find(&marker)? + marker.len();
+    let rest = &content[start..];
+    let end = rest.find('"')?;
+    Some(rest[..end].to_string())
+}
+
+fn json_number_field(content: &str, key: &str) -> Option<String> {
+    let marker = format!("\"{key}\":");
+    let start = content.find(&marker)? + marker.len();
+    let rest = &content[start..];
+    let end = rest
+        .find(|ch: char| !(ch.is_ascii_digit()))
+        .unwrap_or(rest.len());
+    (end > 0).then(|| rest[..end].to_string())
+}
+
+fn json_string_or(content: &str, key: &str, fallback: &str) -> String {
+    json_string_field(content, key)
+        .filter(|value| !value.is_empty())
+        .unwrap_or_else(|| fallback.to_string())
+}
+
+fn print_hot_status() -> Result<(), String> {
+    let path = hot_state_path();
+    if !path.is_file() {
+        println!("hot_state: missing");
+        println!("hot_state_path: {}", path.display());
+        println!("projection: unknown");
+        println!("stale_reason: unknown");
+        return Ok(());
+    }
+
+    let content = fs::read_to_string(&path)
+        .map_err(|error| format!("failed to read {}: {error}", path.display()))?;
+    println!("hot_state: active");
+    println!("case: {}", json_string_or(&content, "case_ref", "unknown"));
+    println!(
+        "session: {}",
+        if json_string_field(&content, "case_session_id")
+            .map(|value| !value.is_empty())
+            .unwrap_or(false)
+        {
+            "active"
+        } else {
+            "unknown"
+        }
+    );
+    println!(
+        "context: {}",
+        if json_string_field(&content, "case_context_id")
+            .map(|value| !value.is_empty())
+            .unwrap_or(false)
+        {
+            "active"
+        } else {
+            "unknown"
+        }
+    );
+    println!(
+        "case_version: {}",
+        json_number_field(&content, "case_version").unwrap_or_else(|| "0".to_string())
+    );
+    println!(
+        "projection: {}",
+        json_string_or(&content, "projection_freshness", "unknown")
+    );
+    println!(
+        "stale_reason: {}",
+        json_string_or(&content, "projection_stale_reason", "unknown")
+    );
+    println!(
+        "last_record: {}",
+        json_string_or(&content, "last_record_id", "none")
+    );
+    println!(
+        "last_decision: {}",
+        json_string_or(&content, "last_decision_id", "none")
+    );
+    println!(
+        "last_receipt: {}",
+        json_string_or(&content, "last_receipt_id", "none")
+    );
+    println!(
+        "pending_ops: {}",
+        json_number_field(&content, "pending_op_count").unwrap_or_else(|| "0".to_string())
+    );
+    println!(
+        "pending_obligations: {}",
+        json_number_field(&content, "pending_obligation_count").unwrap_or_else(|| "0".to_string())
+    );
+    println!(
+        "carrier_locks: {}",
+        json_number_field(&content, "carrier_lock_count").unwrap_or_else(|| "0".to_string())
+    );
+    println!("hot_state_path: {}", path.display());
+    Ok(())
 }
 
 fn find_on_path(name: &str) -> Option<String> {
@@ -2723,6 +2839,12 @@ fn main() {
         }
         Some("engine") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = engine_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("hot") if args.get(1).map(String::as_str) == Some("status") => {
+            if let Err(error) = print_hot_status() {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

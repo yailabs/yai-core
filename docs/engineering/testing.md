@@ -19,6 +19,7 @@ query
 rust engine
 daemon ipc
 daemon loop
+hot state
 ```
 
 ## Primitive Coverage
@@ -39,6 +40,27 @@ daemon loop
 | `rust engine` | Rust can consume C journal residue through FFI |
 | `daemon ipc` | `yai` can reach resident `yaid` over local IPC |
 | `daemon loop` | `yaid` can serve bounded core loops over local IPC |
+| `hot state` | active case/session/projection freshness is visible without treating journal as the live surface |
+
+## SPINE.23 Hot State Loop
+
+```text
+initialize hot state
+bind active case/session/context
+mark projection fresh
+mark decision and receipt
+invalidate projection with stale reason
+refresh projection
+write hot-state snapshot
+```
+
+`tests/smoke/hot-state/test_hot_state.c` proves the v0 cache boundary and
+snapshot path.
+
+```text
+make smoke-spine23
+yai hot status
+```
 
 ## NEW.1 Minimum Loop
 

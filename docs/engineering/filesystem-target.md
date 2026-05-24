@@ -90,9 +90,11 @@ $(YAI_HOME)/cases
 $(YAI_HOME)/sockets
 $(YAI_HOME)/config
 $(YAI_HOME)/run/yaid.sock
+$(YAI_HOME)/run/hot-state.json
 ```
 
-`run/` is the ephemeral daemon/runtime directory and owns the default socket.
+`run/` is the ephemeral daemon/runtime directory and owns the default socket
+and hot-state snapshot.
 `store/` is the future durable data-plane root. `cases/` is the future
 case-session storage root. `log/`, `tmp/` and `config/` hold local runtime
 logs, scratch files and configuration material.
@@ -109,8 +111,9 @@ $(YAI_HOME)/store/duckdb/
 SPINE.20 creates only the top-level runtime directories. It does not implement
 LMDB, Ladybug, DuckDB or shared memory.
 
-SPINE.22 freezes this host/runtime layout. It does not add data-plane contents
-inside `YAI_HOME`.
+SPINE.22 freezes this host/runtime layout. SPINE.23 adds
+`YAI_HOME/run/hot-state.json` as runtime cache material. It is not durable
+truth and may be rebuilt from residue.
 
 ## Transitional Caveats
 

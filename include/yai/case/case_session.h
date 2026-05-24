@@ -3,6 +3,7 @@
 
 #include "yai/base/error.h"
 #include "yai/case/case_context.h"
+#include "yai/hot/hot_state.h"
 
 #define YAI_CASE_SESSION_PATH_MAX 256
 #define YAI_CASE_SESSION_STATE_MAX 32
@@ -12,6 +13,7 @@ typedef struct yai_case_session {
     char journal_path[YAI_CASE_SESSION_PATH_MAX];
     char lifecycle_state[YAI_CASE_SESSION_STATE_MAX];
     yai_case_context_t context;
+    yai_hot_state_t hot_state;
 } yai_case_session_t;
 
 yai_status_t yai_case_session_open(yai_case_session_t *session,

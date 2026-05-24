@@ -28,6 +28,7 @@ data-plane-roadmap.md
 extraction-plan.md
 filesystem-target.md
 four-repo-roadmap.md
+hot-state-plane.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md
@@ -50,13 +51,13 @@ $name
   fi
 done
 
-if ! grep -q 'SPINE.23 Hot State / Shared Memory Plane v0' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
-  printf 'roadmap does not name SPINE.23 as hot-state next sequence\n' >&2
+if ! grep -q 'SPINE.23.*Hot State / Shared Memory Plane v0.*done' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
+  printf 'roadmap does not name SPINE.23 as completed hot-state sequence\n' >&2
   exit 1
 fi
 
-if ! grep -q 'SPINE.22 Filesystem & Runtime Layout Freeze' "$ROOT/docs/engineering/current-status.md"; then
-  printf 'current-status does not name SPINE.22 freeze\n' >&2
+if ! grep -q 'SPINE.23 Hot State / Shared Memory Plane v0' "$ROOT/docs/engineering/current-status.md"; then
+  printf 'current-status does not name SPINE.23 hot state\n' >&2
   exit 1
 fi
 

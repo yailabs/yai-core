@@ -1,6 +1,7 @@
 #include "yai/daemon/daemon_loop.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -22,6 +23,32 @@ static yai_status_t make_dir(const char *path) {
         return YAI_OK;
     }
     return YAI_OK;
+}
+
+static void hot_snapshot_path(char *path, size_t path_size) {
+    const char *yai_home = getenv("YAI_HOME");
+    char fallback[256];
+    if (yai_home == 0 || yai_home[0] == '\0') {
+        const char *home = getenv("HOME");
+        (void)snprintf(fallback, sizeof(fallback), "%s/.yai", home == 0 ? "." : home);
+        yai_home = fallback;
+    }
+    (void)make_dir(yai_home);
+    (void)snprintf(path, path_size, "%s/run", yai_home);
+    (void)make_dir(path);
+    (void)snprintf(path, path_size, "%s/run/hot-state.json", yai_home);
+}
+
+static void write_hot_snapshot(const yai_hot_state_t *hot_state) {
+    char path[512];
+    yai_hot_snapshot_t snapshot;
+    if (hot_state == 0) {
+        return;
+    }
+    hot_snapshot_path(path, sizeof(path));
+    if (yai_hot_state_snapshot(hot_state, &snapshot) == YAI_OK) {
+        (void)yai_hot_snapshot_write_json(&snapshot, path);
+    }
 }
 
 static yai_status_t prepare_run_dirs(const char *leaf,
@@ -190,6 +217,7 @@ yai_status_t yai_daemon_run_minimum_loop(const yai_daemon_ipc_request_t *request
     yai_case_ref_t case_ref;
     yai_subject_ref_t subject_ref;
     yai_projection_t projection;
+    yai_hot_state_t hot_state;
     yai_status_t status;
 
     if (request == 0 || response == 0) {
@@ -216,6 +244,12 @@ yai_status_t yai_daemon_run_minimum_loop(const yai_daemon_ipc_request_t *request
         yai_journal_file_init(&journal_file, response->journal_path) != YAI_OK) {
         return YAI_ERR_INVALID;
     }
+    if (yai_hot_state_init(&hot_state) != YAI_OK ||
+        yai_hot_state_set_case(&hot_state, case_ref.case_id.value) != YAI_OK ||
+        yai_hot_state_set_session(&hot_state, "session:new12-minimum") != YAI_OK ||
+        yai_hot_state_set_context(&hot_state, "case_context:minimum") != YAI_OK) {
+        return YAI_ERR_INVALID;
+    }
 
     if (append_record(&journal_file, &case_ref, 0, YAI_RECORD_CASE, "rec:new12-min-case", 0, 0, 0, "case:opened daemon minimum loop") != YAI_OK ||
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_SUBJECT_BINDING, "rec:new12-min-subject", 0, 0, 0, "subject:repo-test bound") != YAI_OK ||
@@ -227,10 +261,17 @@ yai_status_t yai_daemon_run_minimum_loop(const yai_daemon_ipc_request_t *request
         append_record(&journal_file, &case_ref, &subject_ref, YAI_RECORD_PROJECTION_RESULT, "rec:new12-min-projection", 0, 0, 0, "consumer:operator kind:operator_summary redaction:none freshness:fresh source_records:7 source_receipts:1 source_memory:1 source_divergences:0") != YAI_OK) {
         return YAI_ERR_INVALID;
     }
+    (void)yai_hot_state_mark_decision(&hot_state, "decision:new12-minimum");
+    (void)yai_hot_state_mark_receipt(&hot_state, "receipt:new12-minimum");
+    (void)yai_hot_state_invalidate_projection(&hot_state,
+                                              YAI_HOT_STALE_NEW_RECEIPT_AFTER_PROJECTION);
 
     if (load_projection(response->journal_path, &case_ref, &projection) != YAI_OK) {
         return YAI_ERR_INVALID;
     }
+    (void)yai_hot_state_mark_projection(&hot_state, "projection:new12");
+    hot_state.snapshot.case_version = projection.source_record_count;
+    write_hot_snapshot(&hot_state);
     fill_counts_from_projection(response, &projection);
     response->ok = 1;
     copy_field(response->status, sizeof(response->status), "completed");
@@ -262,6 +303,7 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
     yai_projection_t projection;
     yai_journal_t journal;
     yai_case_session_t case_session;
+    yai_hot_snapshot_t hot_snapshot;
     yai_status_t status;
 
     if (request == 0 || response == 0) {
@@ -392,6 +434,18 @@ yai_status_t yai_daemon_run_filesystem_loop(const yai_daemon_ipc_request_t *requ
         yai_journal_free(&journal);
         return YAI_ERR_INVALID;
     }
+    (void)yai_hot_state_mark_decision(&case_session.hot_state, "decision:new12-fs-write");
+    (void)yai_hot_state_mark_receipt(&case_session.hot_state, "receipt:new12-fs-write");
+    (void)yai_hot_state_invalidate_projection(&case_session.hot_state,
+                                              YAI_HOT_STALE_NEW_RECEIPT_AFTER_PROJECTION);
+    (void)yai_hot_state_mark_projection(&case_session.hot_state, "projection:new12-fs-model");
+    if (yai_hot_state_snapshot(&case_session.hot_state, &hot_snapshot) == YAI_OK) {
+        hot_snapshot.pending_op_count = 0;
+        hot_snapshot.pending_obligation_count = 0;
+        hot_snapshot.carrier_lock_count = 0;
+        (void)yai_hot_snapshot_write_json(&hot_snapshot, "build/tmp/new12/hot-state.json");
+    }
+    write_hot_snapshot(&case_session.hot_state);
     fill_counts_from_projection(response, &projection);
     response->ok = 1;
     copy_field(response->status, sizeof(response->status), "completed");

@@ -25,7 +25,7 @@ pack material = case-world input to future data planes, not loose files
 
 | Plane | Target | Role |
 |---|---|---|
-| hot | shared memory / hot state | active case, session, projection frame, locks, obligations and deltas |
+| hot | hot state / shared memory-ready snapshot | active case, session, projection frame, locks, obligations and deltas |
 | journal | append-only files | replay, audit, debug and rebuild |
 | record | LMDB | durable normalized record lookup |
 | graph | Ladybug | persistent operational causality |
@@ -42,8 +42,8 @@ records, graph, projection, memory or reconcile.
 ## Linear Delivery
 
 ```text
-SPINE.23 Hot State / Shared Memory Plane v0
-SPINE.24 LMDB Record Backend v0
+SPINE.23 Hot State / Shared Memory Plane v0 - active v0
+SPINE.24 LMDB Record Backend v0 - next
 SPINE.25 Journal Replay to LMDB v0
 SPINE.26 Ladybug Graph Backend v0
 SPINE.27 DuckDB Fact Backend v0
@@ -53,6 +53,21 @@ SPINE.30 Reconcile over Hot / Store / Graph Consistency v0
 SPINE.31 Observability / Evaluation Facts v0
 SPINE.32 Data Plane Milestone Freeze
 ```
+
+## Hot Plane v0
+
+SPINE.23 makes hot state the first live data plane.
+
+```text
+hot state is not truth
+journal remains replay/audit
+YAI_HOME/run/hot-state.json = daemon-owned runtime snapshot
+projection freshness = fresh/stale/unknown/rebuilding
+stale reason = explicit invalidation posture
+```
+
+The v0 implementation is in-process state plus a file-backed, mmap-ready
+snapshot contract. True OS shared memory is future work.
 
 ## Rules
 

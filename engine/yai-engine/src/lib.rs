@@ -1,5 +1,6 @@
 pub mod ffi;
 pub mod graph;
+pub mod hot;
 pub mod index;
 pub mod journal;
 pub mod memory;

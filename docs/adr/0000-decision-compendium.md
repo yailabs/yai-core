@@ -62,6 +62,10 @@ NEW.18C adds the interaction thread / participant view boundary. Journal
 remains replay/audit; active model context is selected interaction thread plus
 participant view frame plus current case projection.
 
+SPINE.23 adds hot state as the first live data plane. Hot state is not truth; it
+is a daemon-owned live cache and snapshot used to expose active case/session,
+projection freshness, stale reason and latest residue refs.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -82,6 +86,8 @@ participant view frame plus current case projection.
 | 0014 | Operational data plane stratification | Hot, journal, record, graph, fact, memory, projection and reconcile planes are distinct. |
 | 0015 | Projection as live cognitive view | Projection is live, versioned and delta-aware, not a static summary. |
 | 0016 | Operational observability evaluation plane | Case-view quality, trace, freshness, provenance, behavior and memory quality are first-class. |
+| 0017 | Packs as case materialization units | Packs materialize methods, policies, projections, schemas, memory seeds and fixtures into cases. |
+| 0018 | Hot state is not truth | Hot state is live cache/freshness posture, not durable truth. |
 
 ## Combined Doctrine
 
@@ -151,6 +157,7 @@ SPINE.3R data-plane doctrine:
 ```text
 shared memory = hot state, not truth
 journal = replay
+hot state = live cache, not truth
 LMDB = durable record plane
 Ladybug = operational graph
 DuckDB = derived facts / analytics

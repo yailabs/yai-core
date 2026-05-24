@@ -15,7 +15,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.21 pack materialization doctrine; SPINE.22 filesystem/runtime freeze current. | SPINE.23 Hot State / Shared Memory Plane v0. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.23 hot state plane v0. | SPINE.24 LMDB Record Backend v0. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
 | `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
@@ -35,10 +35,12 @@ and install/uninstall/doctor targets. SPINE.20A rebased the active roadmap so
 pack materialization becomes the next canonical spine step. SPINE.21 made
 packs first-class case materialization units and defined their format,
 lifecycle and materialization boundaries. SPINE.22 freezes the filesystem and
-runtime foundation before data-plane implementation begins.
+runtime foundation before data-plane implementation begins. SPINE.23 introduces
+hot state as the first live data plane: an in-process cache plus
+`YAI_HOME/run/hot-state.json` snapshot.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.23.
+delivery is SPINE.24.
 
 ## Canonical Macro Labels
 
@@ -103,8 +105,8 @@ SPINE.21 defines the pack format, lifecycle and materialization rules.
 SPINE.20  Local Runtime Layout                                  done
 SPINE.20A Pack Roadmap Rebase                                   done
 SPINE.21  Pack Materialization Doctrine                         done
-SPINE.22  Filesystem & Runtime Layout Freeze                    current
-SPINE.23  Hot State / Shared Memory Plane v0                    planned
+SPINE.22  Filesystem & Runtime Layout Freeze                    done
+SPINE.23  Hot State / Shared Memory Plane v0                    done
 SPINE.24  LMDB Record Backend v0                                planned
 SPINE.25  Journal Replay to LMDB v0                             planned
 SPINE.26  Ladybug Graph Backend v0                              planned
@@ -215,7 +217,7 @@ pack runtime, installer, marketplace or pack directories.
 
 ### SPINE.22 - Filesystem & Runtime Layout Freeze
 
-Status: current.
+Status: done.
 
 Macro: HOST / DATA / WORLD / OBSERVABILITY / EXTERNAL
 
@@ -246,11 +248,15 @@ state; active projection frame state; pending ops and obligations; carrier
 locks; latest receipt and delta; freshness flags; daemon integration; hot-state
 lifecycle smoke; docs and freeze.
 
-Old-yai audit focus: `src/runtime/sessions/*`, `src/substrate/signals/*`,
-`src/substrate/views/*`.
+Old-yai audit focus: `src/runtime/machine/*`, `src/runtime/sessions/*`,
+`src/runtime/lifecycle/*`, `src/runtime/operator/operator_context.c`,
+`src/runtime/operator/queue_gate.c`, `src/runtime/operator/queue_view.c`,
+`src/case/continuity/*`, `src/case/materialization/*`,
+`src/substrate/working/*`, `src/substrate/views/*`, `src/substrate/store/*`.
 
-Quality gate: daemon can expose current case/session/projection freshness from
-hot state while durable truth remains residue-backed.
+Quality gate: daemon writes a hot-state snapshot, `yai doctor` and
+`yai hot status` expose readiness/freshness, and durable truth remains
+residue-backed.
 
 ### SPINE.24 - LMDB Record Backend v0
 

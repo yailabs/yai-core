@@ -156,6 +156,12 @@ graph.
 : Durable operational records, sources, receipts, policy snapshots, journals,
 and reconstruction material.
 
+`hot state`
+: Live runtime cache for the active case session, current projection frame,
+freshness, stale reason and latest residue refs. Hot state is not truth; it is
+rebuilt from durable residue and currently snapshots to
+`YAI_HOME/run/hot-state.json`.
+
 `graph`
 : Relationships between subjects, operations, decisions, receipts, policies,
 records, projections, memory, and divergence. The graph preserves operational

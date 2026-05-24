@@ -41,6 +41,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | C/Rust boundary | [13-c-rust-boundary.md](13-c-rust-boundary.md) |
 | Observability and evaluation | [14-operational-observability-evaluation.md](14-operational-observability-evaluation.md) |
 | Pack materialization | [15-pack-materialization.md](15-pack-materialization.md) |
+| Hot state plane | [16-hot-state-plane.md](16-hot-state-plane.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
 | Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
@@ -66,6 +67,7 @@ ingest
 -> projection_rule
 -> authority_scope
 -> live_projection
+-> hot_state freshness / invalidation
 -> interaction_turn
 -> model_interpretation / claim / attempt
 -> operation attempt
