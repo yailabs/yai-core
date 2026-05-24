@@ -2,6 +2,7 @@
 
 SPINE.23 implements hot state v0. SPINE.24 hardens the runtime snapshot.
 SPINE.25 integrates the snapshot with case session and case context lifecycle.
+SPINE.26 adds consumer-aware projection freshness policy.
 
 Hot state is the live operational cache for a case session. It is not durable
 truth and it does not replace journal, records, graph, facts, memory or
@@ -111,6 +112,12 @@ case_world: loaded|not_loaded|unknown
 case_context: active|inactive|unknown
 active_thread: <id>|none|unknown
 participant_view: <frame_id>|none|unknown
+```
+
+SPINE.26 adds policy output:
+
+```text
+projection_policy: usable|refresh_recommended|refresh_required|blocked_for_model|unknown
 ```
 
 Command surface:

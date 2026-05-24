@@ -108,6 +108,26 @@ make smoke-spine25
 yai hot status
 ```
 
+## SPINE.26 Projection Freshness Policy Loop
+
+```text
+fresh model projection is usable
+receipt-stale model projection requires refresh
+operator/debug stale projection remains inspectable with warning
+authority/thread stale model projection is blocked_for_model
+projection refresh returns usable
+```
+
+`tests/smoke/projection-freshness/test_projection_freshness.c` proves the
+consumer-aware policy classification. The daemon-core-loop smoke also checks
+that `yai projection inspect` and prompt dry-run expose freshness policy.
+
+```text
+make smoke-spine26
+yai projection inspect --journal <journal> --consumer model
+yai prompt --dry-run --once "..."
+```
+
 ## NEW.1 Minimum Loop
 
 ```text

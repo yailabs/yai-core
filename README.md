@@ -337,9 +337,10 @@ layout: `PREFIX/bin/yai`, `PREFIX/bin/yaid`, `YAI_HOME/run`, `YAI_HOME/store`,
 Pack Materialization Doctrine before filesystem freeze and data-plane
 implementation. SPINE.21 defines packs as case materialization units; no pack
 runtime, installer, registry backend or marketplace is implemented. SPINE.22
-freezes the filesystem/runtime foundation. SPINE.23-SPINE.25 introduce and
-harden hot state as a non-authoritative live case/session/context cache before
-record, graph, fact, projection and memory backends begin.
+freezes the filesystem/runtime foundation. SPINE.23-SPINE.26 introduce and
+harden hot state as a non-authoritative live case/session/context cache with
+consumer-aware projection freshness policy before record, graph, fact,
+projection and memory backends begin.
 
 ### Absorbed Concepts
 

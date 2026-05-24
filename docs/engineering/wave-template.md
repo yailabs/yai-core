@@ -110,6 +110,7 @@ Data-plane impact:
 
 Projection/model impact:
   model-visible projection
+  projection freshness policy
   authority wording
   model_interpretation
   claim/attempt import

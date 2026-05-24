@@ -149,7 +149,7 @@ fn print_usage() {
     println!("usage: yai [--version|info|doctor]");
     println!("       yai store tail --journal <path>");
     println!("       yai projection summary --journal <path>");
-    println!("       yai projection inspect --journal <path>");
+    println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
     println!("       yai case enter --journal <path> --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
     println!("       yai case attach-provider --journal <path> --case <case_ref> --subject <subject_ref> --base-url <url> --model <model> [--api-key-env <env>] [--shell zsh]");
@@ -289,6 +289,68 @@ fn hot_snapshot_status(path: &std::path::Path) -> HotSnapshotStatus {
     }
 }
 
+#[derive(Clone, Debug)]
+struct ProjectionFreshnessView {
+    freshness: String,
+    stale_reason: String,
+    policy: String,
+    consumer: String,
+    source: String,
+}
+
+fn projection_policy_for(consumer: &str, freshness: &str, stale_reason: &str) -> &'static str {
+    if freshness == "fresh" && stale_reason == "none" {
+        return "usable";
+    }
+    if matches!(consumer, "operator" | "audit" | "debug") {
+        return "refresh_recommended";
+    }
+    if !matches!(consumer, "model" | "agent") {
+        return "unknown";
+    }
+    if freshness == "rebuilding" {
+        return "refresh_required";
+    }
+    match stale_reason {
+        "new_receipt_after_projection"
+        | "new_decision_after_projection"
+        | "new_memory_after_projection" => "refresh_required",
+        "new_authority_scope_after_projection"
+        | "new_divergence_after_projection"
+        | "thread_changed"
+        | "manual_refresh_required"
+        | "unknown" => "blocked_for_model",
+        _ => "blocked_for_model",
+    }
+}
+
+fn projection_freshness_view(case_ref: &str, consumer: &str) -> ProjectionFreshnessView {
+    let status = hot_snapshot_status(&hot_state_path());
+    if status.status == "active" {
+        if let Some(content) = status.content.as_deref() {
+            let hot_case = json_string_or(content, "case_ref", "");
+            if !case_ref.is_empty() && hot_case == case_ref {
+                let freshness = json_string_or(content, "projection_freshness", "unknown");
+                let stale_reason = json_string_or(content, "projection_stale_reason", "unknown");
+                return ProjectionFreshnessView {
+                    policy: projection_policy_for(consumer, &freshness, &stale_reason).to_string(),
+                    freshness,
+                    stale_reason,
+                    consumer: consumer.to_string(),
+                    source: "hot_state".to_string(),
+                };
+            }
+        }
+    }
+    ProjectionFreshnessView {
+        freshness: "fresh".to_string(),
+        stale_reason: "none".to_string(),
+        policy: projection_policy_for(consumer, "fresh", "none").to_string(),
+        consumer: consumer.to_string(),
+        source: "projection_record".to_string(),
+    }
+}
+
 fn print_hot_status() -> Result<(), String> {
     let path = hot_state_path();
     let status = hot_snapshot_status(&path);
@@ -305,6 +367,7 @@ fn print_hot_status() -> Result<(), String> {
         println!("active_thread: unknown");
         println!("participant_view: unknown");
         println!("projection: unknown");
+        println!("projection_policy: unknown");
         println!("stale_reason: unknown");
         return Ok(());
     }
@@ -350,6 +413,14 @@ fn print_hot_status() -> Result<(), String> {
     println!(
         "projection: {}",
         json_string_or(content, "projection_freshness", "unknown")
+    );
+    println!(
+        "projection_policy: {}",
+        projection_policy_for(
+            "model",
+            &json_string_or(content, "projection_freshness", "unknown"),
+            &json_string_or(content, "projection_stale_reason", "unknown")
+        )
     );
     println!(
         "projection_freshness: {}",
@@ -618,10 +689,15 @@ fn projection_summary(args: &[String]) -> Result<(), String> {
 
 fn projection_inspect(args: &[String]) -> Result<(), String> {
     let path = journal_arg(args)?;
+    let consumer = optional_arg(args, "--consumer").unwrap_or_else(|| "model".to_string());
     let journal = Journal::load_jsonl(&path)
         .map_err(|error| format!("failed to load {}: {error}", path.display()))?;
     let projection = ProjectionSummary::from_journal("projection", &journal);
+    let freshness = projection_freshness_view(&projection.case_ref, &consumer);
     println!("records: {}", projection.source_record_count);
+    if !projection.case_ref.is_empty() {
+        println!("case: {}", projection.case_ref);
+    }
     println!("case_domains: {}", projection.case_domain_count);
     println!("case_attachments: {}", projection.case_attachment_count);
     println!("case_bindings: {}", projection.case_binding_count);
@@ -652,6 +728,11 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
         "redacted_or_limited: {}",
         projection.limited_projection_count
     );
+    println!("consumer: {}", freshness.consumer);
+    println!("projection_freshness: {}", freshness.freshness);
+    println!("stale_reason: {}", freshness.stale_reason);
+    println!("freshness_policy: {}", freshness.policy);
+    println!("source: {}", freshness.source);
     Ok(())
 }
 
@@ -2059,12 +2140,17 @@ fn append_participant_view_frame(session: &PromptSession) -> Result<String, Stri
         })
         .map(|record| record.id.as_str())
         .unwrap_or("projection:current");
+    let freshness = projection_freshness_view(&session.case_ref, "model");
     let summary = format!(
-        "participant_view_frame frame_id:{frame_id} case_ref:{} thread_id:{} projection_id:{projection_id} previous_frame_id:{} delta_since_frame_id:{} included_turn_count:{included_turn_count} included_memory_count:{included_memory_count} included_receipt_count:{included_receipt_count} redaction:summary_only freshness:fresh source:active_thread_plus_case_projection",
+        "participant_view_frame frame_id:{frame_id} case_ref:{} thread_id:{} projection_id:{projection_id} previous_frame_id:{} delta_since_frame_id:{} included_turn_count:{included_turn_count} included_memory_count:{included_memory_count} included_receipt_count:{included_receipt_count} redaction:summary_only freshness:{} freshness_source:{} stale_reason_at_build:{} freshness_policy:{} source:active_thread_plus_case_projection",
         session.case_ref,
         session.active_thread_id,
         if previous_frame_id.is_empty() { "none" } else { previous_frame_id.as_str() },
-        if previous_frame_id.is_empty() { "none" } else { previous_frame_id.as_str() }
+        if previous_frame_id.is_empty() { "none" } else { previous_frame_id.as_str() },
+        freshness.freshness,
+        freshness.source,
+        freshness.stale_reason,
+        freshness.policy
     );
     let record = Record::from_parts(
         &frame_id,
@@ -2231,6 +2317,7 @@ fn append_memory_proposal(session: &PromptSession, note: Option<&str>) -> Result
 
 fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> Result<(), String> {
     let colors = color_enabled();
+    let freshness = projection_freshness_view(&session.case_ref, "model");
     if dry_run {
         println!("model_prompt: dry_run");
         println!("case_ref: {}", session.case_ref);
@@ -2238,6 +2325,13 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
         println!("case_context: active");
         println!("interaction_thread: {}", session.active_thread_id);
         println!("participant_view_frame: would_build");
+        println!("projection_freshness: {}", freshness.freshness);
+        println!("stale_reason: {}", freshness.stale_reason);
+        println!("freshness_policy: {}", freshness.policy);
+        println!("freshness_source: {}", freshness.source);
+        if freshness.policy == "refresh_required" || freshness.policy == "blocked_for_model" {
+            println!("refresh_required: true");
+        }
         println!("subject_ref: {}", session.subject_ref);
         println!("provider_base_url: {}", session.provider.base_url);
         println!("provider_model: {}", session.provider.model);
@@ -2254,6 +2348,12 @@ fn run_prompt_once(session: &mut PromptSession, prompt: &str, dry_run: bool) -> 
         return Ok(());
     }
 
+    if freshness.policy == "refresh_required" || freshness.policy == "blocked_for_model" {
+        println!("projection: stale");
+        println!("stale_reason: {}", freshness.stale_reason);
+        println!("freshness_policy: {}", freshness.policy);
+        println!("refresh_required: true");
+    }
     let frame_id = append_participant_view_frame(session)?;
     let attempt_id = append_model_prompt_attempt(session, prompt)?;
     let output = provider_chat_completion(&session.provider, &session.participant_view, prompt)?;

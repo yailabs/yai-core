@@ -49,8 +49,11 @@ yai_status_t yai_participant_view_frame_build(yai_participant_view_frame_t *fram
 
     yai_copy_string(frame->redaction_posture, sizeof(frame->redaction_posture), "summary_only");
     yai_copy_string(frame->freshness, sizeof(frame->freshness), "fresh");
+    yai_copy_string(frame->freshness_source, sizeof(frame->freshness_source), "projection_record");
+    yai_copy_string(frame->stale_reason, sizeof(frame->stale_reason), "none");
+    yai_copy_string(frame->freshness_policy, sizeof(frame->freshness_policy), "usable");
     yai_copy_string(frame->summary,
                     sizeof(frame->summary),
-                    "participant_view_frame redaction:summary_only freshness:fresh");
+                    "participant_view_frame redaction:summary_only freshness:fresh freshness_source:projection_record stale_reason:none freshness_policy:usable");
     return YAI_OK;
 }

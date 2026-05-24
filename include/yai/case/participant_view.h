@@ -22,6 +22,9 @@ typedef struct yai_participant_view_frame {
     size_t included_receipt_count;
     char redaction_posture[32];
     char freshness[32];
+    char freshness_source[32];
+    char stale_reason[64];
+    char freshness_policy[32];
     char summary[256];
 } yai_participant_view_frame_t;
 

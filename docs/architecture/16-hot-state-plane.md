@@ -33,6 +33,7 @@ pending operations
 pending obligations
 carrier locks
 projection freshness
+projection freshness policy
 projection stale reason
 dirty flags
 ```
@@ -111,4 +112,11 @@ Snapshot status:
 missing_snapshot -> hot_state unavailable
 invalid_snapshot -> hot_state unavailable
 valid snapshot -> hot_state active
+```
+
+SPINE.26 adds consumer-aware policy over these fields:
+
+```text
+model/agent -> usable, refresh_required or blocked_for_model
+operator/audit/debug -> usable or refresh_recommended
 ```

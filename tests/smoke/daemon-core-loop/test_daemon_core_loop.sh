@@ -1,11 +1,13 @@
 #!/bin/sh
 set -eu
 
-run_dir="build/tmp/new12/daemon-core-loop-$$"
+run_dir="/tmp/yai-core-daemon-core-loop-$$"
 socket_path="$run_dir/yaid.sock"
 log_path="$run_dir/yaid.log"
 
 mkdir -p "$run_dir"
+YAI_HOME="$run_dir/home"
+export YAI_HOME
 rm -f "$socket_path"
 
 build/yaid --socket "$socket_path" --foreground >"$log_path" 2>&1 &
@@ -88,6 +90,9 @@ printf '%s\n' "$filesystem_projection" | grep 'model_interpretations: 0' >/dev/n
 printf '%s\n' "$filesystem_projection" | grep 'operator: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'model: 1' >/dev/null
 printf '%s\n' "$filesystem_projection" | grep 'redacted_or_limited: 1' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'projection_freshness: fresh' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'freshness_policy: usable' >/dev/null
+printf '%s\n' "$filesystem_projection" | grep 'source: hot_state' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'case_entry: accepted' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'subject_ref: subject:llm-provider' >/dev/null
 printf '%s\n' "$filesystem_case_entry" | grep 'case_session: active' >/dev/null
@@ -123,6 +128,9 @@ printf '%s\n' "$filesystem_prompt_dry_run" | grep 'model_prompt: dry_run' >/dev/
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_session: active' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'case_context: active' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'interaction_thread: thread:default' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'projection_freshness: fresh' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'freshness_policy: usable' >/dev/null
+printf '%s\n' "$filesystem_prompt_dry_run" | grep 'freshness_source: hot_state' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'context_source: interaction_thread_plus_projection_frame' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'transcript_retention: full_redacted_case_local' >/dev/null
 printf '%s\n' "$filesystem_prompt_dry_run" | grep 'raw_journal_access: not_provided' >/dev/null

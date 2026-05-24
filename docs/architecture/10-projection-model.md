@@ -37,6 +37,9 @@ embedded system
 ```text
 source refs
 freshness
+freshness_policy
+freshness_source
+stale_reason
 provenance
 redaction
 audience
@@ -72,6 +75,25 @@ cost
 
 Projection must carry enough refs, version posture and freshness posture for
 CVQ to be computed. CVQ is diagnostic posture, not case truth.
+
+## Freshness Policy
+
+SPINE.26 makes projection freshness consumer-aware.
+
+```text
+usable
+refresh_recommended
+refresh_required
+blocked_for_model
+unknown
+```
+
+Model and agent consumers have stricter requirements than operator, audit and
+debug consumers. A stale model-visible projection caused by a new receipt,
+decision or memory requires refresh. Staleness caused by authority scope,
+divergence, thread change, manual refresh requirement or unknown reason blocks
+model use in policy terms. SPINE.26 v0 warns on the prompt path; later waves may
+hard-block when refresh is available as a complete workflow.
 
 ## Observability Boundary
 

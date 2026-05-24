@@ -1,9 +1,19 @@
-# Four-Repo Roadmap
+# Three-Repo Roadmap
 
-This is the only active engineering roadmap.
+This is the active engineering roadmap for the current YAI core transition.
 
-From SPINE.20 onward, YAI Core uses one linear progression. Macro names are
+From SPINE.20 onward, `yai-core` uses one linear progression. Macro names are
 labels inside a wave, not a second calendar.
+
+The `interfaces` repo is no longer governed inside this roadmap. Its canonical
+roadmap now lives in the `interfaces` repo at:
+
+```text
+docs/intf-studio-spine.md
+```
+
+That document owns the INTF.SPINE.* roadmap and the downstream STUDIO.SPINE.*
+roadmap.
 
 ```text
 SPINE.N = main delivery number
@@ -15,10 +25,19 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.25 hot state case session/context integration. | SPINE.26 Hot State Projection Freshness Integration. |
+| `yai-core` | Canonical local AI operational control core. | Completed foundation through SPINE.26 hot state projection freshness integration. | SPINE.27 Hot State CLI + Manual Validation. |
 | `yai` | Old/current repo. | Transition concept mine and future `ai-environment` source material. | ENV.CANON.0 later. |
-| `interfaces` | Projection/API/SDK/conformance repo. | Downstream consumer of `yai-core` truth. | INTF.CANON.0 later. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
+
+`interfaces` has been removed from this roadmap because it now owns a dedicated
+interface/client spine in the `interfaces` repository:
+
+```text
+interfaces/docs/intf-studio-spine.md
+```
+
+That document governs both `INTF.SPINE.*` and the downstream `STUDIO.SPINE.*`
+client roadmap.
 
 ## Completed Foundation
 
@@ -44,9 +63,11 @@ SPINE.24 hardens the hot-state runtime snapshot as schema
 `yai.hot_state.v1`, temp-and-rename writes and missing/corrupt status handling.
 SPINE.25 links hot state to case session, case world, case context, active
 thread, participant view and decision/receipt-driven projection staleness.
+SPINE.26 makes projection freshness consumer-aware: model/agent views require
+stricter refresh posture than operator, audit and debug views.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.26.
+delivery is SPINE.27.
 
 ## Canonical Macro Labels
 
@@ -123,8 +144,8 @@ partial coverage: SPINE.26 Hot State Projection Freshness Integration
 partial coverage: SPINE.27 Hot State CLI + Manual Validation
 ```
 
-SPINE.24 and SPINE.25 reconcile the partial hot-state behavior already landed
-in SPINE.23 and make it explicit, validated and manually inspectable.
+SPINE.24 through SPINE.26 reconcile the partial hot-state behavior already
+landed in SPINE.23 and make it explicit, validated and manually inspectable.
 
 ```text
 SPINE.20  Local Runtime Layout                                      done
@@ -135,7 +156,7 @@ SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.23A Roadmap Expansion + Command-Test Contract                 done
 SPINE.24  Hot State Runtime Snapshot                                done
 SPINE.25  Hot State Case Session / Context Integration              done
-SPINE.26  Hot State Projection Freshness Integration                 planned
+SPINE.26  Hot State Projection Freshness Integration                 done
 SPINE.27  Hot State CLI + Manual Validation                         planned
 SPINE.28  Hot State Freeze                                          planned
 
@@ -258,16 +279,28 @@ changes no command surface, it must say so explicitly.
 
 ## External Repo Tracks
 
-These tracks remain later and downstream:
+These tracks remain later and downstream from this `yai-core` roadmap:
 
 | Track | Meaning |
 |---|---|
 | ENV.CANON | Turn old `yai` into future `ai-environment` concept mine, lab and harness. |
-| INTF.CANON | Align interfaces, schemas, transports, SDK and conformance to `yai-core` truth. |
 | CONSOLE.CANON | Align operator UX to projections and interfaces. |
+
+The `interfaces` track is no longer listed here. It is governed by the dedicated
+INTF + STUDIO spine in the `interfaces` repository:
+
+```text
+docs/intf-studio-spine.md
+```
 
 ## Non-Goals
 
-This roadmap does not rename repos, create `ai-environment`, touch
-`interfaces`, touch `console`, implement data planes, or make archived docs
-active again.
+This roadmap does not rename repos, create `ai-environment`, touch `console`,
+implement data planes, or make archived docs active again.
+
+It also does not govern the `interfaces` roadmap anymore. The `interfaces`
+repo now owns its own INTF + STUDIO spine at:
+
+```text
+interfaces/docs/intf-studio-spine.md
+```

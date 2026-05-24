@@ -47,8 +47,8 @@ to be implementable and manually verifiable on its own.
 ```text
 SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.24  Hot State Runtime Snapshot                                done
-SPINE.25  Hot State Case Session / Context Integration              active v1
-SPINE.26  Hot State Projection Freshness Integration                 planned
+SPINE.25  Hot State Case Session / Context Integration              done
+SPINE.26  Hot State Projection Freshness Integration                 active v1
 SPINE.27  Hot State CLI + Manual Validation                         planned
 SPINE.28  Hot State Freeze                                          planned
 
@@ -148,6 +148,15 @@ active_thread_id = current selected interaction thread when known
 participant_view_frame_id = current assembled participant view frame when known
 decision/receipt changes mark projection stale
 projection refresh marks projection fresh
+```
+
+SPINE.26 makes freshness consumer-aware:
+
+```text
+model/agent stale projection = refresh_required or blocked_for_model
+operator/audit/debug stale projection = refresh_recommended
+projection inspect exposes freshness_policy and source
+prompt path warns when model-visible projection needs refresh
 ```
 
 ## Rules
