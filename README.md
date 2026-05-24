@@ -168,6 +168,8 @@ This repository currently contains:
 - `include/` contains public and system ABI headers.
 - `tests/` contains smoke and validation tests.
 - Current command docs cover hot-state and record-store inspection.
+- LMDB record-store commands are manually validated through `yai store status`,
+  `yai store summary` and `yai store record get/list`.
 - Some C data-plane paths remain transitional while Rust engine ownership is
   consolidated.
 

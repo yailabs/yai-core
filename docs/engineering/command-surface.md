@@ -98,7 +98,9 @@ durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
 `yai store summary` for aggregate write-path validation. SPINE.31 adds
 read-only `yai store record get` and `yai store record list` over the id, case
 and kind indexes. SPINE.32 extends list with subject and receipt filters.
-Future subcommands can extend the same surface with `yai store rebuild status`.
+SPINE.33 freezes the line-oriented operator output shape before the record-plane
+freeze. Future subcommands can extend the same surface with
+`yai store rebuild status`.
 
 Required fields:
 
@@ -108,11 +110,13 @@ record_store_status: missing|not_initialized|ready|unavailable
 record_store_path: <YAI_HOME>/store/lmdb
 record_env: record_env
 schema: yai.record.v1
+indexes: records_by_id,records_by_case,records_by_kind,records_by_subject,records_by_receipt
 ```
 
 `missing` means `YAI_HOME/store/lmdb` is absent. `not_initialized` means the
 directory exists but no LMDB schema metadata has been initialized. `ready` means
 the LMDB environment opens and `schema_meta/meta:schema` is `yai.record.v1`.
+The `indexes` line is emitted only for `ready`.
 
 Required `yai store summary` fields:
 
@@ -134,10 +138,11 @@ schema: yai.record.v1
 record_id: ...
 record_kind: ...
 case_ref: ...
-source: journal
-source_ref: ...
+source:
+  plane: journal
+  ref: ...
 payload:
-summary: ...
+  summary: ...
 ```
 
 Missing records return:
@@ -156,10 +161,29 @@ yai store record list --receipt <receipt_ref> [--limit <N>]
 ```
 
 List modes report `records_total` for the matching index and print summary rows
-with `record_id`, `record_kind` and `case_ref`. Subject and receipt indexes are
-derived from structured record fields only. If LMDB is missing, uninitialized
-or unavailable, record read commands print the record store status fields and
-do not synthesize records from journal.
+with `record_id`, `record_kind` and `case_ref`:
+
+```text
+filter: case|kind|subject|receipt
+filter_value: ...
+records_total: N
+limit: N
+records:
+- record_id: ...
+  record_kind: ...
+  case_ref: ...
+```
+
+Zero-result list commands return:
+
+```text
+records_total: 0
+records: none
+```
+
+Subject and receipt indexes are derived from structured record fields only. If
+LMDB is missing, uninitialized or unavailable, record read commands print the
+record store status fields and do not synthesize records from journal.
 
 ## Projection Commands
 

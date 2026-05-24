@@ -72,23 +72,29 @@ if [ -z "$receipt_count" ] || [ "$receipt_count" -le 0 ]; then
 fi
 
 subject_list=$("$YAI_BIN" store record list --subject subject:filesystem-sandbox --limit 20)
-require_line "$subject_list" "subject_ref: subject:filesystem-sandbox"
+require_line "$subject_list" "filter: subject"
+require_line "$subject_list" "filter_value: subject:filesystem-sandbox"
 require_line "$subject_list" "records_total:"
+require_line "$subject_list" "limit: 20"
 require_line "$subject_list" "- record_id: rec:new12-fs-authority-scope-fs"
 require_line "$subject_list" "record_kind: authority_scope"
 require_line "$subject_list" "case_ref: case:new12-filesystem"
 
 receipt_list=$("$YAI_BIN" store record list --receipt receipt:new12-fs-write --limit 10)
-require_line "$receipt_list" "receipt_ref: receipt:new12-fs-write"
+require_line "$receipt_list" "filter: receipt"
+require_line "$receipt_list" "filter_value: receipt:new12-fs-write"
 require_line "$receipt_list" "records_total:"
+require_line "$receipt_list" "limit: 10"
 require_line "$receipt_list" "- record_id: rec:new12-fs-write-receipt"
 require_line "$receipt_list" "record_kind: filesystem_receipt"
 require_line "$receipt_list" "case_ref: case:new12-filesystem"
 
 missing_subject_ready=$("$YAI_BIN" store record list --subject subject:missing --limit 10)
-require_line "$missing_subject_ready" "subject_ref: subject:missing"
+require_line "$missing_subject_ready" "filter: subject"
+require_line "$missing_subject_ready" "filter_value: subject:missing"
 require_line "$missing_subject_ready" "records_total: 0"
-require_line "$missing_subject_ready" "- none"
+require_line "$missing_subject_ready" "limit: 10"
+require_line "$missing_subject_ready" "records: none"
 
 "$YAI_BIN" daemon shutdown --socket "$SOCKET" >/dev/null
 wait "$PID" 2>/dev/null || true

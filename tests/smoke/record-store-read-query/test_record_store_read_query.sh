@@ -56,14 +56,18 @@ require_line "$summary" "record_store_status: ready"
 require_line "$summary" "records_total: 8"
 
 kind_list=$("$YAI_BIN" store record list --kind receipt --limit 10)
-require_line "$kind_list" "record_kind: receipt"
+require_line "$kind_list" "filter: kind"
+require_line "$kind_list" "filter_value: receipt"
 require_line "$kind_list" "records_total: 1"
+require_line "$kind_list" "limit: 10"
 require_line "$kind_list" "- record_id: rec:new12-min-receipt"
 require_line "$kind_list" "case_ref: case:new12-daemon"
 
 case_list=$("$YAI_BIN" store record list --case case:new12-daemon --limit 10)
-require_line "$case_list" "case_ref: case:new12-daemon"
+require_line "$case_list" "filter: case"
+require_line "$case_list" "filter_value: case:new12-daemon"
 require_line "$case_list" "records_total: 8"
+require_line "$case_list" "limit: 10"
 require_line "$case_list" "- record_id: rec:new12-min-receipt"
 
 record_get=$("$YAI_BIN" store record get rec:new12-min-receipt)
@@ -71,7 +75,8 @@ require_line "$record_get" "schema: yai.record.v1"
 require_line "$record_get" "record_id: rec:new12-min-receipt"
 require_line "$record_get" "record_kind: receipt"
 require_line "$record_get" "case_ref: case:new12-daemon"
-require_line "$record_get" "source: journal"
+require_line "$record_get" "source:"
+require_line "$record_get" "  plane: journal"
 require_line "$record_get" "payload:"
 
 missing_record=$("$YAI_BIN" store record get rec:missing)

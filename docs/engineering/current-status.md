@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.32 LMDB Case / Subject / Receipt Indexes.
+Status: SPINE.33 LMDB CLI + Manual Validation.
 
 ## Completed Foundation
 
@@ -31,7 +31,8 @@ Rust LMDB write path, mirrors daemon-loop journal records into
 as replay/audit source. SPINE.31 adds direct record get/list commands over the
 LMDB id, case and kind indexes without adding a query planner or journal
 fallback reads. SPINE.32 adds subject and receipt indexes as derived views over
-stored record envelopes.
+stored record envelopes. SPINE.33 freezes the LMDB CLI output shape and manual
+operator validation matrix before the record-plane freeze.
 
 Current:
 
@@ -54,14 +55,15 @@ SPINE.29 LMDB Record Plane Doctrine + Schema completed.
 SPINE.30 LMDB Record Write Path completed.
 SPINE.31 LMDB Record Read / Query Path completed.
 SPINE.32 LMDB Case / Subject / Receipt Indexes completed.
+SPINE.33 LMDB CLI + Manual Validation completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
-REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup current.
+REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
 
 Next:
 
 ```text
-SPINE.33 LMDB CLI + Manual Validation.
+SPINE.34 LMDB Record Plane Freeze.
 ```
 
 Foundation status:
@@ -91,6 +93,7 @@ LMDB record write path active
 record store summary surface active
 LMDB record read/query surface active
 LMDB subject/receipt indexes active
+LMDB CLI manual validation active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -177,7 +180,7 @@ than operator, audit and debug views. SPINE.27 makes `yai hot status`,
 SPINE.28 freezes this surface as a non-authoritative live cache boundary.
 True OS shared memory/mmap, expanded LMDB indexes, Ladybug, DuckDB, projection deltas,
 memory consolidation, cross-plane reconcile and observability/evaluation facts remain
-future SPINE.33-SPINE.80 work. Pack
+future SPINE.34-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -266,6 +269,10 @@ for read/query posture. No `yai-dev` source file was modified.
 SPINE.32 read-only inspected yai-dev index, query, records, store and
 operational receipt residue for subject/receipt index posture. No `yai-dev`
 source file was modified.
+
+SPINE.33 read-only inspected yai-dev query, index and store residue for CLI
+lookup wording, zero-result posture and no-fallback query boundaries. No
+`yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

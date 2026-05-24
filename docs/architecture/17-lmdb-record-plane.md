@@ -11,6 +11,9 @@ case and kind indexes.
 SPINE.32 LMDB Case / Subject / Receipt Indexes adds derived subject and receipt
 indexes over structured record fields.
 
+SPINE.33 LMDB CLI + Manual Validation freezes the operator command output and
+manual validation matrix.
+
 Doctrine:
 
 ```text
@@ -250,21 +253,52 @@ yai store record list --subject <subject_ref> [--limit <N>]
 yai store record list --receipt <receipt_ref> [--limit <N>]
 ```
 
-No-result queries return `records_total: 0` and `- none`. Missing,
+No-result queries return `records_total: 0` and `records: none`. Missing,
 uninitialized or unavailable LMDB environments still return record-store status
 fields and do not fall back to journal.
+
+## SPINE.33 CLI Validation
+
+SPINE.33 freezes the existing LMDB command surface:
+
+```text
+yai store status
+yai store summary
+yai store record get <record_id>
+yai store record list --case <case_ref> [--limit <N>]
+yai store record list --kind <record_kind> [--limit <N>]
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
+```
+
+List commands use a consistent shape:
+
+```text
+filter: case|kind|subject|receipt
+filter_value: ...
+records_total: N
+limit: N
+records:
+- record_id: ...
+  record_kind: ...
+  case_ref: ...
+```
+
+Missing records print `record: not_found`. Missing, uninitialized or
+unavailable LMDB environments print record-store status fields and do not read
+from journal as a fallback.
 
 ## Delivery Boundary
 
 SPINE.30 adds the LMDB dependency, opens the environment, writes records by id
 and minimal case/kind indexes, and exposes aggregate summary counts. SPINE.31
 adds record get/list over those indexes. SPINE.32 adds subject/receipt
-secondary indexes. It does not add journal replay, graph/fact/memory backends,
-projection/time indexes or projection deltas.
+secondary indexes. SPINE.33 freezes CLI/manual validation. It does not add
+journal replay, graph/fact/memory backends, projection/time indexes or
+projection deltas.
 
 Next:
 
 ```text
-SPINE.33 LMDB CLI + Manual Validation
 SPINE.34 LMDB Record Plane Freeze
 ```

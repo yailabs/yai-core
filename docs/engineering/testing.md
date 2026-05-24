@@ -367,7 +367,10 @@ records_by_kind: 8
 
 In sandboxed command runners, daemon IPC smoke tests may need to run outside
 the default sandbox because they connect to local Unix sockets. That is an
-execution-environment caveat, not a change to the architecture.
+execution-environment caveat, not a change to the architecture. File-backed
+daemon smoke targets that share `build/tmp` runtime homes should be run
+serially; parallel `make smoke` and `make check` runs can collide on temporary
+socket paths.
 
 ## SPINE.31 LMDB Record Read / Query Path Loop
 
@@ -459,9 +462,102 @@ Expected key lines:
 ```text
 records_by_subject: <non-zero>
 records_by_receipt: <non-zero>
-subject_ref: subject:filesystem-sandbox
-receipt_ref: receipt:new12-fs-write
+filter: subject
+filter_value: subject:filesystem-sandbox
+filter: receipt
+filter_value: receipt:new12-fs-write
 records_total: 0
+records: none
+```
+
+## SPINE.33 LMDB CLI + Manual Validation Loop
+
+```text
+store status before write reports not_initialized when install-local created the directory
+store status after daemon-loop import reports ready
+store summary shape includes all aggregate index counts
+record list shape is filter/filter_value/records_total/limit/records
+record get shape includes schema, id, kind, case, source and payload
+missing record returns record: not_found
+zero-result list returns records_total: 0 and records: none
+no store command falls back to journal for missing data
+```
+
+`tests/smoke/record-store-cli-manual-validation/test_record_store_cli_manual_validation.sh`
+freezes the SPINE.33 command surface.
+
+```text
+make smoke-spine33
+target/debug/yai store status
+target/debug/yai store summary
+target/debug/yai store record list --case case:new12-daemon --limit 10
+target/debug/yai store record list --kind receipt --limit 10
+target/debug/yai store record list --subject subject:filesystem-sandbox --limit 10
+target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10
+target/debug/yai store record get rec:new12-min-receipt
+target/debug/yai store record get rec:missing
+```
+
+Manual installed matrix:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store status
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai doctor
+
+mkdir -p /tmp/yai-home-test/run
+/tmp/yai-install-test/bin/yaid --socket /tmp/yai-home-test/run/yaid.sock --foreground &
+DAEMON_PID=$!
+sleep 1
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon run-minimum-loop --socket /tmp/yai-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store status
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store summary
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --case case:new12-daemon --limit 10
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --kind receipt --limit 10
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon run-filesystem-loop --socket /tmp/yai-home-test/run/yaid.sock
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store summary
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --subject subject:filesystem-sandbox --limit 10
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --receipt receipt:new12-fs-write --limit 10
+
+REC_ID="$(PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store record list --kind receipt --limit 1 | awk '/record_id:/ {print $3; exit}')"
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store record get "$REC_ID"
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test yai store record get rec:missing
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai store record list --subject subject:missing --limit 10
+
+PATH=/tmp/yai-install-test/bin:$PATH YAI_HOME=/tmp/yai-home-test \
+  yai daemon shutdown --socket /tmp/yai-home-test/run/yaid.sock
+wait $DAEMON_PID
+make uninstall-local PREFIX=/tmp/yai-install-test
+```
+
+Expected key lines:
+
+```text
+record_store_status: not_initialized
+record_store_status: ready
+records_total: 8
+records_by_case: 8
+records_by_kind: 8
+schema: yai.record.v1
+filter: kind
+filter_value: receipt
+record_kind: receipt
+case_ref: case:new12-daemon
+source:
+payload:
+record: not_found
+records_total: 0
+records: none
 ```
 
 ## SPINE.28 Hot State Freeze Loop

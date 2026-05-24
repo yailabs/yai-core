@@ -2,7 +2,8 @@
 
 SPINE.29 freezes the record-plane contract. SPINE.30 implements the first LMDB
 write path. SPINE.31 adds the first read/query path over the id, case and kind
-indexes. SPINE.32 adds derived subject and receipt indexes.
+indexes. SPINE.32 adds derived subject and receipt indexes. SPINE.33 freezes
+the CLI output shape and manual validation matrix.
 
 ## Operator Doctrine
 
@@ -163,7 +164,7 @@ records_by_subject
 records_by_receipt
 ```
 
-SPINE.33+ will add:
+Future waves may add:
 
 ```text
 records_by_projection
@@ -209,6 +210,10 @@ receipt material for subject indexes, receipt lookup, record relationship
 indexes, query filters and index consistency posture. The old material stays
 concept evidence; no `yai-dev` file is mutated.
 
+SPINE.33 read-only inspected query, index and store material for query surface
+wording, no-fallback reads, zero-result posture and manual lookup validation.
+The old material stays concept evidence; no `yai-dev` file is mutated.
+
 ## Write Path
 
 The Rust engine owns the LMDB backend via the `lmdb` crate. The C daemon still
@@ -238,6 +243,7 @@ make smoke-spine29
 make smoke-spine30
 make smoke-spine31
 make smoke-spine32
+make smoke-spine33
 ```
 
 They are integrated into:

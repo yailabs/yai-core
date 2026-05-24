@@ -254,6 +254,11 @@ fn print_store_status() {
     println!("record_store_path: {}", status.path.display());
     println!("record_env: record_env");
     println!("schema: yai.record.v1");
+    if status.status == "ready" {
+        println!(
+            "indexes: records_by_id,records_by_case,records_by_kind,records_by_subject,records_by_receipt"
+        );
+    }
 }
 
 fn print_store_summary() -> Result<(), String> {
@@ -304,17 +309,18 @@ fn store_record_get(args: &[String]) -> Result<(), String> {
     println!("record_id: {}", record.record_id);
     println!("record_kind: {}", record.record_kind);
     println!("case_ref: {}", record.case_ref);
+    println!("source:");
     println!(
-        "source: {}",
+        "  plane: {}",
         json_string_or(&record.raw_json, "plane", "unknown")
     );
     println!(
-        "source_ref: {}",
+        "  ref: {}",
         json_string_or(&record.raw_json, "ref", "unknown")
     );
     println!("payload:");
     println!(
-        "summary: {}",
+        "  summary: {}",
         json_string_or(&record.raw_json, "summary", "unknown")
     );
     println!("envelope: {}", record.raw_json);
@@ -347,30 +353,35 @@ fn store_record_list(args: &[String]) -> Result<(), String> {
     let store = LmdbRecordStore::open(&status.path)?;
     let result = if let Some(case_ref) = case_ref.as_deref() {
         let result = store.list_records_by_case(case_ref, limit)?;
-        println!("case_ref: {case_ref}");
+        println!("filter: case");
+        println!("filter_value: {case_ref}");
         result
     } else if let Some(record_kind) = record_kind.as_deref() {
         if RecordKind::from_str(record_kind).is_none() {
             return Err(format!("unknown record kind: {record_kind}"));
         }
         let result = store.list_records_by_kind(record_kind, limit)?;
-        println!("record_kind: {record_kind}");
+        println!("filter: kind");
+        println!("filter_value: {record_kind}");
         result
     } else if let Some(subject_ref) = subject_ref.as_deref() {
         let result = store.list_records_by_subject(subject_ref, limit)?;
-        println!("subject_ref: {subject_ref}");
+        println!("filter: subject");
+        println!("filter_value: {subject_ref}");
         result
     } else {
         let receipt_ref = receipt_ref.as_deref().unwrap_or_default();
         let result = store.list_records_by_receipt(receipt_ref, limit)?;
-        println!("receipt_ref: {receipt_ref}");
+        println!("filter: receipt");
+        println!("filter_value: {receipt_ref}");
         result
     };
     println!("records_total: {}", result.records_total);
-    println!("records:");
+    println!("limit: {limit}");
     if result.records.is_empty() {
-        println!("- none");
+        println!("records: none");
     } else {
+        println!("records:");
         for record in result.records {
             println!("- record_id: {}", record.record_id);
             println!("  record_kind: {}", record.record_kind);

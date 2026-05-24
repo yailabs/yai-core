@@ -57,7 +57,7 @@ SPINE.29  LMDB Record Plane Doctrine + Schema                       done
 SPINE.30  LMDB Record Write Path                                    done
 SPINE.31  LMDB Record Read / Query Path                             done
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     done
-SPINE.33  LMDB CLI + Manual Validation                              planned
+SPINE.33  LMDB CLI + Manual Validation                              done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -270,6 +270,23 @@ missing subject or receipt query returns records_total: 0
 
 These indexes are derived lookup views over structured record fields. They are
 not new truth and they do not create a journal fallback read path.
+
+SPINE.33 LMDB CLI + Manual Validation freezes:
+
+```text
+yai store status
+yai store summary
+yai store record get <record_id>
+yai store record list --case <case_ref> [--limit <N>]
+yai store record list --kind <record_kind> [--limit <N>]
+yai store record list --subject <subject_ref> [--limit <N>]
+yai store record list --receipt <receipt_ref> [--limit <N>]
+```
+
+The list output shape is `filter`, `filter_value`, `records_total`, `limit`
+and `records`. Missing records return `record: not_found`; zero-result lists
+return `records: none`; missing or uninitialized LMDB reports record-store
+status and does not fall back to the journal.
 
 Source surface boundary:
 
