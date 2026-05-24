@@ -154,6 +154,43 @@ yai projection inspect --journal <journal> --consumer model
 yai prompt --dry-run --once "..."
 ```
 
+## SPINE.27 Hot State CLI Manual Validation Loop
+
+```text
+yai info names SPINE.27
+yai doctor reports hot_state_path/status/schema/readability
+yai hot status reports missing, corrupt and valid snapshot cases
+daemon minimum loop produces active hot-state status
+daemon filesystem loop produces active case/session/context status
+projection inspect exposes projection_freshness/stale_reason/freshness_policy/freshness_source
+```
+
+`tests/smoke/hot-state-cli/test_hot_state_cli.sh` proves the stable manual
+surface for hot state and projection freshness.
+
+```text
+make smoke-spine27
+target/debug/yai --version
+target/debug/yai info
+target/debug/yai doctor
+target/debug/yai hot status
+target/debug/yai projection inspect --journal <journal> --consumer model
+```
+
+Expected key lines:
+
+```text
+hot_state: active|unavailable
+hot_state_schema_status: valid|invalid|missing
+schema: yai.hot_state.v1
+case_session: active
+case_world: loaded
+case_context: active
+projection: fresh|stale
+freshness_policy: usable|refresh_recommended|refresh_required|blocked_for_model|unknown
+freshness_source: hot_state|projection_record
+```
+
 ## NEW.1 Minimum Loop
 
 ```text

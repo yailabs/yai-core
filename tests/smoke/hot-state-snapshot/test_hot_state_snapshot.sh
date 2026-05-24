@@ -59,7 +59,7 @@ printf 'snapshot:valid handled\n'
 doctor=$("$YAI_BIN" doctor)
 require_line "$doctor" "hot_state_path: $HOT"
 require_line "$doctor" "hot_state_status: active"
-require_line "$doctor" "hot_state_schema_status: ok"
+require_line "$doctor" "hot_state_schema_status: valid"
 require_line "$doctor" "hot_state_readable: yes"
 printf 'doctor:hot-state snapshot reported\n'
 

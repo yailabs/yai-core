@@ -113,6 +113,14 @@ The canonical operator command inventory is
 state, projection, pack doctrine and foundation checks to commands, manual
 tests and expected output.
 
+The hot-state manual surface is:
+
+```text
+yai doctor
+yai hot status
+yai projection inspect --journal <path> --consumer model
+```
+
 ## Computational Model
 
 `case`

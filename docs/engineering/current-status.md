@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.26 Hot State Projection Freshness Integration.
+Status: SPINE.27 Hot State CLI + Manual Validation.
 
 ## Completed Foundation
 
@@ -18,7 +18,8 @@ SPINE.24A maps SPINE.20-SPINE.24 primitives to command views, manual tests and
 expected output.
 SPINE.25 links that snapshot to case session, case world and case context
 lifecycle. SPINE.26 defines the projection freshness policy used by model,
-operator, audit and debug consumers.
+operator, audit and debug consumers. SPINE.27 stabilizes the manual CLI surface
+for hot state, doctor diagnostics and projection freshness inspection.
 
 Current:
 
@@ -32,13 +33,14 @@ SPINE.23A Roadmap Expansion + Command-Test Contract completed.
 SPINE.24 Hot State Runtime Snapshot completed.
 SPINE.24A Retroactive Command Surface Recovery completed.
 SPINE.25 Hot State Case Session / Context Integration completed.
-SPINE.26 Hot State Projection Freshness Integration current.
+SPINE.26 Hot State Projection Freshness Integration completed.
+SPINE.27 Hot State CLI + Manual Validation current.
 ```
 
 Next:
 
 ```text
-SPINE.27 Hot State CLI + Manual Validation.
+SPINE.28 Hot State Freeze.
 ```
 
 Foundation status:
@@ -58,6 +60,7 @@ hot-state snapshot missing/corrupt handling active
 hot-state session/context lifecycle fields active
 projection freshness policy active
 consumer-aware model/operator freshness posture active
+hot-state CLI manual validation active
 ```
 
 ## Current Layout
@@ -133,9 +136,11 @@ snapshot schema `yai.hot_state.v1`, writes through temp-and-rename, and makes
 snapshot carry `case_session_status`, `case_world_status`,
 `case_context_status`, `active_thread_id` and `participant_view_frame_id`.
 SPINE.26 adds consumer-aware freshness policy so model/agent views are stricter
-than operator, audit and debug views. True OS shared memory/mmap, LMDB, Ladybug, DuckDB,
-projection deltas, memory consolidation, cross-plane reconcile and
-observability/evaluation facts remain future SPINE.27-SPINE.80 work. Pack
+than operator, audit and debug views. SPINE.27 makes `yai hot status`,
+`yai doctor` and `yai projection inspect` the stable manual inspection surface.
+True OS shared memory/mmap, LMDB, Ladybug, DuckDB, projection deltas, memory
+consolidation, cross-plane reconcile and observability/evaluation facts remain
+future SPINE.28-SPINE.80 work. Pack
 material is future data-plane input, but SPINE.21 does not implement pack
 records or backends. SPINE.20 creates `YAI_HOME/store` as the future durable
 data-plane root but does not create those backends.
@@ -158,6 +163,9 @@ extraction inventory. No old-yai source file was modified.
 
 Old-yai residue for SPINE.26 was read-only inspected and classified in the
 extraction inventory. No old-yai source file was modified.
+
+Old-yai command/runtime residue for SPINE.27 was read-only inspected and
+classified in the extraction inventory. No old-yai source file was modified.
 
 Future implementation waves must classify corresponding old-yai residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

@@ -57,8 +57,8 @@ if ! grep -q 'SPINE.23.*Hot State Doctrine + ABI.*done' "$ROOT/docs/engineering/
   exit 1
 fi
 
-if ! grep -q 'SPINE.26 Hot State Projection Freshness Integration' "$ROOT/docs/engineering/current-status.md"; then
-  printf 'current-status does not name SPINE.26 hot state projection freshness integration\n' >&2
+if ! grep -q 'SPINE.27 Hot State CLI + Manual Validation' "$ROOT/docs/engineering/current-status.md"; then
+  printf 'current-status does not name SPINE.27 hot state cli manual validation\n' >&2
   exit 1
 fi
 

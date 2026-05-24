@@ -48,8 +48,8 @@ to be implementable and manually verifiable on its own.
 SPINE.23  Hot State Doctrine + ABI                                  done
 SPINE.24  Hot State Runtime Snapshot                                done
 SPINE.25  Hot State Case Session / Context Integration              done
-SPINE.26  Hot State Projection Freshness Integration                 active v1
-SPINE.27  Hot State CLI + Manual Validation                         planned
+SPINE.26  Hot State Projection Freshness Integration                 done
+SPINE.27  Hot State CLI + Manual Validation                         active v1
 SPINE.28  Hot State Freeze                                          planned
 
 SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
@@ -157,6 +157,14 @@ model/agent stale projection = refresh_required or blocked_for_model
 operator/audit/debug stale projection = refresh_recommended
 projection inspect exposes freshness_policy and source
 prompt path warns when model-visible projection needs refresh
+```
+
+SPINE.27 stabilizes the manual command surface:
+
+```text
+yai hot status = hot-state snapshot, lifecycle and freshness status
+yai doctor = runtime path and hot-state schema/readability diagnostic
+yai projection inspect = journal projection plus freshness policy/source when available
 ```
 
 Current command views:

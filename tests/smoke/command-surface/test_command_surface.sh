@@ -80,6 +80,7 @@ require_line "$valid" "snapshot: $HOT"
 require_line "$valid" "schema: yai.hot_state.v1"
 require_line "$valid" "case_session: active"
 require_line "$valid" "projection_policy: usable"
+require_line "$valid" "freshness_policy: usable"
 printf 'command_surface:hot-state valid ok\n'
 
 "$YAI_BIN" daemon shutdown --socket "$SOCKET" >/dev/null

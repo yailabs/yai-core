@@ -36,7 +36,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI Core control command");
-    println!("status: SPINE.25");
+    println!("status: SPINE.27 Hot State CLI + Manual Validation");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -133,6 +133,14 @@ fn print_doctor() {
         println!(
             "case_context_status: {}",
             json_string_or(content, "case_context_status", "unknown")
+        );
+        let projection_freshness = json_string_or(content, "projection_freshness", "unknown");
+        let stale_reason = json_string_or(content, "projection_stale_reason", "unknown");
+        println!("projection_freshness: {projection_freshness}");
+        println!("stale_reason: {stale_reason}");
+        println!(
+            "freshness_policy: {}",
+            projection_policy_for("model", &projection_freshness, &stale_reason)
         );
     }
     println!(
@@ -268,7 +276,7 @@ fn hot_snapshot_status(path: &std::path::Path) -> HotSnapshotStatus {
         Ok(content) if validate_hot_snapshot(&content) => HotSnapshotStatus {
             status: "active",
             reason: "none",
-            schema_status: "ok",
+            schema_status: "valid",
             readable: "yes",
             content: Some(content),
         },
@@ -368,6 +376,7 @@ fn print_hot_status() -> Result<(), String> {
         println!("participant_view: unknown");
         println!("projection: unknown");
         println!("projection_policy: unknown");
+        println!("freshness_policy: unknown");
         println!("stale_reason: unknown");
         return Ok(());
     }
@@ -414,26 +423,14 @@ fn print_hot_status() -> Result<(), String> {
         "projection: {}",
         json_string_or(content, "projection_freshness", "unknown")
     );
-    println!(
-        "projection_policy: {}",
-        projection_policy_for(
-            "model",
-            &json_string_or(content, "projection_freshness", "unknown"),
-            &json_string_or(content, "projection_stale_reason", "unknown")
-        )
-    );
-    println!(
-        "projection_freshness: {}",
-        json_string_or(content, "projection_freshness", "unknown")
-    );
-    println!(
-        "stale_reason: {}",
-        json_string_or(content, "projection_stale_reason", "unknown")
-    );
-    println!(
-        "projection_stale_reason: {}",
-        json_string_or(content, "projection_stale_reason", "unknown")
-    );
+    let projection_freshness = json_string_or(content, "projection_freshness", "unknown");
+    let stale_reason = json_string_or(content, "projection_stale_reason", "unknown");
+    let freshness_policy = projection_policy_for("model", &projection_freshness, &stale_reason);
+    println!("projection_policy: {}", freshness_policy);
+    println!("freshness_policy: {freshness_policy}");
+    println!("projection_freshness: {}", projection_freshness);
+    println!("stale_reason: {stale_reason}");
+    println!("projection_stale_reason: {stale_reason}");
     println!(
         "last_record: {}",
         json_string_or(content, "last_record_id", "none")
@@ -732,6 +729,7 @@ fn projection_inspect(args: &[String]) -> Result<(), String> {
     println!("projection_freshness: {}", freshness.freshness);
     println!("stale_reason: {}", freshness.stale_reason);
     println!("freshness_policy: {}", freshness.policy);
+    println!("freshness_source: {}", freshness.source);
     println!("source: {}", freshness.source);
     Ok(())
 }

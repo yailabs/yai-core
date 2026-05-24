@@ -8,7 +8,7 @@ Rule:
 A primitive that cannot be inspected is not operational yet.
 ```
 
-This file maps SPINE.20-SPINE.24 primitives to their current view, command,
+This file maps SPINE.20-SPINE.27 primitives to their current view, command,
 manual test and documentation surface. It does not define new core semantics.
 
 ## Runtime Commands
@@ -57,13 +57,18 @@ schema: yai.hot_state.v1|unknown
 case_session: active|inactive|unknown
 case_world: loaded|not_loaded|unknown
 case_context: active|inactive|unknown
+active_thread: <id>|none|unknown
+participant_view: <id>|none|unknown
 projection: fresh|stale|unknown|rebuilding
-projection_policy: usable|refresh_required|refresh_recommended|blocked_for_model|unknown
+freshness_policy: usable|refresh_required|refresh_recommended|blocked_for_model|unknown
 stale_reason: ...
 updated_at: ...
 ```
 
-There is no `yai hot status --json` convention in SPINE.24A.
+`projection_policy` may also appear as a compatibility alias for the same
+value. `freshness_policy` is the canonical field.
+
+There is no `yai hot status --json` convention in SPINE.27.
 
 ## Projection Commands
 
@@ -75,6 +80,20 @@ There is no `yai hot status --json` convention in SPINE.24A.
 
 Projection commands are still journal-backed in this phase. Hot state provides
 freshness context, not durable projection truth.
+
+Required `yai projection inspect` freshness fields:
+
+```text
+projection_freshness: fresh|stale|unknown|rebuilding
+stale_reason: ...
+freshness_policy: usable|refresh_recommended|refresh_required|blocked_for_model|unknown
+consumer: model|operator|audit|debug|agent
+freshness_source: hot_state|projection_record|journal|unknown
+```
+
+If `projection inspect` cannot correlate the journal case with active hot
+state, it reports journal/projection-derived freshness. It must not fake a
+hot-state source.
 
 ## Pack / Doctrine Checks
 
@@ -151,6 +170,7 @@ schema: yai.hot_state.v1
 case_session: active
 case_context: active
 projection_policy: usable
+freshness_policy: usable
 ```
 
 Snapshot edge cases:
@@ -176,4 +196,5 @@ Automated retroactive coverage:
 
 ```sh
 make smoke-spine24a
+make smoke-spine27
 ```
