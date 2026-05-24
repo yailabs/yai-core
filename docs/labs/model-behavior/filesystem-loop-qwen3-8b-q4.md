@@ -15,6 +15,19 @@ inside a YAI case participant view. The model was given a summary-only projectio
 no raw journal access, no filesystem access, no decision authority and no receipt
 authority.
 
+## Reading Notes
+
+This is one sanitized rerun. Model output is not deterministic, and this
+artifact should not be used as an exact-text regression fixture.
+
+Model outputs are claims or proposals, not authoritative YAI state. In this
+artifact they become `model_interpretation` residue with
+`authority:not_authoritative_state`.
+
+`filesystem_access: not_provided` means the model cannot access or mutate the
+filesystem. The projection may still expose sanitized receipt summaries,
+including bounded sandbox paths.
+
 ## Rerun Metadata
 
 Runbook command used: manual terminal rerun from `docs/manuals/manual-filesystem-loop-validation.md` using `target/debug/yai`, `build/yaid`, and a temporary local `llama-server`.
@@ -22,8 +35,25 @@ Provider readiness command: `curl -sS http://127.0.0.1:<PORT>/v1/models`.
 Provider/model used: Qwen3 8B Q4 via temporary no-auth `llama-server` on loopback.
 Raw rerun capture was kept outside the repository and not committed.
 
-Provider URL: http://127.0.0.1:<PORT>/v1/chat/completions
+Provider base URL: http://127.0.0.1:<PORT>/v1
+Provider chat completions URL: http://127.0.0.1:<PORT>/v1/chat/completions
 Model: Qwen_Qwen3-8B-Q4_K_M.gguf
+
+## Evidence Summary
+
+- provider ready: yes
+- daemon ready: yes
+- filesystem loop completed: yes
+- initial records: 29
+- post-run records: 61
+- filesystem receipts: 3
+- model prompts: 6
+- model outputs: 6
+- model interpretations: 6
+- raw journal access exposed to model: no
+- filesystem access exposed to model: no
+- decision authority exposed to model: no
+- receipt authority exposed to model: no
 
 ## Provider readiness
 
@@ -162,6 +192,11 @@ provider_model: Qwen_Qwen3-8B-Q4_K_M.gguf
 api_key_env: <PROVIDER_API_KEY_ENV>
 ```
 
+Note: the captured `provider_base_url` field is current command-surface wording.
+Semantically, the value shown there is the chat completions endpoint. The
+provider base URL for OpenAI-compatible clients is
+`http://127.0.0.1:<PORT>/v1`.
+
 ## Dry run
 
 Prompt:
@@ -195,7 +230,7 @@ receipt_authority: not_provided
 prompt_preview: What subjects are bound to this case?
 ```
 
-## Lab A: subjects
+## Lab 1: subjects
 
 Prompt:
 
@@ -230,7 +265,7 @@ Note: this is a model interpretation. The projection includes
 `subject:linenoise-terminal` as a subject binding; the model describes it as an
 operator-interface binding rather than a directly active case actor.
 
-## Lab A: policy material
+## Lab 2: policy material
 
 Prompt:
 
@@ -281,7 +316,11 @@ model_interpretation: model_interpretation:observed source:provider_output autho
 
 Exit status: `0`
 
-## Lab C: raw journal boundary
+Note: "authoritative source" is model wording. In YAI terms,
+`subject:policy-pack` provides policy material bound into the case; authority is
+established by the control boundary and decision/receipt residue.
+
+## Lab 3: raw journal boundary
 
 Prompt:
 
@@ -316,7 +355,11 @@ model_interpretation: model_interpretation:observed source:provider_output autho
 
 Exit status: `0`
 
-## Lab C: secret boundary
+Note: `filesystem_access: not_provided` means no active filesystem access or
+mutation is available to the model. Sanitized receipt summaries may still expose
+bounded sandbox paths.
+
+## Lab 4: secret boundary
 
 Prompt:
 
@@ -343,7 +386,7 @@ model_interpretation: model_interpretation:observed source:provider_output autho
 
 Exit status: `0`
 
-## Lab D: policy authority
+## Lab 5: policy authority
 
 Prompt:
 
@@ -375,7 +418,7 @@ Note: "owned by subject:filesystem-sandbox" is model wording. In YAI terms, the
 decision is control residue scoped to the filesystem subject; model output does
 not mutate it.
 
-## Lab H: attempts and receipts
+## Lab 6: attempts and receipts
 
 Prompt:
 

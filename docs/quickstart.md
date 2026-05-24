@@ -40,6 +40,20 @@ make check
 
 For details on what these checks cover, see [Testing](engineering/testing.md).
 
+## Run A First Validation Path
+
+The public validation entrypoint is [Test cases](test-cases.md).
+
+Start with Test 00, repository health:
+
+```sh
+make info
+make check
+```
+
+Then use Test 01 for no-model runtime inspection when local `yai` and `yaid`
+binaries are built or installed.
+
 ## Current Runtime Inspection
 
 The current engineering command surface documents runtime inspection commands
@@ -58,6 +72,7 @@ surface.
 ## Where Command Details Live
 
 - [Command surface](engineering/command-surface.md)
+- [Test cases](test-cases.md)
 - [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
 - [Testing](engineering/testing.md)
 

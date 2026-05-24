@@ -15,6 +15,9 @@ record, projection, and operational memory.
   repository layout.
 - [Technical brief](technical-brief.md): five-minute technical explanation.
 - [Quickstart](quickstart.md): minimal local orientation and validation entry.
+- [Test cases](test-cases.md): reproducible validation paths.
+- [Provider boundary](providers.md): provider experiment matrix and boundary
+  posture.
 - [Architecture summary](architecture.md): public architecture overview.
 - [Glossary](glossary.md): short term definitions for first-contact readers.
 - [Legal posture](legal.md): source-available repository posture.
@@ -32,6 +35,8 @@ and license files are authoritative for current posture.
 
 - [Technical brief](technical-brief.md)
 - [Quickstart](quickstart.md)
+- [Test cases](test-cases.md)
+- [Provider boundary](providers.md)
 - [Architecture summary](architecture.md)
 - [Glossary](glossary.md)
 - [Legal posture](legal.md)
@@ -45,6 +50,7 @@ manuals:
 - [Command surface](engineering/command-surface.md)
 - [Source surface](engineering/source-surface.md)
 - [Testing](engineering/testing.md)
+- [Test cases](test-cases.md)
 - [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
 - [Architecture notes](architecture/README.md)
 
@@ -72,5 +78,5 @@ explicitly scope the change.
 
 The public documentation surface is being split gradually from older
 architecture, manual, and engineering material. The current public pages are
-short entrypoints. Command, daemon, backend, and test-case references will be
-split into focused public docs in later passes.
+short entrypoints. Command and daemon references will be split into focused
+public docs in later passes.
