@@ -66,8 +66,12 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md
+diagrams/README.md
 repo-split.md
 ```
+
+`diagrams/` is the checkpoint diagram asset home. Diagrams are visual aids, not
+implementation status.
 
 ## Non-Goals
 
