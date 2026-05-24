@@ -66,6 +66,10 @@ SPINE.23 adds hot state as the first live data plane. Hot state is not truth; it
 is a daemon-owned live cache and snapshot used to expose active case/session,
 projection freshness, stale reason and latest residue refs.
 
+SPINE.29 defines LMDB as durable indexed record lookup. hot state is not LMDB.
+journal remains replay/audit. LMDB is rebuildable from journal and does not own
+graph, fact or memory semantics.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -88,6 +92,7 @@ projection freshness, stale reason and latest residue refs.
 | 0016 | Operational observability evaluation plane | Case-view quality, trace, freshness, provenance, behavior and memory quality are first-class. |
 | 0017 | Packs as case materialization units | Packs materialize methods, policies, projections, schemas, memory seeds and fixtures into cases. |
 | 0018 | Hot state is not truth | Hot state is live cache/freshness posture, not durable truth. |
+| 0019 | LMDB record plane | LMDB is durable indexed record lookup, rebuildable from journal and separate from hot state, graph, facts and memory. |
 
 ## Combined Doctrine
 
@@ -162,6 +167,17 @@ LMDB = durable record plane
 Ladybug = operational graph
 DuckDB = derived facts / analytics
 projection = live versioned cognitive view
+```
+
+SPINE.29 record-plane doctrine:
+
+```text
+LMDB is durable indexed record lookup
+hot state is not LMDB
+journal remains replay/audit
+schema = yai.record.v1
+record:id / record:case / record:kind / record:subject
+SPINE.30 LMDB Record Write Path
 ```
 
 SPINE.4 observability/evaluation doctrine:

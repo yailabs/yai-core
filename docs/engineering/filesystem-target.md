@@ -90,6 +90,7 @@ $(PREFIX)/bin/yai
 $(PREFIX)/bin/yaid
 $(YAI_HOME)/run
 $(YAI_HOME)/store
+$(YAI_HOME)/store/lmdb
 $(YAI_HOME)/log
 $(YAI_HOME)/tmp
 $(YAI_HOME)/cases
@@ -101,7 +102,8 @@ $(YAI_HOME)/run/hot-state.json
 
 `run/` is the ephemeral daemon/runtime directory and owns the default socket
 and hot-state snapshot.
-`store/` is the future durable data-plane root. `cases/` is the future
+`store/` is the future durable data-plane root. `store/lmdb/` is the SPINE.29
+record-plane location for durable indexed record lookup. `cases/` is the future
 case-session storage root. `log/`, `tmp/` and `config/` hold local runtime
 logs, scratch files and configuration material.
 
@@ -114,8 +116,10 @@ $(YAI_HOME)/store/ladybug/
 $(YAI_HOME)/store/duckdb/
 ```
 
-SPINE.20 creates only the top-level runtime directories. It does not implement
-LMDB, Ladybug, DuckDB or shared memory.
+SPINE.20 creates only the top-level runtime directories. SPINE.29 may create
+`YAI_HOME/store/lmdb` during install-local and reports it as
+`not_initialized`; it does not implement LMDB writes, Ladybug, DuckDB or shared
+memory.
 
 SPINE.22 freezes this host/runtime layout. SPINE.23 adds
 `YAI_HOME/run/hot-state.json` as runtime cache material. It is not durable
@@ -146,6 +150,7 @@ make print-install-paths
 make doctor-local
 yai doctor
 yai hot status
+yai store status
 ```
 
 The operator command inventory for runtime layout, installed binaries, daemon

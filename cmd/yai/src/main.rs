@@ -36,13 +36,14 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.28B Internal Source Surface Cleanup");
+    println!("status: SPINE.29 LMDB Record Plane Doctrine + Schema");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
     println!("runtime_layout: YAI_HOME local runtime v0");
     println!("foundation_freeze: filesystem_runtime_layout");
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
+    println!("record_store: YAI_HOME/store/lmdb planned LMDB lookup plane");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -58,6 +59,7 @@ fn print_doctor() {
     let config_dir = yai_home.join("config");
     let socket = run_dir.join("yaid.sock");
     let hot_state_path = run_dir.join("hot-state.json");
+    let record_status = record_store_status();
     let yai_path = std::env::current_exe()
         .map(|path| path.display().to_string())
         .unwrap_or_else(|_| "unknown".to_string());
@@ -125,6 +127,9 @@ fn print_doctor() {
     println!("hot_state_status: {}", hot_status.status);
     println!("hot_state_schema_status: {}", hot_status.schema_status);
     println!("hot_state_readable: {}", hot_status.readable);
+    println!("record_store_path: {}", record_status.path.display());
+    println!("record_store_status: {}", record_status.status);
+    println!("record_store_backend: {}", record_status.backend);
     if let Some(content) = hot_status.content.as_deref() {
         println!(
             "case_session_status: {}",
@@ -155,6 +160,7 @@ fn print_doctor() {
 
 fn print_usage() {
     println!("usage: yai [--version|info|doctor]");
+    println!("       yai store status");
     println!("       yai store tail --journal <path>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
@@ -197,6 +203,41 @@ fn yai_home() -> PathBuf {
 
 fn hot_state_path() -> PathBuf {
     yai_home().join("run").join("hot-state.json")
+}
+
+fn record_store_path() -> PathBuf {
+    yai_home().join("store").join("lmdb")
+}
+
+struct RecordStoreStatus {
+    path: PathBuf,
+    backend: &'static str,
+    status: &'static str,
+}
+
+fn record_store_status() -> RecordStoreStatus {
+    let path = record_store_path();
+    let status = if path.is_dir() {
+        "not_initialized"
+    } else if path.exists() {
+        "unavailable"
+    } else {
+        "missing"
+    };
+    RecordStoreStatus {
+        path,
+        backend: "lmdb",
+        status,
+    }
+}
+
+fn print_store_status() {
+    let status = record_store_status();
+    println!("record_store_backend: {}", status.backend);
+    println!("record_store_status: {}", status.status);
+    println!("record_store_path: {}", status.path.display());
+    println!("record_env: record_env");
+    println!("schema: yai.record.v1");
 }
 
 fn json_string_field(content: &str, key: &str) -> Option<String> {
@@ -2954,6 +2995,7 @@ fn main() {
         Some("--version") | Some("version") => println!("yai {}", VERSION),
         Some("info") => print_info(),
         Some("doctor") => print_doctor(),
+        Some("store") if args.get(1).map(String::as_str) == Some("status") => print_store_status(),
         Some("store") if args.get(1).map(String::as_str) == Some("tail") => {
             if let Err(error) = store_tail(&args[2..]) {
                 eprintln!("{error}");

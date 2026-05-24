@@ -53,7 +53,7 @@ SPINE.27  Hot State CLI + Manual Validation                         done
 SPINE.28  Hot State Freeze                                          done
 SPINE.28B Internal Source Surface Cleanup                            done
 
-SPINE.29  LMDB Record Plane Doctrine + Schema                       planned
+SPINE.29  LMDB Record Plane Doctrine + Schema                       done
 SPINE.30  LMDB Record Write Path                                    planned
 SPINE.31  LMDB Record Read / Query Path                             planned
 SPINE.32  LMDB Case / Subject / Receipt Indexes                     planned
@@ -198,6 +198,33 @@ Hot state is the live cache and may be rebuilt or refreshed from durable residue
 SPINE.29 begins the durable record plane.
 LMDB will not replace hot state.
 LMDB will become durable lookup; hot state remains current liveness/freshness surface.
+```
+
+## Record Plane v0
+
+SPINE.29 defines the durable record lookup plane:
+
+```text
+LMDB is durable indexed record lookup
+hot state is not LMDB
+journal remains replay/audit
+record_env under YAI_HOME/store/lmdb
+schema = yai.record.v1
+record:id / record:case / record:kind / record:subject key grammar
+```
+
+SPINE.29 adds `yai store status` and doctor fields:
+
+```text
+record_store_backend: lmdb
+record_store_status: missing|not_initialized|unavailable
+record_store_path: <YAI_HOME>/store/lmdb
+```
+
+`ready` is not a SPINE.29 status. The LMDB write path begins in:
+
+```text
+SPINE.30 LMDB Record Write Path
 ```
 
 Source surface boundary:

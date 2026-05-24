@@ -110,8 +110,8 @@ model. Future work is scheduled only through the linear SPINE.20+ roadmap in
 
 The canonical operator command inventory is
 `docs/engineering/command-surface.md`. It maps runtime layout, daemon, hot
-state, projection, pack doctrine and foundation checks to commands, manual
-tests and expected output.
+state, record-store status, projection, pack doctrine and foundation checks to
+commands, manual tests and expected output.
 
 The active source-surface boundary is `docs/engineering/source-surface.md`.
 `system/` is not a second data engine; Rust data-plane ownership targets
@@ -122,6 +122,7 @@ The hot-state manual surface is:
 ```text
 yai doctor
 yai hot status
+yai store status
 yai projection inspect --journal <path> --consumer model
 ```
 
@@ -185,6 +186,13 @@ freshness, stale reason and latest residue refs. Hot state is not truth; it is
 rebuilt from durable residue and currently snapshots to
 `YAI_HOME/run/hot-state.json` with schema `yai.hot_state.v1`. SPINE.28 freezes
 this cache/diagnostic surface before LMDB durable record lookup starts.
+
+`record store`
+: Durable indexed record lookup under `YAI_HOME/store/lmdb`. LMDB is durable
+record lookup, not hot state, journal replay, graph truth, analytical facts or
+memory. SPINE.29 defines schema `yai.record.v1`, logical keys such as
+`record:id`, `record:case`, `record:kind` and `record:subject`, and the
+`yai store status` surface before SPINE.30 writes records.
 
 `graph`
 : Relationships between subjects, operations, decisions, receipts, policies,
@@ -363,7 +371,9 @@ runtime, installer, registry backend or marketplace is implemented. SPINE.22
 freezes the filesystem/runtime foundation. SPINE.23-SPINE.26 introduce and
 harden hot state as a non-authoritative live case/session/context cache with
 consumer-aware projection freshness policy before record, graph, fact,
-projection and memory backends begin.
+projection and memory backends begin. SPINE.29 defines LMDB as the durable
+indexed record lookup plane and keeps the next implementation step scoped to
+SPINE.30 LMDB Record Write Path.
 
 ### Absorbed Concepts
 

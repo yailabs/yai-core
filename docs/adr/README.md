@@ -32,6 +32,8 @@ Then read the atomic records:
 0015-projection-as-live-cognitive-view.md
 0016-operational-observability-evaluation-plane.md
 0017-packs-as-case-materialization-units.md
+0018-hot-state-is-not-truth.md
+0019-lmdb-record-plane.md
 ```
 
 Atomic ADR structure:

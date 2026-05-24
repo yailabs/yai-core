@@ -1,4 +1,4 @@
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -13,6 +13,7 @@ INSTALL_BINDIR := $(PREFIX)/bin
 YAI_BIN := $(RUST_TARGET_DIR)/debug/yai
 YAI_RUN_DIR := $(YAI_HOME)/run
 YAI_STORE_DIR := $(YAI_HOME)/store
+YAI_RECORD_STORE_DIR := $(YAI_STORE_DIR)/lmdb
 YAI_LOG_DIR := $(YAI_HOME)/log
 YAI_TMP_DIR := $(YAI_HOME)/tmp
 YAI_CASES_DIR := $(YAI_HOME)/cases
@@ -94,17 +95,19 @@ SMOKE_COMMAND_SURFACE := tests/smoke/command-surface/test_command_surface.sh
 SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
 SMOKE_PROJECTION_FRESHNESS := $(BUILD_DIR)/test_projection_freshness
 SMOKE_HOT_STATE_CLI := tests/smoke/hot-state-cli/test_hot_state_cli.sh
+SMOKE_RECORD_STORE_CLI := tests/smoke/record-store-cli/test_record_store_cli.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.28B Internal Source Surface Cleanup\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.28B Internal Source Surface Cleanup\n"
-	@printf "next: SPINE.29 LMDB Record Plane Doctrine + Schema\n"
+	@printf "status: SPINE.29 LMDB Record Plane Doctrine + Schema\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.29 LMDB Record Plane Doctrine + Schema\n"
+	@printf "next: SPINE.30 LMDB Record Write Path\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
+	@printf "record-store: %s\n" "$(YAI_RECORD_STORE_DIR)"
 	@printf "pack-doctrine: active docs/engineering/pack-format.md\n"
 	@printf "foundation-freeze: filesystem closed; runtime layout exists; active docs compact; extraction contract active\n"
 	@printf "data-spine-c: transitional keep_temporarily\n"
@@ -131,6 +134,7 @@ check-docs:
 	@./tools/checks/check-foundation-freeze.sh
 	@./tools/checks/check-hot-state-doctrine.sh
 	@./tools/checks/check-hot-state-freeze.sh
+	@./tools/checks/check-lmdb-record-plane-doctrine.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -152,6 +156,9 @@ check-hot-state-doctrine:
 
 check-hot-state-freeze:
 	@./tools/checks/check-hot-state-freeze.sh
+
+check-lmdb-record-plane-doctrine:
+	@./tools/checks/check-lmdb-record-plane-doctrine.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -245,6 +252,7 @@ print-install-paths:
 	@printf "yaid=%s/yaid\n" "$(INSTALL_BINDIR)"
 	@printf "run=%s\n" "$(YAI_RUN_DIR)"
 	@printf "store=%s\n" "$(YAI_STORE_DIR)"
+	@printf "record_store=%s\n" "$(YAI_RECORD_STORE_DIR)"
 	@printf "log=%s\n" "$(YAI_LOG_DIR)"
 	@printf "tmp=%s\n" "$(YAI_TMP_DIR)"
 	@printf "cases=%s\n" "$(YAI_CASES_DIR)"
@@ -254,7 +262,7 @@ print-install-paths:
 
 install-local: build
 	@mkdir -p "$(INSTALL_BINDIR)"
-	@mkdir -p "$(YAI_RUN_DIR)" "$(YAI_STORE_DIR)" "$(YAI_LOG_DIR)" "$(YAI_TMP_DIR)" "$(YAI_CASES_DIR)" "$(YAI_SOCKETS_DIR)" "$(YAI_CONFIG_DIR)"
+	@mkdir -p "$(YAI_RUN_DIR)" "$(YAI_RECORD_STORE_DIR)" "$(YAI_LOG_DIR)" "$(YAI_TMP_DIR)" "$(YAI_CASES_DIR)" "$(YAI_SOCKETS_DIR)" "$(YAI_CONFIG_DIR)"
 	@cp "$(YAI_BIN)" "$(INSTALL_BINDIR)/yai"
 	@cp "$(YAID)" "$(INSTALL_BINDIR)/yaid"
 	@chmod +x "$(INSTALL_BINDIR)/yai" "$(INSTALL_BINDIR)/yaid"
@@ -276,6 +284,9 @@ doctor-local:
 	@printf "yai_version: %s\n" "$$(if [ -x "$(INSTALL_BINDIR)/yai" ]; then "$(INSTALL_BINDIR)/yai" --version; else printf "missing"; fi)"
 	@printf "run_dir: %s\n" "$$(if [ -d "$(YAI_RUN_DIR)" ]; then printf "%s" "$(YAI_RUN_DIR)"; else printf "missing"; fi)"
 	@printf "store_dir: %s\n" "$$(if [ -d "$(YAI_STORE_DIR)" ]; then printf "%s" "$(YAI_STORE_DIR)"; else printf "missing"; fi)"
+	@printf "record_store_path: %s\n" "$(YAI_RECORD_STORE_DIR)"
+	@printf "record_store_status: %s\n" "$$(if [ -d "$(YAI_RECORD_STORE_DIR)" ]; then printf "not_initialized"; else printf "missing"; fi)"
+	@printf "record_store_backend: lmdb\n"
 	@printf "log_dir: %s\n" "$$(if [ -d "$(YAI_LOG_DIR)" ]; then printf "%s" "$(YAI_LOG_DIR)"; else printf "missing"; fi)"
 	@printf "tmp_dir: %s\n" "$$(if [ -d "$(YAI_TMP_DIR)" ]; then printf "%s" "$(YAI_TMP_DIR)"; else printf "missing"; fi)"
 	@printf "cases_dir: %s\n" "$$(if [ -d "$(YAI_CASES_DIR)" ]; then printf "%s" "$(YAI_CASES_DIR)"; else printf "missing"; fi)"
@@ -347,7 +358,10 @@ smoke-spine26: $(SMOKE_PROJECTION_FRESHNESS)
 smoke-spine27: $(YAID) build-rust
 	@$(SMOKE_HOT_STATE_CLI)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27
+smoke-spine29: build-rust
+	@$(SMOKE_RECORD_STORE_CLI)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29
 
 check: check-layout check-docs build smoke
 

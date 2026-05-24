@@ -55,6 +55,20 @@ turning diagnostics into source truth.
 
 Target owner: Rust engine.
 
+SPINE.29 defines the LMDB record plane:
+
+```text
+LMDB is durable indexed record lookup
+hot state is not LMDB
+journal remains replay/audit
+schema yai.record.v1
+record:id / record:case / record:kind / record:subject
+```
+
+The runtime path is `YAI_HOME/store/lmdb`. The logical environment is
+`record_env`. SPINE.29 adds `yai store status`; it does not implement the LMDB
+write path.
+
 NEW.13 route:
 
 ```text

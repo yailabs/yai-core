@@ -42,6 +42,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Observability and evaluation | [14-operational-observability-evaluation.md](14-operational-observability-evaluation.md) |
 | Pack materialization | [15-pack-materialization.md](15-pack-materialization.md) |
 | Hot state plane | [16-hot-state-plane.md](16-hot-state-plane.md) |
+| LMDB record plane | [17-lmdb-record-plane.md](17-lmdb-record-plane.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
 | Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
@@ -76,6 +77,7 @@ ingest
 -> receipt
 -> journal
 -> record store
+-> LMDB durable indexed record lookup
 -> graph
 -> index/query
 -> memory

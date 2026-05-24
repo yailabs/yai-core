@@ -41,6 +41,7 @@ hot state
 | `daemon ipc` | `yai` can reach resident `yaid` over local IPC |
 | `daemon loop` | `yaid` can serve bounded core loops over local IPC |
 | `hot state` | active case/session/projection freshness is visible without treating journal as the live surface |
+| `record store` | LMDB lookup status is visible without faking write-path readiness |
 
 ## SPINE.23 Hot State Loop
 
@@ -236,6 +237,45 @@ case_context: active
 projection: fresh|stale
 freshness_policy: usable|refresh_recommended|refresh_required|blocked_for_model|unknown
 freshness_source: hot_state|projection_record
+```
+
+## SPINE.29 LMDB Record Plane Doctrine Loop
+
+```text
+yai store status exists
+record_store_path resolves under YAI_HOME/store/lmdb
+record_store_backend is lmdb
+record_store_status is missing or not_initialized, never fake ready
+yai doctor includes record store fields
+doctrine guard checks keyspace, schema and plane boundaries
+```
+
+`tests/smoke/record-store-cli/test_record_store_cli.sh` proves the SPINE.29
+status surface without adding an LMDB dependency or opening an environment.
+
+```text
+make check-lmdb-record-plane-doctrine
+make smoke-spine29
+target/debug/yai store status
+target/debug/yai doctor
+```
+
+Installed layout check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai store status
+PATH=/tmp/yai-install-test/bin:$PATH yai doctor
+```
+
+Expected key lines:
+
+```text
+record_store_backend: lmdb
+record_store_status: missing|not_initialized|unavailable
+record_store_path: /tmp/yai-home-test/store/lmdb
+schema: yai.record.v1
 ```
 
 ## SPINE.28 Hot State Freeze Loop
