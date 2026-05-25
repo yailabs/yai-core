@@ -65,6 +65,73 @@ YAI treats work as bounded cases. A case is the operational frame that gives
 subjects, providers, attempted operations, policy decisions, receipts, records,
 projections, and memory a shared context.
 
+Subjects and providers are things inside or around a case: files, services,
+repositories, operators, tools, models, processes, provider engines, or
+external systems. Providers participate at a boundary; they do not become
+authority over the case.
+
+An attempted operation is evaluated through control material: policy gates,
+decisions, obligations, and effect or observation boundaries. The result should
+leave a receipt and durable record.
+
+Projection and memory are derived from operational residue. They are controlled
+views over case state, not substitutes for the records and receipts that
+explain what happened.
+
+## Design Constraints
+
+YAI is built around a few constraints:
+
+- The model is not the system boundary; the case is the operational boundary.
+- Model and provider output is candidate material, not authority.
+- Effects need receipts, not only logs.
+- Records are durable operational material, not chat history.
+- Projections and memory are derived from residue, not free text alone.
+- Provider engines remain separate and may be local, remote, custom, or mocked.
+- Enforcement strength depends on the boundary YAI owns, interposes, or
+  observes.
+
+## What YAI Is Not
+
+YAI is not:
+
+- an inference engine
+- a model provider
+- a chatbot framework
+- a generic agent framework
+- a workflow builder
+- a cloud platform
+- a TUI or client application
+- a generic policy engine
+- a generic audit logger
+
+Inference engines and model servers remain external providers. Systems such as
+`llama.cpp`, Ollama, vLLM, MLX, custom servers, or remote APIs may be used
+around a YAI case, but this README does not claim tested support for each
+provider.
+
+## Operational Model
+
+When a model, provider, tool, operator, script, or system attempts work inside
+a case, YAI tries to turn that activity into inspectable operational material:
+
+```text
+input/proposal -> case binding -> subject/provider boundary -> control decision -> effect/observation -> receipt -> record -> projection/memory
+```
+
+- `input/proposal`: candidate material from a model, provider, operator, tool,
+  script, or system.
+- `case binding`: assigns the activity to a bounded operational context.
+- `subject/provider boundary`: identifies what entity or external boundary is
+  involved.
+- `control decision`: allows, blocks, constrains, or attaches obligations.
+- `effect/observation`: executes, imports, observes, calls, reads, writes, or
+  blocks at a boundary.
+- `receipt`: structured evidence of the result.
+- `record`: durable material for reconstruction and inspection.
+- `projection/memory`: controlled views and derived operational memory for
+  future work.
+
 ## Current Validation
 
 Repository-level entrypoints:
@@ -100,8 +167,10 @@ This repository currently contains:
 - `engine/` contains the Rust operational data engine being consolidated.
 - `include/` contains public and system ABI headers.
 - `tests/` contains smoke and validation tests.
-- Current command docs cover hot-state, record-store, control/carrier, process,
-  and observation surfaces.
+- Current command docs cover hot-state and record-store inspection.
+- LMDB record-store commands are manually validated through `yai store status`,
+  `yai store summary` and `yai store record get/list`.
+- Control/carrier substrate posture is inspectable through `yai carrier families`.
 - Some C data-plane paths remain transitional while Rust engine ownership is
   consolidated.
 

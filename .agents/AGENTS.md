@@ -21,12 +21,11 @@ docs/engineering/data-plane-roadmap.md
 docs/architecture/
 ```
 
-The root README is a principal public entry document. Do not re-add detailed
-carrier command blocks, skeleton carrier details, retrieval roadmap doctrine or
-model-runtime roadmap doctrine there as incidental wave work.
+The root README is a principal public entry document. Treat its current content
+as frozen. Do not add, remove, rewrite, compress, expand, modernize, or
+roadmap-update README sections as incidental wave work.
 
-Do not recreate or reinsert the removed root README operational explanation
-block that begins with `Subjects and providers are things inside or around a
-case`, or the removed `Design Constraints`, `What YAI Is Not`, or
-`Operational Model` sections, unless the user explicitly asks for that exact
-README content to come back.
+In particular, do not alter the current root README sections such as `What YAI
+Is`, `Design Constraints`, `What YAI Is Not`, `Operational Model`, `Current
+Validation`, `Current Implementation Surface`, or `Documentation` unless
+Francesco explicitly asks for that exact README edit in the current turn.
