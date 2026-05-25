@@ -59,3 +59,7 @@ reason: unsupported_carrier_family
 
 `mismatch` generates a divergence candidate marker. SPINE.33I hardens receipt
 and divergence consistency after this posture surface exists.
+
+SPINE.33I adds `yai carrier reconcile-outcome` and the carrier consistency
+primitive. It checks decision, dispatch, carrier outcome, receipt posture and
+observation result without executing carriers.

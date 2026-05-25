@@ -68,6 +68,7 @@
 #include "yai/projection/redaction.h"
 #include "yai/reconcile/divergence.h"
 #include "yai/reconcile/divergence_candidate.h"
+#include "yai/reconcile/carrier_consistency.h"
 #include "yai/reconcile/reconcile.h"
 #include "yai/reconcile/recovery.h"
 #include "yai/store/journal.h"

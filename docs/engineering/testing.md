@@ -954,6 +954,46 @@ PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family review --
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family unknown --outcome blocked
 ```
 
+## SPINE.33I Carrier Receipt / Divergence Hardening Loop
+
+```text
+clean_executed consistent
+clean_blocked consistent
+denied_but_attempted critical divergence
+executed_without_receipt error divergence
+blocked_but_effect_observed critical divergence
+receipt_claimed_executed_but_not_observed error divergence
+failed_with_partial_effect error divergence
+skeleton_executed_unexpectedly critical divergence
+no carrier execution occurs
+```
+
+`tests/smoke/carrier-receipt-divergence/test_carrier_receipt_divergence.c`
+proves the C ABI consistency primitive. The CLI smoke checks representative
+clean and divergent scenarios.
+
+```text
+make check-carrier-receipt-divergence
+make smoke-spine33i
+target/debug/yai carrier reconcile-outcome --scenario clean_blocked
+target/debug/yai carrier reconcile-outcome --scenario denied_but_attempted
+target/debug/yai carrier reconcile-outcome --scenario executed_without_receipt
+target/debug/yai carrier reconcile-outcome --scenario blocked_but_effect_observed
+target/debug/yai carrier reconcile-outcome --scenario skeleton_executed_unexpectedly
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario clean_blocked
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario denied_but_attempted
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario executed_without_receipt
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario blocked_but_effect_observed
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario skeleton_executed_unexpectedly
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

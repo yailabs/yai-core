@@ -321,6 +321,15 @@ SPINE.3R data-plane stratification:
 | projection | live, versioned, delta-aware view materialization |
 | reconcile | mismatch detection and recovery posture |
 
+SPINE.33I carrier receipt / divergence posture:
+
+```text
+decision -> dispatch -> carrier outcome -> receipt posture -> observation -> divergence candidate
+```
+
+Inconsistency is reported as divergence posture. There is no silent repair and
+no new carrier execution in SPINE.33I.
+
 SPINE.33L provider runtime posture:
 
 ```text

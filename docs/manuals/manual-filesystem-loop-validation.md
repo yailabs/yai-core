@@ -1074,6 +1074,19 @@ receipt_posture: simulated
 divergence_candidate:
 ```
 
+## Carrier Receipt / Divergence Hardening
+
+This is consistency/reconcile posture. It does not execute carriers. It checks
+whether decision, dispatch, outcome, receipt and observation agree.
+
+```bash
+yai carrier reconcile-outcome --scenario clean_blocked
+yai carrier reconcile-outcome --scenario denied_but_attempted
+yai carrier reconcile-outcome --scenario executed_without_receipt
+yai carrier reconcile-outcome --scenario blocked_but_effect_observed
+yai carrier reconcile-outcome --scenario skeleton_executed_unexpectedly
+```
+
 ## Provider Runtime / LAN Target Surface
 
 This replaces manual provider launch in the future workflow. SPINE.33L is

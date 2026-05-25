@@ -34,7 +34,7 @@ mkdir -p "$YAI_HOME/run"
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.33L Provider Runtime / LAN Target Surface v0"
+require_line "$info" "status: SPINE.33I Carrier Receipt / Divergence Hardening"
 
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_path: $HOT"

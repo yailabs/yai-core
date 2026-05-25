@@ -79,6 +79,10 @@ skeleton carriers must never execute. The harness proves that outcome states
 are visible and receiptable across the carrier matrix before receipt and
 divergence hardening.
 
+SPINE.33I layers `yai carrier reconcile-outcome` on top of this harness. The
+new command checks whether decision, dispatch, carrier outcome, receipt posture
+and observation result are coherent.
+
 ## Validation
 
 ```bash

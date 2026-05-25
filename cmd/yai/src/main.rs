@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33L Provider Runtime / LAN Target Surface v0");
+    println!("status: SPINE.33I Carrier Receipt / Divergence Hardening");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -63,7 +63,7 @@ fn print_info() {
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
     println!(
-        "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; outcome harness; host probe v0"
+        "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; outcome and consistency harnesses; host probe v0"
     );
     println!("provider-runtime: planned surface active");
     println!("device-registry: active");
@@ -221,6 +221,8 @@ fn print_usage() {
     println!("       yai carrier coverage [--family <carrier_family>] [--mode controlled|observed|imported]");
     println!("       yai carrier inspect <carrier_family>");
     println!("       yai carrier outcome-test --family <carrier_family> [--mode controlled|observed|imported] --outcome <outcome>");
+    println!("       yai carrier reconcile-outcome --scenario <scenario>");
+    println!("       yai carrier reconcile-outcome --decision <decision> --dispatch <dispatch> --carrier-outcome <outcome> --receipt-present yes|no --carrier-attempted yes|no --execution-performed yes|no --observation <result>");
     println!("       yai device add --id <id> --name <name> --host <host> --port <port> --target local|lan|external");
     println!("       yai device list");
     println!("       yai device inspect <device_id>");
@@ -762,6 +764,330 @@ fn carrier_outcome_test(args: &[String]) -> Result<(), String> {
     );
     println!("divergence_candidate: {divergence_candidate}");
     println!("reason: {}", outcome_test_reason(family, effective_outcome));
+    Ok(())
+}
+
+const CARRIER_RECONCILE_SCENARIOS: &[&str] = &[
+    "denied_but_attempted",
+    "executed_without_receipt",
+    "blocked_but_effect_observed",
+    "receipt_claimed_executed_but_not_observed",
+    "failed_with_partial_effect",
+    "skeleton_executed_unexpectedly",
+    "clean_executed",
+    "clean_blocked",
+    "clean_observed",
+];
+
+const CARRIER_RECONCILE_DECISIONS: &[&str] = &[
+    "allow",
+    "deny",
+    "defer",
+    "observe_only",
+    "require_review",
+    "require_evidence",
+    "require_redaction",
+    "allow_with_constraints",
+    "quarantine",
+    "unknown",
+];
+
+const CARRIER_RECONCILE_DISPATCH: &[&str] = &[
+    "pending",
+    "routable",
+    "dispatched",
+    "blocked",
+    "deferred",
+    "failed",
+    "not_supported",
+    "unknown",
+];
+
+const CARRIER_RECONCILE_OBSERVATIONS: &[&str] = &[
+    "matched",
+    "mismatch",
+    "not_observed",
+    "not_found",
+    "permission_denied",
+    "unknown",
+];
+
+#[derive(Clone)]
+struct CarrierConsistencyInput {
+    scenario: String,
+    decision: String,
+    dispatch: String,
+    carrier_outcome: String,
+    receipt_present: bool,
+    carrier_attempted: bool,
+    execution_performed: bool,
+    observation: String,
+    receipt_required: bool,
+    expected_effect: bool,
+    observed_effect: bool,
+    skeleton_carrier: bool,
+}
+
+fn bool_arg(value: &str) -> Result<bool, String> {
+    match value {
+        "yes" | "true" => Ok(true),
+        "no" | "false" => Ok(false),
+        _ => Err("expected yes|no".to_string()),
+    }
+}
+
+fn bool_word(value: bool) -> &'static str {
+    if value {
+        "yes"
+    } else {
+        "no"
+    }
+}
+
+fn decision_is_deny_like(decision: &str) -> bool {
+    matches!(
+        decision,
+        "deny" | "quarantine" | "require_review" | "require_evidence" | "require_redaction"
+    )
+}
+
+fn default_expected_effect(decision: &str, carrier_outcome: &str) -> bool {
+    !decision_is_deny_like(decision)
+        && matches!(carrier_outcome, "executed" | "failed" | "mismatch")
+}
+
+fn default_observed_effect(
+    carrier_outcome: &str,
+    execution_performed: bool,
+    observation: &str,
+) -> bool {
+    match (carrier_outcome, observation) {
+        ("blocked", "mismatch") | ("failed", "mismatch") => true,
+        ("executed", "mismatch") | ("executed", "not_found") | ("executed", "not_observed") => {
+            false
+        }
+        _ => execution_performed && observation == "matched",
+    }
+}
+
+fn carrier_reconcile_scenario_input(scenario: &str) -> Result<CarrierConsistencyInput, String> {
+    if !CARRIER_RECONCILE_SCENARIOS.contains(&scenario) {
+        return Err("unsupported_scenario".to_string());
+    }
+
+    let mut input = CarrierConsistencyInput {
+        scenario: scenario.to_string(),
+        decision: "allow".to_string(),
+        dispatch: "dispatched".to_string(),
+        carrier_outcome: "executed".to_string(),
+        receipt_present: true,
+        carrier_attempted: true,
+        execution_performed: true,
+        observation: "matched".to_string(),
+        receipt_required: true,
+        expected_effect: true,
+        observed_effect: true,
+        skeleton_carrier: false,
+    };
+
+    match scenario {
+        "clean_executed" => {}
+        "clean_blocked" => {
+            input.decision = "deny".to_string();
+            input.dispatch = "blocked".to_string();
+            input.carrier_outcome = "blocked".to_string();
+            input.carrier_attempted = false;
+            input.execution_performed = false;
+            input.observation = "not_observed".to_string();
+            input.expected_effect = false;
+            input.observed_effect = false;
+        }
+        "clean_observed" => {
+            input.decision = "observe_only".to_string();
+            input.carrier_outcome = "observed".to_string();
+            input.carrier_attempted = false;
+            input.execution_performed = false;
+            input.expected_effect = false;
+            input.observed_effect = false;
+        }
+        "denied_but_attempted" => {
+            input.decision = "deny".to_string();
+            input.dispatch = "blocked".to_string();
+        }
+        "executed_without_receipt" => {
+            input.receipt_present = false;
+        }
+        "blocked_but_effect_observed" => {
+            input.decision = "deny".to_string();
+            input.dispatch = "blocked".to_string();
+            input.carrier_outcome = "blocked".to_string();
+            input.carrier_attempted = false;
+            input.execution_performed = false;
+            input.observation = "mismatch".to_string();
+            input.expected_effect = false;
+            input.observed_effect = true;
+        }
+        "receipt_claimed_executed_but_not_observed" => {
+            input.observation = "mismatch".to_string();
+            input.observed_effect = false;
+        }
+        "failed_with_partial_effect" => {
+            input.carrier_outcome = "failed".to_string();
+            input.observation = "mismatch".to_string();
+            input.observed_effect = true;
+        }
+        "skeleton_executed_unexpectedly" => {
+            input.skeleton_carrier = true;
+        }
+        _ => {}
+    }
+    Ok(input)
+}
+
+fn carrier_reconcile_explicit_input(args: &[String]) -> Result<CarrierConsistencyInput, String> {
+    let decision =
+        optional_arg(args, "--decision").ok_or_else(|| "--decision is required".to_string())?;
+    let dispatch =
+        optional_arg(args, "--dispatch").ok_or_else(|| "--dispatch is required".to_string())?;
+    let carrier_outcome = optional_arg(args, "--carrier-outcome")
+        .ok_or_else(|| "--carrier-outcome is required".to_string())?;
+    let receipt_present = optional_arg(args, "--receipt-present")
+        .ok_or_else(|| "--receipt-present is required".to_string())?;
+    let carrier_attempted = optional_arg(args, "--carrier-attempted")
+        .ok_or_else(|| "--carrier-attempted is required".to_string())?;
+    let execution_performed = optional_arg(args, "--execution-performed")
+        .ok_or_else(|| "--execution-performed is required".to_string())?;
+    let observation = optional_arg(args, "--observation")
+        .ok_or_else(|| "--observation is required".to_string())?;
+
+    if !CARRIER_RECONCILE_DECISIONS.contains(&decision.as_str()) {
+        return Err("unsupported_decision".to_string());
+    }
+    if !CARRIER_RECONCILE_DISPATCH.contains(&dispatch.as_str()) {
+        return Err("unsupported_dispatch".to_string());
+    }
+    if !CARRIER_OUTCOME_TEST_OUTCOMES.contains(&carrier_outcome.as_str()) {
+        return Err("unsupported_carrier_outcome".to_string());
+    }
+    if !CARRIER_RECONCILE_OBSERVATIONS.contains(&observation.as_str()) {
+        return Err("unsupported_observation".to_string());
+    }
+
+    let receipt_present = bool_arg(&receipt_present)?;
+    let carrier_attempted = bool_arg(&carrier_attempted)?;
+    let execution_performed = bool_arg(&execution_performed)?;
+    let receipt_required = optional_arg(args, "--receipt-required")
+        .map(|value| bool_arg(&value))
+        .transpose()?
+        .unwrap_or(true);
+    let expected_effect = optional_arg(args, "--expected-effect")
+        .map(|value| bool_arg(&value))
+        .transpose()?
+        .unwrap_or_else(|| default_expected_effect(&decision, &carrier_outcome));
+    let observed_effect = optional_arg(args, "--observed-effect")
+        .map(|value| bool_arg(&value))
+        .transpose()?
+        .unwrap_or_else(|| {
+            default_observed_effect(&carrier_outcome, execution_performed, &observation)
+        });
+    let skeleton_carrier = optional_arg(args, "--skeleton-carrier")
+        .map(|value| bool_arg(&value))
+        .transpose()?
+        .unwrap_or(false);
+
+    Ok(CarrierConsistencyInput {
+        scenario: "explicit".to_string(),
+        decision,
+        dispatch,
+        carrier_outcome,
+        receipt_present,
+        carrier_attempted,
+        execution_performed,
+        observation,
+        receipt_required,
+        expected_effect,
+        observed_effect,
+        skeleton_carrier,
+    })
+}
+
+fn carrier_consistency_divergence(input: &CarrierConsistencyInput) -> (&'static str, &'static str) {
+    if input.skeleton_carrier && (input.execution_performed || input.carrier_attempted) {
+        return ("skeleton_executed_unexpectedly", "critical");
+    }
+    if decision_is_deny_like(&input.decision) && input.carrier_attempted {
+        return ("denied_but_attempted", "critical");
+    }
+    if input.carrier_outcome == "executed" && input.receipt_required && !input.receipt_present {
+        return ("executed_without_receipt", "error");
+    }
+    if input.carrier_outcome == "blocked" && input.observed_effect {
+        return ("blocked_but_effect_observed", "critical");
+    }
+    if input.carrier_outcome == "executed"
+        && !input.observed_effect
+        && matches!(
+            input.observation.as_str(),
+            "mismatch" | "not_found" | "not_observed"
+        )
+    {
+        return ("receipt_claimed_executed_but_not_observed", "error");
+    }
+    if input.carrier_outcome == "failed" && input.observed_effect {
+        return ("failed_with_partial_effect", "error");
+    }
+    if input.carrier_outcome == "mismatch" {
+        return ("generated", "warning");
+    }
+    if input.receipt_required && !input.receipt_present && input.carrier_outcome != "not_attempted"
+    {
+        return ("missing_receipt", "error");
+    }
+    if input.decision == "unknown" && input.receipt_present {
+        return ("receipt_without_decision", "warning");
+    }
+    ("none", "info")
+}
+
+fn receipt_posture(input: &CarrierConsistencyInput) -> &'static str {
+    if !input.receipt_required {
+        "none"
+    } else if input.receipt_present {
+        "present"
+    } else {
+        "missing"
+    }
+}
+
+fn carrier_reconcile_outcome(args: &[String]) -> Result<(), String> {
+    let input = if let Some(scenario) = optional_arg(args, "--scenario") {
+        carrier_reconcile_scenario_input(&scenario)?
+    } else {
+        carrier_reconcile_explicit_input(args)?
+    };
+    let (divergence_candidate, severity) = carrier_consistency_divergence(&input);
+    let result = if divergence_candidate == "none" {
+        "consistent"
+    } else {
+        "inconsistent"
+    };
+
+    println!("scenario: {}", input.scenario);
+    println!("decision: {}", input.decision);
+    println!("dispatch: {}", input.dispatch);
+    println!("carrier_outcome: {}", input.carrier_outcome);
+    println!("receipt_required: {}", bool_word(input.receipt_required));
+    println!("receipt_present: {}", bool_word(input.receipt_present));
+    println!("receipt_posture: {}", receipt_posture(&input));
+    println!("observation: {}", input.observation);
+    println!("carrier_attempted: {}", input.carrier_attempted);
+    println!("execution_performed: {}", input.execution_performed);
+    println!("expected_effect: {}", bool_word(input.expected_effect));
+    println!("observed_effect: {}", bool_word(input.observed_effect));
+    println!("divergence_candidate: {divergence_candidate}");
+    println!("severity: {severity}");
+    println!("result: {result}");
+    println!("execution_side_effect: none");
     Ok(())
 }
 
@@ -4828,6 +5154,12 @@ fn main() {
         }
         Some("carrier") if args.get(1).map(String::as_str) == Some("outcome-test") => {
             if let Err(error) = carrier_outcome_test(&args[2..]) {
+                eprintln!("error: {error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("reconcile-outcome") => {
+            if let Err(error) = carrier_reconcile_outcome(&args[2..]) {
                 eprintln!("error: {error}");
                 std::process::exit(2);
             }

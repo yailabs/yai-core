@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33l smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -88,6 +88,7 @@ C_SOURCES := \
 	system/memory/memory_candidate.c \
 	system/reconcile/divergence.c \
 	system/reconcile/divergence_candidate.c \
+	system/reconcile/carrier_consistency.c \
 	system/reconcile/reconcile.c \
 	system/reconcile/recovery.c \
 	system/index/query.c \
@@ -132,6 +133,7 @@ SMOKE_HOST_OBSERVATION_PROBE := $(BUILD_DIR)/test_host_observation_probe
 SMOKE_CARRIER_COVERAGE_MATRIX := $(BUILD_DIR)/test_carrier_coverage_matrix
 SMOKE_NON_PROCESS_CARRIER_SKELETONS := $(BUILD_DIR)/test_non_process_carrier_skeletons
 SMOKE_CARRIER_OUTCOME_HARNESS := $(BUILD_DIR)/test_carrier_outcome_harness
+SMOKE_CARRIER_RECEIPT_DIVERGENCE := $(BUILD_DIR)/test_carrier_receipt_divergence
 SMOKE_HOT_STATE_SNAPSHOT := tests/smoke/hot-state-snapshot/test_hot_state_snapshot.sh
 SMOKE_COMMAND_SURFACE := tests/smoke/command-surface/test_command_surface.sh
 SMOKE_HOT_STATE_SESSION := $(BUILD_DIR)/test_hot_state_session
@@ -148,9 +150,9 @@ SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_prov
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.33L Provider Runtime / LAN Target Surface v0\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33L Provider Runtime / LAN Target Surface v0\n"
-	@printf "next: SPINE.33I Carrier Receipt / Divergence Hardening\n"
+	@printf "status: SPINE.33I Carrier Receipt / Divergence Hardening\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33I Carrier Receipt / Divergence Hardening plus SPINE.33J/33K/33L\n"
+	@printf "next: SPINE.34 LMDB Record Plane Freeze\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -193,6 +195,7 @@ check-docs:
 	@./tools/checks/check-carrier-coverage-matrix.sh
 	@./tools/checks/check-non-process-carrier-skeletons.sh
 	@./tools/checks/check-carrier-outcome-harness.sh
+	@./tools/checks/check-carrier-receipt-divergence.sh
 	@./tools/checks/check-retrieval-runner-roadmap.sh
 	@./tools/checks/check-context-compiler-retrieval-mtp-roadmap.sh
 	@./tools/checks/check-provider-runtime-lan-target-surface.sh
@@ -256,6 +259,9 @@ check-non-process-carrier-skeletons:
 
 check-carrier-outcome-harness:
 	@./tools/checks/check-carrier-outcome-harness.sh
+
+check-carrier-receipt-divergence:
+	@./tools/checks/check-carrier-receipt-divergence.sh
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p "$(dir $@)"
@@ -353,6 +359,10 @@ $(SMOKE_CARRIER_OUTCOME_HARNESS): tests/smoke/carrier-outcome-harness/test_carri
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/carrier-outcome-harness/test_carrier_outcome_harness.c $(C_LIBRARY) -o "$@"
 
+$(SMOKE_CARRIER_RECEIPT_DIVERGENCE): tests/smoke/carrier-receipt-divergence/test_carrier_receipt_divergence.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/smoke/carrier-receipt-divergence/test_carrier_receipt_divergence.c $(C_LIBRARY) -o "$@"
+
 $(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/hot-state-session/test_hot_state_session.c $(C_LIBRARY) -o "$@"
@@ -361,7 +371,7 @@ $(SMOKE_PROJECTION_FRESHNESS): tests/smoke/projection-freshness/test_projection_
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY) -o "$@"
 
-build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOST_OBSERVATION_PROBE) $(SMOKE_CARRIER_COVERAGE_MATRIX) $(SMOKE_NON_PROCESS_CARRIER_SKELETONS) $(SMOKE_CARRIER_OUTCOME_HARNESS) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
+build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOST_OBSERVATION_PROBE) $(SMOKE_CARRIER_COVERAGE_MATRIX) $(SMOKE_NON_PROCESS_CARRIER_SKELETONS) $(SMOKE_CARRIER_OUTCOME_HARNESS) $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
 
 build-rust-ffi:
 	CARGO_TARGET_DIR=$(RUST_TARGET_DIR) cargo build --manifest-path engine/Cargo.toml -p yai-engine
@@ -607,10 +617,32 @@ smoke-spine33h: $(SMOKE_CARRIER_OUTCOME_HARNESS) build-rust
 	@printf "outcome:unknown not_attempted ok\n"
 	@printf "no_execution:skeletons confirmed\n"
 
+smoke-spine33i: $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) build-rust
+	@$(SMOKE_CARRIER_RECEIPT_DIVERGENCE)
+	@$(YAI_BIN) carrier reconcile-outcome --scenario clean_executed | grep -F -- "result: consistent" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario clean_blocked | grep -F -- "divergence_candidate: none" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario denied_but_attempted | grep -F -- "divergence_candidate: denied_but_attempted" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario denied_but_attempted | grep -F -- "severity: critical" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario executed_without_receipt | grep -F -- "divergence_candidate: executed_without_receipt" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario executed_without_receipt | grep -F -- "severity: error" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario blocked_but_effect_observed | grep -F -- "observed_effect: yes" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario blocked_but_effect_observed | grep -F -- "severity: critical" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario receipt_claimed_executed_but_not_observed | grep -F -- "divergence_candidate: receipt_claimed_executed_but_not_observed" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario failed_with_partial_effect | grep -F -- "divergence_candidate: failed_with_partial_effect" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario skeleton_executed_unexpectedly | grep -F -- "divergence_candidate: skeleton_executed_unexpectedly" >/dev/null
+	@$(YAI_BIN) carrier reconcile-outcome --scenario skeleton_executed_unexpectedly | grep -F -- "execution_side_effect: none" >/dev/null
+	@printf "reconcile:clean_executed consistent\n"
+	@printf "reconcile:clean_blocked consistent\n"
+	@printf "reconcile:denied_but_attempted critical\n"
+	@printf "reconcile:executed_without_receipt error\n"
+	@printf "reconcile:blocked_but_effect_observed critical\n"
+	@printf "reconcile:failed_with_partial_effect error\n"
+	@printf "reconcile:skeleton_executed_unexpectedly critical\n"
+
 smoke-spine33l: build-rust
 	@$(SMOKE_PROVIDER_RUNTIME_SURFACE)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33l
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l
 
 check: check-layout check-docs build smoke
 

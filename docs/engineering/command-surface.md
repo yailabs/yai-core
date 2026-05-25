@@ -104,6 +104,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | carrier coverage matrix | family/mode/outcome coverage visibility | `yai carrier coverage [--family <family>] [--mode <mode>]` | `target/debug/yai carrier coverage --family process` | `carrier-coverage-matrix.md`, `testing.md` |
 | non-process carrier skeletons | inspectable carrier.v1 no-execution skeletons | `yai carrier inspect <family>` | `target/debug/yai carrier inspect database` | `non-process-carrier-skeletons.md`, `testing.md` |
 | carrier outcome harness | dry-run outcome posture over the carrier matrix | `yai carrier outcome-test --family <family> --outcome <outcome>` | `target/debug/yai carrier outcome-test --family database --outcome blocked` | `carrier-outcome-harness.md`, `testing.md` |
+| carrier receipt divergence | consistency posture across decision/dispatch/outcome/receipt/observation | `yai carrier reconcile-outcome --scenario <scenario>` | `target/debug/yai carrier reconcile-outcome --scenario denied_but_attempted` | `carrier-receipt-divergence.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -577,6 +578,39 @@ skeleton carriers. Invalid outcomes return:
 ```text
 error: unsupported_outcome
 ```
+
+SPINE.33I adds carrier receipt / divergence reconciliation:
+
+```text
+yai carrier reconcile-outcome --scenario denied_but_attempted
+scenario: denied_but_attempted
+decision: deny
+dispatch: blocked
+carrier_outcome: executed
+receipt_present: yes
+observation: matched
+carrier_attempted: true
+execution_performed: true
+divergence_candidate: denied_but_attempted
+severity: critical
+result: inconsistent
+
+yai carrier reconcile-outcome --scenario clean_blocked
+scenario: clean_blocked
+decision: deny
+dispatch: blocked
+carrier_outcome: blocked
+receipt_present: yes
+carrier_attempted: false
+execution_performed: false
+divergence_candidate: none
+severity: info
+result: consistent
+```
+
+Use `yai carrier reconcile-outcome` to check whether outcome posture is
+coherent against decision, dispatch, receipt posture and observation result. It
+does not execute carriers.
 
 SPINE.33L adds provider runtime / LAN target surface v0:
 

@@ -31,6 +31,30 @@ const char *yai_divergence_kind_string(yai_divergence_kind_t kind) {
         return "memory_without_basis";
     case YAI_DIVERGENCE_GRAPH_CHAIN_MISSING:
         return "graph_chain_missing";
+    case YAI_DIVERGENCE_DENIED_BUT_ATTEMPTED:
+        return "denied_but_attempted";
+    case YAI_DIVERGENCE_BLOCKED_BUT_EFFECT_OBSERVED:
+        return "blocked_but_effect_observed";
+    case YAI_DIVERGENCE_EXECUTED_WITHOUT_RECEIPT:
+        return "executed_without_receipt";
+    case YAI_DIVERGENCE_RECEIPT_CLAIMED_EXECUTED_BUT_NOT_OBSERVED:
+        return "receipt_claimed_executed_but_not_observed";
+    case YAI_DIVERGENCE_FAILED_WITH_PARTIAL_EFFECT:
+        return "failed_with_partial_effect";
+    case YAI_DIVERGENCE_MISSING_RECEIPT:
+        return "missing_receipt";
+    case YAI_DIVERGENCE_DECISION_WITHOUT_RECEIPT:
+        return "decision_without_receipt";
+    case YAI_DIVERGENCE_CARRIER_TIMEOUT:
+        return "carrier_timeout";
+    case YAI_DIVERGENCE_UNSAFE_TARGET_ATTEMPTED:
+        return "unsafe_target_attempted";
+    case YAI_DIVERGENCE_SKELETON_EXECUTED_UNEXPECTEDLY:
+        return "skeleton_executed_unexpectedly";
+    case YAI_DIVERGENCE_NONE:
+        return "none";
+    case YAI_DIVERGENCE_UNKNOWN:
+        return "unknown";
     default:
         return "unknown";
     }
@@ -55,6 +79,30 @@ yai_status_t yai_divergence_kind_from_string(const char *value,
         *kind = YAI_DIVERGENCE_MEMORY_WITHOUT_BASIS;
     } else if (strcmp(value, "graph_chain_missing") == 0) {
         *kind = YAI_DIVERGENCE_GRAPH_CHAIN_MISSING;
+    } else if (strcmp(value, "denied_but_attempted") == 0) {
+        *kind = YAI_DIVERGENCE_DENIED_BUT_ATTEMPTED;
+    } else if (strcmp(value, "blocked_but_effect_observed") == 0) {
+        *kind = YAI_DIVERGENCE_BLOCKED_BUT_EFFECT_OBSERVED;
+    } else if (strcmp(value, "executed_without_receipt") == 0) {
+        *kind = YAI_DIVERGENCE_EXECUTED_WITHOUT_RECEIPT;
+    } else if (strcmp(value, "receipt_claimed_executed_but_not_observed") == 0) {
+        *kind = YAI_DIVERGENCE_RECEIPT_CLAIMED_EXECUTED_BUT_NOT_OBSERVED;
+    } else if (strcmp(value, "failed_with_partial_effect") == 0) {
+        *kind = YAI_DIVERGENCE_FAILED_WITH_PARTIAL_EFFECT;
+    } else if (strcmp(value, "missing_receipt") == 0) {
+        *kind = YAI_DIVERGENCE_MISSING_RECEIPT;
+    } else if (strcmp(value, "decision_without_receipt") == 0) {
+        *kind = YAI_DIVERGENCE_DECISION_WITHOUT_RECEIPT;
+    } else if (strcmp(value, "carrier_timeout") == 0) {
+        *kind = YAI_DIVERGENCE_CARRIER_TIMEOUT;
+    } else if (strcmp(value, "unsafe_target_attempted") == 0) {
+        *kind = YAI_DIVERGENCE_UNSAFE_TARGET_ATTEMPTED;
+    } else if (strcmp(value, "skeleton_executed_unexpectedly") == 0) {
+        *kind = YAI_DIVERGENCE_SKELETON_EXECUTED_UNEXPECTEDLY;
+    } else if (strcmp(value, "none") == 0) {
+        *kind = YAI_DIVERGENCE_NONE;
+    } else if (strcmp(value, "unknown") == 0) {
+        *kind = YAI_DIVERGENCE_UNKNOWN;
     } else {
         return YAI_ERR_INVALID;
     }
@@ -71,6 +119,8 @@ const char *yai_divergence_severity_string(yai_divergence_severity_t severity) {
         return "error";
     case YAI_DIVERGENCE_CRITICAL:
         return "critical";
+    case YAI_DIVERGENCE_SEVERITY_UNKNOWN:
+        return "unknown";
     default:
         return "unknown";
     }
@@ -89,6 +139,8 @@ yai_status_t yai_divergence_severity_from_string(const char *value,
         *severity = YAI_DIVERGENCE_ERROR;
     } else if (strcmp(value, "critical") == 0) {
         *severity = YAI_DIVERGENCE_CRITICAL;
+    } else if (strcmp(value, "unknown") == 0) {
+        *severity = YAI_DIVERGENCE_SEVERITY_UNKNOWN;
     } else {
         return YAI_ERR_INVALID;
     }
