@@ -117,6 +117,32 @@ If the journal was already mirrored by the daemon loop, real replay may report
 `records_written: 0` and `records_duplicate: N`. That is the expected
 idempotent replay posture.
 
+## Replay Idempotency + Schema Version Handling
+
+SPINE.37 adds replay status, cursor and schema compatibility output.
+
+```bash
+yai journal replay --path "$JOURNAL" --dry-run
+yai journal replay --path "$JOURNAL"
+yai journal replay-status --path "$JOURNAL"
+yai journal replay --path "$JOURNAL"
+```
+
+Expected posture:
+
+```text
+journal_identity:
+record_schema: yai.record.v1
+journal_schema: yai.store.record.v0
+compatibility: compatible
+cursor_line:
+replay_status: completed
+idempotent: yes
+```
+
+Second replay must not duplicate records. Schema mismatch must not write
+records.
+
 ## Optional LAN Provider
 
 Use the provider values from `.yai/env` or the NVIDIA LAN benchmark lab. The

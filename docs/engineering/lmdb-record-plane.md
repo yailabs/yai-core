@@ -298,6 +298,7 @@ record:subject:<subject_ref>:<record_id> -> record_id
 record:receipt:<receipt_ref>:<record_id> -> record_id
 meta:schema -> yai.record.v1
 meta:rebuild -> not_started
+meta:replay:<journal_identity> -> replay metadata
 ```
 
 If LMDB import fails, the command fails explicitly and names that the journal
@@ -315,6 +316,9 @@ make smoke-spine31
 make smoke-spine32
 make smoke-spine33
 make smoke-spine34
+make smoke-spine35
+make smoke-spine36
+make smoke-spine37
 ```
 
 They are integrated into:

@@ -45,6 +45,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | LMDB record plane | [17-lmdb-record-plane.md](17-lmdb-record-plane.md) |
 | Journal replay boundary | [33-journal-replay-boundary.md](33-journal-replay-boundary.md) |
 | Journal replay to LMDB | [34-journal-replay-to-lmdb.md](34-journal-replay-to-lmdb.md) |
+| Replay idempotency/schema | [35-replay-idempotency-schema-version.md](35-replay-idempotency-schema-version.md) |
 | Data Context Runtime / RuntimeGraph | [31-data-context-runtime-runtimegraph.md](31-data-context-runtime-runtimegraph.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
@@ -80,6 +81,7 @@ ingest
 -> receipt
 -> journal
 -> journal replay diagnostics
+-> replay cursor / schema compatibility
 -> record store
 -> LMDB durable indexed record lookup
 -> graph persistence / Ladybug relations

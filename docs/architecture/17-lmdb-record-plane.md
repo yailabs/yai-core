@@ -335,7 +335,7 @@ Next:
 ```text
 SPINE.35 Journal Replay Doctrine + Parser Hardening done
 SPINE.36 Journal Replay to LMDB done
-SPINE.37 Replay Idempotency + Schema Version Handling
+SPINE.37 Replay Idempotency + Schema Version Handling done
 ```
 
 SPINE.35 adds `yai journal inspect --path <journal.jsonl> [--show-errors]`.
@@ -347,3 +347,7 @@ SPINE.36 adds `yai journal replay --path <journal.jsonl> [--dry-run]`. Replay
 uses the existing LMDB writer and frozen indexes. Existing records are counted
 as `records_duplicate`, so basic idempotent replay is visible without changing
 store query semantics.
+
+SPINE.37 adds replay metadata under `meta:replay:<journal_identity>`, reports
+`record_schema`, `journal_schema`, `compatibility`, `cursor_line` and
+`replay_status`, and exposes `yai journal replay-status --path <journal.jsonl>`.

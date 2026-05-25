@@ -61,6 +61,7 @@ pack-format.md
 pack-roadmap.md
 process-carrier-signal-control.md
 provider-runtime-lan-target-surface.md
+replay-idempotency-schema-version.md
 source-surface.md
 testing.md
 wave-template.md

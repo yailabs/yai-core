@@ -18,6 +18,7 @@ make smoke-spine27
 | Hot state | Missing snapshot reports `missing_snapshot`; daemon loops produce active status. |
 | Carrier planning | Carrier route reports `execution_performed: false` for planning-only paths. |
 | Journal replay to LMDB | `yai journal replay --dry-run` writes nothing, real replay creates or confirms LMDB records, second replay is idempotent. |
+| Replay idempotency/schema | `yai journal replay-status` reports `cursor_line`, `journal_identity`, `record_schema` and `compatibility`; schema mismatch writes no records. |
 | Policy fixtures | JSON fixtures validate and materialize as `subject:policy-pack` residue. |
 | Provider boundary | Provider attachment records base URL/model, not provider authority. |
 | Model output | Model output is `claim_or_proposal` and not authoritative case state. |
@@ -43,6 +44,7 @@ These checks validate journal replay to LMDB for the filesystem-loop lab.
 yai journal inspect --path "$JOURNAL"
 yai journal replay --path "$JOURNAL" --dry-run
 yai journal replay --path "$JOURNAL"
+yai journal replay-status --path "$JOURNAL"
 yai store summary
 yai store record list --case case:new12-filesystem --limit 10
 ```
@@ -55,4 +57,30 @@ replay_ready: yes
 records_written:
 records_duplicate:
 record_store_status: ready
+journal_identity:
+record_schema: yai.record.v1
+compatibility: compatible
+cursor_line:
+replay_status: completed
+```
+
+## Replay Schema Checks
+
+These checks validate SPINE.37 replay idempotency and schema handling.
+
+```bash
+yai journal replay --path "$JOURNAL" --dry-run
+yai journal replay --path "$JOURNAL"
+yai journal replay-status --path "$JOURNAL"
+yai journal replay --path "$JOURNAL"
+```
+
+Expected signals:
+
+```text
+second replay records_written: 0
+second replay records_duplicate: N
+schema mismatch records_written: 0
+schema mismatch compatibility: schema_mismatch
+no false completed status for invalid input
 ```

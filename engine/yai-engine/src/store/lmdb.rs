@@ -24,7 +24,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 const MAP_SIZE: usize = 16 * 1024 * 1024;
-const SCHEMA: &str = "yai.record.v1";
+pub const RECORD_SCHEMA: &str = "yai.record.v1";
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum RecordStoreStatusKind {
@@ -92,6 +92,27 @@ pub struct JournalImportReport {
     pub records_written: usize,
     pub records_duplicate: usize,
     pub records_skipped: usize,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct ReplayMetadata {
+    pub replay_id: String,
+    pub journal_identity: String,
+    pub journal_path: String,
+    pub record_schema: String,
+    pub journal_schema: String,
+    pub started_at: String,
+    pub completed_at: String,
+    pub lines_total: usize,
+    pub lines_replayed: usize,
+    pub records_written: usize,
+    pub records_duplicate: usize,
+    pub records_skipped: usize,
+    pub invalid_entries: usize,
+    pub unsupported_entries: usize,
+    pub cursor_line: usize,
+    pub status: String,
+    pub compatibility: String,
 }
 
 impl LmdbRecordStore {
@@ -197,6 +218,42 @@ impl LmdbRecordStore {
         Ok(report)
     }
 
+    pub fn put_replay_metadata(&self, metadata: &ReplayMetadata) -> Result<(), String> {
+        let key = replay_metadata_key(&metadata.journal_identity);
+        let value = metadata.to_json();
+        let mut txn = self
+            .env
+            .begin_rw_txn()
+            .map_err(|error| format!("failed to start LMDB replay metadata write: {error}"))?;
+        txn.put(self.schema_meta, &key, &value, WriteFlags::empty())
+            .map_err(|error| {
+                format!(
+                    "failed to write replay metadata for {}: {error}",
+                    metadata.journal_identity
+                )
+            })?;
+        txn.commit()
+            .map_err(|error| format!("failed to commit LMDB replay metadata: {error}"))
+    }
+
+    pub fn replay_metadata(
+        &self,
+        journal_identity: &str,
+    ) -> Result<Option<ReplayMetadata>, String> {
+        let key = replay_metadata_key(journal_identity);
+        let txn = self
+            .env
+            .begin_ro_txn()
+            .map_err(|error| format!("failed to start LMDB replay metadata read: {error}"))?;
+        match txn.get(self.schema_meta, &key) {
+            Ok(value) => ReplayMetadata::from_bytes(value).map(Some),
+            Err(Error::NotFound) => Ok(None),
+            Err(error) => Err(format!(
+                "failed to read replay metadata for {journal_identity}: {error}"
+            )),
+        }
+    }
+
     pub fn summary(&self) -> Result<RecordStoreSummary, String> {
         let txn = self
             .env
@@ -282,7 +339,7 @@ impl LmdbRecordStore {
         txn.put(
             self.schema_meta,
             &"meta:schema",
-            &SCHEMA,
+            &RECORD_SCHEMA,
             WriteFlags::empty(),
         )
         .map_err(|error| format!("failed to write LMDB schema meta: {error}"))?;
@@ -415,7 +472,58 @@ impl LmdbRecordStore {
         let Ok(txn) = env.begin_ro_txn() else {
             return Err(());
         };
-        Ok(matches!(txn.get(schema_meta, &"meta:schema"), Ok(value) if value == SCHEMA.as_bytes()))
+        Ok(
+            matches!(txn.get(schema_meta, &"meta:schema"), Ok(value) if value == RECORD_SCHEMA.as_bytes()),
+        )
+    }
+}
+
+impl ReplayMetadata {
+    fn to_json(&self) -> String {
+        format!(
+            "{{\"replay_id\":\"{}\",\"journal_identity\":\"{}\",\"journal_path\":\"{}\",\"record_schema\":\"{}\",\"journal_schema\":\"{}\",\"started_at\":\"{}\",\"completed_at\":\"{}\",\"lines_total\":{},\"lines_replayed\":{},\"records_written\":{},\"records_duplicate\":{},\"records_skipped\":{},\"invalid_entries\":{},\"unsupported_entries\":{},\"cursor_line\":{},\"status\":\"{}\",\"compatibility\":\"{}\"}}",
+            escape_json(&self.replay_id),
+            escape_json(&self.journal_identity),
+            escape_json(&self.journal_path),
+            escape_json(&self.record_schema),
+            escape_json(&self.journal_schema),
+            escape_json(&self.started_at),
+            escape_json(&self.completed_at),
+            self.lines_total,
+            self.lines_replayed,
+            self.records_written,
+            self.records_duplicate,
+            self.records_skipped,
+            self.invalid_entries,
+            self.unsupported_entries,
+            self.cursor_line,
+            escape_json(&self.status),
+            escape_json(&self.compatibility)
+        )
+    }
+
+    fn from_bytes(value: &[u8]) -> Result<Self, String> {
+        let raw_json = std::str::from_utf8(value)
+            .map_err(|error| format!("invalid LMDB replay metadata utf8: {error}"))?;
+        Ok(Self {
+            replay_id: json_string_field(raw_json, "replay_id").unwrap_or_default(),
+            journal_identity: json_string_field(raw_json, "journal_identity").unwrap_or_default(),
+            journal_path: json_string_field(raw_json, "journal_path").unwrap_or_default(),
+            record_schema: json_string_field(raw_json, "record_schema").unwrap_or_default(),
+            journal_schema: json_string_field(raw_json, "journal_schema").unwrap_or_default(),
+            started_at: json_string_field(raw_json, "started_at").unwrap_or_default(),
+            completed_at: json_string_field(raw_json, "completed_at").unwrap_or_default(),
+            lines_total: json_usize_field(raw_json, "lines_total"),
+            lines_replayed: json_usize_field(raw_json, "lines_replayed"),
+            records_written: json_usize_field(raw_json, "records_written"),
+            records_duplicate: json_usize_field(raw_json, "records_duplicate"),
+            records_skipped: json_usize_field(raw_json, "records_skipped"),
+            invalid_entries: json_usize_field(raw_json, "invalid_entries"),
+            unsupported_entries: json_usize_field(raw_json, "unsupported_entries"),
+            cursor_line: json_usize_field(raw_json, "cursor_line"),
+            status: json_string_field(raw_json, "status").unwrap_or_default(),
+            compatibility: json_string_field(raw_json, "compatibility").unwrap_or_default(),
+        })
     }
 }
 
@@ -447,6 +555,30 @@ fn json_string_field(content: &str, key: &str) -> Option<String> {
     let rest = &content[start..];
     let end = rest.find('"')?;
     Some(rest[..end].to_string())
+}
+
+fn json_usize_field(content: &str, key: &str) -> usize {
+    let marker = format!("\"{key}\":");
+    let Some(start) = content.find(&marker).map(|index| index + marker.len()) else {
+        return 0;
+    };
+    let rest = &content[start..];
+    let end = rest
+        .find(|ch: char| matches!(ch, ',' | '}'))
+        .unwrap_or(rest.len());
+    rest[..end].trim().parse::<usize>().unwrap_or(0)
+}
+
+fn replay_metadata_key(journal_identity: &str) -> String {
+    format!("meta:replay:{journal_identity}")
+}
+
+fn escape_json(value: &str) -> String {
+    value
+        .replace('\\', "\\\\")
+        .replace('"', "\\\"")
+        .replace('\n', "\\n")
+        .replace('\r', "\\r")
 }
 
 #[cfg(test)]
@@ -562,7 +694,7 @@ mod tests {
             .get_record_by_id("rec:freeze-carrier-request")
             .expect("get carrier request")
             .expect("carrier request present");
-        assert_eq!(carrier_request.schema, SCHEMA);
+        assert_eq!(carrier_request.schema, RECORD_SCHEMA);
         assert_eq!(carrier_request.record_kind, "carrier_request");
         assert!(carrier_request
             .raw_json

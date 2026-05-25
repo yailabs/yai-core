@@ -262,6 +262,17 @@ index/query, fact derivation, memory, live projection, reconcile, retention and
 integrity.
 ```
 
+Replay idempotency after ADR 0035:
+
+```text
+journal replay persists replay metadata
+journal_identity identifies replay input
+record_schema and journal_schema are reported separately
+cursor_line records replay position
+schema_mismatch does not write records
+replay-status exposes completed/failed/incompatible posture
+```
+
 ## Consequences
 
 Readers can understand the decision set quickly without losing atomic ADR

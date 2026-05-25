@@ -59,10 +59,16 @@ records_by_receipt
 Report fields include:
 
 ```text
+journal_identity
+record_schema
+journal_schema
+compatibility
 records_seen
 records_written
 records_duplicate
 records_skipped
+cursor_line
+replay_status
 record_store_status
 idempotent
 ```
@@ -78,8 +84,12 @@ records_written: 0 on second replay of the same journal
 idempotent: yes when all seen records already existed
 ```
 
-SPINE.37 will harden idempotency with schema version, replay cursor, rebuild
-metadata and compatibility handling.
+SPINE.37 hardens idempotency with schema version, replay cursor, metadata and
+compatibility handling. Use:
+
+```bash
+yai journal replay-status --path <journal.jsonl>
+```
 
 ## Failure Posture
 

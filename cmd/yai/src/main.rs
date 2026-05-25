@@ -24,13 +24,15 @@ use std::os::unix::net::UnixStream;
 use std::path::PathBuf;
 
 use yai_core_engine::graph::GraphSummary;
-use yai_core_engine::journal::Journal;
+use yai_core_engine::journal::{Journal, JournalInspection, JOURNAL_RECORD_SCHEMA};
 use yai_core_engine::memory::MemorySummary;
 use yai_core_engine::projection::ProjectionSummary;
 use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::{Record, RecordKind};
-use yai_core_engine::store::lmdb::{LmdbRecordStore, RecordStoreStatusKind};
+use yai_core_engine::store::lmdb::{
+    LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata, RECORD_SCHEMA,
+};
 use yai_core_engine::store::Store;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -54,7 +56,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.36 Journal Replay to LMDB");
+    println!("status: SPINE.37 Replay Idempotency + Schema Version Handling");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -68,7 +70,7 @@ fn print_info() {
     println!("provider-runtime: planned surface active");
     println!("device-registry: active");
     println!("journal_inspection: file-based JSONL v0");
-    println!("journal_replay: LMDB materialization v0");
+    println!("journal_replay: LMDB materialization with schema/cursor metadata v0");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -194,6 +196,7 @@ fn print_usage() {
     println!("       yai store tail --journal <path>");
     println!("       yai journal inspect --path <journal.jsonl> [--show-errors]");
     println!("       yai journal replay --path <journal.jsonl> [--dry-run]");
+    println!("       yai journal replay-status --path <journal.jsonl>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
@@ -2686,9 +2689,14 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     let dry_run = args.iter().any(|arg| arg == "--dry-run");
     let lmdb_path = record_store_path();
     if !path.exists() {
+        let profile = replay_profile_for_missing(&path);
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
+        println!("journal_identity: {}", profile.journal_identity);
         println!("lmdb_path: {}", lmdb_path.display());
+        println!("record_schema: {}", profile.record_schema);
+        println!("journal_schema: {}", profile.journal_schema);
+        println!("compatibility: {}", profile.compatibility);
         println!("lines_total: 0");
         println!("valid_entries: 0");
         println!("invalid_entries: 0");
@@ -2698,14 +2706,21 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("records_written: 0");
         println!("records_duplicate: 0");
         println!("records_skipped: 0");
+        println!("cursor_line: 0");
+        println!("replay_status: failed");
         println!("replay_ready: no");
         println!("reason: missing_journal");
         return Ok(());
     }
     if !path.is_file() {
+        let profile = replay_profile_for_missing(&path);
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
+        println!("journal_identity: {}", profile.journal_identity);
         println!("lmdb_path: {}", lmdb_path.display());
+        println!("record_schema: {}", profile.record_schema);
+        println!("journal_schema: {}", profile.journal_schema);
+        println!("compatibility: {}", profile.compatibility);
         println!("lines_total: 0");
         println!("valid_entries: 0");
         println!("invalid_entries: 0");
@@ -2715,6 +2730,8 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("records_written: 0");
         println!("records_duplicate: 0");
         println!("records_skipped: 0");
+        println!("cursor_line: 0");
+        println!("replay_status: failed");
         println!("replay_ready: no");
         println!("reason: journal_unavailable");
         return Ok(());
@@ -2722,10 +2739,26 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
 
     let inspection = Journal::inspect_jsonl(&path)
         .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    let contents = fs::read_to_string(&path).map_err(|error| {
+        format!(
+            "failed to read {} for replay identity: {error}",
+            path.display()
+        )
+    })?;
+    let profile = replay_profile_for_inspection(&path, &contents, &inspection);
     if !inspection.replay_ready() {
+        persist_replay_metadata(
+            &lmdb_path,
+            replay_metadata_from_failure(&path, &profile, &inspection),
+        )?;
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
+        println!("journal_identity: {}", profile.journal_identity);
         println!("lmdb_path: {}", lmdb_path.display());
+        println!("record_schema: {}", profile.record_schema);
+        println!("journal_schema: {}", profile.journal_schema);
+        println!("supported_schema: {}", RECORD_SCHEMA);
+        println!("compatibility: {}", profile.compatibility);
         println!("lines_total: {}", inspection.lines_total);
         println!("valid_entries: {}", inspection.valid_entries);
         println!("invalid_entries: {}", inspection.invalid_entries);
@@ -2735,21 +2768,39 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("records_written: 0");
         println!("records_duplicate: 0");
         println!("records_skipped: {}", inspection.lines_total);
+        println!("cursor_line: 0");
+        println!(
+            "replay_status: {}",
+            if profile.compatibility == "schema_mismatch" {
+                "incompatible"
+            } else {
+                "failed"
+            }
+        );
         println!("replay_ready: no");
         println!("reason: {}", replay_failure_reason(&inspection));
         return Ok(());
     }
 
     if dry_run {
+        let cursor_line = current_replay_metadata(&lmdb_path, &profile.journal_identity)?
+            .map(|metadata| metadata.cursor_line)
+            .unwrap_or(0);
         println!("journal_replay: dry_run");
         println!("journal_path: {}", path.display());
+        println!("journal_identity: {}", profile.journal_identity);
         println!("lmdb_path: {}", lmdb_path.display());
+        println!("record_schema: {}", profile.record_schema);
+        println!("journal_schema: {}", profile.journal_schema);
+        println!("compatibility: {}", profile.compatibility);
         println!("lines_total: {}", inspection.lines_total);
         println!("valid_entries: {}", inspection.valid_entries);
         println!("invalid_entries: {}", inspection.invalid_entries);
         println!("unsupported_entries: {}", inspection.unsupported_entries);
         println!("duplicate_entries: {}", inspection.duplicate_entries);
         println!("records_to_write: {}", inspection.valid_entries);
+        println!("cursor_line: {cursor_line}");
+        println!("would_update_cursor: yes");
         println!("would_write_lmdb: yes");
         println!("replay_ready: yes");
         return Ok(());
@@ -2759,12 +2810,33 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         .map_err(|error| format!("journal replay failed to load journal: {error}"))?;
     let store = LmdbRecordStore::open(&lmdb_path)
         .map_err(|error| format!("journal replay failed to open LMDB: {error}"))?;
+    let started_at = unix_timestamp_string();
+    store.put_replay_metadata(&replay_metadata_in_progress(
+        &path,
+        &profile,
+        &inspection,
+        &started_at,
+    ))?;
     let report = store.import_journal_with_report(&journal, &path.display().to_string())?;
+    let metadata = replay_metadata_from_report(
+        &path,
+        &profile,
+        &inspection,
+        &report,
+        &started_at,
+        &unix_timestamp_string(),
+    );
+    store.put_replay_metadata(&metadata)?;
     let status = LmdbRecordStore::status(&lmdb_path);
     println!("journal_replay: completed");
     println!("journal_path: {}", path.display());
+    println!("journal_identity: {}", profile.journal_identity);
     println!("lmdb_path: {}", lmdb_path.display());
+    println!("record_schema: {}", profile.record_schema);
+    println!("journal_schema: {}", profile.journal_schema);
+    println!("compatibility: {}", profile.compatibility);
     println!("lines_total: {}", inspection.lines_total);
+    println!("lines_replayed: {}", metadata.lines_replayed);
     println!("valid_entries: {}", inspection.valid_entries);
     println!("invalid_entries: {}", inspection.invalid_entries);
     println!("unsupported_entries: {}", inspection.unsupported_entries);
@@ -2773,6 +2845,8 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     println!("records_written: {}", report.records_written);
     println!("records_duplicate: {}", report.records_duplicate);
     println!("records_skipped: {}", report.records_skipped);
+    println!("cursor_line: {}", metadata.cursor_line);
+    println!("replay_status: {}", metadata.status);
     println!("replay_ready: yes");
     println!("record_store_status: {}", status.status.as_str());
     println!(
@@ -2786,7 +2860,73 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn replay_failure_reason(inspection: &yai_core_engine::journal::JournalInspection) -> String {
+fn journal_replay_status(args: &[String]) -> Result<(), String> {
+    let path = PathBuf::from(named_arg(args, "--path")?);
+    let lmdb_path = record_store_path();
+    if !path.exists() || !path.is_file() {
+        let profile = replay_profile_for_missing(&path);
+        println!("journal_replay_status:");
+        println!("journal_path: {}", path.display());
+        println!("journal_identity: {}", profile.journal_identity);
+        println!("lmdb_path: {}", lmdb_path.display());
+        println!("record_schema: {}", profile.record_schema);
+        println!("journal_schema: {}", profile.journal_schema);
+        println!("cursor_line: 0");
+        println!("replay_status: not_started");
+        println!("records_written: 0");
+        println!("records_duplicate: 0");
+        println!("compatibility: {}", profile.compatibility);
+        return Ok(());
+    }
+
+    let inspection = Journal::inspect_jsonl(&path)
+        .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    let contents = fs::read_to_string(&path).map_err(|error| {
+        format!(
+            "failed to read {} for replay identity: {error}",
+            path.display()
+        )
+    })?;
+    let profile = replay_profile_for_inspection(&path, &contents, &inspection);
+    let metadata = current_replay_metadata(&lmdb_path, &profile.journal_identity)?;
+    println!("journal_replay_status:");
+    println!("journal_path: {}", path.display());
+    println!("journal_identity: {}", profile.journal_identity);
+    println!("lmdb_path: {}", lmdb_path.display());
+    match metadata {
+        Some(metadata) => {
+            println!("record_schema: {}", metadata.record_schema);
+            println!("journal_schema: {}", metadata.journal_schema);
+            println!("cursor_line: {}", metadata.cursor_line);
+            println!("replay_status: {}", metadata.status);
+            println!("lines_total: {}", metadata.lines_total);
+            println!("lines_replayed: {}", metadata.lines_replayed);
+            println!("records_written: {}", metadata.records_written);
+            println!("records_duplicate: {}", metadata.records_duplicate);
+            println!("records_skipped: {}", metadata.records_skipped);
+            println!("invalid_entries: {}", metadata.invalid_entries);
+            println!("unsupported_entries: {}", metadata.unsupported_entries);
+            println!("compatibility: {}", metadata.compatibility);
+        }
+        None => {
+            println!("record_schema: {}", profile.record_schema);
+            println!("journal_schema: {}", profile.journal_schema);
+            println!("cursor_line: 0");
+            println!("replay_status: not_started");
+            println!("lines_total: {}", inspection.lines_total);
+            println!("lines_replayed: 0");
+            println!("records_written: 0");
+            println!("records_duplicate: 0");
+            println!("records_skipped: 0");
+            println!("invalid_entries: {}", inspection.invalid_entries);
+            println!("unsupported_entries: {}", inspection.unsupported_entries);
+            println!("compatibility: {}", profile.compatibility);
+        }
+    }
+    Ok(())
+}
+
+fn replay_failure_reason(inspection: &JournalInspection) -> String {
     if inspection.invalid_entries > 0 {
         return "invalid_json".to_string();
     }
@@ -2795,6 +2935,194 @@ fn replay_failure_reason(inspection: &yai_core_engine::journal::JournalInspectio
         .first()
         .map(|diagnostic| diagnostic.error_code.clone())
         .unwrap_or_else(|| "not_replay_ready".to_string())
+}
+
+#[derive(Clone, Debug)]
+struct ReplayProfile {
+    journal_identity: String,
+    record_schema: String,
+    journal_schema: String,
+    compatibility: String,
+}
+
+fn replay_profile_for_missing(path: &std::path::Path) -> ReplayProfile {
+    ReplayProfile {
+        journal_identity: journal_identity(path, ""),
+        record_schema: RECORD_SCHEMA.to_string(),
+        journal_schema: "unknown".to_string(),
+        compatibility: "unknown".to_string(),
+    }
+}
+
+fn replay_profile_for_inspection(
+    path: &std::path::Path,
+    contents: &str,
+    inspection: &JournalInspection,
+) -> ReplayProfile {
+    let mut observed_schema = if inspection.valid_entries > 0 {
+        JOURNAL_RECORD_SCHEMA.to_string()
+    } else {
+        "unknown".to_string()
+    };
+    let mut compatibility = if inspection.valid_entries > 0 {
+        "compatible".to_string()
+    } else {
+        "unknown".to_string()
+    };
+
+    for diagnostic in &inspection.diagnostics {
+        if diagnostic.error_code == "invalid_schema" || diagnostic.error_code == "missing_record_id"
+        {
+            observed_schema = diagnostic.schema.clone();
+            if observed_schema == "none" {
+                compatibility = "unknown".to_string();
+            } else {
+                compatibility = "schema_mismatch".to_string();
+            }
+            break;
+        }
+    }
+
+    let record_schema = if compatibility == "schema_mismatch" {
+        observed_schema.clone()
+    } else {
+        RECORD_SCHEMA.to_string()
+    };
+
+    ReplayProfile {
+        journal_identity: journal_identity(path, contents),
+        record_schema,
+        journal_schema: observed_schema,
+        compatibility,
+    }
+}
+
+fn current_replay_metadata(
+    lmdb_path: &std::path::Path,
+    journal_identity: &str,
+) -> Result<Option<ReplayMetadata>, String> {
+    if LmdbRecordStore::status(lmdb_path).status != RecordStoreStatusKind::Ready {
+        return Ok(None);
+    }
+    let store = LmdbRecordStore::open(lmdb_path)
+        .map_err(|error| format!("failed to open LMDB for replay status: {error}"))?;
+    store.replay_metadata(journal_identity)
+}
+
+fn persist_replay_metadata(
+    lmdb_path: &std::path::Path,
+    metadata: ReplayMetadata,
+) -> Result<(), String> {
+    let store = LmdbRecordStore::open(lmdb_path)
+        .map_err(|error| format!("failed to open LMDB for replay metadata: {error}"))?;
+    store.put_replay_metadata(&metadata)
+}
+
+fn replay_metadata_in_progress(
+    path: &std::path::Path,
+    profile: &ReplayProfile,
+    inspection: &JournalInspection,
+    started_at: &str,
+) -> ReplayMetadata {
+    ReplayMetadata {
+        replay_id: format!("replay:{}", profile.journal_identity),
+        journal_identity: profile.journal_identity.clone(),
+        journal_path: path.display().to_string(),
+        record_schema: profile.record_schema.clone(),
+        journal_schema: profile.journal_schema.clone(),
+        started_at: started_at.to_string(),
+        completed_at: "none".to_string(),
+        lines_total: inspection.lines_total,
+        lines_replayed: 0,
+        records_written: 0,
+        records_duplicate: 0,
+        records_skipped: 0,
+        invalid_entries: inspection.invalid_entries,
+        unsupported_entries: inspection.unsupported_entries,
+        cursor_line: 0,
+        status: "in_progress".to_string(),
+        compatibility: profile.compatibility.clone(),
+    }
+}
+
+fn replay_metadata_from_report(
+    path: &std::path::Path,
+    profile: &ReplayProfile,
+    inspection: &JournalInspection,
+    report: &yai_core_engine::store::lmdb::JournalImportReport,
+    started_at: &str,
+    completed_at: &str,
+) -> ReplayMetadata {
+    ReplayMetadata {
+        replay_id: format!("replay:{}", profile.journal_identity),
+        journal_identity: profile.journal_identity.clone(),
+        journal_path: path.display().to_string(),
+        record_schema: profile.record_schema.clone(),
+        journal_schema: profile.journal_schema.clone(),
+        started_at: started_at.to_string(),
+        completed_at: completed_at.to_string(),
+        lines_total: inspection.lines_total,
+        lines_replayed: inspection.valid_entries,
+        records_written: report.records_written,
+        records_duplicate: report.records_duplicate,
+        records_skipped: report.records_skipped,
+        invalid_entries: inspection.invalid_entries,
+        unsupported_entries: inspection.unsupported_entries,
+        cursor_line: inspection.lines_total,
+        status: "completed".to_string(),
+        compatibility: profile.compatibility.clone(),
+    }
+}
+
+fn replay_metadata_from_failure(
+    path: &std::path::Path,
+    profile: &ReplayProfile,
+    inspection: &JournalInspection,
+) -> ReplayMetadata {
+    ReplayMetadata {
+        replay_id: format!("replay:{}", profile.journal_identity),
+        journal_identity: profile.journal_identity.clone(),
+        journal_path: path.display().to_string(),
+        record_schema: profile.record_schema.clone(),
+        journal_schema: profile.journal_schema.clone(),
+        started_at: unix_timestamp_string(),
+        completed_at: unix_timestamp_string(),
+        lines_total: inspection.lines_total,
+        lines_replayed: 0,
+        records_written: 0,
+        records_duplicate: 0,
+        records_skipped: inspection.lines_total,
+        invalid_entries: inspection.invalid_entries,
+        unsupported_entries: inspection.unsupported_entries,
+        cursor_line: 0,
+        status: if profile.compatibility == "schema_mismatch" {
+            "incompatible".to_string()
+        } else {
+            "failed".to_string()
+        },
+        compatibility: profile.compatibility.clone(),
+    }
+}
+
+fn journal_identity(path: &std::path::Path, contents: &str) -> String {
+    let seed = format!("{}|{}", path.display(), contents);
+    format!("journal:{:016x}", fnv1a64(seed.as_bytes()))
+}
+
+fn fnv1a64(bytes: &[u8]) -> u64 {
+    let mut hash = 0xcbf29ce484222325u64;
+    for byte in bytes {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    hash
+}
+
+fn unix_timestamp_string() -> String {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|duration| duration.as_secs().to_string())
+        .unwrap_or_else(|_| "0".to_string())
 }
 
 fn import_journal_to_record_store(journal_path: &std::path::Path) -> Result<(), String> {
@@ -5162,6 +5490,12 @@ fn main() {
         }
         Some("journal") if args.get(1).map(String::as_str) == Some("replay") => {
             if let Err(error) = journal_replay(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("journal") if args.get(1).map(String::as_str) == Some("replay-status") => {
+            if let Err(error) = journal_replay_status(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

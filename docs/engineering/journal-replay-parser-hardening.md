@@ -119,3 +119,6 @@ inspection. It also checks that inspection does not create an LMDB path.
 SPINE.36 Journal Replay to LMDB materializes replay into the frozen
 `yai.record.v1` plane. It keeps replay diagnostics visible and preserves the
 SPINE.34 LMDB no silent journal fallback rule.
+
+SPINE.37 adds formal idempotency, schema compatibility, journal identity,
+replay cursor metadata and `yai journal replay-status`.

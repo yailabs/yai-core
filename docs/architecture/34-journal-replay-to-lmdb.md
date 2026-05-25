@@ -71,7 +71,11 @@ not make store queries synthesize records from journal.
 
 ```text
 journal_path
+journal_identity
 lmdb_path
+record_schema
+journal_schema
+compatibility
 lines_total
 valid_entries
 invalid_entries
@@ -81,6 +85,8 @@ records_seen
 records_written
 records_duplicate
 records_skipped
+cursor_line
+replay_status
 replay_ready
 idempotent
 status
@@ -88,5 +94,6 @@ status
 
 ## Roadmap Placement
 
-SPINE.36 provides basic replay and idempotent replay behavior. SPINE.37 will
-harden schema version handling, replay cursor and compatibility posture.
+SPINE.36 provides basic replay and idempotent replay behavior. SPINE.37 hardens
+schema version handling, replay cursor and compatibility posture with
+`yai journal replay-status --path <journal.jsonl>`.

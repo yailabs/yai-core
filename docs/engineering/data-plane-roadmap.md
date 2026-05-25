@@ -109,7 +109,7 @@ SPINE.34  LMDB Record Plane Freeze                                  done
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                done
 SPINE.36  Journal Replay to LMDB                                    done
-SPINE.37  Replay Idempotency + Schema Version Handling              planned
+SPINE.37  Replay Idempotency + Schema Version Handling              done
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
 SPINE.39  Journal Replay Freeze                                     planned
 
@@ -396,6 +396,24 @@ records_by_subject and records_by_receipt. Dry-run writes nothing. Invalid
 journal input blocks replay with no silent skip. Existing LMDB records are
 reported as records_duplicate so a second replay is idempotent. Store queries
 continue to have no journal fallback.
+
+SPINE.37 Replay Idempotency + Schema Version Handling adds:
+
+```text
+yai journal replay-status --path <journal.jsonl>
+journal_identity
+record_schema
+journal_schema
+compatibility
+cursor_line
+replay_status
+```
+
+Replay metadata is stored under `meta:replay:<journal_identity>` in the LMDB
+metadata namespace. Current replay accepts `yai.store.record.v0` journal input
+and materializes `yai.record.v1` records. Schema mismatch rejects replay with
+`records_written: 0`; missing schema is invalid unless a future converter
+explicitly reports `compat_legacy`.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

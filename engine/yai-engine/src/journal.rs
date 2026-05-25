@@ -17,6 +17,8 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+pub const JOURNAL_RECORD_SCHEMA: &str = "yai.store.record.v0";
+
 #[derive(Default)]
 pub struct Journal {
     records: Vec<Record>,
@@ -157,7 +159,7 @@ impl Journal {
             let record_id = field_value(&fields, "record_id").unwrap_or_default();
             let record_kind = field_value(&fields, "record_kind").unwrap_or_default();
 
-            if schema != "yai.store.record.v0" {
+            if schema != JOURNAL_RECORD_SCHEMA {
                 inspection.unsupported_entries += 1;
                 inspection.diagnostics.push(diagnostic(
                     line_number,
@@ -298,8 +300,12 @@ impl<'a> JsonStringFieldParser<'a> {
             self.skip_ws();
             self.expect(':')?;
             self.skip_ws();
-            let value = self.parse_string()?;
-            fields.push((key, value));
+            if self.peek() == Some('"') {
+                let value = self.parse_string()?;
+                fields.push((key, value));
+            } else {
+                self.skip_value()?;
+            }
             self.skip_ws();
             if self.consume('}') {
                 self.skip_ws();
@@ -330,6 +336,47 @@ impl<'a> JsonStringFieldParser<'a> {
                     }
                 }
                 other => result.push(other),
+            }
+        }
+        Err(())
+    }
+
+    fn skip_value(&mut self) -> Result<(), ()> {
+        self.skip_ws();
+        match self.peek() {
+            Some('"') => self.parse_string().map(|_| ()),
+            Some('{') => self.skip_compound('{', '}'),
+            Some('[') => self.skip_compound('[', ']'),
+            Some(_) => {
+                while let Some(ch) = self.peek() {
+                    if matches!(ch, ',' | '}' | ']') {
+                        break;
+                    }
+                    self.index += 1;
+                }
+                Ok(())
+            }
+            None => Err(()),
+        }
+    }
+
+    fn skip_compound(&mut self, open: char, close: char) -> Result<(), ()> {
+        self.expect(open)?;
+        let mut depth = 1usize;
+        while let Some(ch) = self.next() {
+            match ch {
+                '"' => {
+                    self.index -= 1;
+                    self.parse_string()?;
+                }
+                current if current == open => depth += 1,
+                current if current == close => {
+                    depth -= 1;
+                    if depth == 0 {
+                        return Ok(());
+                    }
+                }
+                _ => {}
             }
         }
         Err(())

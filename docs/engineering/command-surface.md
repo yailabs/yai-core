@@ -92,6 +92,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | record list by receipt | LMDB receipt index scan | `yai store record list --receipt <receipt_ref> [--limit <N>]` | `target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | journal inspect | replay-readiness diagnostics without LMDB writes | `yai journal inspect --path <journal.jsonl> [--show-errors]` | `target/debug/yai journal inspect --path /tmp/yai-journal.jsonl --show-errors` | `journal-replay-parser-hardening.md`, `testing.md` |
 | journal replay | materialize valid journal records into LMDB | `yai journal replay --path <journal.jsonl> [--dry-run]` | `target/debug/yai journal replay --path /tmp/yai-journal.jsonl --dry-run` | `journal-replay-to-lmdb.md`, `testing.md` |
+| journal replay status | replay cursor/schema metadata | `yai journal replay-status --path <journal.jsonl>` | `target/debug/yai journal replay-status --path /tmp/yai-journal.jsonl` | `replay-idempotency-schema-version.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 | carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
 | carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
@@ -130,6 +131,10 @@ SPINE.36 adds `yai journal replay --path <journal.jsonl> [--dry-run]`. Dry-run
 reports replay readiness and intended writes without opening LMDB. Real replay
 writes valid records through the existing LMDB writer and index path. Existing
 records are counted as `records_duplicate`, so a second replay is idempotent.
+
+SPINE.37 adds `yai journal replay-status --path <journal.jsonl>` and extends
+replay output with replay cursor metadata: `journal_identity`, `record_schema`,
+`journal_schema`, `compatibility`, `cursor_line` and `replay_status`.
 
 Required fields:
 
@@ -255,10 +260,11 @@ does not perform replay or write LMDB.
 
 ## Journal Replay Command
 
-SPINE.36 adds:
+SPINE.36 adds replay and SPINE.37 adds replay metadata/status:
 
 ```text
 yai journal replay --path <journal.jsonl> [--dry-run]
+yai journal replay-status --path <journal.jsonl>
 ```
 
 Dry-run output includes:
@@ -266,11 +272,17 @@ Dry-run output includes:
 ```text
 journal_replay: dry_run
 journal_path: ...
+journal_identity: ...
 lmdb_path: <YAI_HOME>/store/lmdb
+record_schema: yai.record.v1
+journal_schema: yai.store.record.v0
+compatibility: compatible
 lines_total: N
 valid_entries: N
 invalid_entries: 0
 records_to_write: N
+cursor_line: N
+would_update_cursor: yes
 would_write_lmdb: yes
 replay_ready: yes
 ```
@@ -279,6 +291,11 @@ Real replay output includes:
 
 ```text
 journal_replay: completed
+journal_identity: ...
+record_schema: yai.record.v1
+compatibility: compatible
+cursor_line: N
+replay_status: completed
 records_seen: N
 records_written: N
 records_duplicate: N
@@ -294,6 +311,17 @@ journal_replay: failed
 replay_ready: no
 records_written: 0
 reason: invalid_json|invalid_schema|unsupported_kind|duplicate
+```
+
+Replay-status output includes:
+
+```text
+journal_replay_status:
+journal_identity: ...
+record_schema: yai.record.v1
+cursor_line: N
+replay_status: completed
+compatibility: compatible
 ```
 
 Replay materializes LMDB records. It does not change no journal fallback

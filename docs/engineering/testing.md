@@ -1061,6 +1061,28 @@ make check-journal-replay-to-lmdb
 make smoke-spine36
 ```
 
+## SPINE.37 Replay Idempotency + Schema Version Loop
+
+```text
+first replay writes records
+second replay is idempotent
+replay-status reports cursor
+schema mismatch is rejected
+missing schema reports invalid_schema
+invalid input does not get false completed status
+```
+
+`tests/smoke/replay-idempotency-schema-version/test_replay_idempotency_schema_version.sh`
+proves replay cursor metadata and schema compatibility. It uses isolated temp
+journals and `YAI_HOME`, verifies `journal_identity`, `record_schema`,
+`compatibility`, `cursor_line`, `replay_status`, `records_duplicate` and
+`records_written: 0` for incompatible input.
+
+```text
+make check-replay-idempotency-schema-version
+make smoke-spine37
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text
