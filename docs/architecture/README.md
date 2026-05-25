@@ -73,6 +73,7 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 25-carrier-outcome-harness.md
 26-context-compiler-retrieval-boundary.md
 27-model-runtime-mtp-boundary.md
+28-provider-runtime-lan-target-surface.md
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md

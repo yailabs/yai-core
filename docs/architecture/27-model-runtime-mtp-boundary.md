@@ -9,6 +9,11 @@ doctrine, not under retrieval or data-plane truth.
 
 MTP belongs to model runtime / runner / decoding strategy.
 
+SPINE.33L adds the first provider runtime target surface around this future
+runner boundary. It exposes `local`, `lan` and `external` runtime target
+posture, provider start dry-run plans, provider logs, model catalog status and
+model runtime status. It does not implement a runner or provider execution.
+
 MTP is:
 
 ```text

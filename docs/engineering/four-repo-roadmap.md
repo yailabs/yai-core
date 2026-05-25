@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33K context compiler, retrieval and MTP roadmap correction. | SPINE.33I Carrier Receipt / Divergence Hardening. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33L provider runtime / LAN target surface v0. | SPINE.33I Carrier Receipt / Divergence Hardening. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -197,6 +197,7 @@ SPINE.33H Carrier Outcome Harness                                  done
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
+SPINE.33L Provider Runtime / LAN Target Surface v0                  done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -432,6 +433,40 @@ mtp_mode, mtp_depth, requires_mtp_weights, requires_draft_model,
 backend_support, acceptance_rate, fallback_mode, structured_output_risk,
 latency_delta and tokens_per_second_delta. MTP may accelerate generation; it
 must not change output authority.
+
+## Provider Runtime / LAN Target Surface Doctrine
+
+The normal future workflow should not require manual provider launch as normal
+workflow. Manual provider launch remains a development fallback.
+
+SPINE.33L adds the first inspectable provider runtime surface:
+
+```text
+runtime target: local / lan / external
+device registry: YAI_HOME/config/devices.jsonl
+provider supervisor: planned
+provider start dry-run: active
+provider logs: YAI_HOME/log/providers
+model catalog: not_scanned / planned
+model routing: planned
+context compiler: planned
+retrieval_hnsw: planned
+decoding acceleration: planned
+```
+
+Rules:
+
+```text
+LAN device is not a provider.
+LAN device is a runtime target.
+Provider runs on a runtime target.
+Model belongs to a provider instance.
+Case attaches to provider instance.
+```
+
+SPINE.33L exposes dry-run plan posture only. It performs no remote start in
+SPINE.33L, starts no provider process, performs no LAN discovery, scans no
+model files, probes no GPU and invokes no model.
 
 ## Implementation Wave Rule
 

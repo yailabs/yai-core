@@ -564,6 +564,69 @@ skeleton carriers. Invalid outcomes return:
 error: unsupported_outcome
 ```
 
+SPINE.33L adds provider runtime / LAN target surface v0:
+
+| Primitive | View | Command | Manual test | Docs |
+|---|---|---|---|---|
+| device registry | JSONL registry under `YAI_HOME/config/devices.jsonl` | `yai device list` | `target/debug/yai device list` | `provider-runtime-lan-target-surface.md`, `testing.md` |
+| device add | declared runtime target | `yai device add --id <id> --name <name> --host <host> --port <port> --target lan` | `target/debug/yai device add --id workstation --name Workstation --host 192.168.1.50 --port 8777 --target lan` | `provider-runtime-lan-target-surface.md` |
+| device inspect | target/trust/supervisor posture | `yai device inspect <device_id>` | `target/debug/yai device inspect workstation` | `provider-runtime-lan-target-surface.md` |
+| trusted device posture | registry trust update | `yai device trust <device_id>` | `target/debug/yai device trust workstation` | `provider-runtime-lan-target-surface.md` |
+| provider runtime targets | runtime target vocabulary | `yai provider runtime status`, `yai provider targets` | `target/debug/yai provider runtime status` | `provider-runtime-lan-target-surface.md` |
+| provider start dry-run | no-execution provider start plan | `yai provider start --dry-run --target <target> ...` | `target/debug/yai provider start --dry-run --target lan --device workstation --kind ds4 --model deepseek-v4-flash` | `provider-runtime-lan-target-surface.md` |
+| provider logs | reserved log/run/plan paths | `yai provider logs-path` | `target/debug/yai provider logs-path` | `provider-runtime-lan-target-surface.md` |
+| model catalog | scan posture only | `yai model catalog status` | `target/debug/yai model catalog status` | `provider-runtime-lan-target-surface.md` |
+| model runtime | routing/retrieval/decoding status | `yai model runtime status` | `target/debug/yai model runtime status` | `provider-runtime-lan-target-surface.md` |
+
+Required `yai device list` empty output:
+
+```text
+devices: none
+device_registry: <YAI_HOME>/config/devices.jsonl
+```
+
+Required LAN dry-run blocked output:
+
+```text
+provider_start_plan:
+  target: lan
+  device_id: workstation
+  status: blocked
+  reason: device_not_trusted
+  execution_performed: false
+```
+
+Required trusted LAN dry-run output:
+
+```text
+provider_start_plan:
+  target: lan
+  device_id: workstation
+  provider_kind: ds4
+  model: deepseek-v4-flash
+  status: planned
+  action: dry_run_only
+  would_contact_device: true
+  would_start_provider: true
+  execution_performed: false
+  receipt_required: yes
+```
+
+Required model runtime posture:
+
+```text
+model_runtime:
+  provider_supervision: planned
+  model_routing: planned
+  context_compiler: planned
+  retrieval_hnsw: planned
+  decoding_acceleration: planned
+  fallback: normal_decoding
+```
+
+SPINE.33L does not start provider processes, contact LAN devices, scan model
+files, probe GPUs, implement HNSW or implement MTP.
+
 Reserved future commands for the retrieval and runner roadmap rebase:
 
 ```text

@@ -27,6 +27,7 @@ for file in \
   docs/architecture/25-carrier-outcome-harness.md \
   docs/architecture/26-context-compiler-retrieval-boundary.md \
   docs/architecture/27-model-runtime-mtp-boundary.md \
+  docs/architecture/28-provider-runtime-lan-target-surface.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -48,6 +49,7 @@ for file in \
   docs/engineering/hot-state-plane.md \
   docs/engineering/carrier-outcome-harness.md \
   docs/engineering/non-process-carrier-skeletons.md \
+  docs/engineering/provider-runtime-lan-target-surface.md \
   docs/engineering/operational-extraction-contract.md \
   docs/engineering/pack-format.md \
   docs/engineering/pack-roadmap.md \
@@ -68,6 +70,7 @@ for file in \
   docs/adr/0025-carrier-coverage-matrix.md \
   docs/adr/0026-non-process-carrier-skeletons.md \
   docs/adr/0027-carrier-outcome-harness.md \
+  docs/adr/0028-provider-runtime-lan-target-surface.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

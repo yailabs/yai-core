@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33l smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -144,11 +144,12 @@ SMOKE_RECORD_STORE_SUBJECT_RECEIPT := tests/smoke/record-store-subject-receipt-i
 SMOKE_RECORD_STORE_CLI_MANUAL := tests/smoke/record-store-cli-manual-validation/test_record_store_cli_manual_validation.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
+SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction\n"
+	@printf "status: SPINE.33L Provider Runtime / LAN Target Surface v0\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.33L Provider Runtime / LAN Target Surface v0\n"
 	@printf "next: SPINE.33I Carrier Receipt / Divergence Hardening\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
@@ -160,6 +161,8 @@ info:
 	@printf "engine-bridge: active\n"
 	@printf "lib: removed\n"
 	@printf "daemon: moved to cmd/yaid + system/daemon\n"
+	@printf "provider-runtime: planned surface active\n"
+	@printf "device-registry: active\n"
 	@printf "crates: removed\n"
 	@printf "ctl: removed\n"
 	@printf "install-local: active PREFIX=%s YAI_HOME=%s\n" "$(PREFIX)" "$(YAI_HOME)"
@@ -192,6 +195,7 @@ check-docs:
 	@./tools/checks/check-carrier-outcome-harness.sh
 	@./tools/checks/check-retrieval-runner-roadmap.sh
 	@./tools/checks/check-context-compiler-retrieval-mtp-roadmap.sh
+	@./tools/checks/check-provider-runtime-lan-target-surface.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -243,6 +247,9 @@ check-retrieval-runner-roadmap:
 
 check-context-compiler-retrieval-mtp-roadmap:
 	@./tools/checks/check-context-compiler-retrieval-mtp-roadmap.sh
+
+check-provider-runtime-lan-target-surface:
+	@./tools/checks/check-provider-runtime-lan-target-surface.sh
 
 check-non-process-carrier-skeletons:
 	@./tools/checks/check-non-process-carrier-skeletons.sh
@@ -586,7 +593,10 @@ smoke-spine33h: $(SMOKE_CARRIER_OUTCOME_HARNESS) build-rust
 	@printf "outcome:unknown not_attempted ok\n"
 	@printf "no_execution:skeletons confirmed\n"
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h
+smoke-spine33l: build-rust
+	@$(SMOKE_PROVIDER_RUNTIME_SURFACE)
+
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33l
 
 check: check-layout check-docs build smoke
 

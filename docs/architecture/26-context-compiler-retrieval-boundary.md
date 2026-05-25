@@ -9,6 +9,11 @@ retrieval implementation begins.
 
 Projection does not disappear.
 
+SPINE.33L does not implement the Context Compiler. It exposes
+`yai model runtime status` so `context_compiler`, `retrieval_hnsw`, model
+routing and decoding acceleration posture are visible from CLI before runtime
+implementation.
+
 Projection evolves into the controlled view produced by the context compiler.
 A compiled model context is a temporary, scoped, freshness-aware consumer view.
 It is not truth. It is not memory. It is not the record plane. It is not the

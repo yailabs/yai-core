@@ -1073,6 +1073,36 @@ receipt_posture: simulated
 divergence_candidate:
 ```
 
+## Provider Runtime / LAN Target Surface
+
+This replaces manual provider launch in the future workflow. SPINE.33L is
+dry-run/surface only. No provider is started. LAN execution requires future
+paired remote supervisor support.
+
+```bash
+yai device list
+yai device add --id workstation --name Workstation --host 192.168.1.50 --port 8777 --target lan
+yai device trust workstation
+yai provider runtime status
+yai provider targets
+yai provider start --dry-run --target lan --device workstation --kind ds4 --model deepseek-v4-flash
+yai provider logs-path
+yai model catalog status
+yai model runtime status
+```
+
+Expected posture:
+
+```text
+device_registry: <YAI_HOME>/config/devices.jsonl
+provider_start_plan:
+execution_performed: false
+receipt_required: yes
+model_routing: planned
+retrieval_hnsw: planned
+decoding_acceleration: planned
+```
+
 ## Shutdown
 
 ```bash

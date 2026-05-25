@@ -949,6 +949,57 @@ PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family model_pro
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family unknown --outcome blocked
 ```
 
+## SPINE.33L Provider Runtime / LAN Target Surface Loop
+
+```text
+device list empty
+device add works
+device inspect works
+device trust works
+provider runtime status works
+provider targets works
+provider start dry-run local works
+provider start dry-run lan untrusted blocks
+provider start dry-run lan trusted plans
+provider start dry-run external attach_only works
+provider logs-path works
+model catalog status works
+model runtime status works
+no provider process is started
+```
+
+`tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh` proves
+the surface v0 CLI behavior. It uses an isolated `YAI_HOME`, writes only the
+device registry and provider runtime path directories, and verifies
+`execution_performed: false`.
+
+```text
+make check-provider-runtime-lan-target-surface
+make smoke-spine33l
+target/debug/yai device list
+target/debug/yai device add --id workstation --name Workstation --host 192.168.1.50 --port 8777 --target lan
+target/debug/yai device inspect workstation
+target/debug/yai device trust workstation
+target/debug/yai provider runtime status
+target/debug/yai provider targets
+target/debug/yai provider start --dry-run --target lan --device workstation --kind ds4 --model deepseek-v4-flash
+target/debug/yai provider logs-path
+target/debug/yai model catalog status
+target/debug/yai model runtime status
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai device list
+PATH=/tmp/yai-install-test/bin:$PATH yai device add --id workstation --name Workstation --host 192.168.1.50 --port 8777 --target lan
+PATH=/tmp/yai-install-test/bin:$PATH yai device trust workstation
+PATH=/tmp/yai-install-test/bin:$PATH yai provider start --dry-run --target lan --device workstation --kind ds4 --model deepseek-v4-flash
+PATH=/tmp/yai-install-test/bin:$PATH yai model runtime status
+```
+
 Expected key lines:
 
 ```text

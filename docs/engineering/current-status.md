@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction.
+Status: SPINE.33L Provider Runtime / LAN Target Surface v0.
 
 ## Completed Foundation
 
@@ -52,7 +52,10 @@ mismatch, observed, quarantined, waiting_operator, waiting_agent and
 not_attempted posture without fake execution. SPINE.33J and SPINE.33K reserve
 retrieval, context compiler and model runtime boundaries before SPINE.34:
 projection does not disappear, HNSW remains candidate retrieval and MTP belongs
-to model runtime / runner decoding strategy.
+to model runtime / runner decoding strategy. SPINE.33L adds provider runtime /
+LAN target surface v0: device registry, runtime target posture, provider start
+dry-run plans, provider log paths, model catalog posture and model runtime
+status without provider execution.
 
 Current:
 
@@ -86,6 +89,7 @@ SPINE.33G Non-Process Carrier Skeletons completed.
 SPINE.33H Carrier Outcome Harness completed.
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase completed.
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction completed.
+SPINE.33L Provider Runtime / LAN Target Surface v0 completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -131,6 +135,8 @@ carrier outcome harness active
 non-process carrier skeletons active
 context compiler retrieval doctrine active
 model runtime MTP doctrine active
+provider runtime LAN target surface active
+device registry v0 active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -351,6 +357,11 @@ Vector Retrieval / HNSW as candidate retrieval, not graph/memory/decision
 authority; define Context Compiler as the system that assembles compiled
 projection/model context; and reserve Model Runtime / Runner plus MTP policy
 without claiming YAI is a universal inference engine.
+
+SPINE.33L read-only inspected yai-dev provider, transport, machine, residency,
+activation and runtime registry residue for provider lifecycle, provider
+daemon, local/remote transport, machine authorization, runtime target, artifact
+layout and startup plan concepts. No `yai-dev` source file was modified.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

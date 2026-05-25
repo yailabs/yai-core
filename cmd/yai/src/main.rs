@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction");
+    println!("status: SPINE.33L Provider Runtime / LAN Target Surface v0");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -65,6 +65,8 @@ fn print_info() {
     println!(
         "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; outcome harness; host probe v0"
     );
+    println!("provider-runtime: planned surface active");
+    println!("device-registry: active");
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
 }
@@ -219,6 +221,21 @@ fn print_usage() {
     println!("       yai carrier coverage [--family <carrier_family>] [--mode controlled|observed|imported]");
     println!("       yai carrier inspect <carrier_family>");
     println!("       yai carrier outcome-test --family <carrier_family> [--mode controlled|observed|imported] --outcome <outcome>");
+    println!("       yai device add --id <id> --name <name> --host <host> --port <port> --target local|lan|external");
+    println!("       yai device list");
+    println!("       yai device inspect <device_id>");
+    println!("       yai device trust <device_id>");
+    println!("       yai device untrust <device_id>");
+    println!("       yai provider runtime status");
+    println!("       yai provider targets");
+    println!("       yai provider start --dry-run --target local --kind <kind> --model <model>");
+    println!("       yai provider start --dry-run --target lan --device <device_id> --kind <kind> --model <model>");
+    println!(
+        "       yai provider start --dry-run --target external --endpoint <url> --kind <kind>"
+    );
+    println!("       yai provider logs-path");
+    println!("       yai model catalog status");
+    println!("       yai model runtime status");
     println!("       yai process observe --pid <pid>");
     println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
     println!("       yai observe process --pid <pid>");
@@ -1224,6 +1241,396 @@ fn yai_home() -> PathBuf {
                 .unwrap_or_else(|| PathBuf::from("."))
                 .join(".yai")
         })
+}
+
+fn yai_config_dir() -> PathBuf {
+    yai_home().join("config")
+}
+
+fn provider_run_dir() -> PathBuf {
+    yai_home().join("run").join("providers")
+}
+
+fn provider_log_dir() -> PathBuf {
+    yai_home().join("log").join("providers")
+}
+
+fn provider_plan_dir() -> PathBuf {
+    yai_home().join("tmp").join("provider-plans")
+}
+
+fn device_registry_path() -> PathBuf {
+    yai_config_dir().join("devices.jsonl")
+}
+
+fn ensure_provider_runtime_dirs() -> Result<(), String> {
+    for path in [
+        yai_config_dir(),
+        provider_run_dir(),
+        provider_log_dir(),
+        provider_plan_dir(),
+    ] {
+        fs::create_dir_all(&path)
+            .map_err(|error| format!("failed to create {}: {error}", path.display()))?;
+    }
+    Ok(())
+}
+
+#[derive(Clone, Debug)]
+struct DeviceEntry {
+    device_id: String,
+    name: String,
+    target_mode: String,
+    host: String,
+    port: u16,
+    pairing_status: String,
+    trust_status: String,
+    os: String,
+    arch: String,
+    gpu_backend: String,
+    provider_supervisor_status: String,
+    notes: String,
+}
+
+impl DeviceEntry {
+    fn to_jsonl(&self) -> String {
+        format!(
+            "{{\"device_id\":\"{}\",\"name\":\"{}\",\"target_mode\":\"{}\",\"host\":\"{}\",\"port\":{},\"pairing_status\":\"{}\",\"trust_status\":\"{}\",\"os\":\"{}\",\"arch\":\"{}\",\"gpu_backend\":\"{}\",\"provider_supervisor_status\":\"{}\",\"notes\":\"{}\"}}\n",
+            json_escape(&self.device_id),
+            json_escape(&self.name),
+            json_escape(&self.target_mode),
+            json_escape(&self.host),
+            self.port,
+            json_escape(&self.pairing_status),
+            json_escape(&self.trust_status),
+            json_escape(&self.os),
+            json_escape(&self.arch),
+            json_escape(&self.gpu_backend),
+            json_escape(&self.provider_supervisor_status),
+            json_escape(&self.notes)
+        )
+    }
+}
+
+fn validate_runtime_target(value: &str) -> Result<(), String> {
+    if matches!(value, "local" | "lan" | "external") {
+        Ok(())
+    } else {
+        Err("target must be local, lan or external".to_string())
+    }
+}
+
+fn parse_device_line(line: &str) -> Option<DeviceEntry> {
+    let device_id = extract_json_string_field(line, "device_id")?;
+    let port = json_number_field(line, "port")?.parse::<u16>().ok()?;
+    Some(DeviceEntry {
+        device_id,
+        name: extract_json_string_field(line, "name").unwrap_or_else(|| "unknown".to_string()),
+        target_mode: extract_json_string_field(line, "target_mode")
+            .unwrap_or_else(|| "lan".to_string()),
+        host: extract_json_string_field(line, "host").unwrap_or_else(|| "unknown".to_string()),
+        port,
+        pairing_status: extract_json_string_field(line, "pairing_status")
+            .unwrap_or_else(|| "unknown".to_string()),
+        trust_status: extract_json_string_field(line, "trust_status")
+            .unwrap_or_else(|| "unknown".to_string()),
+        os: extract_json_string_field(line, "os").unwrap_or_else(|| "unknown".to_string()),
+        arch: extract_json_string_field(line, "arch").unwrap_or_else(|| "unknown".to_string()),
+        gpu_backend: extract_json_string_field(line, "gpu_backend")
+            .unwrap_or_else(|| "unknown".to_string()),
+        provider_supervisor_status: extract_json_string_field(line, "provider_supervisor_status")
+            .unwrap_or_else(|| "not_checked".to_string()),
+        notes: extract_json_string_field(line, "notes").unwrap_or_default(),
+    })
+}
+
+fn read_device_registry() -> Result<Vec<DeviceEntry>, String> {
+    let path = device_registry_path();
+    if !path.is_file() {
+        return Ok(Vec::new());
+    }
+    let content = fs::read_to_string(&path)
+        .map_err(|error| format!("failed to read {}: {error}", path.display()))?;
+    Ok(content.lines().filter_map(parse_device_line).collect())
+}
+
+fn write_device_registry(devices: &[DeviceEntry]) -> Result<(), String> {
+    ensure_provider_runtime_dirs()?;
+    let path = device_registry_path();
+    let mut file = fs::File::create(&path)
+        .map_err(|error| format!("failed to open {}: {error}", path.display()))?;
+    for device in devices {
+        file.write_all(device.to_jsonl().as_bytes())
+            .map_err(|error| format!("failed to write {}: {error}", path.display()))?;
+    }
+    Ok(())
+}
+
+fn print_device_entry(device: &DeviceEntry, list_item: bool) {
+    let prefix = if list_item { "  " } else { "" };
+    if list_item {
+        println!("- device_id: {}", device.device_id);
+    } else {
+        println!("device_id: {}", device.device_id);
+    }
+    println!("{prefix}name: {}", device.name);
+    println!("{prefix}target_mode: {}", device.target_mode);
+    println!("{prefix}host: {}", device.host);
+    println!("{prefix}port: {}", device.port);
+    println!("{prefix}pairing_status: {}", device.pairing_status);
+    println!("{prefix}trust_status: {}", device.trust_status);
+    println!(
+        "{prefix}provider_supervisor_status: {}",
+        device.provider_supervisor_status
+    );
+    if !list_item {
+        println!("os: {}", device.os);
+        println!("arch: {}", device.arch);
+        println!("gpu_backend: {}", device.gpu_backend);
+        println!("model_catalog: not_scanned");
+        println!(
+            "notes: {}",
+            if device.notes.is_empty() {
+                "none"
+            } else {
+                device.notes.as_str()
+            }
+        );
+    }
+}
+
+fn device_add(args: &[String]) -> Result<(), String> {
+    let device_id = named_arg(args, "--id")?;
+    let name = named_arg(args, "--name")?;
+    let host = named_arg(args, "--host")?;
+    let port_text = named_arg(args, "--port")?;
+    let target_mode = named_arg(args, "--target")?;
+    validate_runtime_target(&target_mode)?;
+    let port = port_text
+        .parse::<u16>()
+        .map_err(|_| "--port must be an integer from 0 to 65535".to_string())?;
+    let entry = DeviceEntry {
+        device_id: device_id.clone(),
+        name,
+        target_mode: target_mode.clone(),
+        host,
+        port,
+        pairing_status: if target_mode == "lan" {
+            "paired".to_string()
+        } else {
+            "unknown".to_string()
+        },
+        trust_status: "untrusted".to_string(),
+        os: optional_arg(args, "--os").unwrap_or_else(|| "unknown".to_string()),
+        arch: optional_arg(args, "--arch").unwrap_or_else(|| "unknown".to_string()),
+        gpu_backend: optional_arg(args, "--gpu-backend").unwrap_or_else(|| "unknown".to_string()),
+        provider_supervisor_status: "not_checked".to_string(),
+        notes: optional_arg(args, "--notes").unwrap_or_default(),
+    };
+    let mut devices = read_device_registry()?;
+    devices.retain(|device| device.device_id != device_id);
+    devices.push(entry.clone());
+    write_device_registry(&devices)?;
+    println!("device:add ok");
+    println!("device_registry: {}", device_registry_path().display());
+    print_device_entry(&entry, false);
+    Ok(())
+}
+
+fn device_list() -> Result<(), String> {
+    let devices = read_device_registry()?;
+    if devices.is_empty() {
+        println!("devices: none");
+        println!("device_registry: {}", device_registry_path().display());
+        return Ok(());
+    }
+    println!("devices:");
+    for device in &devices {
+        print_device_entry(device, true);
+    }
+    println!("device_registry: {}", device_registry_path().display());
+    Ok(())
+}
+
+fn device_inspect(args: &[String]) -> Result<(), String> {
+    let device_id = args
+        .first()
+        .filter(|value| !value.starts_with("--"))
+        .ok_or_else(|| "device_id is required".to_string())?;
+    let devices = read_device_registry()?;
+    let Some(device) = devices.iter().find(|device| &device.device_id == device_id) else {
+        println!("device: not_found");
+        println!("device_id: {device_id}");
+        println!("device_registry: {}", device_registry_path().display());
+        return Ok(());
+    };
+    print_device_entry(device, false);
+    Ok(())
+}
+
+fn set_device_trust(args: &[String], trust_status: &str) -> Result<(), String> {
+    let device_id = args
+        .first()
+        .filter(|value| !value.starts_with("--"))
+        .ok_or_else(|| "device_id is required".to_string())?;
+    let mut devices = read_device_registry()?;
+    let Some(device) = devices
+        .iter_mut()
+        .find(|device| device.device_id == *device_id)
+    else {
+        println!("device: not_found");
+        println!("device_id: {device_id}");
+        println!("device_registry: {}", device_registry_path().display());
+        return Ok(());
+    };
+    device.trust_status = trust_status.to_string();
+    let updated = device.clone();
+    write_device_registry(&devices)?;
+    println!("device_id: {}", updated.device_id);
+    println!("trust_status: {}", updated.trust_status);
+    println!("device_registry: {}", device_registry_path().display());
+    Ok(())
+}
+
+fn print_provider_runtime_status() {
+    println!("provider_runtime:");
+    println!("  status: surface_v0");
+    println!("  execution: dry_run_only");
+    println!("  provider_supervision: planned");
+    println!("  device_registry: active");
+    println!("  runtime_targets:");
+    println!("  - local");
+    println!("  - lan");
+    println!("  - external");
+    println!("local:");
+    println!("  supervisor: planned");
+    println!("lan:");
+    println!("  requires_paired_device: yes");
+    println!("  requires_trusted_device: yes");
+    println!("  supervisor: planned");
+    println!("external:");
+    println!("  attach_only: yes");
+}
+
+fn print_provider_targets() {
+    println!("runtime_targets:");
+    println!("- local");
+    println!("- lan");
+    println!("- external");
+    println!("local:");
+    println!("  provider_process: same_machine");
+    println!("  supervisor: planned");
+    println!("lan:");
+    println!("  device_is_runtime_target: yes");
+    println!("  requires_paired_device: yes");
+    println!("  requires_trusted_device: yes");
+    println!("  supervisor: planned");
+    println!("external:");
+    println!("  attach_only: yes");
+    println!("  supervisor: not_owned");
+}
+
+fn print_provider_logs_path() -> Result<(), String> {
+    ensure_provider_runtime_dirs()?;
+    println!("provider_log_dir: {}", provider_log_dir().display());
+    println!("provider_run_dir: {}", provider_run_dir().display());
+    println!("provider_plan_dir: {}", provider_plan_dir().display());
+    Ok(())
+}
+
+fn print_model_catalog_status() {
+    println!("model_catalog:");
+    println!("  local_scan: planned");
+    println!("  lan_scan: planned");
+    println!("  manual_path_registration: planned");
+    println!("  current_models: not_scanned");
+}
+
+fn print_model_runtime_status() {
+    println!("model_runtime:");
+    println!("  provider_supervision: planned");
+    println!("  model_routing: planned");
+    println!("  context_compiler: planned");
+    println!("  retrieval_hnsw: planned");
+    println!("  decoding_acceleration: planned");
+    println!("  normal_decoding: baseline");
+    println!("  speculative_draft: planned");
+    println!("  native_mtp: opportunistic");
+    println!("  fallback: normal_decoding");
+}
+
+fn provider_start_plan(args: &[String]) -> Result<(), String> {
+    if !args.iter().any(|arg| arg == "--dry-run") {
+        return Err("--dry-run is required in SPINE.33L".to_string());
+    }
+    let target = named_arg(args, "--target")?;
+    validate_runtime_target(&target)?;
+    let provider_kind = named_arg(args, "--kind")?;
+    ensure_provider_runtime_dirs()?;
+
+    println!("provider_start_plan:");
+    println!("  target: {target}");
+    match target.as_str() {
+        "local" => {
+            let model = named_arg(args, "--model")?;
+            println!("  provider_kind: {provider_kind}");
+            println!("  model: {model}");
+            println!("  status: planned");
+            println!("  action: dry_run_only");
+            println!("  would_contact_device: false");
+            println!("  would_start_provider: true");
+            println!("  execution_performed: false");
+            println!("  logs_path: {}", provider_log_dir().display());
+            println!("  receipt_required: yes");
+        }
+        "lan" => {
+            let device_id = named_arg(args, "--device")?;
+            println!("  device_id: {device_id}");
+            let devices = read_device_registry()?;
+            let Some(device) = devices.iter().find(|device| device.device_id == device_id) else {
+                println!("  status: blocked");
+                println!("  reason: device_not_found");
+                println!("  execution_performed: false");
+                return Ok(());
+            };
+            if device.pairing_status != "paired" {
+                println!("  status: blocked");
+                println!("  reason: device_not_paired");
+                println!("  execution_performed: false");
+                return Ok(());
+            }
+            if device.trust_status != "trusted" {
+                println!("  status: blocked");
+                println!("  reason: device_not_trusted");
+                println!("  execution_performed: false");
+                return Ok(());
+            }
+            let model = named_arg(args, "--model")?;
+            println!("  provider_kind: {provider_kind}");
+            println!("  model: {model}");
+            println!("  status: planned");
+            println!("  action: dry_run_only");
+            println!("  would_contact_device: true");
+            println!("  would_start_provider: true");
+            println!("  execution_performed: false");
+            println!("  logs_path: {}", provider_log_dir().display());
+            println!("  receipt_required: yes");
+        }
+        "external" => {
+            let endpoint = named_arg(args, "--endpoint")?;
+            println!("  provider_kind: {provider_kind}");
+            println!("  endpoint: {endpoint}");
+            println!("  status: planned");
+            println!("  action: attach_only");
+            println!("  would_contact_device: false");
+            println!("  would_start_provider: false");
+            println!("  execution_performed: false");
+            println!("  logs_path: {}", provider_log_dir().display());
+            println!("  receipt_required: yes");
+        }
+        _ => unreachable!("validated target"),
+    }
+    Ok(())
 }
 
 fn hot_state_path() -> PathBuf {
@@ -4418,6 +4825,69 @@ fn main() {
                 eprintln!("{error}");
                 std::process::exit(2);
             }
+        }
+        Some("device") if args.get(1).map(String::as_str) == Some("add") => {
+            if let Err(error) = device_add(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("device") if args.get(1).map(String::as_str) == Some("list") => {
+            if let Err(error) = device_list() {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("device") if args.get(1).map(String::as_str) == Some("inspect") => {
+            if let Err(error) = device_inspect(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("device") if args.get(1).map(String::as_str) == Some("trust") => {
+            if let Err(error) = set_device_trust(&args[2..], "trusted") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("device") if args.get(1).map(String::as_str) == Some("untrust") => {
+            if let Err(error) = set_device_trust(&args[2..], "untrusted") {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("provider")
+            if args.get(1).map(String::as_str) == Some("runtime")
+                && args.get(2).map(String::as_str) == Some("status") =>
+        {
+            print_provider_runtime_status();
+        }
+        Some("provider") if args.get(1).map(String::as_str) == Some("targets") => {
+            print_provider_targets();
+        }
+        Some("provider") if args.get(1).map(String::as_str) == Some("start") => {
+            if let Err(error) = provider_start_plan(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("provider") if args.get(1).map(String::as_str) == Some("logs-path") => {
+            if let Err(error) = print_provider_logs_path() {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("model")
+            if args.get(1).map(String::as_str) == Some("catalog")
+                && args.get(2).map(String::as_str) == Some("status") =>
+        {
+            print_model_catalog_status();
+        }
+        Some("model")
+            if args.get(1).map(String::as_str) == Some("runtime")
+                && args.get(2).map(String::as_str) == Some("status") =>
+        {
+            print_model_runtime_status();
         }
         Some("process") if args.get(1).map(String::as_str) == Some("observe") => {
             if let Err(error) = process_observe(&args[2..]) {

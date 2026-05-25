@@ -321,6 +321,17 @@ SPINE.3R data-plane stratification:
 | projection | live, versioned, delta-aware view materialization |
 | reconcile | mismatch detection and recovery posture |
 
+SPINE.33L provider runtime posture:
+
+```text
+device -> provider supervisor -> provider instance -> model attachment -> case
+```
+
+Runtime targets are `local`, `lan` and `external`. SPINE.33L exposes device
+registry, provider start dry-run plans, provider logs, model catalog posture,
+model routing, context compiler, retrieval_hnsw and decoding acceleration
+status. It starts no provider and performs no remote start in SPINE.33L.
+
 SPINE.4 observability/evaluation doctrine:
 
 ```text
