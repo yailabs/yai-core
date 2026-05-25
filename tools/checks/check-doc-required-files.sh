@@ -29,6 +29,7 @@ for file in \
   docs/architecture/27-model-runtime-mtp-boundary.md \
   docs/architecture/28-provider-runtime-lan-target-surface.md \
   docs/architecture/30-carrier-receipt-divergence.md \
+  docs/architecture/31-data-context-runtime-runtimegraph.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -36,6 +37,7 @@ for file in \
   docs/engineering/agent-operating-appendix.md \
   docs/engineering/current-status.md \
   docs/engineering/command-surface.md \
+  docs/engineering/data-context-runtime-runtimegraph.md \
   docs/engineering/carrier-contract-v1.md \
   docs/engineering/control-carrier-rebase.md \
   docs/engineering/operation-dispatch-multiplex.md \
@@ -74,6 +76,7 @@ for file in \
   docs/adr/0027-carrier-outcome-harness.md \
   docs/adr/0028-provider-runtime-lan-target-surface.md \
   docs/adr/0030-carrier-receipt-divergence.md \
+  docs/adr/0031-data-context-runtime-runtimegraph.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

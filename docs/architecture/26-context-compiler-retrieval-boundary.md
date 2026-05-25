@@ -20,13 +20,13 @@ It is not truth. It is not memory. It is not the record plane. It is not the
 graph.
 
 ```text
-Hot State
-LMDB Records
-Ladybug Graph
-DuckDB Facts
-Operational Memory
-Policy / Authority
-Retrieval Candidates
+Journal / LMDB / Ladybug / DuckDB
+        ↓ rebuild/load
+RuntimeGraph
+        ↓ retrieval bindings
+HNSW
+        ↓ candidates
+RuntimeGraph expansion + policy/facts filtering
         ↓
 Context Compiler
         ↓
@@ -61,6 +61,19 @@ decision authority.
 
 HNSW is a rebuildable proximity index over retrieval units. It stores vectors
 and refs, not authority. HNSW corruption must not destroy case truth.
+
+The bridge is:
+
+```text
+vector_id -> retrieval_unit_id -> runtime_node_id -> record_ref / graph_ref / payload_ref
+```
+
+SPINE.58D is `HNSW Candidate -> RuntimeGraph Expansion`.
+
+```text
+HNSW finds vectors.
+RuntimeGraph gives meaning.
+```
 
 Canonical rule:
 

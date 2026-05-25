@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33I carrier receipt / divergence hardening plus SPINE.33L provider runtime / LAN target surface v0. | SPINE.34 LMDB Record Plane Freeze. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33M Data Context Runtime / RuntimeGraph doctrine. | SPINE.34 LMDB Record Plane Freeze. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -84,7 +84,7 @@ journal fallback reads. SPINE.32 adds derived subject and receipt indexes plus
 CLI list filters for both.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.33.
+delivery is SPINE.34.
 
 ## Canonical Macro Labels
 
@@ -144,6 +144,42 @@ compat
 
 SPINE.21 defines the pack format, lifecycle and materialization rules.
 
+## Data Context Runtime / RuntimeGraph Doctrine
+
+YAI separates durable truth from runtime computation.
+
+```text
+Truth lives on durable planes.
+Computation happens in runtime working sets.
+```
+
+The canonical data/context split is:
+
+```text
+LMDB stores records.
+Ladybug stores relations.
+DuckDB stores facts.
+RuntimeGraph computes over the active case.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views.
+```
+
+Ladybug remains graph persistence, relation truth and rebuild contract.
+RuntimeGraph is the in-memory active case graph / working set loaded from
+durable truth. HNSW is a rebuildable proximity index over retrieval units bound
+to RuntimeGraph nodes. Context Compiler builds temporary controlled projections
+and model contexts from RuntimeGraph, retrieval candidates, policy, facts and
+token budgets.
+
+The retrieval roadmap therefore includes:
+
+```text
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion
+```
+
+This means HNSW finds vectors. RuntimeGraph gives meaning. ContextFrame remains
+a temporary compiled artifact, not truth, memory, storage or graph.
+
 ## SPINE.20-SPINE.120 Linear Roadmap
 
 SPINE.N is one implementable and manually verifiable delivery. Macro labels stay
@@ -198,6 +234,7 @@ SPINE.33I Carrier Receipt / Divergence Hardening                   done
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.33L Provider Runtime / LAN Target Surface v0                  done
+SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -206,12 +243,12 @@ SPINE.37  Replay Idempotency + Schema Version Handling              planned
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
 SPINE.39  Journal Replay Freeze                                     planned
 
-SPINE.40  Ladybug Graph Doctrine + Schema                           planned
-SPINE.41  Ladybug Graph Write Path                                  planned
-SPINE.42  Ladybug Graph Query / Causal Path                         planned
-SPINE.43  Graph Rebuild from LMDB / Journal                         planned
-SPINE.44  Graph Diagnostics / Orphan Edge Checks                    planned
-SPINE.45  Graph Plane Freeze                                        planned
+SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
+SPINE.41  Graph Relation Write Path                                  planned
+SPINE.42  RuntimeGraph In-Memory Working Set                         planned
+SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
+SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
+SPINE.45  Graph + RuntimeGraph Freeze                                planned
 
 SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
 SPINE.47  Receipt / Decision / Projection Facts                     planned
@@ -231,7 +268,7 @@ SPINE.58  Live Projection Freeze                                    planned
 SPINE.58A Context Compiler / Retrieval Boundary Doctrine            planned
 SPINE.58B Retrieval Unit Schema + Embedding Manifest                planned
 SPINE.58C HNSW Candidate Index Build / Rebuild                      planned
-SPINE.58D Case / Subject / Policy Scoped Retrieval Query            planned
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion                  planned
 SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
 SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
 SPINE.58G Context Compiler / Retrieval Freeze                       planned
@@ -320,20 +357,27 @@ into a compiled live context: scoped, redacted, freshness-aware and
 consumer-aware.
 
 Context Compiler is the YAI-owned, model-neutral system that assembles a
-projection/model context from records, graph, facts, memory, retrieval
-candidates, policy and token budget. A compiled model context is not truth. It
-is not memory, not the record plane, not the graph and not policy authority.
+projection/model context from records, graph persistence, RuntimeGraph, facts,
+memory, retrieval candidates, policy and token budget. A compiled model context
+is not truth. It is not memory, not the record plane, not the graph and not
+policy authority.
+
+Canonical statement:
+
+```text
+compiled model context is not truth
+```
 
 Canonical chain:
 
 ```text
-Hot State
-LMDB Records
-Ladybug Graph
-DuckDB Facts
-Operational Memory
-Policy / Authority
-Retrieval Candidates
+Journal / LMDB / Ladybug / DuckDB
+        ↓ rebuild/load
+RuntimeGraph
+        ↓ retrieval bindings
+HNSW
+        ↓ candidates
+RuntimeGraph expansion + policy/facts filtering
         ↓
 Context Compiler
         ↓

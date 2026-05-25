@@ -43,6 +43,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Pack materialization | [15-pack-materialization.md](15-pack-materialization.md) |
 | Hot state plane | [16-hot-state-plane.md](16-hot-state-plane.md) |
 | LMDB record plane | [17-lmdb-record-plane.md](17-lmdb-record-plane.md) |
+| Data Context Runtime / RuntimeGraph | [31-data-context-runtime-runtimegraph.md](31-data-context-runtime-runtimegraph.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
 | Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
@@ -78,9 +79,11 @@ ingest
 -> journal
 -> record store
 -> LMDB durable indexed record lookup
--> graph
+-> graph persistence / Ladybug relations
+-> RuntimeGraph active case working set
 -> index/query
 -> retrieval units / HNSW candidates
+-> HNSW Candidate -> RuntimeGraph Expansion
 -> context compiler
 -> compiled projection / model context
 -> memory
@@ -149,6 +152,42 @@ operationally through gates, decision and carrier
 Agent frameworks are not first. Agents become later subjects, actors or sources
 through external environment/adapters after naked model behavior is measurable.
 
+## Data Context Runtime / RuntimeGraph Doctrine
+
+YAI separates durable truth from runtime computation.
+
+```text
+Truth lives on durable planes.
+Computation happens in runtime working sets.
+```
+
+The Data Context Runtime doctrine keeps durable planes and computation planes
+separate:
+
+```text
+LMDB stores records.
+Ladybug stores relations.
+DuckDB stores facts.
+RuntimeGraph computes over the active case.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views.
+```
+
+Ladybug is graph persistence, relation truth and rebuild contract. RuntimeGraph
+is the in-memory working graph for the active case/session. HNSW is a
+rebuildable proximity index over retrieval units bound to RuntimeGraph nodes.
+Context Compiler builds temporary controlled projections/model contexts from
+RuntimeGraph, retrieval candidates, policy, facts and token budgets.
+
+The future retrieval block includes:
+
+```text
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion
+```
+
+HNSW finds vectors. RuntimeGraph gives meaning. ContextFrame is a temporary
+compiled artifact, not truth, memory, storage or graph.
+
 ## Context Compiler / Retrieval Doctrine
 
 Projection does not disappear. Projection evolves into the controlled view
@@ -156,8 +195,9 @@ produced by the context compiler: scoped, redacted, freshness-aware and
 consumer-aware.
 
 The Context Compiler is the model-neutral YAI boundary that assembles a
-projection/model context from hot state, LMDB records, Ladybug graph, DuckDB
-facts, operational memory, policy/authority and retrieval candidates. A
+projection/model context from hot state, LMDB records, Ladybug relations,
+RuntimeGraph, DuckDB facts, operational memory, policy/authority and retrieval
+candidates. A
 compiled model context is not truth, not memory, not the record plane and not
 the graph.
 
@@ -292,7 +332,8 @@ Definitions:
 | Primitive | Definition |
 |---|---|
 | store | durable residue persistence |
-| graph | causality and reconstruction over residue |
+| graph | durable relation truth and reconstruction over residue |
+| RuntimeGraph | in-memory active case working set loaded from durable truth |
 | index/query | operational access over case-bound residue |
 | memory | receipt-backed, graph-derived, policy-aware operational experience |
 | projection | live versioned cognitive view for model, agent, operator, API, audit and debug |
@@ -315,8 +356,10 @@ SPINE.3R data-plane stratification:
 | hot | shared memory / hot state, not truth |
 | journal | append-only replay chronology |
 | record | durable normalized record lookup, LMDB or equivalent |
-| graph | operational causality and reconstruction, Ladybug target |
+| graph | operational causality and reconstruction, Ladybug persistence target |
+| runtime graph | active in-memory case graph / working set, RuntimeGraph target |
 | fact | derived analytical facts, DuckDB target |
+| retrieval | retrieval units, HNSW candidates and RuntimeGraph expansion |
 | memory | operational memory over records, receipts, graph, policy and divergences |
 | projection | live, versioned, delta-aware view materialization |
 | reconcile | mismatch detection and recovery posture |

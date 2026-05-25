@@ -13,6 +13,7 @@ journal = replay/audit
 hot state = live session state, not truth
 record plane = durable lookup
 graph plane = causality and reconstruction
+runtime graph = active in-memory case graph / working set, not truth
 fact plane = analytics and diagnostics
 retrieval plane = retrieval units and candidate retrieval, not truth
 memory plane = consolidated operational experience
@@ -29,9 +30,10 @@ pack material = case-world input to future data planes, not loose files
 | hot | hot state / shared memory-ready snapshot | active case, session, projection frame, locks, obligations and deltas |
 | journal | append-only files | replay, audit, debug and rebuild |
 | record | LMDB | durable normalized record lookup |
-| graph | Ladybug | persistent operational causality |
+| graph | Ladybug / graph persistence | persistent operational causality, relation truth and rebuild contract |
+| runtime graph | RuntimeGraph / Data Context Runtime | active in-memory case graph / working set loaded from durable truth |
 | fact | DuckDB | analytical facts, reports and model behavior analysis |
-| retrieval | Context Compiler / HNSW optional accelerator | scoped retrieval units, candidate retrieval and context narrowing |
+| retrieval | Context Compiler / HNSW optional accelerator | scoped retrieval units, candidate retrieval, RuntimeGraph expansion and context narrowing |
 | memory | Rust engine memory | receipt-backed, graph-derived operational continuity |
 | projection | Rust engine projection / compiled context | live, versioned, delta-aware cognitive view for consumers |
 | reconcile | Rust engine reconcile | expected-vs-observed mismatch posture |
@@ -40,6 +42,36 @@ pack material = case-world input to future data planes, not loose files
 Pack material will feed these planes after it has been inspected, validated,
 materialized and bound to case-world residue. Packs do not bypass journal,
 records, graph, projection, memory or reconcile.
+
+## Data Context Runtime
+
+Truth lives on durable planes. Computation happens in runtime working sets.
+
+```text
+LMDB stores records.
+Ladybug stores relations.
+DuckDB stores facts.
+RuntimeGraph computes over the active case.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views.
+```
+
+RuntimeGraph is the Data Context Runtime working graph for an active
+case/session. It is not a replacement for LMDB, Ladybug or DuckDB. It is loaded
+or rebuilt from durable truth and updated during active work so graph traversal,
+retrieval candidate expansion, policy filtering and context assembly can be
+performed quickly.
+
+HNSW is attached to this runtime substrate as a rebuildable proximity index over
+retrieval units. The roadmap names this bridge explicitly:
+
+```text
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion
+```
+
+HNSW finds vectors. RuntimeGraph gives meaning. Context Compiler emits the
+compiled projection/model context; ContextFrame is a temporary compiled
+artifact, not truth.
 
 ## Linear Delivery
 
@@ -72,6 +104,7 @@ SPINE.33I Carrier Receipt / Divergence Hardening                   done
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.33L Provider Runtime / LAN Target Surface v0                  done
+SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -80,12 +113,12 @@ SPINE.37  Replay Idempotency + Schema Version Handling              planned
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
 SPINE.39  Journal Replay Freeze                                     planned
 
-SPINE.40  Ladybug Graph Doctrine + Schema                           planned
-SPINE.41  Ladybug Graph Write Path                                  planned
-SPINE.42  Ladybug Graph Query / Causal Path                         planned
-SPINE.43  Graph Rebuild from LMDB / Journal                         planned
-SPINE.44  Graph Diagnostics / Orphan Edge Checks                    planned
-SPINE.45  Graph Plane Freeze                                        planned
+SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
+SPINE.41  Graph Relation Write Path                                  planned
+SPINE.42  RuntimeGraph In-Memory Working Set                         planned
+SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
+SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
+SPINE.45  Graph + RuntimeGraph Freeze                                planned
 
 SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
 SPINE.47  Receipt / Decision / Projection Facts                     planned
@@ -105,7 +138,7 @@ SPINE.58  Live Projection Freeze                                    planned
 SPINE.58A Context Compiler / Retrieval Boundary Doctrine            planned
 SPINE.58B Retrieval Unit Schema + Embedding Manifest                planned
 SPINE.58C HNSW Candidate Index Build / Rebuild                      planned
-SPINE.58D Case / Subject / Policy Scoped Retrieval Query            planned
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion                  planned
 SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
 SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
 SPINE.58G Context Compiler / Retrieval Freeze                       planned

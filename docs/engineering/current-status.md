@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33I Carrier Receipt / Divergence Hardening.
+Status: SPINE.33M Data Context Runtime / RuntimeGraph Doctrine.
 
 ## Completed Foundation
 
@@ -57,7 +57,11 @@ LAN target surface v0: device registry, runtime target posture, provider start
 dry-run plans, provider log paths, model catalog posture and model runtime
 status without provider execution. SPINE.33I hardens carrier receipt /
 divergence posture by reconciling decision, dispatch, carrier outcome, receipt
-posture and observation result into consistent or divergent status.
+posture and observation result into consistent or divergent status. SPINE.33M
+adds the Data Context Runtime / RuntimeGraph doctrine: truth lives on durable
+planes, computation happens in runtime working sets, Ladybug stores relations,
+RuntimeGraph computes over the active case, HNSW finds candidate nodes and
+Context Compiler renders controlled views.
 
 Current:
 
@@ -93,6 +97,7 @@ SPINE.33I Carrier Receipt / Divergence Hardening completed.
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase completed.
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction completed.
 SPINE.33L Provider Runtime / LAN Target Surface v0 completed.
+SPINE.33M Data Context Runtime / RuntimeGraph Doctrine completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -138,6 +143,8 @@ carrier outcome harness active
 carrier receipt divergence hardening active
 non-process carrier skeletons active
 context compiler retrieval doctrine active
+Data Context Runtime doctrine active
+RuntimeGraph active case working set doctrine active
 model runtime MTP doctrine active
 provider runtime LAN target surface active
 device registry v0 active
@@ -198,6 +205,7 @@ ctl/
 README.md
 command-surface.md
 current-status.md
+data-context-runtime-runtimegraph.md
 data-plane-roadmap.md
 extraction-plan.md
 filesystem-target.md

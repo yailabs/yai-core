@@ -81,6 +81,11 @@ SPINE.33H adopts the carrier outcome harness. Outcome posture can be tested
 across active, skeleton and unsupported families without executing skeleton
 effects.
 
+SPINE.33M adopts Data Context Runtime / RuntimeGraph doctrine. Truth lives on
+durable planes and computation happens in runtime working sets. Ladybug stores
+relations, RuntimeGraph computes over the active case, HNSW finds candidate
+nodes and Context Compiler renders controlled views.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -106,6 +111,7 @@ effects.
 | 0019 | LMDB record plane | LMDB is durable indexed record lookup, rebuildable from journal and separate from hot state, graph, facts and memory. |
 | 0026 | Non-process carrier skeletons | Planned carrier families become carrier.v1 skeletons before implementation and do not execute effects. |
 | 0027 | Carrier outcome harness | Outcome posture is tested independently of real carrier execution; skeleton carriers simulate posture only. |
+| 0031 | Data Context Runtime / RuntimeGraph | Durable graph truth is separated from runtime graph computation, HNSW candidate retrieval and compiled projection output. |
 
 ## Combined Doctrine
 
@@ -177,8 +183,10 @@ shared memory = hot state, not truth
 journal = replay
 hot state = live cache, not truth
 LMDB = durable record plane
-Ladybug = operational graph
+Ladybug = operational graph persistence / relation truth
+RuntimeGraph = active in-memory case graph / working set
 DuckDB = derived facts / analytics
+HNSW = candidate retrieval index
 projection = live versioned cognitive view
 ```
 

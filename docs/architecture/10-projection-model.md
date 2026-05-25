@@ -87,10 +87,10 @@ Projection does not disappear. Projection evolves from a static controlled view
 into compiled live context.
 
 The Context Compiler assembles projections for consumers from records,
-receipts, graph, facts, memory, policy, freshness state, retrieval candidates
-and token budget. A compiled model context is a temporary, scoped,
-freshness-aware consumer view. It is not truth, not memory, not the record
-plane and not the graph.
+receipts, graph persistence, RuntimeGraph, facts, memory, policy, freshness
+state, retrieval candidates and token budget. A compiled model context is a
+temporary, scoped, freshness-aware consumer view. It is not truth, not memory,
+not the record plane and not the graph.
 
 ```text
 projection = generic controlled view
@@ -101,6 +101,11 @@ ContextFrame = temporary compiled artifact, not durable truth
 HNSW may accelerate retrieval candidate discovery for context assembly, but
 HNSW is candidate retrieval only. HNSW is not graph, not memory and not
 decision authority.
+
+RuntimeGraph is the active in-memory case working set that expands retrieval
+candidates into operational meaning before Context Compiler rendering. Ladybug
+persists relations. RuntimeGraph computes over the active case. HNSW finds
+candidate nodes; it does not justify projection contents by proximity alone.
 
 ## Freshness Policy
 

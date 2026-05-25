@@ -1056,6 +1056,29 @@ divergence_candidate:
 carrier_status: unsupported
 ```
 
+## SPINE.33M Data Context Runtime / RuntimeGraph Doctrine Loop
+
+```text
+Truth lives on durable planes.
+Computation happens in runtime working sets.
+LMDB stores records.
+Ladybug stores relations.
+DuckDB stores facts.
+RuntimeGraph computes over the active case.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views.
+SPINE.58D HNSW Candidate -> RuntimeGraph Expansion
+```
+
+SPINE.33M is docs/roadmap/guard only. It does not implement RuntimeGraph,
+HNSW, graph persistence, context compilation, retrieval commands or model
+runtime behavior.
+
+```text
+make check-data-context-runtime-roadmap
+make check-docs
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

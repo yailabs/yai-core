@@ -695,6 +695,23 @@ so future roadmap work has an explicit command-surface placeholder without
 implying HNSW, vector DB, embedding, context compiler, MTP, DS4 or model runner
 support.
 
+SPINE.33M adds no runtime command surface. It corrects the vocabulary for
+future graph, retrieval and context compiler commands:
+
+```text
+LMDB stores records.
+Ladybug stores relations.
+DuckDB stores facts.
+RuntimeGraph computes over the active case.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views.
+```
+
+Future command surfaces may inspect Data Context Runtime state,
+RuntimeGraph working sets and HNSW Candidate -> RuntimeGraph Expansion, but
+SPINE.33M implements no `yai runtime-graph`, `yai retrieval` or `yai context`
+command.
+
 ## Projection Commands
 
 | Primitive | View | Command | Manual test | Docs |
