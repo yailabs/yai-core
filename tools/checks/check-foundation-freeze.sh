@@ -52,6 +52,7 @@ hot-state-plane.md
 host-observation-probe.md
 journal-replay-parser-hardening.md
 journal-replay-to-lmdb.md
+journal-replay-freeze.md
 lmdb-record-plane.md
 lmdb-record-plane-freeze.md
 non-process-carrier-skeletons.md

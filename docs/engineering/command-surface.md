@@ -144,6 +144,12 @@ prints `journal_identity`, `compatibility`, `cursor_line`, `records_written`,
 `records_duplicate`, `invalid_entries`, idempotent status and failed report
 diagnostics.
 
+SPINE.39 adds no command. It freezes the journal replay command surface and
+validates `journal inspect`, `journal replay --dry-run`, `journal replay`,
+`journal replay-status`, `journal replay-report`, `yai.replay_report.v1`,
+`schema_mismatch`, `invalid_json`, no silent skip, no false complete and no
+journal fallback.
+
 Required fields:
 
 ```text
@@ -335,6 +341,10 @@ compatibility: compatible
 
 Replay materializes LMDB records. It does not change no journal fallback
 behavior for store reads.
+
+SPINE.39 freezes this surface. Future graph rebuild work must consume replay as
+a stable diagnostic/materialization boundary instead of adding hidden journal
+fallback behavior.
 
 ## Carrier Substrate Commands
 

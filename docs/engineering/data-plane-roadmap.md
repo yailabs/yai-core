@@ -111,7 +111,7 @@ SPINE.35  Journal Replay Doctrine + Parser Hardening                done
 SPINE.36  Journal Replay to LMDB                                    done
 SPINE.37  Replay Idempotency + Schema Version Handling              done
 SPINE.38  Replay Diagnostics / Rebuild Report                       done
-SPINE.39  Journal Replay Freeze                                     planned
+SPINE.39  Journal Replay Freeze                                     done
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
 SPINE.41  Graph Relation Write Path                                  planned
@@ -432,6 +432,21 @@ failed report
 Replay reports are durable operational evidence for journal to LMDB rebuilds.
 They live under `YAI_HOME/store/replay/reports/` and describe completed,
 idempotent and failed materialization attempts.
+
+SPINE.39 Journal Replay Freeze adds no new command. It freezes:
+
+```text
+yai journal inspect --path <journal.jsonl>
+yai journal replay --path <journal.jsonl> --dry-run
+yai journal replay --path <journal.jsonl>
+yai journal replay-status --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+yai store summary
+```
+
+The freeze confirms no silent skip, no false complete, no journal fallback,
+schema_mismatch and invalid_json blocking, idempotent second replay and
+`yai.replay_report.v1` completed/failed reports.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

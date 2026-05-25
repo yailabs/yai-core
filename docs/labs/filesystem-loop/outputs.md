@@ -95,3 +95,43 @@ replay_report: YAI_HOME/store/replay/reports/<journal_identity>.replay-report.js
 `replay_report_schema: yai.replay_report.v1`, `compatibility`, `cursor_line`,
 `records_written`, `records_duplicate`, `invalid_entries`, `idempotent` and the
 failed report summary when corrupt input blocks replay.
+
+## Journal Replay Freeze Output
+
+SPINE.39 freezes the output contract for filesystem-loop replay checks:
+
+```text
+journal inspect -> replay_ready: yes|no
+journal replay --dry-run -> would_write_lmdb: yes
+journal replay -> journal_replay: completed|failed
+journal replay-status -> journal_replay_status:
+journal replay-report -> replay_report_schema: yai.replay_report.v1
+store summary -> record_store_status: ready
+```
+
+Required fields:
+
+```text
+journal_identity:
+record_schema:
+journal_schema:
+compatibility:
+cursor_line:
+replay_status:
+records_written:
+records_duplicate:
+records_skipped:
+invalid_entries:
+idempotent:
+```
+
+Schema and parser failures remain explicit:
+
+```text
+schema_mismatch
+invalid_json
+records_written: 0
+```
+
+The freeze output must not imply silent skip, false complete or journal
+fallback behavior.

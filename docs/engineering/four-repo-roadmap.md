@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.38 Replay Diagnostics / Rebuild Report. | SPINE.39 Journal Replay Freeze. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.39 Journal Replay Freeze. | SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -93,10 +93,12 @@ journal identity, schema compatibility, replay cursor metadata and
 `yai journal replay-status`. SPINE.38 adds `yai.replay_report.v1` durable replay
 diagnostics with `journal_identity`, `compatibility`, `cursor_line`,
 `records_written`, `records_duplicate`, `invalid_entries` and failed report
-evidence.
+evidence. SPINE.39 freezes journal replay as the controlled materialization
+path from append-only replay/audit residue into LMDB before graph persistence
+begins.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.39.
+delivery is SPINE.40.
 
 ## Canonical Macro Labels
 
@@ -253,7 +255,7 @@ SPINE.35  Journal Replay Doctrine + Parser Hardening                done
 SPINE.36  Journal Replay to LMDB                                    done
 SPINE.37  Replay Idempotency + Schema Version Handling              done
 SPINE.38  Replay Diagnostics / Rebuild Report                       done
-SPINE.39  Journal Replay Freeze                                     planned
+SPINE.39  Journal Replay Freeze                                     done
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
 SPINE.41  Graph Relation Write Path                                  planned

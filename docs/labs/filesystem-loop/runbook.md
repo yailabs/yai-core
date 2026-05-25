@@ -182,3 +182,47 @@ The report uses `yai.replay_report.v1` and is stored under
 `YAI_HOME/store/replay/reports/`. It records `journal_identity`,
 `compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
 `invalid_entries` and failed report diagnostics for the filesystem-loop journal.
+
+## Journal Replay Freeze
+
+SPINE.39 freezes the canonical filesystem-loop replay sequence in
+`docs/labs/filesystem-loop`. The active order is:
+
+```bash
+yai journal inspect --path <journal.jsonl>
+yai journal replay --path <journal.jsonl> --dry-run
+yai journal replay --path <journal.jsonl>
+yai journal replay-status --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+yai store summary
+yai store record list --case <case_ref> --limit 10
+yai journal replay --path <journal.jsonl>
+yai journal replay-status --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+```
+
+Expected freeze fields:
+
+```text
+journal_identity:
+record_schema: yai.record.v1
+journal_schema: yai.store.record.v0
+compatibility: compatible
+cursor_line:
+replay_status: completed
+records_written:
+records_duplicate:
+invalid_entries: 0
+replay_report_schema: yai.replay_report.v1
+idempotent: yes
+```
+
+Bad input checks must stay visible:
+
+```text
+schema_mismatch -> records_written: 0
+invalid_json -> records_written: 0
+```
+
+The old `docs/manuals/manual-filesystem-loop-validation` path is not the active
+filesystem-loop replay lab path.

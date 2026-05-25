@@ -120,3 +120,11 @@ make smoke-spine36
 
 Smoke verifies dry-run, real replay, idempotent replay, corrupt journal failure
 and LMDB store summary/query behavior.
+
+## Freeze Note
+
+SPINE.39 freezes `journal replay --dry-run` and `journal replay` as the
+controlled materialization path from journal residue into LMDB. The command
+surface must keep `journal_identity`, `compatibility`, `records_written`,
+`records_duplicate`, `invalid_entries` and no journal fallback semantics
+visible.

@@ -29,3 +29,7 @@ inspectable evidence.
 
 SPINE.38 does not add graph rebuild, DuckDB facts, memory consolidation,
 RuntimeGraph, HNSW, carrier/provider behavior or interfaces/studio behavior.
+
+SPINE.39 freezes the report command as part of the canonical replay chain.
+`yai journal replay-report` remains the durable `yai.replay_report.v1` evidence
+surface for completed, idempotent and failed replay attempts.

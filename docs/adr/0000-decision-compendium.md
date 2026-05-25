@@ -98,6 +98,19 @@ SPINE.36 adopts Journal Replay to LMDB. Replay materializes valid journal
 residue into the LMDB record plane through the frozen writer, reports
 records_written and records_duplicate, and keeps no journal fallback semantics.
 
+SPINE.37 adopts Replay Idempotency + Schema Version Handling. Replay persists
+cursor and compatibility metadata so repeated replay is diagnosable and schema
+mismatch cannot be reported as completed materialization.
+
+SPINE.38 adopts Replay Diagnostics / Rebuild Report. Replay writes durable
+`yai.replay_report.v1` reports for completed, idempotent and failed replay
+attempts.
+
+SPINE.39 adopts Journal Replay Freeze. `journal inspect`, `journal replay`,
+`journal replay-status` and `journal replay-report` are frozen as the controlled
+journal-to-LMDB path with no silent skip, no false completion and no journal
+fallback.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -127,6 +140,8 @@ records_written and records_duplicate, and keeps no journal fallback semantics.
 | 0032 | LMDB record plane freeze | `yai.record.v1` id/case/kind/subject/receipt lookup is frozen with no journal fallback. |
 | 0033 | Journal replay boundary | Journal inspect reports invalid_json, invalid_schema, unsupported_kind, duplicate and replay readiness without writing LMDB. |
 | 0034 | Journal replay to LMDB | Journal replay writes valid records through the LMDB record/index path and treats existing records as idempotent duplicates. |
+| 0035 | Replay idempotency/schema | Replay metadata tracks journal_identity, cursor_line, record_schema and compatibility. |
+| 0036 | Journal replay freeze | Journal replay is frozen as the diagnostic, idempotent, report-producing path from journal to LMDB. |
 
 ## Combined Doctrine
 

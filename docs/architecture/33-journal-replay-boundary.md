@@ -93,3 +93,5 @@ LMDB against the frozen `yai.record.v1` lookup and index posture.
 SPINE.37 adds replay identity, schema compatibility, cursor metadata and
 `yai journal replay-status` so future rebuilds can reason about completed,
 failed and incompatible replay posture.
+SPINE.39 freezes this boundary as the inspect step in the canonical replay
+chain and preserves the rule that inspection never writes LMDB.

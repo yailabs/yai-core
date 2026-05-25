@@ -97,3 +97,42 @@ yai journal replay-report --path <journal.jsonl>
 Expected evidence includes `yai.replay_report.v1`, `journal_identity`,
 `compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
 `invalid_entries` and a failed report for corrupt replay input.
+
+## Journal Replay Freeze
+
+SPINE.39 freezes the replay checks under `docs/labs/filesystem-loop`.
+
+```bash
+yai journal inspect --path <journal.jsonl>
+yai journal replay --path <journal.jsonl> --dry-run
+yai journal replay --path <journal.jsonl>
+yai journal replay-status --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+yai store summary
+yai store record list --case <case_ref> --limit 10
+```
+
+Expected signals:
+
+```text
+journal_identity:
+record_schema: yai.record.v1
+journal_schema: yai.store.record.v0
+compatibility: compatible
+cursor_line:
+replay_status: completed
+replay_report_schema: yai.replay_report.v1
+records_written:
+records_duplicate:
+invalid_entries: 0
+idempotent: yes
+```
+
+Negative checks:
+
+```text
+schema_mismatch writes no records
+invalid_json writes no records
+no false complete
+no journal fallback
+```

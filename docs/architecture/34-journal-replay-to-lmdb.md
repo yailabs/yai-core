@@ -97,3 +97,6 @@ status
 SPINE.36 provides basic replay and idempotent replay behavior. SPINE.37 hardens
 schema version handling, replay cursor and compatibility posture with
 `yai journal replay-status --path <journal.jsonl>`.
+SPINE.39 freezes journal replay to LMDB as the controlled materialization path
+and keeps no silent skip, no false completion and no journal fallback as
+architectural requirements.

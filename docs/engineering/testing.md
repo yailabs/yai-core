@@ -1100,6 +1100,37 @@ make check-replay-diagnostics-report
 make smoke-spine38
 ```
 
+## SPINE.39 Journal Replay Freeze Loop
+
+SPINE.39 adds no new replay semantics. It freezes the journal replay block as
+an inspectable, diagnostic, idempotent, schema-aware and report-producing path
+from append-only journal residue into LMDB.
+
+`tests/smoke/journal-replay-freeze/test_journal_replay_freeze.sh` proves the
+full compact lifecycle:
+
+```text
+journal inspect reports replay readiness
+journal replay --dry-run writes nothing
+journal replay materializes valid records into LMDB
+journal replay-status reports journal_identity, compatibility and cursor_line
+journal replay-report emits yai.replay_report.v1
+second replay is idempotent
+schema_mismatch blocks writes
+invalid_json blocks writes and produces a failed report
+store record list does not fall back to journal-only input
+```
+
+Required freeze fields include `journal_identity`, `record_schema`,
+`journal_schema`, `compatibility`, `cursor_line`, `records_written`,
+`records_duplicate`, `invalid_entries`, `replay_status` and
+`replay_report_schema: yai.replay_report.v1`.
+
+```text
+make check-journal-replay-freeze
+make smoke-spine39
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

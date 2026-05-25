@@ -172,3 +172,10 @@ No HNSW.
 No carrier/provider changes.
 No old docs/manuals path updates.
 ```
+
+## Freeze Note
+
+SPINE.39 freezes replay cursor and compatibility output. `replay-status` must
+continue to expose `journal_identity`, `record_schema`, `journal_schema`,
+`compatibility`, `cursor_line`, `replay_status` and idempotent replay posture,
+and schema_mismatch must not be reported as completed replay.

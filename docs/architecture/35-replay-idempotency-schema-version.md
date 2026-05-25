@@ -137,3 +137,10 @@ No RuntimeGraph.
 No HNSW.
 No carrier/provider changes.
 ```
+
+## Freeze Placement
+
+SPINE.39 freezes replay cursor, schema and compatibility posture. The replay
+block must continue to expose `journal_identity`, `compatibility`,
+`cursor_line`, `schema_mismatch`, idempotent second replay posture and no false
+completed state.

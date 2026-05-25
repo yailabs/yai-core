@@ -122,3 +122,8 @@ SPINE.34 LMDB no silent journal fallback rule.
 
 SPINE.37 adds formal idempotency, schema compatibility, journal identity,
 replay cursor metadata and `yai journal replay-status`.
+
+SPINE.39 freezes this inspect boundary as the first command in the canonical
+filesystem-loop replay chain. `journal inspect` must continue to report
+`invalid_json`, `invalid_schema`, `unsupported_kind`, `duplicate` and
+`replay_ready` without writing LMDB.
