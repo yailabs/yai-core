@@ -191,6 +191,7 @@ fn print_usage() {
     println!("       yai store record list --subject <subject_ref> [--limit <N>]");
     println!("       yai store record list --receipt <receipt_ref> [--limit <N>]");
     println!("       yai store tail --journal <path>");
+    println!("       yai journal inspect --path <journal.jsonl> [--show-errors]");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
@@ -2627,6 +2628,57 @@ fn store_tail(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn journal_inspect(args: &[String]) -> Result<(), String> {
+    let path = PathBuf::from(named_arg(args, "--path")?);
+    let show_errors = args.iter().any(|arg| arg == "--show-errors");
+    println!("journal_path: {}", path.display());
+    println!("parser_policy: diagnostic");
+    println!("lmdb_write: no");
+    if !path.exists() {
+        println!("journal_status: missing");
+        println!("lines_total: 0");
+        println!("valid_entries: 0");
+        println!("invalid_entries: 0");
+        println!("unsupported_entries: 0");
+        println!("duplicate_entries: 0");
+        println!("replay_ready: no");
+        return Ok(());
+    }
+    if !path.is_file() {
+        println!("journal_status: unavailable");
+        println!("lines_total: 0");
+        println!("valid_entries: 0");
+        println!("invalid_entries: 0");
+        println!("unsupported_entries: 0");
+        println!("duplicate_entries: 0");
+        println!("replay_ready: no");
+        return Ok(());
+    }
+
+    let inspection = Journal::inspect_jsonl(&path)
+        .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    println!("journal_status: readable");
+    println!("lines_total: {}", inspection.lines_total);
+    println!("valid_entries: {}", inspection.valid_entries);
+    println!("invalid_entries: {}", inspection.invalid_entries);
+    println!("unsupported_entries: {}", inspection.unsupported_entries);
+    println!("duplicate_entries: {}", inspection.duplicate_entries);
+    println!("replay_ready: {}", bool_word(inspection.replay_ready()));
+    if show_errors {
+        for diagnostic in inspection.diagnostics {
+            println!("line: {}", diagnostic.line_number);
+            println!("entry_status: {}", diagnostic.entry_status.as_str());
+            println!("record_id: {}", diagnostic.record_id);
+            println!("record_kind: {}", diagnostic.record_kind);
+            println!("schema: {}", diagnostic.schema);
+            println!("error_code: {}", diagnostic.error_code);
+            println!("error_message: {}", diagnostic.error_message);
+            println!("action: {}", diagnostic.action);
+        }
+    }
+    Ok(())
+}
+
 fn import_journal_to_record_store(journal_path: &std::path::Path) -> Result<(), String> {
     let journal = Journal::load_jsonl(journal_path)
         .map_err(|error| format!("record store import failed to load journal: {error}"))?;
@@ -4980,6 +5032,12 @@ fn main() {
         }
         Some("store") if args.get(1).map(String::as_str) == Some("tail") => {
             if let Err(error) = store_tail(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("journal") if args.get(1).map(String::as_str) == Some("inspect") => {
+            if let Err(error) = journal_inspect(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

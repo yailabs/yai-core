@@ -50,6 +50,7 @@ filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md
 host-observation-probe.md
+journal-replay-parser-hardening.md
 lmdb-record-plane.md
 lmdb-record-plane-freeze.md
 non-process-carrier-skeletons.md

@@ -107,5 +107,6 @@ record_store_freeze:spine34 ok
 
 ## Next
 
-SPINE.35 begins Journal Replay Doctrine + Parser Hardening. Replay may rebuild
-LMDB, but it must respect the frozen `yai.record.v1` lookup and index posture.
+SPINE.35 hardens Journal Replay Doctrine + Parser Hardening through journal
+inspection diagnostics only. SPINE.36 may replay into LMDB, but it must respect
+the frozen `yai.record.v1` lookup and index posture.

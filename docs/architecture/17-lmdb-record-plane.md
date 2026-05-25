@@ -333,5 +333,11 @@ without adding new carrier execution.
 Next:
 
 ```text
-SPINE.35 Journal Replay Doctrine + Parser Hardening
+SPINE.35 Journal Replay Doctrine + Parser Hardening done
+SPINE.36 Journal Replay to LMDB
 ```
+
+SPINE.35 adds `yai journal inspect --path <journal.jsonl> [--show-errors]`.
+It is parser/readiness inspection only. Journal is replay/audit. LMDB is
+durable indexed record lookup. The command reports replay diagnostics and does
+not write LMDB or create a no silent journal fallback path.

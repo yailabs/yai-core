@@ -125,12 +125,12 @@ target/debug/yai hot status
 ```text
 runtime/install path commands are inspectable
 pack and foundation guards are callable directly
-manual policy pack fixtures are staged before provider attach
+filesystem-loop lab policy pack fixtures are staged before provider attach
 daemon filesystem loop materializes subject:policy-pack and policy/projection/authority residue
 yai doctor reports runtime and hot-state status
 yai hot status handles missing, corrupt and valid snapshots
 daemon status/info/minimum-loop commands are reachable
-command surface inventory maps primitive -> view -> command -> manual test -> docs
+command surface inventory maps primitive -> view -> command -> lab test -> docs
 ```
 
 `tests/smoke/command-surface/test_command_surface.sh` proves the retroactive
@@ -152,14 +152,14 @@ build/yaid --version
 Manual pack fixture checkpoint:
 
 ```text
-cp docs/manuals/examples/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/
+cp docs/labs/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/
 python -m json.tool "$YAI_RUN/policy-packs/filesystem-sandbox-policy.json"
 yai daemon run-filesystem-loop --socket "$YAI_SOCKET"
 grep 'subject:policy-pack' "$JOURNAL"
 grep 'policy:manual-filesystem-sandbox-v0' "$JOURNAL"
 ```
 
-This proves the current manual posture. It does not imply a `yai pack`
+This proves the current filesystem-loop lab fixture posture. It does not imply a `yai pack`
 runtime command exists.
 
 ## SPINE.28B Source Surface Cleanup
@@ -239,15 +239,15 @@ daemon filesystem loop produces active case/session/context status
 projection inspect exposes projection_freshness/stale_reason/freshness_policy/freshness_source
 ```
 
-`tests/smoke/hot-state-cli/test_hot_state_cli.sh` proves the stable manual
+`tests/smoke/hot-state-cli/test_hot_state_cli.sh` proves the stable lab/operator
 surface for hot state and projection freshness.
 
-The operator-facing runbook and notebooks for this command surface are:
+The operator-facing lab runbook for this command surface is:
 
 ```text
-docs/manuals/manual-filesystem-loop-validation.md
-docs/manuals/manual-filesystem-loop-validation.ipynb
-docs/manuals/manual-filesystem-loop-validation.it.ipynb
+docs/labs/filesystem-loop/runbook.md
+docs/labs/filesystem-loop/tests.md
+docs/labs/filesystem-loop/outputs.md
 ```
 
 ```text
@@ -677,7 +677,7 @@ execution_performed: false
 receipt_requirement: required
 ```
 
-The filesystem loop manual and notebook include these commands as dispatch
+The filesystem loop lab includes these commands as dispatch
 planning, not execution. Process lane is planned, filesystem lane is
 active_minimal and execution remains false in SPINE.33B.
 
@@ -1016,6 +1016,28 @@ kinds can be persisted and indexed.
 ```text
 make check-lmdb-record-plane-freeze
 make smoke-spine34
+```
+
+## SPINE.35 Journal Replay Parser Hardening Loop
+
+```text
+valid journal inspect works
+missing journal handled cleanly
+corrupt json line reported
+empty journal handled cleanly
+duplicate record ids reported
+inspect does not write LMDB
+inspect does not fake replay success
+```
+
+`tests/smoke/journal-replay-boundary/test_journal_replay_boundary.sh` proves
+the parser hardening surface. It uses isolated temp journals and verifies
+`lmdb_write: no`, `invalid_json`, `invalid_schema`, `duplicate` and honest
+`replay_ready` output.
+
+```text
+make check-journal-replay-boundary
+make smoke-spine35
 ```
 
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop

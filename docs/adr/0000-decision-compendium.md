@@ -90,6 +90,10 @@ SPINE.34 adopts LMDB Record Plane Freeze. `yai.record.v1`, id/case/kind/
 subject/receipt indexes and no journal fallback become the stable record-plane
 posture for journal replay and graph persistence work.
 
+SPINE.35 adopts Journal Replay Doctrine + Parser Hardening. Journal is
+replay/audit, LMDB is durable indexed record lookup, replay diagnostics are
+mandatory and `yai journal inspect` reports readiness without LMDB writes.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -117,6 +121,7 @@ posture for journal replay and graph persistence work.
 | 0027 | Carrier outcome harness | Outcome posture is tested independently of real carrier execution; skeleton carriers simulate posture only. |
 | 0031 | Data Context Runtime / RuntimeGraph | Durable graph truth is separated from runtime graph computation, HNSW candidate retrieval and compiled projection output. |
 | 0032 | LMDB record plane freeze | `yai.record.v1` id/case/kind/subject/receipt lookup is frozen with no journal fallback. |
+| 0033 | Journal replay boundary | Journal inspect reports invalid_json, invalid_schema, unsupported_kind, duplicate and replay readiness without writing LMDB. |
 
 ## Combined Doctrine
 

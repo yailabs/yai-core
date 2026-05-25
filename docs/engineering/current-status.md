@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.34 LMDB Record Plane Freeze.
+Status: SPINE.35 Journal Replay Doctrine + Parser Hardening.
 
 ## Completed Foundation
 
@@ -14,7 +14,7 @@ pack doctrine guards and the operational extraction contract before data-plane
 implementation begins. SPINE.23 adds the first live hot-state plane. SPINE.23A
 expands the linear roadmap and adds the mandatory command surface contract for
 future deliveries. SPINE.24 hardens the runtime hot-state snapshot lifecycle.
-SPINE.24A maps SPINE.20-SPINE.24 primitives to command views, manual tests and
+SPINE.24A maps SPINE.20-SPINE.24 primitives to command views, lab tests and
 expected output.
 SPINE.25 links that snapshot to case session, case world and case context
 lifecycle. SPINE.26 defines the projection freshness policy used by model,
@@ -65,6 +65,9 @@ Context Compiler renders controlled views. SPINE.34 freezes the LMDB record
 plane as `yai.record.v1` durable indexed lookup with id, case, kind, subject
 and receipt indexes, no journal fallback and explicit carrier/control/divergence
 record-store validation.
+SPINE.35 hardens the journal replay boundary with diagnostic parser inspection,
+visible invalid_json, invalid_schema, unsupported_kind and duplicate statuses,
+and no LMDB writes.
 
 Current:
 
@@ -102,6 +105,7 @@ SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction completed.
 SPINE.33L Provider Runtime / LAN Target Surface v0 completed.
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine completed.
 SPINE.34 LMDB Record Plane Freeze completed.
+SPINE.35 Journal Replay Doctrine + Parser Hardening completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -109,7 +113,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.35 Journal Replay Doctrine + Parser Hardening.
+SPINE.36 Journal Replay to LMDB.
 ```
 
 Foundation status:
@@ -141,6 +145,8 @@ LMDB record read/query surface active
 LMDB subject/receipt indexes active
 LMDB CLI manual validation active
 LMDB record-plane freeze active
+journal replay parser hardening active
+journal inspect diagnostics active
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
@@ -218,6 +224,7 @@ four-repo-roadmap.md
 hot-state-plane.md
 lmdb-record-plane.md
 lmdb-record-plane-freeze.md
+journal-replay-parser-hardening.md
 pack-format.md
 pack-roadmap.md
 testing.md

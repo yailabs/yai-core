@@ -9,14 +9,13 @@ A primitive that cannot be inspected is not operational yet.
 ```
 
 This file maps SPINE.20-SPINE.32 primitives to their current view, command,
-manual test and documentation surface. It does not define new core semantics.
-The operator-facing runbook is `docs/manuals/manual-filesystem-loop-validation.md`
-with notebook companions `docs/manuals/manual-filesystem-loop-validation.ipynb`
-and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
+lab test and documentation surface. It does not define new core semantics.
+The operator-facing runbook is `docs/labs/filesystem-loop/runbook.md`.
+Historical files under `docs/manuals/` are compatibility redirects only.
 
 ## Runtime Commands
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | `YAI_HOME` | resolved runtime home | `yai doctor` | `target/debug/yai doctor` | `filesystem-target.md`, `testing.md` |
 | runtime dirs | resolved `run/store/log/tmp/cases/sockets/config` | `yai doctor` | `target/debug/yai doctor` | `filesystem-target.md` |
@@ -30,7 +29,7 @@ and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 
 ## Daemon Commands
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | `yaid` binary | daemon version | `yaid --version` | `/tmp/yai-install-test/bin/yaid --version` | `testing.md` |
 | local socket | daemon foreground endpoint | `yaid --socket <path> --foreground` | `yaid --socket /tmp/yai-home-test/run/yaid.sock --foreground` | `filesystem-target.md` |
@@ -42,7 +41,7 @@ and `docs/manuals/manual-filesystem-loop-validation.it.ipynb`.
 
 ## Hot State Commands
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | hot state | live cache status | `yai hot status` | `target/debug/yai hot status` | `hot-state-plane.md`, `data-plane-roadmap.md` |
 | hot snapshot path | snapshot source | `yai hot status` | `YAI_HOME=/tmp/yai-home-test yai hot status` | `filesystem-target.md` |
@@ -82,7 +81,7 @@ available. LMDB will add durable record lookup later; it will not replace
 
 ## Record Store Commands
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | record store | LMDB record-plane readiness | `yai store status` | `target/debug/yai store status` | `lmdb-record-plane.md`, `data-plane-roadmap.md` |
 | record store summary | LMDB aggregate write-path counts | `yai store summary` | `target/debug/yai store summary` | `lmdb-record-plane.md`, `testing.md` |
@@ -91,6 +90,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | record list by kind | LMDB kind index scan | `yai store record list --kind <record_kind> [--limit <N>]` | `target/debug/yai store record list --kind receipt --limit 10` | `lmdb-record-plane.md`, `testing.md` |
 | record list by subject | LMDB subject index scan | `yai store record list --subject <subject_ref> [--limit <N>]` | `target/debug/yai store record list --subject subject:filesystem-sandbox --limit 20` | `lmdb-record-plane.md`, `testing.md` |
 | record list by receipt | LMDB receipt index scan | `yai store record list --receipt <receipt_ref> [--limit <N>]` | `target/debug/yai store record list --receipt receipt:new12-fs-write --limit 10` | `lmdb-record-plane.md`, `testing.md` |
+| journal inspect | replay-readiness diagnostics without LMDB writes | `yai journal inspect --path <journal.jsonl> [--show-errors]` | `target/debug/yai journal inspect --path /tmp/yai-journal.jsonl --show-errors` | `journal-replay-parser-hardening.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 | carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
 | carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
@@ -119,6 +119,11 @@ SPINE.34 adds no new command. It freezes the existing LMDB record-plane command
 surface, including id/case/kind/subject/receipt lookup, `yai.record.v1`,
 `records_by_id`, `records_by_case`, `records_by_kind`, `records_by_subject`,
 `records_by_receipt` and no journal fallback reads.
+
+SPINE.35 adds `yai journal inspect --path <journal.jsonl> [--show-errors]`.
+This is replay-readiness inspection only. It reports parser diagnostics and
+`replay_ready: yes|no`; it does not write LMDB, rebuild LMDB or change no
+journal fallback behavior for LMDB query commands.
 
 Required fields:
 
@@ -202,6 +207,45 @@ records: none
 Subject and receipt indexes are derived from structured record fields only. If
 LMDB is missing, uninitialized or unavailable, record read commands print the
 record store status fields and do not synthesize records from journal.
+
+## Journal Inspect Command
+
+SPINE.35 adds:
+
+```text
+yai journal inspect --path <journal.jsonl> [--show-errors]
+```
+
+Required summary output:
+
+```text
+journal_path: ...
+parser_policy: diagnostic
+lmdb_write: no
+journal_status: readable|missing|unavailable
+lines_total: N
+valid_entries: N
+invalid_entries: N
+unsupported_entries: N
+duplicate_entries: N
+replay_ready: yes|no
+```
+
+With `--show-errors`, diagnostics include:
+
+```text
+line: N
+entry_status: invalid_json|invalid_schema|unsupported_kind|duplicate
+record_id: ...
+record_kind: ...
+schema: ...
+error_code: ...
+error_message: ...
+action: ...
+```
+
+Journal is replay/audit. LMDB is durable indexed record lookup. This command
+does not perform replay or write LMDB.
 
 ## Carrier Substrate Commands
 
@@ -619,7 +663,7 @@ does not execute carriers.
 
 SPINE.33L adds provider runtime / LAN target surface v0:
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | device registry | JSONL registry under `YAI_HOME/config/devices.jsonl` | `yai device list` | `target/debug/yai device list` | `provider-runtime-lan-target-surface.md`, `testing.md` |
 | device add | declared runtime target | `yai device add --id <id> --name <name> --host <host> --port <port> --target lan` | `target/debug/yai device add --id workstation --name Workstation --host 192.168.1.50 --port 8777 --target lan` | `provider-runtime-lan-target-surface.md` |
@@ -719,7 +763,7 @@ command.
 
 ## Projection Commands
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | projection summary | journal-derived projection summary | `yai projection summary --journal <path>` | smoke journal path | `testing.md` |
 | projection inspect | projection details and freshness policy | `yai projection inspect --journal <path> --consumer <consumer>` | `yai projection inspect --journal <journal> --consumer model` | `data-plane-roadmap.md` |
@@ -744,21 +788,21 @@ hot-state source.
 
 ## Pack / Doctrine Checks
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | pack doctrine | required pack doctrine doc/phrases | `make check-pack-doctrine` | `make check-pack-doctrine` | `pack-format.md`, `pack-roadmap.md` |
-| manual policy pack fixtures | staged pack material before provider attach | shell copy/JSON validation in manual | `cp docs/manuals/examples/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/` | `manual-filesystem-loop-validation.md` |
-| pack-derived case residue | materialized policy/projection/authority records | `yai daemon run-filesystem-loop --socket <path>` | `grep subject:policy-pack "$JOURNAL"` | `manual-filesystem-loop-validation.md` |
+| filesystem-loop lab policy pack fixtures | staged pack material before provider attach | shell copy/JSON validation in lab | `cp docs/labs/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/` | `docs/labs/filesystem-loop/runbook.md` |
+| pack-derived case residue | materialized policy/projection/authority records | `yai daemon run-filesystem-loop --socket <path>` | `grep subject:policy-pack "$JOURNAL"` | `docs/labs/filesystem-loop/runbook.md` |
 | active docs | canonical engineering doc set | `make check-docs` | `make check-docs` | `README.md` |
 
 Pack runtime commands are not implemented yet. SPINE.21 only provides pack
-doctrine and guards. The filesystem loop manual stages policy pack fixtures and
+doctrine and guards. The filesystem loop lab stages policy pack fixtures and
 the daemon loop materializes their current posture into journal records for the
-manual case. Do not document a `yai pack` command until the pack runtime exists.
+filesystem-loop lab case. Do not document a `yai pack` command until the pack runtime exists.
 
 ## Foundation / Layout Checks
 
-| Primitive | View | Command | Manual test | Docs |
+| Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | source layout | no old active roots | `make check-layout` | `make check-layout` | `filesystem-target.md` |
 | source surface | no venv roots, no README-only source roots, transitional C shims marked | `make check-source-surface-clean` | `make check-source-surface-clean` | `source-surface.md` |

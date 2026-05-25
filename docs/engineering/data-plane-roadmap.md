@@ -107,7 +107,7 @@ SPINE.33L Provider Runtime / LAN Target Surface v0                  done
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
 SPINE.34  LMDB Record Plane Freeze                                  done
 
-SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
+SPINE.35  Journal Replay Doctrine + Parser Hardening                done
 SPINE.36  Journal Replay to LMDB                                    planned
 SPINE.37  Replay Idempotency + Schema Version Handling              planned
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
@@ -360,6 +360,24 @@ The freeze validates that carrier/control/divergence records can be preserved
 and queried by the frozen indexes. It adds no new command surface and no
 journal replay behavior.
 
+SPINE.35 Journal Replay Doctrine + Parser Hardening adds:
+
+```text
+yai journal inspect --path <journal.jsonl> [--show-errors]
+diagnostic parser policy
+invalid_json
+invalid_schema
+unsupported_kind
+duplicate
+replay diagnostics
+replay_ready: yes|no
+```
+
+Journal is replay/audit. LMDB is durable indexed record lookup. Journal inspect
+does not write LMDB, does not rebuild LMDB and does not create a no silent
+journal fallback exception. Duplicate detection prepares later idempotency
+work, but full replay waits for SPINE.36.
+
 SPINE.33A Control / Carrier Substrate Primitives adds:
 
 ```text
@@ -414,7 +432,7 @@ unsafe target blocking
 ```
 
 Process signals are controlled effects, not shell commands. Real signal effects
-are limited to test-owned child processes in smoke/manual tests.
+are limited to test-owned child processes in smoke/lab tests.
 
 SPINE.33E Host Observation Probe v0 / Bypass Verification adds:
 

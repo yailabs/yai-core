@@ -43,6 +43,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Pack materialization | [15-pack-materialization.md](15-pack-materialization.md) |
 | Hot state plane | [16-hot-state-plane.md](16-hot-state-plane.md) |
 | LMDB record plane | [17-lmdb-record-plane.md](17-lmdb-record-plane.md) |
+| Journal replay boundary | [33-journal-replay-boundary.md](33-journal-replay-boundary.md) |
 | Data Context Runtime / RuntimeGraph | [31-data-context-runtime-runtimegraph.md](31-data-context-runtime-runtimegraph.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
@@ -77,6 +78,7 @@ ingest
 -> effect / carrier
 -> receipt
 -> journal
+-> journal replay diagnostics
 -> record store
 -> LMDB durable indexed record lookup
 -> graph persistence / Ladybug relations

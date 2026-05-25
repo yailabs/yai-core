@@ -4,7 +4,8 @@ SPINE.29 freezes the record-plane contract. SPINE.30 implements the first LMDB
 write path. SPINE.31 adds the first read/query path over the id, case and kind
 indexes. SPINE.32 adds derived subject and receipt indexes. SPINE.33 freezes
 the CLI output shape and manual validation matrix. SPINE.34 freezes the record
-plane before journal replay work begins.
+plane before journal replay work begins. SPINE.35 adds journal replay parser
+inspection without writing LMDB.
 
 ## Operator Doctrine
 
@@ -209,6 +210,19 @@ reconciliation
 
 This is storage/index validation only. It does not add new carrier execution,
 journal replay, graph persistence, facts, memory or projection behavior.
+
+## SPINE.35 Journal Inspect Boundary
+
+SPINE.35 adds:
+
+```text
+yai journal inspect --path <journal.jsonl> [--show-errors]
+```
+
+Journal is replay/audit. LMDB is durable indexed record lookup. The inspect
+command reports invalid_json, invalid_schema, unsupported_kind, duplicate and
+replay_ready status. It does not write LMDB, rebuild LMDB or create a no silent
+journal fallback path for record reads.
 
 ## yai-dev Audit
 
