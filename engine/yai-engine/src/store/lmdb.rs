@@ -412,3 +412,130 @@ fn json_string_field(content: &str, key: &str) -> Option<String> {
     let end = rest.find('"')?;
     Some(rest[..end].to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::record::{Record, RecordKind};
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn temp_store_path(name: &str) -> PathBuf {
+        let now = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("system time before unix epoch")
+            .as_nanos();
+        std::env::temp_dir().join(format!("yai-{name}-{}-{now}", std::process::id()))
+    }
+
+    #[test]
+    fn freeze_supports_control_carrier_and_divergence_records() {
+        let path = temp_store_path("record-freeze");
+        let store = LmdbRecordStore::open(&path).expect("open LMDB test store");
+        let records = [
+            Record::from_parts(
+                "rec:freeze-attempt",
+                "case:spine34-freeze",
+                RecordKind::Attempt,
+                "subject:filesystem-sandbox",
+                "op:freeze-write",
+                "",
+                "",
+                "attempt:file.write",
+            ),
+            Record::from_parts(
+                "rec:freeze-decision",
+                "case:spine34-freeze",
+                RecordKind::Decision,
+                "subject:filesystem-sandbox",
+                "op:freeze-write",
+                "decision:freeze-deny",
+                "",
+                "decision:deny",
+            ),
+            Record::from_parts(
+                "rec:freeze-carrier-request",
+                "case:spine34-freeze",
+                RecordKind::CarrierRequest,
+                "subject:filesystem-sandbox",
+                "op:freeze-write",
+                "decision:freeze-deny",
+                "",
+                "carrier:filesystem requested_outcome:blocked",
+            ),
+            Record::from_parts(
+                "rec:freeze-effect-receipt",
+                "case:spine34-freeze",
+                RecordKind::EffectReceipt,
+                "subject:filesystem-sandbox",
+                "op:freeze-write",
+                "decision:freeze-deny",
+                "receipt:freeze-blocked",
+                "receipt:blocked",
+            ),
+            Record::from_parts(
+                "rec:freeze-divergence",
+                "case:spine34-freeze",
+                RecordKind::Divergence,
+                "subject:filesystem-sandbox",
+                "op:freeze-write",
+                "decision:freeze-deny",
+                "receipt:freeze-blocked",
+                "divergence:none result:consistent",
+            ),
+        ];
+
+        for record in &records {
+            store
+                .append_record(record, "spine34-freeze-test")
+                .expect("append freeze record");
+        }
+
+        let summary = store.summary().expect("summary");
+        assert_eq!(summary.records_total, 5);
+        assert_eq!(summary.records_by_case, 5);
+        assert_eq!(summary.records_by_kind, 5);
+        assert_eq!(summary.records_by_subject, 5);
+        assert_eq!(summary.records_by_receipt, 2);
+
+        let divergence = store
+            .list_records_by_kind("divergence", 10)
+            .expect("list divergence records");
+        assert_eq!(divergence.records_total, 1);
+        assert_eq!(
+            divergence
+                .records
+                .first()
+                .map(|record| record.record_id.as_str()),
+            Some("rec:freeze-divergence")
+        );
+
+        let receipt_records = store
+            .list_records_by_receipt("receipt:freeze-blocked", 10)
+            .expect("list receipt records");
+        assert_eq!(receipt_records.records_total, 2);
+        assert!(receipt_records
+            .records
+            .iter()
+            .any(|record| record.record_kind == "effect_receipt"));
+        assert!(receipt_records
+            .records
+            .iter()
+            .any(|record| record.record_kind == "divergence"));
+
+        let carrier_request = store
+            .get_record_by_id("rec:freeze-carrier-request")
+            .expect("get carrier request")
+            .expect("carrier request present");
+        assert_eq!(carrier_request.schema, SCHEMA);
+        assert_eq!(carrier_request.record_kind, "carrier_request");
+        assert!(carrier_request
+            .raw_json
+            .contains("\"schema\":\"yai.record.v1\""));
+        assert!(carrier_request
+            .raw_json
+            .contains("\"source\":{\"plane\":\"journal\""));
+
+        drop(store);
+        fs::remove_dir_all(path).expect("remove LMDB test store");
+    }
+}

@@ -86,6 +86,10 @@ durable planes and computation happens in runtime working sets. Ladybug stores
 relations, RuntimeGraph computes over the active case, HNSW finds candidate
 nodes and Context Compiler renders controlled views.
 
+SPINE.34 adopts LMDB Record Plane Freeze. `yai.record.v1`, id/case/kind/
+subject/receipt indexes and no journal fallback become the stable record-plane
+posture for journal replay and graph persistence work.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -112,6 +116,7 @@ nodes and Context Compiler renders controlled views.
 | 0026 | Non-process carrier skeletons | Planned carrier families become carrier.v1 skeletons before implementation and do not execute effects. |
 | 0027 | Carrier outcome harness | Outcome posture is tested independently of real carrier execution; skeleton carriers simulate posture only. |
 | 0031 | Data Context Runtime / RuntimeGraph | Durable graph truth is separated from runtime graph computation, HNSW candidate retrieval and compiled projection output. |
+| 0032 | LMDB record plane freeze | `yai.record.v1` id/case/kind/subject/receipt lookup is frozen with no journal fallback. |
 
 ## Combined Doctrine
 
@@ -199,6 +204,8 @@ journal remains replay/audit
 schema = yai.record.v1
 record:id / record:case / record:kind / record:subject
 SPINE.30 LMDB Record Write Path
+SPINE.34 LMDB Record Plane Freeze
+no journal fallback
 ```
 
 SPINE.4 observability/evaluation doctrine:

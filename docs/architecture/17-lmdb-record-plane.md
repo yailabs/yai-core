@@ -293,12 +293,45 @@ from journal as a fallback.
 SPINE.30 adds the LMDB dependency, opens the environment, writes records by id
 and minimal case/kind indexes, and exposes aggregate summary counts. SPINE.31
 adds record get/list over those indexes. SPINE.32 adds subject/receipt
-secondary indexes. SPINE.33 freezes CLI/manual validation. It does not add
-journal replay, graph/fact/memory backends, projection/time indexes or
-projection deltas.
+secondary indexes. SPINE.33 freezes CLI/manual validation. SPINE.34 freezes
+the LMDB record plane before journal replay hardening. It does not add journal
+replay, graph/fact/memory backends, projection/time indexes or projection
+deltas.
+
+## SPINE.34 LMDB Record Plane Freeze
+
+```text
+LMDB is durable indexed record lookup.
+journal remains replay/audit.
+no journal fallback.
+```
+
+Frozen indexes:
+
+```text
+records_by_id
+records_by_case
+records_by_kind
+records_by_subject
+records_by_receipt
+schema_meta
+```
+
+The freeze verifies that the record plane can preserve carrier/control
+material such as:
+
+```text
+carrier_request
+effect_receipt
+filesystem_receipt
+divergence
+reconciliation
+```
+
+without adding new carrier execution.
 
 Next:
 
 ```text
-SPINE.34 LMDB Record Plane Freeze
+SPINE.35 Journal Replay Doctrine + Parser Hardening
 ```

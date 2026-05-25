@@ -3,7 +3,8 @@
 SPINE.29 freezes the record-plane contract. SPINE.30 implements the first LMDB
 write path. SPINE.31 adds the first read/query path over the id, case and kind
 indexes. SPINE.32 adds derived subject and receipt indexes. SPINE.33 freezes
-the CLI output shape and manual validation matrix.
+the CLI output shape and manual validation matrix. SPINE.34 freezes the record
+plane before journal replay work begins.
 
 ## Operator Doctrine
 
@@ -175,6 +176,40 @@ record_meta
 They are rebuildable from journal residue. LMDB must not replace journal replay
 or audit.
 
+## SPINE.34 Freeze
+
+SPINE.34 LMDB Record Plane Freeze accepts the current `yai.record.v1` surface
+as stable enough for journal replay and graph persistence work to build on.
+
+Frozen:
+
+```text
+records_by_id
+records_by_case
+records_by_kind
+records_by_subject
+records_by_receipt
+schema_meta
+```
+
+There is no journal fallback. Missing, not initialized or unavailable LMDB
+environments report record-store status fields instead of synthesizing records
+from journal residue.
+
+The freeze also validates that the record plane can preserve carrier/control
+record kinds:
+
+```text
+carrier_request
+effect_receipt
+filesystem_receipt
+divergence
+reconciliation
+```
+
+This is storage/index validation only. It does not add new carrier execution,
+journal replay, graph persistence, facts, memory or projection behavior.
+
 ## yai-dev Audit
 
 SPINE.29 read-only inspected:
@@ -214,6 +249,10 @@ SPINE.33 read-only inspected query, index and store material for query surface
 wording, no-fallback reads, zero-result posture and manual lookup validation.
 The old material stays concept evidence; no `yai-dev` file is mutated.
 
+SPINE.34 read-only classified the same store/index/query/receipt material for
+record-plane freeze posture. No additional `yai-dev` source is migrated or
+mutated.
+
 ## Write Path
 
 The Rust engine owns the LMDB backend via the `lmdb` crate. The C daemon still
@@ -244,6 +283,7 @@ make smoke-spine30
 make smoke-spine31
 make smoke-spine32
 make smoke-spine33
+make smoke-spine34
 ```
 
 They are integrated into:

@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33M Data Context Runtime / RuntimeGraph doctrine. | SPINE.34 LMDB Record Plane Freeze. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.34 LMDB Record Plane Freeze. | SPINE.35 Journal Replay Doctrine + Parser Hardening. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -81,10 +81,14 @@ the Rust LMDB write path, minimal `records_by_id`, `records_by_case` and
 journal to LMDB. SPINE.31 adds `yai store record get` and
 `yai store record list` over the id, case and kind indexes without adding
 journal fallback reads. SPINE.32 adds derived subject and receipt indexes plus
-CLI list filters for both.
+CLI list filters for both. SPINE.33 freezes LMDB CLI/manual validation.
+SPINE.33A through SPINE.33I harden the carrier/control/receipt/divergence
+substrate. SPINE.33J through SPINE.33M reserve retrieval, model runtime,
+Context Compiler and RuntimeGraph boundaries. SPINE.34 freezes the LMDB record
+plane as `yai.record.v1` durable indexed lookup before journal replay begins.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.34.
+delivery is SPINE.35.
 
 ## Canonical Macro Labels
 
@@ -235,7 +239,7 @@ SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.33L Provider Runtime / LAN Target Surface v0                  done
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
-SPINE.34  LMDB Record Plane Freeze                                  planned
+SPINE.34  LMDB Record Plane Freeze                                  done
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
 SPINE.36  Journal Replay to LMDB                                    planned

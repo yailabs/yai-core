@@ -115,6 +115,11 @@ SPINE.33 freezes the line-oriented operator output shape before the record-plane
 freeze. Future subcommands can extend the same surface with
 `yai store rebuild status`.
 
+SPINE.34 adds no new command. It freezes the existing LMDB record-plane command
+surface, including id/case/kind/subject/receipt lookup, `yai.record.v1`,
+`records_by_id`, `records_by_case`, `records_by_kind`, `records_by_subject`,
+`records_by_receipt` and no journal fallback reads.
+
 Required fields:
 
 ```text

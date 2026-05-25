@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33M Data Context Runtime / RuntimeGraph Doctrine.
+Status: SPINE.34 LMDB Record Plane Freeze.
 
 ## Completed Foundation
 
@@ -61,7 +61,10 @@ posture and observation result into consistent or divergent status. SPINE.33M
 adds the Data Context Runtime / RuntimeGraph doctrine: truth lives on durable
 planes, computation happens in runtime working sets, Ladybug stores relations,
 RuntimeGraph computes over the active case, HNSW finds candidate nodes and
-Context Compiler renders controlled views.
+Context Compiler renders controlled views. SPINE.34 freezes the LMDB record
+plane as `yai.record.v1` durable indexed lookup with id, case, kind, subject
+and receipt indexes, no journal fallback and explicit carrier/control/divergence
+record-store validation.
 
 Current:
 
@@ -98,6 +101,7 @@ SPINE.33J Retrieval and Model Runtime Roadmap Rebase completed.
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction completed.
 SPINE.33L Provider Runtime / LAN Target Surface v0 completed.
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine completed.
+SPINE.34 LMDB Record Plane Freeze completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -105,7 +109,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.34 LMDB Record Plane Freeze.
+SPINE.35 Journal Replay Doctrine + Parser Hardening.
 ```
 
 Foundation status:
@@ -136,6 +140,7 @@ record store summary surface active
 LMDB record read/query surface active
 LMDB subject/receipt indexes active
 LMDB CLI manual validation active
+LMDB record-plane freeze active
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
@@ -212,6 +217,7 @@ filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md
 lmdb-record-plane.md
+lmdb-record-plane-freeze.md
 pack-format.md
 pack-roadmap.md
 testing.md

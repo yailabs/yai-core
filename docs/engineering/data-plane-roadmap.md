@@ -105,7 +105,7 @@ SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
 SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.33L Provider Runtime / LAN Target Surface v0                  done
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
-SPINE.34  LMDB Record Plane Freeze                                  planned
+SPINE.34  LMDB Record Plane Freeze                                  done
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
 SPINE.36  Journal Replay to LMDB                                    planned
@@ -342,6 +342,23 @@ The list output shape is `filter`, `filter_value`, `records_total`, `limit`
 and `records`. Missing records return `record: not_found`; zero-result lists
 return `records: none`; missing or uninitialized LMDB reports record-store
 status and does not fall back to the journal.
+
+SPINE.34 LMDB Record Plane Freeze freezes:
+
+```text
+schema = yai.record.v1
+records_by_id
+records_by_case
+records_by_kind
+records_by_subject
+records_by_receipt
+no journal fallback
+carrier_request / effect_receipt / divergence record-store posture
+```
+
+The freeze validates that carrier/control/divergence records can be preserved
+and queried by the frozen indexes. It adds no new command surface and no
+journal replay behavior.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

@@ -30,6 +30,7 @@ for file in \
   docs/architecture/28-provider-runtime-lan-target-surface.md \
   docs/architecture/30-carrier-receipt-divergence.md \
   docs/architecture/31-data-context-runtime-runtimegraph.md \
+  docs/architecture/32-lmdb-record-plane-freeze.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -50,6 +51,7 @@ for file in \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
   docs/engineering/hot-state-plane.md \
+  docs/engineering/lmdb-record-plane-freeze.md \
   docs/engineering/carrier-outcome-harness.md \
   docs/engineering/carrier-receipt-divergence.md \
   docs/engineering/non-process-carrier-skeletons.md \
@@ -77,6 +79,7 @@ for file in \
   docs/adr/0028-provider-runtime-lan-target-surface.md \
   docs/adr/0030-carrier-receipt-divergence.md \
   docs/adr/0031-data-context-runtime-runtimegraph.md \
+  docs/adr/0032-lmdb-record-plane-freeze.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

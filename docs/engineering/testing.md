@@ -994,6 +994,30 @@ PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario bl
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier reconcile-outcome --scenario skeleton_executed_unexpectedly
 ```
 
+## SPINE.34 LMDB Record Plane Freeze Loop
+
+```text
+record store missing reports status
+record store ready reports yai.record.v1
+records_by_id/case/kind/subject/receipt are visible
+decision records are queryable by kind
+filesystem receipt records are queryable by receipt
+subject-scoped records are queryable by subject
+record get returns schema/source/payload
+missing records return record: not_found only when LMDB is ready
+no journal fallback after LMDB environment is removed
+carrier_request/effect_receipt/divergence records are store/index capable
+```
+
+`tests/smoke/record-store-freeze/test_record_store_freeze.sh` proves the CLI
+freeze. The Rust LMDB store unit test proves carrier/control/divergence record
+kinds can be persisted and indexed.
+
+```text
+make check-lmdb-record-plane-freeze
+make smoke-spine34
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

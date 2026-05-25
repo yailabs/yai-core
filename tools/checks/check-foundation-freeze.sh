@@ -51,6 +51,7 @@ four-repo-roadmap.md
 hot-state-plane.md
 host-observation-probe.md
 lmdb-record-plane.md
+lmdb-record-plane-freeze.md
 non-process-carrier-skeletons.md
 operation-dispatch-multiplex.md
 operational-extraction-contract.md
