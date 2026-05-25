@@ -5,9 +5,15 @@ target/
 venv/
 env/
 ENV/
+__pycache__/
+*.py[cod]
 
 *.o
 *.a
 *.d
 
 .DS_Store
+
+# Local lab benchmark output can be large and machine-specific.
+benchmarks/nvidia/**
+!benchmarks/nvidia/.gitkeep

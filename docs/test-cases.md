@@ -20,7 +20,7 @@ benchmarks, provider compatibility claims, or production readiness claims.
 |---|---|---:|---:|---:|---|---|
 | `00-repository-health` | current | no | no | no | `make info`, `make check` | Repository status, layout, docs, build, and smoke validation posture. |
 | `01-local-runtime-inspection` | manual | no | optional | yes | `yai doctor`, `yai hot status`, `yai store status`, `yai store summary` | Runtime path, hot-state, store, and local daemon inspection surfaces. |
-| `02-filesystem-loop-manual` | manual | no | yes | yes | filesystem loop manual runbook | Existing daemon-backed filesystem loop, journal, receipts, projection, and hot-state evidence. |
+| `02-filesystem-loop-lab` | lab | no | yes | yes | filesystem loop lab runbook | Existing daemon-backed filesystem loop, journal, receipts, projection, and hot-state evidence. |
 | `03-model-behavior-lab` | experimental | yes | yes | yes | model-behavior lab artifact | Optional model/provider behavior evidence over a YAI case projection. |
 
 ## Test 00 -- Repository Health
@@ -90,17 +90,17 @@ This test does not require a provider, model, API key, or model server.
 Deeper reference:
 [tests/cases/01-local-runtime-inspection](../tests/cases/01-local-runtime-inspection/README.md).
 
-## Test 02 -- Filesystem Loop Manual Validation
+## Test 02 -- Filesystem Loop Lab Validation
 
 Status: manual
 
 Purpose:
-Use the existing manual filesystem loop to inspect a daemon-backed operational
+Use the filesystem-loop lab to inspect a daemon-backed operational
 path with case material, policy material, filesystem receipts, projection, and
 hot-state evidence.
 
 Primary reference:
-[Manual filesystem loop validation](manuals/manual-filesystem-loop-validation.md).
+[Filesystem loop lab validation](labs/filesystem-loop/runbook.md).
 
 Expected evidence includes:
 
@@ -160,5 +160,5 @@ historical material.
 - [Quickstart](quickstart.md)
 - [Testing doctrine](engineering/testing.md)
 - [Command surface](engineering/command-surface.md)
-- [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
+- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
 - [Model behavior lab artifacts](labs/model-behavior/README.md)

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.visual-artifact.v0",
+  "title": "YAI Visual Artifact v0",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "title",
+    "source_run",
+    "source_data",
+    "generation_method",
+    "output_path",
+    "format",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.T[0-9]{3}\\.R[0-9]{3}\\.(F|C|D|TBL)[0-9]{3}$"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["chart", "diagram", "figure", "table", "topology", "timeline", "matrix", "flow"]
+    },
+    "title": { "type": "string" },
+    "source_run": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.T[0-9]{3}\\.R[0-9]{3}$"
+    },
+    "source_data": { "type": "string" },
+    "generation_method": { "type": "string" },
+    "output_path": { "type": "string" },
+    "format": {
+      "type": "string",
+      "enum": ["svg", "png", "html", "md", "json", "csv"]
+    },
+    "created_at": { "type": "string" },
+    "caption": { "type": "string" },
+    "limitations": { "type": "array" }
+  },
+  "additionalProperties": true
+}

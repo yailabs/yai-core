@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.technical-report.v0",
+  "title": "YAI Technical Report v0",
+  "allOf": [
+    { "$ref": "scientific-document.v0.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "type": { "const": "technical_report" },
+        "scope": { "type": "string" },
+        "system_state": { "type": "string" }
+      }
+    }
+  ]
+}

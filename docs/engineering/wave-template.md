@@ -60,14 +60,13 @@ Command Surface:
   Expected outputs:
     exact key lines expected from manual commands
   Command docs updated:
-    command docs, testing docs or manual runbooks changed
+    command docs, testing docs or lab runbooks changed
   Primitive/view/command mapping:
     command-surface.md updated when a wave exposes or changes an operator view
-  Manual runbook/notebook:
-    docs/manuals/manual-filesystem-loop-validation.md and
-    docs/manuals/manual-filesystem-loop-validation.ipynb and
-    docs/manuals/manual-filesystem-loop-validation.it.ipynb updated when command
-    behavior, pack materialization order, expected output or manual workflow
+  Lab runbook/report:
+    docs/labs/filesystem-loop/runbook.md and related lab test/output docs
+    updated when command
+    behavior, pack materialization order, expected output or lab workflow
     changes
 
   Rule:

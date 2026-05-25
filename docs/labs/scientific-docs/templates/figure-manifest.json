@@ -1,0 +1,20 @@
+{
+  "schema": "yai.figure-manifest.v0",
+  "source_run": "",
+  "created_at": "",
+  "artifacts": [
+    {
+      "id": "",
+      "type": "chart",
+      "title": "",
+      "source_run": "",
+      "source_data": "",
+      "generation_method": "",
+      "output_path": "",
+      "format": "svg",
+      "created_at": "",
+      "caption": "",
+      "limitations": []
+    }
+  ]
+}

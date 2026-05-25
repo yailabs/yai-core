@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.experiment-report.v0",
+  "title": "YAI Experiment Report v0",
+  "allOf": [
+    { "$ref": "scientific-document.v0.schema.json" },
+    {
+      "type": "object",
+      "required": ["research_question", "hypothesis"],
+      "properties": {
+        "type": { "const": "experiment_report" },
+        "research_question": { "type": "string" },
+        "hypothesis": { "type": "string" }
+      }
+    }
+  ]
+}

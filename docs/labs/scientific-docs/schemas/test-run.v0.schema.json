@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.test-run.v0",
+  "title": "YAI Test Run v0",
+  "type": "object",
+  "required": [
+    "schema",
+    "test_id",
+    "run_id",
+    "title",
+    "status",
+    "created_at",
+    "lab",
+    "run_path",
+    "raw",
+    "normalized",
+    "figures",
+    "diagrams",
+    "tables",
+    "exports"
+  ],
+  "properties": {
+    "schema": { "const": "yai.test-run.v0" },
+    "test_id": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.T[0-9]{3}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.T[0-9]{3}\\.R[0-9]{3}$"
+    },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "frozen", "archived", "superseded"]
+    },
+    "created_at": { "type": "string" },
+    "lab": { "type": "string" },
+    "run_path": { "type": "string" },
+    "commit": { "type": "string" },
+    "commands": { "type": "array" },
+    "inputs": { "type": "array" },
+    "configs": { "type": "array" },
+    "raw": { "type": "array" },
+    "normalized": { "type": "array" },
+    "figures": { "type": "array" },
+    "diagrams": { "type": "array" },
+    "tables": { "type": "array" },
+    "exports": { "type": "array" },
+    "known_nondeterminism": { "type": "array" },
+    "limitations": { "type": "array" }
+  },
+  "additionalProperties": true
+}

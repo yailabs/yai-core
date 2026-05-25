@@ -18,7 +18,7 @@ An agent must do this before changing behavior:
 6. Identify whether the touched concept exists in yai-dev.
 7. Update docs/internal/extraction-inventory.tsv if old residue is touched.
 8. Do not mix unrelated legal/docs/source changes.
-9. Do not add a primitive without a command/view/manual test unless internal-only is explicit.
+9. Do not add a primitive without a command/view/lab test unless internal-only is explicit.
 10. Do not add long-term data-plane logic to transitional C shim roots.
 ```
 
@@ -37,7 +37,7 @@ behavior.
 2. If ownership is unclear, add or update the header/README before changing behavior.
 3. Do not add long-term data-plane logic to transitional C shim roots.
 4. Do not mix roadmap, legal, source and feature changes in one commit.
-5. Do not create a primitive without a view/command/manual test unless internal-only is explicit.
+5. Do not create a primitive without a view/command/lab test unless internal-only is explicit.
 6. Do not use yai-dev as source code to copy wholesale.
 7. Extract concepts from yai-dev, rewrite them in yai grammar, classify residue.
 8. If a file is historical, archive it or mark it; do not leave it active-looking.

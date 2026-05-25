@@ -81,12 +81,12 @@ make info
 make check
 ```
 
-The current command, source, testing, and manual validation details live in:
+The current command, source, testing, and lab validation details live in:
 
 - [Command surface](engineering/command-surface.md)
 - [Source surface](engineering/source-surface.md)
 - [Testing](engineering/testing.md)
-- [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
+- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
 
 ## What Is Not Claimed
 

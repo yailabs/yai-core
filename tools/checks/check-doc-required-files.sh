@@ -5,7 +5,7 @@
 #   Ensure the active documentation set needed by current waves exists.
 #
 # Scope:
-#   Checks required active docs, manuals and ADR files.
+#   Checks required active docs, lab docs, compatibility manuals and ADR files.
 #
 # Non-goals:
 #   Does not validate every doc phrase.
@@ -62,6 +62,14 @@ for file in \
   docs/engineering/source-surface.md \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
+  docs/labs/README.md \
+  docs/labs/filesystem-loop/README.md \
+  docs/labs/filesystem-loop/runbook.md \
+  docs/labs/filesystem-loop/tests.md \
+  docs/labs/filesystem-loop/outputs.md \
+  docs/labs/nvidia/README.md \
+  docs/labs/nvidia/benchmark-runbook.md \
+  docs/labs/nvidia/benchmark-visual-language.md \
   docs/manuals/README.md \
   docs/manuals/manual-filesystem-loop-validation.md \
   docs/manuals/manual-filesystem-loop-validation.ipynb \

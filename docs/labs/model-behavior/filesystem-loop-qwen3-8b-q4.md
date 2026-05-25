@@ -30,7 +30,7 @@ including bounded sandbox paths.
 
 ## Rerun Metadata
 
-Runbook command used: manual terminal rerun from `docs/manuals/manual-filesystem-loop-validation.md` using `target/debug/yai`, `build/yaid`, and a temporary local `llama-server`.
+Runbook command used: terminal rerun from `docs/labs/filesystem-loop/runbook.md` using `target/debug/yai`, `build/yaid`, and a temporary local `llama-server`.
 Provider readiness command: `curl -sS http://127.0.0.1:<PORT>/v1/models`.
 Provider/model used: Qwen3 8B Q4 via temporary no-auth `llama-server` on loopback.
 Raw rerun capture was kept outside the repository and not committed.

@@ -145,7 +145,7 @@ Changed commands:
   yai hot status
   yai doctor
 
-Manual tests:
+Lab tests:
   yai doctor
   yai hot status
 ```

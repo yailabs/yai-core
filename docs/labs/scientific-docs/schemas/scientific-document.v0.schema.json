@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.scientific-document.v0",
+  "title": "YAI Scientific Document v0",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "title",
+    "status",
+    "version",
+    "date",
+    "authors",
+    "project",
+    "lab",
+    "tags",
+    "summary",
+    "artifacts"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "note",
+        "experiment_report",
+        "technical_report",
+        "position_paper",
+        "systems_paper",
+        "benchmark_report"
+      ]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "frozen", "archived", "superseded"]
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "date": { "type": "string", "minLength": 1 },
+    "authors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "project": { "type": "string", "minLength": 1 },
+    "lab": { "type": "string", "minLength": 1 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "summary": { "type": "string" },
+    "claims": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "supersedes": { "type": ["string", "null"] },
+    "superseded_by": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

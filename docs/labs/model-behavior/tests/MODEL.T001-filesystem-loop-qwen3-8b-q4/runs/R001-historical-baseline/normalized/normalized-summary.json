@@ -1,0 +1,39 @@
+{
+  "test_id": "MODEL.T001",
+  "run_id": "MODEL.T001.R001",
+  "lab": "model-behavior",
+  "status": "historical_baseline",
+  "model": {
+    "family": "Qwen3",
+    "size": "8B",
+    "quantization": "Q4",
+    "source": "historical lab note"
+  },
+  "task": {
+    "kind": "filesystem_loop",
+    "bounded": true
+  },
+  "measurements": {
+    "latency_ms": null,
+    "tokens_per_second": null,
+    "vram_peak_mb": null
+  },
+  "artifacts": {
+    "raw": [],
+    "normalized": [
+      "normalized/normalized-summary.json"
+    ],
+    "figures": [],
+    "diagrams": [
+      "diagrams/D001-filesystem-loop-flow.md"
+    ],
+    "tables": [
+      "tables/TBL001-run-summary.md"
+    ]
+  },
+  "limitations": [
+    "Historical baseline only.",
+    "No new model execution was performed.",
+    "No quantitative benchmark is claimed."
+  ]
+}

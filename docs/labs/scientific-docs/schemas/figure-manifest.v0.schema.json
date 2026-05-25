@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.figure-manifest.v0",
+  "title": "YAI Figure Manifest v0",
+  "type": "object",
+  "required": ["schema", "source_run", "created_at", "artifacts"],
+  "properties": {
+    "schema": { "const": "yai.figure-manifest.v0" },
+    "source_run": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*\\.T[0-9]{3}\\.R[0-9]{3}$"
+    },
+    "created_at": { "type": "string" },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "visual-artifact.v0.schema.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

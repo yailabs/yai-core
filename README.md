@@ -141,7 +141,7 @@ make info
 make check
 ```
 
-Deeper runtime and manual validation lives in the engineering and manual docs.
+Deeper runtime and lab validation lives in the engineering and lab docs.
 The README is not the full command reference.
 
 Agent-facing ownership rules live in:
@@ -206,7 +206,7 @@ The current source boundary is described in
 - [Current engineering command surface](docs/engineering/command-surface.md)
 - [Current engineering source surface](docs/engineering/source-surface.md)
 - [Testing](docs/engineering/testing.md)
-- [Filesystem loop manual](docs/manuals/manual-filesystem-loop-validation.md)
+- [Filesystem loop lab](docs/labs/filesystem-loop/runbook.md)
 
 Engineering references may still include internal or historical material. The
 public documentation surface is being split into shorter focused pages.

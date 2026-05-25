@@ -73,7 +73,7 @@ surface.
 
 - [Command surface](engineering/command-surface.md)
 - [Test cases](test-cases.md)
-- [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
+- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
 - [Testing](engineering/testing.md)
 
 ## Known Limitations

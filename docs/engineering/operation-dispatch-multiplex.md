@@ -51,8 +51,8 @@ carrier/control wave that changes CLI, dispatch, gate, carrier or receipt
 behavior must update:
 
 ```text
-docs/manuals/manual-filesystem-loop-validation.it.ipynb
-docs/manuals/manual-filesystem-loop-validation.md
+docs/labs/filesystem-loop/runbook.md
+docs/labs/filesystem-loop/tests.md
 ```
 
 SPINE.33F adds the carrier coverage matrix above this route surface. Route

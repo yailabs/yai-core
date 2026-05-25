@@ -1,0 +1,25 @@
+report_id: 20260525-lan-provider
+title: NVIDIA LAN Provider Benchmark Report
+status: local_lab
+operator_host: 172.20.10.12
+provider_host: 172.20.10.3
+live_provider_port: "43117"
+negative_evidence_ports:
+  - "44317"
+headline_claims:
+  - "172.20.10.3:43117 /v1/models -> reachable"
+  - "172.20.10.3:43117 /v1/chat/completions -> auth_blocked"
+  - "172.20.10.3:44317 -> connection_refused"
+curated_runs:
+  - id: macbook-baseline-20260525-44317
+    role: operator_baseline
+    label: MacBook operator baseline
+  - id: hnsw-smoke-20260525-44317
+    role: vector_search_smoke
+    label: HNSW smoke baseline
+  - id: lan-provider-20260525-44317-escalated
+    role: negative_endpoint_evidence
+    label: Provider port 44317 negative evidence
+  - id: lan-provider-20260525-43117-auth2
+    role: live_provider_probe
+    label: Provider port 43117 live probe

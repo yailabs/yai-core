@@ -1,38 +1,21 @@
 # Manuals
 
-This folder contains operator-facing runbooks for validating and debugging
-`yai` behavior.
+Status: compatibility redirects.
 
-Manuals do not define architecture, protocol contracts or product claims. They
-describe concrete local procedures for running the current core implementation
-and preserving evidence from those runs.
+Canonical runnable lab material now lives under `docs/labs/`. This directory is
+kept because older links and required-file checks still expect the manual files
+to exist.
 
-## Manual Map
+## Canonical Replacements
 
-- `manual-filesystem-loop-validation.md` - local daemon filesystem loop,
-  command-surface baseline, hot-state validation, case entry, provider
-  attachment and vendored prompt-surface runbook.
-- `manual-filesystem-loop-validation.ipynb` - notebook companion for the common
-  command-surface and LAN-provider validation path.
-- `manual-filesystem-loop-validation.it.ipynb` - Italian notebook companion
-  with translated prompt labs.
-- `requirements-notebook.txt` - Python packages for local notebook kernels.
-- `examples/filesystem-loop/policy-packs/` - example policy pack material used
-  by the filesystem loop manual.
+| Legacy manual path | Canonical lab path |
+|---|---|
+| `manual-filesystem-loop-validation.md` | `docs/labs/filesystem-loop/runbook.md` |
+| `manual-filesystem-loop-validation.ipynb` | `docs/labs/filesystem-loop/runbook.md` and lab reports |
+| `manual-filesystem-loop-validation.it.ipynb` | `docs/labs/filesystem-loop/runbook.md` and lab reports |
+| `examples/filesystem-loop/policy-packs/` | `docs/labs/filesystem-loop/policy-packs/` |
 
-## Command Update Rule
+## Rule
 
-When a wave adds, removes or changes an operator command, update all four
-surfaces in the same delivery:
-
-```text
-docs/engineering/command-surface.md
-docs/manuals/manual-filesystem-loop-validation.md
-docs/manuals/manual-filesystem-loop-validation.ipynb
-docs/manuals/manual-filesystem-loop-validation.it.ipynb
-```
-
-The filesystem loop manual is the single active manual test path. It owns both
-the command-surface baseline and the provider/case prompt workflow. If command
-or pack materialization steps change, update the Markdown runbook and both
-notebooks together.
+Do not add new operational procedure here. Add or update lab procedures under
+`docs/labs/`, then keep these compatibility files as pointers only.

@@ -45,13 +45,13 @@ and license files are authoritative for current posture.
 
 These are useful today, but they still contain internal planning/history and
 should be read as current engineering references rather than polished public
-manuals:
+guides:
 
 - [Command surface](engineering/command-surface.md)
 - [Source surface](engineering/source-surface.md)
 - [Testing](engineering/testing.md)
 - [Test cases](test-cases.md)
-- [Filesystem loop manual](manuals/manual-filesystem-loop-validation.md)
+- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
 - [Architecture notes](architecture/README.md)
 
 ## Advanced And Internal Docs

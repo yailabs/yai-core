@@ -33,6 +33,7 @@ for path in \
   docs/architecture \
   docs/engineering \
   docs/internal \
+  docs/labs \
   docs/manuals \
   docs/product \
   docs/protocols \

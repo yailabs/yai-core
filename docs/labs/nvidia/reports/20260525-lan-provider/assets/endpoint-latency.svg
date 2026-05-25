@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img">
+<rect width="980" height="520" fill="#ffffff"/>
+<text x="90" y="46" font-family="Arial" font-size="24" font-weight="700" fill="#111827">Endpoint Latency</text>
+<text x="90" y="72" font-family="Arial" font-size="13" fill="#4b5563">Curl total time by endpoint; color encodes canonical endpoint status.</text>
+<line x1="90" y1="390" x2="910" y2="390" stroke="#d1d5db"/>
+<text x="90" y="110" font-family="Arial" font-size="12" fill="#111827">172.20.10.3:44317 /v1/models</text>
+<rect x="350" y="90" width="580" height="30" rx="3" fill="#dc2626"/>
+<text x="940" y="110" font-family="Arial" font-size="12" fill="#111827">1.207s</text>
+<text x="560" y="110" font-family="Arial" font-size="12" fill="#dc2626">connection_refused</text>
+<text x="90" y="164" font-family="Arial" font-size="12" fill="#111827">172.20.10.3:44317 /v1/chat/completions</text>
+<rect x="350" y="144" width="530" height="30" rx="3" fill="#dc2626"/>
+<text x="890" y="164" font-family="Arial" font-size="12" fill="#111827">1.104s</text>
+<text x="560" y="164" font-family="Arial" font-size="12" fill="#dc2626">connection_refused</text>
+<text x="90" y="218" font-family="Arial" font-size="12" fill="#111827">172.20.10.3:43117 /v1/models</text>
+<rect x="350" y="198" width="51" height="30" rx="3" fill="#1f9d55"/>
+<text x="411" y="218" font-family="Arial" font-size="12" fill="#111827">0.107s</text>
+<text x="560" y="218" font-family="Arial" font-size="12" fill="#1f9d55">reachable</text>
+<text x="90" y="272" font-family="Arial" font-size="12" fill="#111827">172.20.10.3:43117 /v1/chat/completions</text>
+<rect x="350" y="252" width="18" height="30" rx="3" fill="#d97706"/>
+<text x="378" y="272" font-family="Arial" font-size="12" fill="#111827">0.039s</text>
+<text x="560" y="272" font-family="Arial" font-size="12" fill="#d97706">auth_blocked</text>
+</svg>

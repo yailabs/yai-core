@@ -28,7 +28,7 @@ no arbitrary kill
 ```
 
 Real signal effects are limited to a test-owned process spawned by smoke or
-manual test. Arbitrary or external PID signal attempts report:
+lab test. Arbitrary or external PID signal attempts report:
 
 ```text
 carrier_attempted: false

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.paper.v0",
+  "title": "YAI Paper v0",
+  "allOf": [
+    { "$ref": "scientific-document.v0.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["position_paper", "systems_paper"]
+        },
+        "abstract": { "type": "string" }
+      }
+    }
+  ]
+}
