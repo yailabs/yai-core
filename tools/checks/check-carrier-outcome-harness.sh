@@ -49,8 +49,12 @@ for text in \
   "waiting_agent" \
   "not_attempted" \
   "skeleton carriers must never execute" \
+  "execution_performed: false" \
+  "carrier_attempted: false" \
   "receipt_posture: simulated" \
+  "receipt_posture: none" \
   "divergence_candidate" \
+  "unsupported_carrier_family" \
   "yai carrier outcome-test"
 do
   require_text docs/engineering/carrier-outcome-harness.md "$text"

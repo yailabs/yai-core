@@ -31,3 +31,13 @@ not_attempted
 ```
 
 Skeleton carriers remain non-executing and report simulated receipt posture.
+
+Later alignment clarified unsupported family output:
+
+```text
+effective_outcome: not_attempted
+carrier_status: unsupported
+receipt_required: no
+receipt_posture: none
+reason: unsupported_carrier_family
+```

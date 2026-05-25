@@ -1059,6 +1059,7 @@ matrix.
 yai carrier outcome-test --family database --outcome blocked
 yai carrier outcome-test --family network_http --outcome failed
 yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+yai carrier outcome-test --family service --outcome quarantined
 yai carrier outcome-test --family model_provider --outcome waiting_operator
 yai carrier outcome-test --family review --outcome waiting_agent
 ```

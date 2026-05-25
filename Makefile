@@ -574,7 +574,8 @@ smoke-spine33h: $(SMOKE_CARRIER_OUTCOME_HARNESS) build-rust
 	@$(YAI_BIN) carrier outcome-test --family filesystem --outcome blocked | grep -F -- "reason: policy_blocked_harness" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family process --outcome blocked | grep -F -- "reason: unsafe_or_policy_blocked" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family database --outcome blocked | grep -F -- "execution_performed: false" >/dev/null
-	@$(YAI_BIN) carrier outcome-test --family network_http --outcome failed | grep -F -- "receipt_posture: simulated" >/dev/null
+	@$(YAI_BIN) carrier outcome-test --family database --outcome blocked | grep -F -- "carrier_attempted: false" >/dev/null
+	@$(YAI_BIN) carrier outcome-test --family network_http --outcome failed | grep -F -- "reason: simulated_failure_posture" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family repository_git --mode observed --outcome mismatch | grep -F -- "divergence_candidate: generated" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family service --outcome quarantined | grep -F -- "carrier_attempted: false" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family endpoint --mode observed --outcome observed | grep -F -- "effective_outcome: observed" >/dev/null
@@ -583,11 +584,24 @@ smoke-spine33h: $(SMOKE_CARRIER_OUTCOME_HARNESS) build-rust
 	@$(YAI_BIN) carrier outcome-test --family model_provider --outcome waiting_operator | grep -F -- "effective_outcome: waiting_operator" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family review --outcome waiting_agent | grep -F -- "effective_outcome: waiting_agent" >/dev/null
 	@$(YAI_BIN) carrier outcome-test --family unknown --outcome blocked | grep -F -- "carrier_status: unsupported" >/dev/null
+	@$(YAI_BIN) carrier outcome-test --family unknown --outcome blocked | grep -F -- "receipt_required: no" >/dev/null
+	@$(YAI_BIN) carrier outcome-test --family unknown --outcome blocked | grep -F -- "receipt_posture: none" >/dev/null
+	@$(YAI_BIN) carrier outcome-test --family unknown --outcome blocked | grep -F -- "reason: unsupported_carrier_family" >/dev/null
+	@if $(YAI_BIN) carrier outcome-test --family database --outcome impossible >/tmp/yai-invalid-outcome.out 2>&1; then \
+		cat /tmp/yai-invalid-outcome.out; \
+		exit 1; \
+	fi
+	@grep -F -- "error: unsupported_outcome" /tmp/yai-invalid-outcome.out >/dev/null
+	@rm -f /tmp/yai-invalid-outcome.out
 	@printf "outcome:filesystem blocked ok\n"
 	@printf "outcome:process blocked ok\n"
 	@printf "outcome:database blocked simulated\n"
 	@printf "outcome:network_http failed simulated\n"
 	@printf "outcome:repository_git mismatch simulated divergence_candidate\n"
+	@printf "outcome:service quarantined simulated\n"
+	@printf "outcome:endpoint observed simulated\n"
+	@printf "outcome:socket deferred simulated\n"
+	@printf "outcome:listener not_attempted simulated\n"
 	@printf "outcome:model_provider waiting_operator simulated\n"
 	@printf "outcome:review waiting_agent simulated\n"
 	@printf "outcome:unknown not_attempted ok\n"

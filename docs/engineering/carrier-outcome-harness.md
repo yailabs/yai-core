@@ -42,8 +42,10 @@ unknown
 yai carrier outcome-test --family database --outcome blocked
 yai carrier outcome-test --family network_http --outcome failed
 yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+yai carrier outcome-test --family service --outcome quarantined
 yai carrier outcome-test --family model_provider --outcome waiting_operator
 yai carrier outcome-test --family review --outcome waiting_agent
+yai carrier outcome-test --family unknown --outcome blocked
 ```
 
 Expected skeleton posture:
@@ -53,6 +55,18 @@ execution_performed: false
 carrier_attempted: false
 receipt_required: yes
 receipt_posture: simulated
+```
+
+Unsupported `unknown` family posture:
+
+```text
+effective_outcome: not_attempted
+carrier_status: unsupported
+execution_performed: false
+carrier_attempted: false
+receipt_required: no
+receipt_posture: none
+reason: unsupported_carrier_family
 ```
 
 `mismatch` reports:

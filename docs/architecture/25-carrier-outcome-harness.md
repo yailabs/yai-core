@@ -45,5 +45,17 @@ carrier_attempted: false
 receipt_posture: simulated
 ```
 
+Unsupported `unknown` family posture reports:
+
+```text
+effective_outcome: not_attempted
+carrier_status: unsupported
+execution_performed: false
+carrier_attempted: false
+receipt_required: no
+receipt_posture: none
+reason: unsupported_carrier_family
+```
+
 `mismatch` generates a divergence candidate marker. SPINE.33I hardens receipt
 and divergence consistency after this posture surface exists.

@@ -62,13 +62,29 @@ static const char *execution_available_for_family(yai_carrier_family_t family) {
 
 static const char *reason_for(yai_carrier_family_t family, yai_carrier_outcome_t outcome) {
     if (family == YAI_CARRIER_FAMILY_UNKNOWN) {
-        return "unsupported_family";
+        return "unsupported_carrier_family";
     }
     if (outcome == YAI_CARRIER_OUTCOME_MISMATCH) {
         return "simulated_mismatch_posture";
     }
     if (is_skeleton_family(family)) {
-        return "skeleton_carrier_no_execution";
+        switch (outcome) {
+        case YAI_CARRIER_OUTCOME_FAILED:
+            return "simulated_failure_posture";
+        case YAI_CARRIER_OUTCOME_DEFERRED:
+            return "simulated_deferred_posture";
+        case YAI_CARRIER_OUTCOME_OBSERVED:
+            return "simulated_observed_posture";
+        case YAI_CARRIER_OUTCOME_QUARANTINED:
+            return "simulated_quarantine_posture";
+        case YAI_CARRIER_OUTCOME_WAITING_OPERATOR:
+        case YAI_CARRIER_OUTCOME_WAITING_AGENT:
+            return "simulated_waiting_posture";
+        case YAI_CARRIER_OUTCOME_NOT_ATTEMPTED:
+            return "not_attempted";
+        default:
+            return "skeleton_carrier_no_execution";
+        }
     }
     if (family == YAI_CARRIER_FAMILY_PROCESS && outcome == YAI_CARRIER_OUTCOME_BLOCKED) {
         return "unsafe_or_policy_blocked";
@@ -81,7 +97,7 @@ static const char *reason_for(yai_carrier_family_t family, yai_carrier_outcome_t
     case YAI_CARRIER_OUTCOME_DEFERRED:
         return "simulated_deferred_posture";
     case YAI_CARRIER_OUTCOME_FAILED:
-        return "simulated_failed_posture";
+        return "simulated_failure_posture";
     case YAI_CARRIER_OUTCOME_OBSERVED:
         return "simulated_observed_posture";
     case YAI_CARRIER_OUTCOME_QUARANTINED:
@@ -122,8 +138,8 @@ int yai_carrier_outcome_harness_test(yai_carrier_family_t family,
     out->execution_available = execution_available_for_family(family);
     out->execution_performed = 0;
     out->carrier_attempted = 0;
-    out->receipt_required = 1;
-    out->receipt_posture = "simulated";
+    out->receipt_required = family == YAI_CARRIER_FAMILY_UNKNOWN ? 0 : 1;
+    out->receipt_posture = family == YAI_CARRIER_FAMILY_UNKNOWN ? "none" : "simulated";
     out->divergence_candidate =
         effective_outcome == YAI_CARRIER_OUTCOME_MISMATCH ? "generated" : "none";
     out->reason = reason_for(family, effective_outcome);

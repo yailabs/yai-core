@@ -555,6 +555,20 @@ receipt_required: yes
 receipt_posture: simulated
 divergence_candidate: generated
 reason: simulated_mismatch_posture
+
+yai carrier outcome-test --family unknown --outcome blocked
+family: unknown
+mode: controlled
+requested_outcome: blocked
+effective_outcome: not_attempted
+carrier_status: unsupported
+execution_available: false
+execution_performed: false
+carrier_attempted: false
+receipt_required: no
+receipt_posture: none
+divergence_candidate: none
+reason: unsupported_carrier_family
 ```
 
 Use `yai carrier outcome-test` to inspect outcome posture without executing

@@ -679,13 +679,21 @@ fn is_skeleton_outcome_family(family: &str) -> bool {
 
 fn outcome_test_reason(family: &str, effective_outcome: &str) -> &'static str {
     if family == "unknown" {
-        return "unsupported_family";
+        return "unsupported_carrier_family";
     }
     if effective_outcome == "mismatch" {
         return "simulated_mismatch_posture";
     }
     if is_skeleton_outcome_family(family) {
-        return "skeleton_carrier_no_execution";
+        return match effective_outcome {
+            "failed" => "simulated_failure_posture",
+            "deferred" => "simulated_deferred_posture",
+            "observed" => "simulated_observed_posture",
+            "quarantined" => "simulated_quarantine_posture",
+            "waiting_operator" | "waiting_agent" => "simulated_waiting_posture",
+            "not_attempted" => "not_attempted",
+            _ => "skeleton_carrier_no_execution",
+        };
     }
     if family == "process" && effective_outcome == "blocked" {
         return "unsafe_or_policy_blocked";
@@ -694,7 +702,7 @@ fn outcome_test_reason(family: &str, effective_outcome: &str) -> &'static str {
         "executed" => "active_carrier_harness_dry_run",
         "blocked" => "policy_blocked_harness",
         "deferred" => "simulated_deferred_posture",
-        "failed" => "simulated_failed_posture",
+        "failed" => "simulated_failure_posture",
         "observed" => "simulated_observed_posture",
         "quarantined" => "simulated_quarantine_posture",
         "waiting_operator" | "waiting_agent" => "simulated_waiting_posture",
@@ -740,8 +748,18 @@ fn carrier_outcome_test(args: &[String]) -> Result<(), String> {
     );
     println!("execution_performed: false");
     println!("carrier_attempted: false");
-    println!("receipt_required: yes");
-    println!("receipt_posture: simulated");
+    println!(
+        "receipt_required: {}",
+        if family == "unknown" { "no" } else { "yes" }
+    );
+    println!(
+        "receipt_posture: {}",
+        if family == "unknown" {
+            "none"
+        } else {
+            "simulated"
+        }
+    );
     println!("divergence_candidate: {divergence_candidate}");
     println!("reason: {}", outcome_test_reason(family, effective_outcome));
     Ok(())

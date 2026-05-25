@@ -921,6 +921,7 @@ review waiting_agent posture
 unknown unsupported/not_attempted posture
 skeleton carriers do not execute
 mismatch generates divergence_candidate
+invalid outcome fails cleanly
 ```
 
 `tests/smoke/carrier-outcome-harness/test_carrier_outcome_harness.c` proves
@@ -933,8 +934,10 @@ make smoke-spine33h
 target/debug/yai carrier outcome-test --family database --outcome blocked
 target/debug/yai carrier outcome-test --family network_http --outcome failed
 target/debug/yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+target/debug/yai carrier outcome-test --family service --outcome quarantined
 target/debug/yai carrier outcome-test --family model_provider --outcome waiting_operator
 target/debug/yai carrier outcome-test --family review --outcome waiting_agent
+target/debug/yai carrier outcome-test --family unknown --outcome blocked
 ```
 
 Installed check:
@@ -945,7 +948,9 @@ make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family database --outcome blocked
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family network_http --outcome failed
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family service --outcome quarantined
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family model_provider --outcome waiting_operator
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family review --outcome waiting_agent
 PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family unknown --outcome blocked
 ```
 
