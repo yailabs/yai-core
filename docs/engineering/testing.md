@@ -904,6 +904,62 @@ non_execution_reason:
 carrier_attempted: false
 ```
 
+## SPINE.33H Carrier Outcome Harness Loop
+
+```text
+filesystem blocked posture
+process blocked posture
+database blocked posture
+network_http failed posture
+repository_git mismatch posture
+service quarantined posture
+endpoint observed posture
+socket deferred posture
+listener not_attempted posture
+model_provider waiting_operator posture
+review waiting_agent posture
+unknown unsupported/not_attempted posture
+skeleton carriers do not execute
+mismatch generates divergence_candidate
+```
+
+`tests/smoke/carrier-outcome-harness/test_carrier_outcome_harness.c` proves
+the C ABI result posture. The CLI smoke checks representative active,
+skeleton, mismatch, waiting and unsupported cases.
+
+```text
+make check-carrier-outcome-harness
+make smoke-spine33h
+target/debug/yai carrier outcome-test --family database --outcome blocked
+target/debug/yai carrier outcome-test --family network_http --outcome failed
+target/debug/yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+target/debug/yai carrier outcome-test --family model_provider --outcome waiting_operator
+target/debug/yai carrier outcome-test --family review --outcome waiting_agent
+```
+
+Installed check:
+
+```text
+rm -rf /tmp/yai-install-test /tmp/yai-home-test
+make install-local PREFIX=/tmp/yai-install-test YAI_HOME=/tmp/yai-home-test
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family database --outcome blocked
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family network_http --outcome failed
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family model_provider --outcome waiting_operator
+PATH=/tmp/yai-install-test/bin:$PATH yai carrier outcome-test --family unknown --outcome blocked
+```
+
+Expected key lines:
+
+```text
+execution_performed: false
+carrier_attempted: false
+receipt_required: yes
+receipt_posture: simulated
+divergence_candidate:
+carrier_status: unsupported
+```
+
 ## SPINE.28 Hot State Freeze Loop
 
 ```text

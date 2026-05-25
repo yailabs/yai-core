@@ -1049,6 +1049,30 @@ non_execution_reason:
 carrier_attempted: false
 ```
 
+## Carrier Outcome Harness
+
+This is outcome posture testing. Skeleton carriers do not execute. The harness
+proves that outcome states are visible and receiptable across the carrier
+matrix.
+
+```bash
+yai carrier outcome-test --family database --outcome blocked
+yai carrier outcome-test --family network_http --outcome failed
+yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+yai carrier outcome-test --family model_provider --outcome waiting_operator
+yai carrier outcome-test --family review --outcome waiting_agent
+```
+
+Expected posture:
+
+```text
+execution_performed: false
+carrier_attempted: false
+receipt_required: yes
+receipt_posture: simulated
+divergence_candidate:
+```
+
 ## Shutdown
 
 ```bash

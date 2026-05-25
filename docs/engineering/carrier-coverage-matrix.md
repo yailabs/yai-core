@@ -29,3 +29,7 @@ yai carrier coverage --mode controlled
 This surface is visibility only. It does not execute non-filesystem/non-process
 carriers and does not claim support beyond the matrix. SPINE.33G aligns
 non-process skeleton coverage with `carrier.v1` inspect surfaces.
+
+SPINE.33H layers `yai carrier outcome-test` on top of this matrix. The harness
+represents outcome posture and simulated receipt posture; it does not execute
+skeleton carriers.

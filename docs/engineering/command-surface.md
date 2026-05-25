@@ -103,6 +103,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | host process comparison | expected/observed mismatch view | `yai observe compare-process --pid <pid> --expected running|stopped` | `target/debug/yai observe compare-process --pid 1 --expected stopped` | `host-observation-probe.md`, `testing.md` |
 | carrier coverage matrix | family/mode/outcome coverage visibility | `yai carrier coverage [--family <family>] [--mode <mode>]` | `target/debug/yai carrier coverage --family process` | `carrier-coverage-matrix.md`, `testing.md` |
 | non-process carrier skeletons | inspectable carrier.v1 no-execution skeletons | `yai carrier inspect <family>` | `target/debug/yai carrier inspect database` | `non-process-carrier-skeletons.md`, `testing.md` |
+| carrier outcome harness | dry-run outcome posture over the carrier matrix | `yai carrier outcome-test --family <family> --outcome <outcome>` | `target/debug/yai carrier outcome-test --family database --outcome blocked` | `carrier-outcome-harness.md`, `testing.md` |
 
 `yai store status` is the readiness view because `store` already names the
 durable data root and LMDB is the record-plane backend under it. SPINE.30 adds
@@ -523,6 +524,45 @@ future_activation_wave: planned
 Skeleton inspect is available for `network_http`, `database`,
 `repository_git`, `service`, `endpoint`, `socket`, `listener`,
 `model_provider` and `review`. It does not execute carrier effects.
+
+SPINE.33H adds carrier outcome posture testing:
+
+```text
+yai carrier outcome-test --family database --outcome blocked
+family: database
+mode: controlled
+requested_outcome: blocked
+effective_outcome: blocked
+carrier_status: skeleton
+execution_available: false
+execution_performed: false
+carrier_attempted: false
+receipt_required: yes
+receipt_posture: simulated
+divergence_candidate: none
+reason: skeleton_carrier_no_execution
+
+yai carrier outcome-test --family repository_git --mode observed --outcome mismatch
+family: repository_git
+mode: observed
+requested_outcome: mismatch
+effective_outcome: mismatch
+carrier_status: skeleton
+execution_available: false
+execution_performed: false
+carrier_attempted: false
+receipt_required: yes
+receipt_posture: simulated
+divergence_candidate: generated
+reason: simulated_mismatch_posture
+```
+
+Use `yai carrier outcome-test` to inspect outcome posture without executing
+skeleton carriers. Invalid outcomes return:
+
+```text
+error: unsupported_outcome
+```
 
 Reserved future commands for the retrieval and runner roadmap rebase:
 

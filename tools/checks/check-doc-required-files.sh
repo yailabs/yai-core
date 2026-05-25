@@ -23,6 +23,8 @@ for file in \
   docs/architecture/21-process-carrier-signal-control.md \
   docs/architecture/22-host-observation-probe.md \
   docs/architecture/23-carrier-coverage-matrix.md \
+  docs/architecture/24-non-process-carrier-skeletons.md \
+  docs/architecture/25-carrier-outcome-harness.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \
@@ -42,6 +44,7 @@ for file in \
   docs/engineering/filesystem-target.md \
   docs/engineering/four-repo-roadmap.md \
   docs/engineering/hot-state-plane.md \
+  docs/engineering/carrier-outcome-harness.md \
   docs/engineering/non-process-carrier-skeletons.md \
   docs/engineering/operational-extraction-contract.md \
   docs/engineering/pack-format.md \
@@ -62,6 +65,7 @@ for file in \
   docs/adr/0024-host-observation-probe.md \
   docs/adr/0025-carrier-coverage-matrix.md \
   docs/adr/0026-non-process-carrier-skeletons.md \
+  docs/adr/0027-carrier-outcome-harness.md \
   docs/product/positioning.md \
   docs/adr/0000-decision-compendium.md
 do

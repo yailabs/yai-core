@@ -77,6 +77,10 @@ fails explicitly if LMDB import fails.
 SPINE.33G adopts non-process carrier skeletons. Planned carrier families must
 be inspectable and receipt-aware before execution is implemented.
 
+SPINE.33H adopts the carrier outcome harness. Outcome posture can be tested
+across active, skeleton and unsupported families without executing skeleton
+effects.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -101,6 +105,7 @@ be inspectable and receipt-aware before execution is implemented.
 | 0018 | Hot state is not truth | Hot state is live cache/freshness posture, not durable truth. |
 | 0019 | LMDB record plane | LMDB is durable indexed record lookup, rebuildable from journal and separate from hot state, graph, facts and memory. |
 | 0026 | Non-process carrier skeletons | Planned carrier families become carrier.v1 skeletons before implementation and do not execute effects. |
+| 0027 | Carrier outcome harness | Outcome posture is tested independently of real carrier execution; skeleton carriers simulate posture only. |
 
 ## Combined Doctrine
 

@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33G non-process carrier skeletons. | SPINE.33H Carrier Outcome Harness. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33H carrier outcome harness. | SPINE.33I Carrier Receipt / Divergence Hardening. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -193,7 +193,7 @@ SPINE.33D Process Carrier v0 / Signal Control                      done
 SPINE.33E Host Observation Probe v0 / Bypass Check                 done
 SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
 SPINE.33G Non-Process Carrier Skeletons                            done
-SPINE.33H Carrier Outcome Harness                                  planned
+SPINE.33H Carrier Outcome Harness                                  done
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase                planned
 SPINE.34  LMDB Record Plane Freeze                                  planned

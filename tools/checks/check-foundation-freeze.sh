@@ -35,6 +35,7 @@ done
 allowed_docs='
 README.md
 agent-operating-appendix.md
+carrier-outcome-harness.md
 carrier-contract-v1.md
 carrier-coverage-matrix.md
 command-surface.md

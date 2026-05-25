@@ -76,3 +76,7 @@ make check-non-process-carrier-skeletons
 This wave does not execute real network requests, database queries, git
 commands, socket operations, listener operations, service lifecycle control,
 model invocation or review queue execution.
+
+SPINE.33H outcome-test may represent blocked, failed, mismatch, waiting and
+other outcome posture for skeletons, but those tests remain dry-run and report
+`execution_performed: false`.

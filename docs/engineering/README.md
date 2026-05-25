@@ -31,6 +31,7 @@ extraction-plan.md
 filesystem-target.md
 four-repo-roadmap.md
 hot-state-plane.md
+carrier-outcome-harness.md
 lmdb-record-plane.md
 non-process-carrier-skeletons.md
 operational-extraction-contract.md

@@ -67,7 +67,7 @@ SPINE.33D Process Carrier v0 / Signal Control                      done
 SPINE.33E Host Observation Probe v0 / Bypass Check                 done
 SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
 SPINE.33G Non-Process Carrier Skeletons                            done
-SPINE.33H Carrier Outcome Harness                                  planned
+SPINE.33H Carrier Outcome Harness                                  done
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
 SPINE.33J Retrieval and Model Runtime Roadmap Rebase                planned
 SPINE.34  LMDB Record Plane Freeze                                  planned

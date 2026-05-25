@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33G Non-Process Carrier Skeletons");
+    println!("status: SPINE.33H Carrier Outcome Harness");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -63,7 +63,7 @@ fn print_info() {
     println!("hot_state: YAI_HOME/run/hot-state.json live cache v0");
     println!("record_store: YAI_HOME/store/lmdb LMDB lookup plane");
     println!(
-        "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; host probe v0"
+        "carrier_substrate: carrier.v1 filesystem/process plus non-process skeletons; outcome harness; host probe v0"
     );
     println!("journal_inspection: file-based JSONL v0");
     println!("control_inspection: journal-derived summary");
@@ -218,6 +218,7 @@ fn print_usage() {
     println!("       yai carrier route --family <carrier_family>");
     println!("       yai carrier coverage [--family <carrier_family>] [--mode controlled|observed|imported]");
     println!("       yai carrier inspect <carrier_family>");
+    println!("       yai carrier outcome-test --family <carrier_family> [--mode controlled|observed|imported] --outcome <outcome>");
     println!("       yai process observe --pid <pid>");
     println!("       yai process signal --pid <pid> --signal TERM|KILL [--dry-run]");
     println!("       yai observe process --pid <pid>");
@@ -603,6 +604,129 @@ fn carrier_coverage(args: &[String]) -> Result<(), String> {
             print_coverage_entry(entry, true, None);
         }
     }
+    Ok(())
+}
+
+const CARRIER_OUTCOME_TEST_OUTCOMES: &[&str] = &[
+    "executed",
+    "blocked",
+    "deferred",
+    "failed",
+    "mismatch",
+    "observed",
+    "quarantined",
+    "waiting_operator",
+    "waiting_agent",
+    "not_attempted",
+];
+
+fn normalized_carrier_family(family: &str) -> &'static str {
+    CARRIER_COVERAGE
+        .iter()
+        .find(|entry| entry.family == family)
+        .map(|entry| entry.family)
+        .unwrap_or("unknown")
+}
+
+fn outcome_test_carrier_status(family: &str) -> &'static str {
+    match family {
+        "filesystem" | "process" | "observation" => "active_minimal",
+        "network_http" | "database" | "repository_git" | "service" | "endpoint" | "socket"
+        | "listener" | "model_provider" | "review" => "skeleton",
+        _ => "unsupported",
+    }
+}
+
+fn outcome_test_execution_available(family: &str) -> &'static str {
+    match family {
+        "filesystem" => "true",
+        "process" => "true_limited",
+        _ => "false",
+    }
+}
+
+fn is_skeleton_outcome_family(family: &str) -> bool {
+    matches!(
+        family,
+        "network_http"
+            | "database"
+            | "repository_git"
+            | "service"
+            | "endpoint"
+            | "socket"
+            | "listener"
+            | "model_provider"
+            | "review"
+    )
+}
+
+fn outcome_test_reason(family: &str, effective_outcome: &str) -> &'static str {
+    if family == "unknown" {
+        return "unsupported_family";
+    }
+    if effective_outcome == "mismatch" {
+        return "simulated_mismatch_posture";
+    }
+    if is_skeleton_outcome_family(family) {
+        return "skeleton_carrier_no_execution";
+    }
+    if family == "process" && effective_outcome == "blocked" {
+        return "unsafe_or_policy_blocked";
+    }
+    match effective_outcome {
+        "executed" => "active_carrier_harness_dry_run",
+        "blocked" => "policy_blocked_harness",
+        "deferred" => "simulated_deferred_posture",
+        "failed" => "simulated_failed_posture",
+        "observed" => "simulated_observed_posture",
+        "quarantined" => "simulated_quarantine_posture",
+        "waiting_operator" | "waiting_agent" => "simulated_waiting_posture",
+        "not_attempted" => "not_attempted",
+        _ => "unsupported_outcome",
+    }
+}
+
+fn carrier_outcome_test(args: &[String]) -> Result<(), String> {
+    let requested_family =
+        optional_arg(args, "--family").ok_or_else(|| "--family is required".to_string())?;
+    let mode = optional_arg(args, "--mode").unwrap_or_else(|| "controlled".to_string());
+    let requested_outcome =
+        optional_arg(args, "--outcome").ok_or_else(|| "--outcome is required".to_string())?;
+
+    if !matches!(mode.as_str(), "controlled" | "observed" | "imported") {
+        return Err("unsupported_mode".to_string());
+    }
+    if !CARRIER_OUTCOME_TEST_OUTCOMES.contains(&requested_outcome.as_str()) {
+        return Err("unsupported_outcome".to_string());
+    }
+
+    let family = normalized_carrier_family(&requested_family);
+    let effective_outcome = if family == "unknown" {
+        "not_attempted"
+    } else {
+        requested_outcome.as_str()
+    };
+    let divergence_candidate = if effective_outcome == "mismatch" {
+        "generated"
+    } else {
+        "none"
+    };
+
+    println!("family: {family}");
+    println!("mode: {mode}");
+    println!("requested_outcome: {requested_outcome}");
+    println!("effective_outcome: {effective_outcome}");
+    println!("carrier_status: {}", outcome_test_carrier_status(family));
+    println!(
+        "execution_available: {}",
+        outcome_test_execution_available(family)
+    );
+    println!("execution_performed: false");
+    println!("carrier_attempted: false");
+    println!("receipt_required: yes");
+    println!("receipt_posture: simulated");
+    println!("divergence_candidate: {divergence_candidate}");
+    println!("reason: {}", outcome_test_reason(family, effective_outcome));
     Ok(())
 }
 
@@ -4274,6 +4398,12 @@ fn main() {
         Some("carrier") if args.get(1).map(String::as_str) == Some("inspect") => {
             if let Err(error) = carrier_inspect(&args[2..]) {
                 eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("carrier") if args.get(1).map(String::as_str) == Some("outcome-test") => {
+            if let Err(error) = carrier_outcome_test(&args[2..]) {
+                eprintln!("error: {error}");
                 std::process::exit(2);
             }
         }

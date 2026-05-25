@@ -44,3 +44,7 @@ observed modes. `review` is visible as an imported skeleton with unsupported
 controlled and observed modes.
 
 This preserves carrier visibility without fake execution.
+
+SPINE.33H may simulate outcome posture for these skeleton families through the
+carrier outcome harness. Skeleton outcome tests still report
+`execution_performed: false` and `carrier_attempted: false`.

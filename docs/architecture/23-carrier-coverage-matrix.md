@@ -95,3 +95,7 @@ carrier_contract: carrier.v1
 
 SPINE.33G adds `yai carrier inspect <family>` for the non-process skeleton
 families and requires the coverage matrix to agree with skeleton status.
+
+SPINE.33H adds `yai carrier outcome-test` as a dry-run harness for outcome
+posture. It tests outcomes against the matrix but does not turn skeleton
+coverage into executable carrier support.

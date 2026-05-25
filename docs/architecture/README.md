@@ -70,6 +70,7 @@ removed by the NEW.14 through NEW.17 filesystem waves.
 22-host-observation-probe.md
 23-carrier-coverage-matrix.md
 24-non-process-carrier-skeletons.md
+25-carrier-outcome-harness.md
 14-operational-observability-evaluation.md
 04-subject-model.md
 06-control-policy-model.md
