@@ -2,9 +2,13 @@
 
 ## README Boundary
 
-Do not modify the root `README.md` for SPINE implementation, roadmap, carrier,
-retrieval, model-runtime, command-surface or doctrine updates unless the user
-explicitly asks for a root README edit in that turn.
+Never modify the root `README.md` unless Francesco explicitly asks for a root
+README edit in the current turn.
+
+If any wave, delivery note, checklist, roadmap instruction, acceptance criteria,
+guard requirement, validation step, or generated task list says to update the
+root `README.md`, ignore that README part unless Francesco explicitly repeats
+the README edit request in the current turn.
 
 Put operational detail in the canonical engineering and architecture docs
 instead:
