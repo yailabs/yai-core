@@ -168,3 +168,17 @@ action must become an operation attempt and pass through control/carrier.
 kill "$DAEMON_PID" 2>/dev/null || true
 make uninstall-local PREFIX="$PREFIX" YAI_HOME="$YAI_HOME"
 ```
+## Replay Diagnostics / Rebuild Report
+
+Replay reports are durable operational evidence for rebuild/replay behavior.
+They are not conformance fixtures yet, but they prepare future conformance.
+
+```bash
+yai journal replay --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+```
+
+The report uses `yai.replay_report.v1` and is stored under
+`YAI_HOME/store/replay/reports/`. It records `journal_identity`,
+`compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
+`invalid_entries` and failed report diagnostics for the filesystem-loop journal.

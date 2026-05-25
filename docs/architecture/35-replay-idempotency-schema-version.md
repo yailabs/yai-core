@@ -26,6 +26,11 @@ journal.jsonl
 Journal remains replay/audit chronology. LMDB remains durable indexed record
 lookup. Store queries must not silently fall back to the journal.
 
+SPINE.38 extends this boundary with `yai.replay_report.v1` durable replay
+diagnostics. The report preserves `journal_identity`, `compatibility`,
+`cursor_line`, `records_written`, `records_duplicate`, `invalid_entries` and
+failed report evidence after the replay command exits.
+
 ## Schema Posture
 
 YAI separates the input journal schema from the LMDB record schema:

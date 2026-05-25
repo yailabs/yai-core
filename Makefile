@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -148,15 +148,16 @@ SMOKE_RECORD_STORE_FREEZE := tests/smoke/record-store-freeze/test_record_store_f
 SMOKE_JOURNAL_REPLAY_BOUNDARY := tests/smoke/journal-replay-boundary/test_journal_replay_boundary.sh
 SMOKE_JOURNAL_REPLAY_TO_LMDB := tests/smoke/journal-replay-to-lmdb/test_journal_replay_to_lmdb.sh
 SMOKE_REPLAY_IDEMPOTENCY_SCHEMA := tests/smoke/replay-idempotency-schema-version/test_replay_idempotency_schema_version.sh
+SMOKE_REPLAY_DIAGNOSTICS_REPORT := tests/smoke/replay-diagnostics-report/test_replay_diagnostics_report.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.37 Replay Idempotency + Schema Version Handling\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.37 Replay Idempotency + Schema Version Handling\n"
-	@printf "next: SPINE.38 Replay Diagnostics / Rebuild Report\n"
+	@printf "status: SPINE.38 Replay Diagnostics / Rebuild Report\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.38 Replay Diagnostics / Rebuild Report\n"
+	@printf "next: SPINE.39 Journal Replay Freeze\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -194,6 +195,7 @@ check-docs:
 	@./tools/checks/check-journal-replay-boundary.sh
 	@./tools/checks/check-journal-replay-to-lmdb.sh
 	@./tools/checks/check-replay-idempotency-schema-version.sh
+	@./tools/checks/check-replay-diagnostics-report.sh
 	@./tools/checks/check-file-header-standard.sh
 	@./tools/checks/check-control-carrier-substrate.sh
 	@./tools/checks/check-operation-dispatch-multiplex.sh
@@ -247,6 +249,9 @@ check-journal-replay-to-lmdb:
 
 check-replay-idempotency-schema-version:
 	@./tools/checks/check-replay-idempotency-schema-version.sh
+
+check-replay-diagnostics-report:
+	@./tools/checks/check-replay-diagnostics-report.sh
 
 check-control-carrier-substrate:
 	@./tools/checks/check-control-carrier-substrate.sh
@@ -548,6 +553,9 @@ smoke-spine36: build-rust
 smoke-spine37: build-rust
 	@$(SMOKE_REPLAY_IDEMPOTENCY_SCHEMA)
 
+smoke-spine38: build-rust
+	@$(SMOKE_REPLAY_DIAGNOSTICS_REPORT)
+
 smoke-spine33a: $(SMOKE_CONTROL_CARRIER_SUBSTRATE) build-rust
 	@$(SMOKE_CONTROL_CARRIER_SUBSTRATE)
 	@$(YAI_BIN) carrier families | grep -F -- "carrier_families:" >/dev/null
@@ -678,7 +686,7 @@ smoke-spine33i: $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) build-rust
 smoke-spine33l: build-rust
 	@$(SMOKE_PROVIDER_RUNTIME_SURFACE)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38
 
 check: check-layout check-docs build smoke
 

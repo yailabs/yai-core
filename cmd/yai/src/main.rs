@@ -21,7 +21,7 @@ use std::net::TcpStream;
 use std::os::raw::{c_char, c_int, c_void};
 #[cfg(unix)]
 use std::os::unix::net::UnixStream;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use yai_core_engine::graph::GraphSummary;
 use yai_core_engine::journal::{Journal, JournalInspection, JOURNAL_RECORD_SCHEMA};
@@ -56,7 +56,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.37 Replay Idempotency + Schema Version Handling");
+    println!("status: SPINE.38 Replay Diagnostics / Rebuild Report");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -70,7 +70,7 @@ fn print_info() {
     println!("provider-runtime: planned surface active");
     println!("device-registry: active");
     println!("journal_inspection: file-based JSONL v0");
-    println!("journal_replay: LMDB materialization with schema/cursor metadata v0");
+    println!("journal_replay: LMDB materialization with schema/cursor/report metadata v0");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -197,6 +197,7 @@ fn print_usage() {
     println!("       yai journal inspect --path <journal.jsonl> [--show-errors]");
     println!("       yai journal replay --path <journal.jsonl> [--dry-run]");
     println!("       yai journal replay-status --path <journal.jsonl>");
+    println!("       yai journal replay-report --path <journal.jsonl>");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
@@ -1991,6 +1992,14 @@ fn record_store_path() -> PathBuf {
     yai_home().join("store").join("lmdb")
 }
 
+fn replay_report_dir() -> PathBuf {
+    yai_home().join("store").join("replay").join("reports")
+}
+
+fn replay_report_path(journal_identity: &str) -> PathBuf {
+    replay_report_dir().join(format!("{journal_identity}.replay-report.json"))
+}
+
 struct RecordStoreStatus {
     path: PathBuf,
     backend: &'static str,
@@ -2690,6 +2699,40 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     let lmdb_path = record_store_path();
     if !path.exists() {
         let profile = replay_profile_for_missing(&path);
+        let started_at = unix_timestamp_string();
+        let completed_at = unix_timestamp_string();
+        let report_path = write_replay_report(&ReplayReport {
+            report_id: replay_report_id(&profile.journal_identity),
+            journal_identity: profile.journal_identity.clone(),
+            journal_path: path.display().to_string(),
+            lmdb_path: lmdb_path.display().to_string(),
+            record_schema: profile.record_schema.clone(),
+            journal_schema: profile.journal_schema.clone(),
+            compatibility: profile.compatibility.clone(),
+            started_at,
+            completed_at,
+            lines_total: 0,
+            valid_entries: 0,
+            invalid_entries: 0,
+            unsupported_entries: 0,
+            duplicate_entries: 0,
+            records_seen: 0,
+            records_written: 0,
+            records_duplicate: 0,
+            records_skipped: 0,
+            cursor_line: 0,
+            replay_status: "failed".to_string(),
+            replay_ready: false,
+            idempotent: false,
+            errors: vec![ReplayReportIssue::new(
+                0,
+                "missing_journal",
+                "journal path is missing",
+            )],
+            warnings: Vec::new(),
+            summary: "Replay failed before materialization because the journal path is missing."
+                .to_string(),
+        })?;
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
         println!("journal_identity: {}", profile.journal_identity);
@@ -2709,11 +2752,47 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("cursor_line: 0");
         println!("replay_status: failed");
         println!("replay_ready: no");
+        println!("replay_report: {}", report_path.display());
         println!("reason: missing_journal");
         return Ok(());
     }
     if !path.is_file() {
         let profile = replay_profile_for_missing(&path);
+        let started_at = unix_timestamp_string();
+        let completed_at = unix_timestamp_string();
+        let report_path = write_replay_report(&ReplayReport {
+            report_id: replay_report_id(&profile.journal_identity),
+            journal_identity: profile.journal_identity.clone(),
+            journal_path: path.display().to_string(),
+            lmdb_path: lmdb_path.display().to_string(),
+            record_schema: profile.record_schema.clone(),
+            journal_schema: profile.journal_schema.clone(),
+            compatibility: profile.compatibility.clone(),
+            started_at,
+            completed_at,
+            lines_total: 0,
+            valid_entries: 0,
+            invalid_entries: 0,
+            unsupported_entries: 0,
+            duplicate_entries: 0,
+            records_seen: 0,
+            records_written: 0,
+            records_duplicate: 0,
+            records_skipped: 0,
+            cursor_line: 0,
+            replay_status: "failed".to_string(),
+            replay_ready: false,
+            idempotent: false,
+            errors: vec![ReplayReportIssue::new(
+                0,
+                "journal_unavailable",
+                "journal path is not a regular file",
+            )],
+            warnings: Vec::new(),
+            summary:
+                "Replay failed before materialization because the journal path is unavailable."
+                    .to_string(),
+        })?;
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
         println!("journal_identity: {}", profile.journal_identity);
@@ -2733,6 +2812,7 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("cursor_line: 0");
         println!("replay_status: failed");
         println!("replay_ready: no");
+        println!("replay_report: {}", report_path.display());
         println!("reason: journal_unavailable");
         return Ok(());
     }
@@ -2747,10 +2827,17 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     })?;
     let profile = replay_profile_for_inspection(&path, &contents, &inspection);
     if !inspection.replay_ready() {
-        persist_replay_metadata(
-            &lmdb_path,
-            replay_metadata_from_failure(&path, &profile, &inspection),
-        )?;
+        let metadata = replay_metadata_from_failure(&path, &profile, &inspection);
+        persist_replay_metadata(&lmdb_path, metadata.clone())?;
+        let report_path = write_replay_report(&replay_report_from_metadata(
+            &metadata,
+            &inspection,
+            inspection.valid_entries,
+            false,
+            replay_report_issues_from_inspection(&inspection),
+            Vec::new(),
+            replay_summary(&metadata.status, 0, 0, inspection.invalid_entries),
+        ))?;
         println!("journal_replay: failed");
         println!("journal_path: {}", path.display());
         println!("journal_identity: {}", profile.journal_identity);
@@ -2771,13 +2858,14 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         println!("cursor_line: 0");
         println!(
             "replay_status: {}",
-            if profile.compatibility == "schema_mismatch" {
+            if inspection.invalid_entries == 0 && profile.compatibility == "schema_mismatch" {
                 "incompatible"
             } else {
                 "failed"
             }
         );
         println!("replay_ready: no");
+        println!("replay_report: {}", report_path.display());
         println!("reason: {}", replay_failure_reason(&inspection));
         return Ok(());
     }
@@ -2827,6 +2915,23 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
         &unix_timestamp_string(),
     );
     store.put_replay_metadata(&metadata)?;
+    let idempotent = report.records_seen > 0
+        && report.records_written == 0
+        && report.records_duplicate == report.records_seen;
+    let report_path = write_replay_report(&replay_report_from_metadata(
+        &metadata,
+        &inspection,
+        report.records_seen,
+        idempotent,
+        Vec::new(),
+        Vec::new(),
+        replay_summary(
+            &metadata.status,
+            report.records_written,
+            report.records_duplicate,
+            inspection.invalid_entries,
+        ),
+    ))?;
     let status = LmdbRecordStore::status(&lmdb_path);
     println!("journal_replay: completed");
     println!("journal_path: {}", path.display());
@@ -2848,15 +2953,9 @@ fn journal_replay(args: &[String]) -> Result<(), String> {
     println!("cursor_line: {}", metadata.cursor_line);
     println!("replay_status: {}", metadata.status);
     println!("replay_ready: yes");
+    println!("replay_report: {}", report_path.display());
     println!("record_store_status: {}", status.status.as_str());
-    println!(
-        "idempotent: {}",
-        bool_word(
-            report.records_seen > 0
-                && report.records_written == 0
-                && report.records_duplicate == report.records_seen
-        )
-    );
+    println!("idempotent: {}", bool_word(idempotent));
     Ok(())
 }
 
@@ -2921,6 +3020,101 @@ fn journal_replay_status(args: &[String]) -> Result<(), String> {
             println!("invalid_entries: {}", inspection.invalid_entries);
             println!("unsupported_entries: {}", inspection.unsupported_entries);
             println!("compatibility: {}", profile.compatibility);
+        }
+    }
+    Ok(())
+}
+
+fn journal_replay_report(args: &[String]) -> Result<(), String> {
+    let path = PathBuf::from(named_arg(args, "--path")?);
+    let (profile, inspection) = replay_profile_and_inspection_for_report(&path)?;
+    let report_path = replay_report_path(&profile.journal_identity);
+    if !report_path.is_file() {
+        println!("replay_report_schema: yai.replay_report.v1");
+        println!("replay_report: not_found");
+        println!("journal_identity: {}", profile.journal_identity);
+        println!("journal_path: {}", path.display());
+        println!("lmdb_path: {}", record_store_path().display());
+        println!("compatibility: {}", profile.compatibility);
+        println!("replay_status: not_started");
+        return Ok(());
+    }
+
+    let report = fs::read_to_string(&report_path)
+        .map_err(|error| format!("failed to read {}: {error}", report_path.display()))?;
+    println!(
+        "replay_report_schema: {}",
+        json_string_or(&report, "report_schema", "yai.replay_report.v1")
+    );
+    println!("replay_report: {}", report_path.display());
+    println!(
+        "report_id: {}",
+        json_string_or(&report, "report_id", "unknown")
+    );
+    println!(
+        "journal_identity: {}",
+        json_string_or(&report, "journal_identity", &profile.journal_identity)
+    );
+    println!(
+        "journal_path: {}",
+        json_string_or(&report, "journal_path", &path.display().to_string())
+    );
+    println!(
+        "lmdb_path: {}",
+        json_string_or(
+            &report,
+            "lmdb_path",
+            &record_store_path().display().to_string()
+        )
+    );
+    println!(
+        "record_schema: {}",
+        json_string_or(&report, "record_schema", RECORD_SCHEMA)
+    );
+    println!(
+        "journal_schema: {}",
+        json_string_or(&report, "journal_schema", &profile.journal_schema)
+    );
+    println!(
+        "compatibility: {}",
+        json_string_or(&report, "compatibility", &profile.compatibility)
+    );
+    println!(
+        "replay_status: {}",
+        json_string_or(&report, "replay_status", "unknown")
+    );
+    print_report_number(&report, "lines_total", inspection.lines_total);
+    print_report_number(&report, "valid_entries", inspection.valid_entries);
+    print_report_number(&report, "invalid_entries", inspection.invalid_entries);
+    print_report_number(
+        &report,
+        "unsupported_entries",
+        inspection.unsupported_entries,
+    );
+    print_report_number(&report, "duplicate_entries", inspection.duplicate_entries);
+    print_report_number(&report, "records_seen", 0);
+    print_report_number(&report, "records_written", 0);
+    print_report_number(&report, "records_duplicate", 0);
+    print_report_number(&report, "records_skipped", 0);
+    print_report_number(&report, "cursor_line", 0);
+    println!(
+        "replay_ready: {}",
+        json_string_or(&report, "replay_ready", "no")
+    );
+    println!(
+        "idempotent: {}",
+        json_string_or(&report, "idempotent", "no")
+    );
+    println!(
+        "summary: {}",
+        json_string_or(&report, "summary", "Replay report summary unavailable.")
+    );
+    if !inspection.replay_ready() && !inspection.diagnostics.is_empty() {
+        println!("errors:");
+        for diagnostic in inspection.diagnostics {
+            println!("- line: {}", diagnostic.line_number);
+            println!("  status: {}", diagnostic.entry_status.as_str());
+            println!("  error_code: {}", diagnostic.error_code);
         }
     }
     Ok(())
@@ -3095,13 +3289,255 @@ fn replay_metadata_from_failure(
         invalid_entries: inspection.invalid_entries,
         unsupported_entries: inspection.unsupported_entries,
         cursor_line: 0,
-        status: if profile.compatibility == "schema_mismatch" {
+        status: if inspection.invalid_entries == 0 && profile.compatibility == "schema_mismatch" {
             "incompatible".to_string()
         } else {
             "failed".to_string()
         },
         compatibility: profile.compatibility.clone(),
     }
+}
+
+#[derive(Clone, Debug)]
+struct ReplayReportIssue {
+    line: usize,
+    status: String,
+    message: String,
+}
+
+impl ReplayReportIssue {
+    fn new(line: usize, status: &str, message: &str) -> Self {
+        Self {
+            line,
+            status: status.to_string(),
+            message: message.to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+struct ReplayReport {
+    report_id: String,
+    journal_identity: String,
+    journal_path: String,
+    lmdb_path: String,
+    record_schema: String,
+    journal_schema: String,
+    compatibility: String,
+    started_at: String,
+    completed_at: String,
+    lines_total: usize,
+    valid_entries: usize,
+    invalid_entries: usize,
+    unsupported_entries: usize,
+    duplicate_entries: usize,
+    records_seen: usize,
+    records_written: usize,
+    records_duplicate: usize,
+    records_skipped: usize,
+    cursor_line: usize,
+    replay_status: String,
+    replay_ready: bool,
+    idempotent: bool,
+    errors: Vec<ReplayReportIssue>,
+    warnings: Vec<ReplayReportIssue>,
+    summary: String,
+}
+
+fn replay_profile_and_inspection_for_report(
+    path: &Path,
+) -> Result<(ReplayProfile, JournalInspection), String> {
+    if !path.exists() || !path.is_file() {
+        return Ok((
+            replay_profile_for_missing(path),
+            JournalInspection::default(),
+        ));
+    }
+    let inspection = Journal::inspect_jsonl(path)
+        .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    let contents = fs::read_to_string(path).map_err(|error| {
+        format!(
+            "failed to read {} for replay identity: {error}",
+            path.display()
+        )
+    })?;
+    Ok((
+        replay_profile_for_inspection(path, &contents, &inspection),
+        inspection,
+    ))
+}
+
+fn replay_report_id(journal_identity: &str) -> String {
+    format!("replay-report:{journal_identity}")
+}
+
+fn replay_report_from_metadata(
+    metadata: &ReplayMetadata,
+    inspection: &JournalInspection,
+    records_seen: usize,
+    idempotent: bool,
+    errors: Vec<ReplayReportIssue>,
+    warnings: Vec<ReplayReportIssue>,
+    summary: String,
+) -> ReplayReport {
+    ReplayReport {
+        report_id: replay_report_id(&metadata.journal_identity),
+        journal_identity: metadata.journal_identity.clone(),
+        journal_path: metadata.journal_path.clone(),
+        lmdb_path: record_store_path().display().to_string(),
+        record_schema: metadata.record_schema.clone(),
+        journal_schema: metadata.journal_schema.clone(),
+        compatibility: metadata.compatibility.clone(),
+        started_at: metadata.started_at.clone(),
+        completed_at: metadata.completed_at.clone(),
+        lines_total: metadata.lines_total,
+        valid_entries: inspection.valid_entries,
+        invalid_entries: metadata.invalid_entries,
+        unsupported_entries: metadata.unsupported_entries,
+        duplicate_entries: inspection.duplicate_entries,
+        records_seen,
+        records_written: metadata.records_written,
+        records_duplicate: metadata.records_duplicate,
+        records_skipped: metadata.records_skipped,
+        cursor_line: metadata.cursor_line,
+        replay_status: metadata.status.clone(),
+        replay_ready: inspection.replay_ready(),
+        idempotent,
+        errors,
+        warnings,
+        summary,
+    }
+}
+
+fn replay_report_issues_from_inspection(inspection: &JournalInspection) -> Vec<ReplayReportIssue> {
+    inspection
+        .diagnostics
+        .iter()
+        .map(|diagnostic| ReplayReportIssue {
+            line: diagnostic.line_number,
+            status: diagnostic.entry_status.as_str().to_string(),
+            message: diagnostic.error_code.clone(),
+        })
+        .collect()
+}
+
+fn replay_summary(
+    replay_status: &str,
+    records_written: usize,
+    records_duplicate: usize,
+    invalid_entries: usize,
+) -> String {
+    if replay_status == "completed" && records_duplicate > 0 && records_written == 0 {
+        return format!(
+            "Replay completed idempotently with {records_duplicate} duplicate records and no new writes."
+        );
+    }
+    if replay_status == "completed" {
+        return format!("Replay completed with {records_written} records written.");
+    }
+    format!("Replay failed with {invalid_entries} invalid entries and no durable writes.")
+}
+
+fn write_replay_report(report: &ReplayReport) -> Result<PathBuf, String> {
+    let report_path = replay_report_path(&report.journal_identity);
+    fs::create_dir_all(replay_report_dir()).map_err(|error| {
+        format!(
+            "failed to create replay report dir {}: {error}",
+            replay_report_dir().display()
+        )
+    })?;
+    fs::write(&report_path, replay_report_json(report))
+        .map_err(|error| format!("failed to write {}: {error}", report_path.display()))?;
+    Ok(report_path)
+}
+
+fn replay_report_json(report: &ReplayReport) -> String {
+    format!(
+        concat!(
+            "{{\n",
+            "  \"report_schema\":\"yai.replay_report.v1\",\n",
+            "  \"report_id\":\"{}\",\n",
+            "  \"journal_identity\":\"{}\",\n",
+            "  \"journal_path\":\"{}\",\n",
+            "  \"lmdb_path\":\"{}\",\n",
+            "  \"record_schema\":\"{}\",\n",
+            "  \"journal_schema\":\"{}\",\n",
+            "  \"compatibility\":\"{}\",\n",
+            "  \"started_at\":\"{}\",\n",
+            "  \"completed_at\":\"{}\",\n            \"duration_ms\":{},\n",
+            "  \"lines_total\":{},\n",
+            "  \"valid_entries\":{},\n",
+            "  \"invalid_entries\":{},\n",
+            "  \"unsupported_entries\":{},\n",
+            "  \"duplicate_entries\":{},\n",
+            "  \"records_seen\":{},\n",
+            "  \"records_written\":{},\n",
+            "  \"records_duplicate\":{},\n",
+            "  \"records_skipped\":{},\n",
+            "  \"cursor_line\":{},\n",
+            "  \"replay_status\":\"{}\",\n",
+            "  \"replay_ready\":\"{}\",\n",
+            "  \"idempotent\":\"{}\",\n",
+            "  \"errors\":[{}],\n",
+            "  \"warnings\":[{}],\n",
+            "  \"summary\":\"{}\"\n",
+            "}}\n"
+        ),
+        json_escape(&report.report_id),
+        json_escape(&report.journal_identity),
+        json_escape(&report.journal_path),
+        json_escape(&report.lmdb_path),
+        json_escape(&report.record_schema),
+        json_escape(&report.journal_schema),
+        json_escape(&report.compatibility),
+        json_escape(&report.started_at),
+        json_escape(&report.completed_at),
+        replay_duration_ms(&report.started_at, &report.completed_at),
+        report.lines_total,
+        report.valid_entries,
+        report.invalid_entries,
+        report.unsupported_entries,
+        report.duplicate_entries,
+        report.records_seen,
+        report.records_written,
+        report.records_duplicate,
+        report.records_skipped,
+        report.cursor_line,
+        json_escape(&report.replay_status),
+        bool_word(report.replay_ready),
+        bool_word(report.idempotent),
+        replay_report_issues_json(&report.errors),
+        replay_report_issues_json(&report.warnings),
+        json_escape(&report.summary)
+    )
+}
+
+fn replay_report_issues_json(issues: &[ReplayReportIssue]) -> String {
+    issues
+        .iter()
+        .map(|issue| {
+            format!(
+                "{{\"line\":{},\"status\":\"{}\",\"message\":\"{}\"}}",
+                issue.line,
+                json_escape(&issue.status),
+                json_escape(&issue.message)
+            )
+        })
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+fn replay_duration_ms(started_at: &str, completed_at: &str) -> u64 {
+    let started = started_at.parse::<u64>().unwrap_or(0);
+    let completed = completed_at.parse::<u64>().unwrap_or(started);
+    completed.saturating_sub(started) * 1000
+}
+
+fn print_report_number(report: &str, key: &str, fallback: usize) {
+    println!(
+        "{key}: {}",
+        json_number_field(report, key).unwrap_or_else(|| fallback.to_string())
+    );
 }
 
 fn journal_identity(path: &std::path::Path, contents: &str) -> String {
@@ -5496,6 +5932,12 @@ fn main() {
         }
         Some("journal") if args.get(1).map(String::as_str) == Some("replay-status") => {
             if let Err(error) = journal_replay_status(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("journal") if args.get(1).map(String::as_str) == Some("replay-report") => {
+            if let Err(error) = journal_replay_report(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

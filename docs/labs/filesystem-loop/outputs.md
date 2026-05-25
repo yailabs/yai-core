@@ -78,3 +78,20 @@ docs/labs/nvidia/reports/
 
 Do not mix filesystem-loop validation transcripts with benchmark reports unless
 a report explicitly declares the transcript as supporting evidence.
+## Replay Diagnostics / Rebuild Report
+
+Replay output now includes a durable report pointer:
+
+```text
+journal_replay: completed
+journal_identity: journal:...
+records_written: 28
+records_duplicate: 0
+cursor_line: 28
+replay_report: YAI_HOME/store/replay/reports/<journal_identity>.replay-report.json
+```
+
+`yai journal replay-report --path <journal.jsonl>` prints
+`replay_report_schema: yai.replay_report.v1`, `compatibility`, `cursor_line`,
+`records_written`, `records_duplicate`, `invalid_entries`, `idempotent` and the
+failed report summary when corrupt input blocks replay.

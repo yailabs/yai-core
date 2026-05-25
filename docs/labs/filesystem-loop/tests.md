@@ -84,3 +84,16 @@ schema mismatch records_written: 0
 schema mismatch compatibility: schema_mismatch
 no false completed status for invalid input
 ```
+## Replay Diagnostics / Rebuild Report
+
+SPINE.38 validates durable replay diagnostics for the canonical
+docs/labs/filesystem-loop path.
+
+```bash
+yai journal replay --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
+```
+
+Expected evidence includes `yai.replay_report.v1`, `journal_identity`,
+`compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
+`invalid_entries` and a failed report for corrupt replay input.

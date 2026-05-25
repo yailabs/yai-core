@@ -93,6 +93,7 @@ available. LMDB will add durable record lookup later; it will not replace
 | journal inspect | replay-readiness diagnostics without LMDB writes | `yai journal inspect --path <journal.jsonl> [--show-errors]` | `target/debug/yai journal inspect --path /tmp/yai-journal.jsonl --show-errors` | `journal-replay-parser-hardening.md`, `testing.md` |
 | journal replay | materialize valid journal records into LMDB | `yai journal replay --path <journal.jsonl> [--dry-run]` | `target/debug/yai journal replay --path /tmp/yai-journal.jsonl --dry-run` | `journal-replay-to-lmdb.md`, `testing.md` |
 | journal replay status | replay cursor/schema metadata | `yai journal replay-status --path <journal.jsonl>` | `target/debug/yai journal replay-status --path /tmp/yai-journal.jsonl` | `replay-idempotency-schema-version.md`, `testing.md` |
+| journal replay report | durable replay diagnostics | `yai journal replay-report --path <journal.jsonl>` | `target/debug/yai journal replay-report --path /tmp/yai-journal.jsonl` | `replay-diagnostics-rebuild-report.md`, `testing.md` |
 | doctor record store | path/backend/status | `yai doctor` | `target/debug/yai doctor` | `lmdb-record-plane.md`, `testing.md` |
 | carrier family vocabulary | control/carrier substrate posture | `yai carrier families` | `target/debug/yai carrier families` | `control-carrier-rebase.md`, `testing.md` |
 | carrier lane vocabulary | no-execution lane metadata | `yai carrier lanes` | `target/debug/yai carrier lanes` | `operation-dispatch-multiplex.md`, `testing.md` |
@@ -135,6 +136,13 @@ records are counted as `records_duplicate`, so a second replay is idempotent.
 SPINE.37 adds `yai journal replay-status --path <journal.jsonl>` and extends
 replay output with replay cursor metadata: `journal_identity`, `record_schema`,
 `journal_schema`, `compatibility`, `cursor_line` and `replay_status`.
+
+SPINE.38 adds durable replay diagnostics. Real replay writes
+`yai.replay_report.v1` under `YAI_HOME/store/replay/reports/` and prints
+`replay_report: <path>`. `yai journal replay-report --path <journal.jsonl>`
+prints `journal_identity`, `compatibility`, `cursor_line`, `records_written`,
+`records_duplicate`, `invalid_entries`, idempotent status and failed report
+diagnostics.
 
 Required fields:
 
@@ -265,6 +273,7 @@ SPINE.36 adds replay and SPINE.37 adds replay metadata/status:
 ```text
 yai journal replay --path <journal.jsonl> [--dry-run]
 yai journal replay-status --path <journal.jsonl>
+yai journal replay-report --path <journal.jsonl>
 ```
 
 Dry-run output includes:

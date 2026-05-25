@@ -1083,6 +1083,23 @@ make check-replay-idempotency-schema-version
 make smoke-spine37
 ```
 
+## SPINE.38 Replay Diagnostics / Rebuild Report Loop
+
+`tests/smoke/replay-diagnostics-report/test_replay_diagnostics_report.sh`
+proves durable replay reports. It uses isolated temp journals and `YAI_HOME`,
+then verifies real replay writes a report, `replay-report` reads the latest
+report, second replay updates idempotent behavior, corrupt replay writes a
+failed report, and the report schema is `yai.replay_report.v1`.
+
+Required evidence includes `journal_identity`, `compatibility`, `cursor_line`,
+`records_written`, `records_duplicate`, `invalid_entries` and failed report
+diagnostics.
+
+```text
+make check-replay-diagnostics-report
+make smoke-spine38
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

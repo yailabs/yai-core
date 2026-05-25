@@ -29,6 +29,16 @@ yai journal replay --path <journal.jsonl>
 yai journal replay-status --path <journal.jsonl>
 ```
 
+SPINE.38 adds the durable report companion:
+
+```bash
+yai journal replay-report --path <journal.jsonl>
+```
+
+The report schema is `yai.replay_report.v1` and carries `journal_identity`,
+`compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
+`invalid_entries` and failed report diagnostics for audit after replay.
+
 No commands are removed or deprecated.
 
 ## Schema Handling

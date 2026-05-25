@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.37 Replay Idempotency + Schema Version Handling.
+Status: SPINE.38 Replay Diagnostics / Rebuild Report.
 
 ## Completed Foundation
 
@@ -71,7 +71,10 @@ and no LMDB writes.
 SPINE.36 implements explicit journal replay to LMDB with dry-run reporting,
 basic idempotent replay, invalid input blocking and store query validation.
 SPINE.37 hardens replay idempotency with journal identity, schema compatibility,
-cursor metadata, replay-status output and persisted replay metadata.
+cursor metadata, replay-status output and persisted replay metadata. SPINE.38
+adds durable `yai.replay_report.v1` replay reports with `journal_identity`,
+`compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
+`invalid_entries` and failed report diagnostics.
 
 Current:
 
@@ -112,6 +115,7 @@ SPINE.34 LMDB Record Plane Freeze completed.
 SPINE.35 Journal Replay Doctrine + Parser Hardening completed.
 SPINE.36 Journal Replay to LMDB completed.
 SPINE.37 Replay Idempotency + Schema Version Handling completed.
+SPINE.38 Replay Diagnostics / Rebuild Report completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -119,7 +123,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.38 Replay Diagnostics / Rebuild Report.
+SPINE.39 Journal Replay Freeze.
 ```
 
 Foundation status:

@@ -110,7 +110,7 @@ SPINE.34  LMDB Record Plane Freeze                                  done
 SPINE.35  Journal Replay Doctrine + Parser Hardening                done
 SPINE.36  Journal Replay to LMDB                                    done
 SPINE.37  Replay Idempotency + Schema Version Handling              done
-SPINE.38  Replay Diagnostics / Rebuild Report                       planned
+SPINE.38  Replay Diagnostics / Rebuild Report                       done
 SPINE.39  Journal Replay Freeze                                     planned
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
@@ -414,6 +414,24 @@ metadata namespace. Current replay accepts `yai.store.record.v0` journal input
 and materializes `yai.record.v1` records. Schema mismatch rejects replay with
 `records_written: 0`; missing schema is invalid unless a future converter
 explicitly reports `compat_legacy`.
+
+SPINE.38 Replay Diagnostics / Rebuild Report adds:
+
+```text
+yai journal replay-report --path <journal.jsonl>
+yai.replay_report.v1
+journal_identity
+compatibility
+cursor_line
+records_written
+records_duplicate
+invalid_entries
+failed report
+```
+
+Replay reports are durable operational evidence for journal to LMDB rebuilds.
+They live under `YAI_HOME/store/replay/reports/` and describe completed,
+idempotent and failed materialization attempts.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 
