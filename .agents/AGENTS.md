@@ -20,3 +20,9 @@ docs/architecture/
 The root README is a principal public entry document. Do not re-add detailed
 carrier command blocks, skeleton carrier details, retrieval roadmap doctrine or
 model-runtime roadmap doctrine there as incidental wave work.
+
+Do not recreate or reinsert the removed root README operational explanation
+block that begins with `Subjects and providers are things inside or around a
+case`, or the removed `Design Constraints`, `What YAI Is Not`, or
+`Operational Model` sections, unless the user explicitly asks for that exact
+README content to come back.
