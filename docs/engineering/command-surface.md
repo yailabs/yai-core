@@ -571,14 +571,18 @@ yai retrieval status
 yai retrieval build
 yai retrieval query
 yai retrieval candidates
-yai model-runtime status
+yai context compile --dry-run
+yai context inspect <frame/ref>
 yai model-runtime inspect
+yai model-runtime capabilities
 yai model-runtime invoke --dry-run
+yai model-runtime benchmark --decoding normal|mtp
 ```
 
-These commands are not implemented by SPINE.33J. They are reserved so future
-roadmap work has an explicit command-surface placeholder without implying
-HNSW, vector DB, embedding, DS4 or model runner support.
+These commands are not implemented by SPINE.33J or SPINE.33K. They are reserved
+so future roadmap work has an explicit command-surface placeholder without
+implying HNSW, vector DB, embedding, context compiler, MTP, DS4 or model runner
+support.
 
 ## Projection Commands
 

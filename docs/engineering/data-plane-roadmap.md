@@ -14,9 +14,9 @@ hot state = live session state, not truth
 record plane = durable lookup
 graph plane = causality and reconstruction
 fact plane = analytics and diagnostics
-retrieval plane = candidate retrieval, not truth
+retrieval plane = retrieval units and candidate retrieval, not truth
 memory plane = consolidated operational experience
-projection plane = controlled live cognitive view
+projection plane = controlled live cognitive view compiled for consumers
 reconcile plane = mismatch detection
 observability/evaluation = quality facts, not truth
 pack material = case-world input to future data planes, not loose files
@@ -31,9 +31,9 @@ pack material = case-world input to future data planes, not loose files
 | record | LMDB | durable normalized record lookup |
 | graph | Ladybug | persistent operational causality |
 | fact | DuckDB | analytical facts, reports and model behavior analysis |
-| retrieval | HNSW/vector retrieval | scoped candidate retrieval and context narrowing |
+| retrieval | Context Compiler / HNSW optional accelerator | scoped retrieval units, candidate retrieval and context narrowing |
 | memory | Rust engine memory | receipt-backed, graph-derived operational continuity |
-| projection | Rust engine projection | live, versioned, delta-aware cognitive view |
+| projection | Rust engine projection / compiled context | live, versioned, delta-aware cognitive view for consumers |
 | reconcile | Rust engine reconcile | expected-vs-observed mismatch posture |
 | observability/evaluation | facts and diagnostics | freshness, trace, provenance, rebuild and quality posture |
 
@@ -69,7 +69,8 @@ SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
 SPINE.33G Non-Process Carrier Skeletons                            done
 SPINE.33H Carrier Outcome Harness                                  done
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
-SPINE.33J Retrieval and Model Runtime Roadmap Rebase                planned
+SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
+SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -100,12 +101,13 @@ SPINE.56  Projection Memory / Divergence Patch                      planned
 SPINE.57  Model-Visible Delta Smoke + CLI                           planned
 SPINE.58  Live Projection Freeze                                    planned
 
-SPINE.58A Vector Retrieval / HNSW Boundary Doctrine                 planned
-SPINE.58B Vector Payload Schema + Embedding Manifest                planned
+SPINE.58A Context Compiler / Retrieval Boundary Doctrine            planned
+SPINE.58B Retrieval Unit Schema + Embedding Manifest                planned
 SPINE.58C HNSW Candidate Index Build / Rebuild                      planned
 SPINE.58D Case / Subject / Policy Scoped Retrieval Query            planned
-SPINE.58E Retrieval Residue + Cost / Recall Facts                   planned
-SPINE.58F Vector Retrieval Freeze                                   planned
+SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
+SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
+SPINE.58G Context Compiler / Retrieval Freeze                       planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned

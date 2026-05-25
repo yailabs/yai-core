@@ -25,6 +25,8 @@ for file in \
   docs/architecture/23-carrier-coverage-matrix.md \
   docs/architecture/24-non-process-carrier-skeletons.md \
   docs/architecture/25-carrier-outcome-harness.md \
+  docs/architecture/26-context-compiler-retrieval-boundary.md \
+  docs/architecture/27-model-runtime-mtp-boundary.md \
   docs/architecture/01-terminology.md \
   docs/architecture/04-subject-model.md \
   docs/architecture/06-control-policy-model.md \

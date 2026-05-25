@@ -41,20 +41,21 @@ done
 
 for text in \
   "RETRIEVAL" \
-  "Vector Retrieval / HNSW" \
+  "Context Compiler" \
+  "HNSW is candidate retrieval" \
   "candidate retrieval" \
   "not graph" \
   "not memory" \
   "not decision authority" \
-  "embedding manifest" \
+  "Embedding Manifest" \
   "case / subject / policy scoped retrieval" \
   "Model Runtime / Runner Boundary" \
   "not universal inference engine" \
   "runner output is not authority" \
   "SPINE.58A" \
-  "SPINE.58F" \
+  "SPINE.58G" \
   "SPINE.93A" \
-  "SPINE.93E"
+  "SPINE.93F"
 do
   require_text "$roadmap" "$text"
 done
@@ -64,18 +65,19 @@ for text in \
   "yai retrieval build" \
   "yai retrieval query" \
   "yai retrieval candidates" \
-  "yai model-runtime status" \
+  "yai context compile --dry-run" \
   "yai model-runtime inspect" \
+  "yai model-runtime capabilities" \
   "yai model-runtime invoke --dry-run" \
-  "not implemented by SPINE.33J"
+  "not implemented by SPINE.33J or SPINE.33K"
 do
   require_text "$commands" "$text"
 done
 
-require_text "$spine" "Vector Retrieval / HNSW is a derived candidate-retrieval substrate"
+require_text "$spine" "HNSW is candidate retrieval"
 require_text "$spine" "YAI must not immediately reinvent"
 require_text "$projection" "retrieval candidates are not projection truth"
-require_text "$data_roadmap" "SPINE.58A Vector Retrieval / HNSW Boundary Doctrine"
+require_text "$data_roadmap" "SPINE.58A Context Compiler / Retrieval Boundary Doctrine"
 require_text "$archive" "No HNSW implementation."
 
 printf 'retrieval-runner-roadmap: ok\n'

@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33H carrier outcome harness. | SPINE.33I Carrier Receipt / Divergence Hardening. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.33K context compiler, retrieval and MTP roadmap correction. | SPINE.33I Carrier Receipt / Divergence Hardening. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -195,7 +195,8 @@ SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
 SPINE.33G Non-Process Carrier Skeletons                            done
 SPINE.33H Carrier Outcome Harness                                  done
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
-SPINE.33J Retrieval and Model Runtime Roadmap Rebase                planned
+SPINE.33J Retrieval and Model Runtime Roadmap Rebase                done
+SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction     done
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -226,12 +227,13 @@ SPINE.56  Projection Memory / Divergence Patch                      planned
 SPINE.57  Model-Visible Delta Smoke + CLI                           planned
 SPINE.58  Live Projection Freeze                                    planned
 
-SPINE.58A Vector Retrieval / HNSW Boundary Doctrine                 planned
-SPINE.58B Vector Payload Schema + Embedding Manifest                planned
+SPINE.58A Context Compiler / Retrieval Boundary Doctrine            planned
+SPINE.58B Retrieval Unit Schema + Embedding Manifest                planned
 SPINE.58C HNSW Candidate Index Build / Rebuild                      planned
 SPINE.58D Case / Subject / Policy Scoped Retrieval Query            planned
-SPINE.58E Retrieval Residue + Cost / Recall Facts                   planned
-SPINE.58F Vector Retrieval Freeze                                   planned
+SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
+SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
+SPINE.58G Context Compiler / Retrieval Freeze                       planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned
@@ -273,10 +275,11 @@ SPINE.91  Naked Local Model Case Experiment                         planned
 SPINE.92  Model Behavior Trace                                      planned
 SPINE.93  Model Carrier                                             planned
 SPINE.93A Model Runtime / Runner Boundary Doctrine                  planned
-SPINE.93B Runner Adapter Contract + Invocation Envelope             planned
-SPINE.93C Specialized Local Runner Harness                          planned
-SPINE.93D Runner Receipt + KV / Context State Boundary              planned
-SPINE.93E Model Runtime Boundary Freeze                             planned
+SPINE.93B Model Capability Probe + Decoding Manifest                planned
+SPINE.93C Runner Adapter Contract + Invocation Envelope             planned
+SPINE.93D MTP / Speculative Decoding Policy + Metrics               planned
+SPINE.93E Runner Receipt + KV / Context State Boundary              planned
+SPINE.93F Model Runtime Boundary Freeze                             planned
 SPINE.94  Model / Provider Freeze                                   planned
 
 SPINE.95  Policy Pack Skeleton                                      planned
@@ -309,20 +312,50 @@ SPINE.119 YAI-dev Harness Prep                                      planned
 SPINE.120 Local Core Milestone Freeze                               planned
 ```
 
-## Vector Retrieval / HNSW Doctrine
+## Context Compiler / Retrieval Doctrine
 
-Vector retrieval is a candidate-retrieval substrate. It is derived,
-rebuildable and scoped. It does not own truth. It does not replace graph,
-memory or policy.
+Projection does not disappear. Projection evolves from a static controlled view
+into a compiled live context: scoped, redacted, freshness-aware and
+consumer-aware.
 
-HNSW may support similarity search, context narrowing, evidence recall
-assistance, memory candidate support and model-context cost reduction. Every
-candidate must be grounded in case-visible evidence before influencing
-decisions or memory.
+Context Compiler is the YAI-owned, model-neutral system that assembles a
+projection/model context from records, graph, facts, memory, retrieval
+candidates, policy and token budget. A compiled model context is not truth. It
+is not memory, not the record plane, not the graph and not policy authority.
 
-Boundary phrases for future guards: vector retrieval is candidate retrieval;
-not graph; not memory; not decision authority. The future payload work includes
-an embedding manifest, and future query work is case / subject / policy scoped retrieval.
+Canonical chain:
+
+```text
+Hot State
+LMDB Records
+Ladybug Graph
+DuckDB Facts
+Operational Memory
+Policy / Authority
+Retrieval Candidates
+        ↓
+Context Compiler
+        ↓
+Compiled Projection / Model Context
+        ↓
+Model Runner
+```
+
+Use terms carefully:
+
+```text
+projection = generic controlled view
+model context = projection rendered for a model/provider/runner
+ContextFrame = temporary compiled artifact, not durable truth
+```
+
+HNSW is candidate retrieval. HNSW is not graph. HNSW is not memory. HNSW is not decision authority.
+HNSW is not policy authority. HNSW is a rebuildable
+proximity index over retrieval units; it stores vectors and refs, not
+authority.
+
+Future query work remains case / subject / policy scoped retrieval and must
+return candidates with provenance, not final answers.
 
 Canonical rule:
 
@@ -334,13 +367,27 @@ but no YAI decision may be justified by vector proximity alone.
 Operational chain:
 
 ```text
-HNSW finds.
-Case scope filters.
-Policy validates.
-Evidence justifies.
-Record/graph/facts provide basis.
-Memory consolidates only if authorized.
+LMDB / Ladybug / DuckDB / Memory
+        ↓
+Retrieval Projection Units
+        ↓
+Embedding Manifest
+        ↓
+HNSW Candidate Index
+        ↓
+Candidate Set
+        ↓
+Policy + Case Scope + Graph + Facts Filtering
+        ↓
+Context Compiler
+        ↓
+Model Context
 ```
+
+Context assembly uses hard filters before scoring: case scope, subject scope,
+authority, redaction, freshness, policy compatibility and operation
+compatibility. Scoring is composite: vector similarity, graph relevance,
+freshness, behavior facts, risk penalty and redundancy penalty.
 
 ## Model Runtime / Runner Doctrine
 
@@ -371,6 +418,20 @@ YAI:
   behavior facts
   memory/reconcile consequences
 ```
+
+MTP belongs to model runtime / runner / decoding strategy. MTP is not retrieval.
+MTP is not memory. MTP is not policy authority. MTP is not case truth.
+
+```text
+HNSW makes the model read less.
+MTP makes the model write faster.
+```
+
+YAI tracks MTP as a runner capability and measured behavior: supports_mtp,
+mtp_mode, mtp_depth, requires_mtp_weights, requires_draft_model,
+backend_support, acceptance_rate, fallback_mode, structured_output_risk,
+latency_delta and tokens_per_second_delta. MTP may accelerate generation; it
+must not change output authority.
 
 ## Implementation Wave Rule
 

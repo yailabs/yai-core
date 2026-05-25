@@ -80,7 +80,9 @@ ingest
 -> LMDB durable indexed record lookup
 -> graph
 -> index/query
--> vector retrieval / HNSW candidates
+-> retrieval units / HNSW candidates
+-> context compiler
+-> compiled projection / model context
 -> memory
 -> reconcile
 -> observability / evaluation
@@ -147,12 +149,25 @@ operationally through gates, decision and carrier
 Agent frameworks are not first. Agents become later subjects, actors or sources
 through external environment/adapters after naked model behavior is measurable.
 
-## Vector Retrieval / HNSW Doctrine
+## Context Compiler / Retrieval Doctrine
 
-Vector Retrieval / HNSW is a derived candidate-retrieval substrate. It is not
-graph truth, memory truth, lineage truth, decision authority or policy
-authority. It may support similarity search, context narrowing, evidence recall
-assistance, memory candidate support and model-context cost reduction.
+Projection does not disappear. Projection evolves into the controlled view
+produced by the context compiler: scoped, redacted, freshness-aware and
+consumer-aware.
+
+The Context Compiler is the model-neutral YAI boundary that assembles a
+projection/model context from hot state, LMDB records, Ladybug graph, DuckDB
+facts, operational memory, policy/authority and retrieval candidates. A
+compiled model context is not truth, not memory, not the record plane and not
+the graph.
+
+ContextFrame may survive as an implementation artifact, but it is a temporary
+compiled artifact and not durable truth.
+
+HNSW is candidate retrieval. HNSW is not graph, not memory, not decision
+authority and not policy authority. HNSW is a rebuildable proximity index over
+retrieval units. The source of truth remains records, graph, facts, receipts,
+policy and memory basis.
 
 Canonical rule:
 
@@ -162,7 +177,8 @@ but no YAI decision may be justified by vector proximity alone.
 ```
 
 HNSW finds. Case scope filters. Policy validates. Evidence justifies.
-Record/graph/facts provide basis. Memory consolidates only if authorized.
+Record/graph/facts provide basis. The Context Compiler assembles the controlled
+view. Memory consolidates only if authorized.
 
 ## Model Runtime / Runner Doctrine
 
@@ -175,6 +191,19 @@ execution. YAI owns case binding, projection, authority, prompt/invocation
 envelopes, model carriers, provider/runner subjects, receipts, model output
 import, behavior facts and memory/reconcile consequences. Runner output is not
 case authority.
+
+MTP belongs to model runtime / runner / decoding strategy. MTP is not
+retrieval, not policy authority and not case truth.
+
+```text
+HNSW reduces input/context selection cost.
+MTP reduces output token generation latency.
+```
+
+YAI may track supports_mtp, mtp_mode, mtp_depth, requires_mtp_weights,
+requires_draft_model, backend_support, acceptance_rate, fallback_mode,
+structured_output_risk, latency_delta and tokens_per_second_delta. MTP may
+accelerate generation; it must not change output authority.
 
 ## Core Invariants
 

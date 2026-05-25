@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.33H Carrier Outcome Harness.
+Status: SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction.
 
 ## Completed Foundation
 
@@ -49,7 +49,10 @@ endpoint, socket, listener, model_provider and review without executing those
 effects. SPINE.33H adds a dry-run carrier outcome harness so active, skeleton
 and unsupported carriers can represent executed, blocked, deferred, failed,
 mismatch, observed, quarantined, waiting_operator, waiting_agent and
-not_attempted posture without fake execution.
+not_attempted posture without fake execution. SPINE.33J and SPINE.33K reserve
+retrieval, context compiler and model runtime boundaries before SPINE.34:
+projection does not disappear, HNSW remains candidate retrieval and MTP belongs
+to model runtime / runner decoding strategy.
 
 Current:
 
@@ -81,6 +84,8 @@ SPINE.33E Host Observation Probe v0 / Bypass Verification completed.
 SPINE.33F Carrier Coverage Matrix + Mode Taxonomy completed.
 SPINE.33G Non-Process Carrier Skeletons completed.
 SPINE.33H Carrier Outcome Harness completed.
+SPINE.33J Retrieval and Model Runtime Roadmap Rebase completed.
+SPINE.33K Context Compiler / Retrieval / MTP Roadmap Correction completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -124,6 +129,8 @@ host observation probe active
 carrier coverage matrix active
 carrier outcome harness active
 non-process carrier skeletons active
+context compiler retrieval doctrine active
+model runtime MTP doctrine active
 file/header ownership standard active
 agent operating appendix active
 principal ownership headers and READMEs active
@@ -339,10 +346,11 @@ stage state, decision-receipt boundary, observation transition and
 decision/conflict residue for outcome, receipt posture and divergence-candidate
 concepts. No `yai-dev` source file was modified.
 
-SPINE.33J is planned after SPINE.33I and before SPINE.34 as a roadmap/doctrine
-rebase only. It will reserve Vector Retrieval / HNSW as candidate retrieval,
-not graph/memory/decision authority, and reserve Model Runtime / Runner
-Boundary work without claiming YAI is a universal inference engine.
+SPINE.33J and SPINE.33K completed roadmap/doctrine rebases only. They reserve
+Vector Retrieval / HNSW as candidate retrieval, not graph/memory/decision
+authority; define Context Compiler as the system that assembles compiled
+projection/model context; and reserve Model Runtime / Runner plus MTP policy
+without claiming YAI is a universal inference engine.
 
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,

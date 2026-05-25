@@ -81,6 +81,27 @@ cost
 Projection must carry enough refs, version posture and freshness posture for
 CVQ to be computed. CVQ is diagnostic posture, not case truth.
 
+## Context Compiler Evolution
+
+Projection does not disappear. Projection evolves from a static controlled view
+into compiled live context.
+
+The Context Compiler assembles projections for consumers from records,
+receipts, graph, facts, memory, policy, freshness state, retrieval candidates
+and token budget. A compiled model context is a temporary, scoped,
+freshness-aware consumer view. It is not truth, not memory, not the record
+plane and not the graph.
+
+```text
+projection = generic controlled view
+model context = projection rendered for a model/provider/runner
+ContextFrame = temporary compiled artifact, not durable truth
+```
+
+HNSW may accelerate retrieval candidate discovery for context assembly, but
+HNSW is candidate retrieval only. HNSW is not graph, not memory and not
+decision authority.
+
 ## Freshness Policy
 
 SPINE.26 makes projection freshness consumer-aware.
