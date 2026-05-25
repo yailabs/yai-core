@@ -1087,6 +1087,53 @@ yai carrier reconcile-outcome --scenario blocked_but_effect_observed
 yai carrier reconcile-outcome --scenario skeleton_executed_unexpectedly
 ```
 
+## LMDB Record Plane Freeze
+
+This is record-plane freeze validation. It does not add a new command. It
+checks that the existing LMDB surface preserves `yai.record.v1`, the
+id/case/kind/subject/receipt indexes and the no-journal-fallback posture.
+
+```bash
+yai store status
+yai store summary
+yai store record list --case case:new12-daemon --limit 10
+yai store record list --kind decision --limit 10
+yai store record list --subject subject:filesystem-sandbox --limit 10
+yai store record list --receipt receipt:new12-fs-write --limit 10
+yai store record get rec:new12-min-receipt
+```
+
+Expected posture:
+
+```text
+schema: yai.record.v1
+indexes: records_by_id,records_by_case,records_by_kind,records_by_subject,records_by_receipt
+record_store_status: ready
+record_kind: decision
+record_kind: filesystem_receipt
+source:
+  plane: journal
+payload:
+  summary:
+```
+
+No journal fallback check:
+
+```bash
+tmp_home=/tmp/yai-lmdb-freeze-manual
+rm -rf "$tmp_home"
+YAI_HOME="$tmp_home" yai store record get rec:new12-min-receipt
+```
+
+Expected:
+
+```text
+record_store_status: missing
+```
+
+It must not print `schema: yai.record.v1` or a synthetic record when LMDB is
+missing.
+
 ## Provider Runtime / LAN Target Surface
 
 This replaces manual provider launch in the future workflow. SPINE.33L is
