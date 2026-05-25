@@ -486,7 +486,7 @@ observed: skeleton
 imported: skeleton
 execution_available: false
 receipt_required: yes
-supports_inspect: true
+supports_inspect: yes
 non_execution_reason: adapter_not_implemented
 future_activation_wave: planned
 carrier_attempted: false
@@ -501,7 +501,9 @@ observed: planned
 imported: skeleton
 execution_available: false
 receipt_required: yes
+supports_inspect: yes
 non_execution_reason: model_provider_carrier_not_implemented
+future_activation_wave: SPINE.93A+
 
 yai carrier inspect review
 carrier: review
@@ -513,7 +515,9 @@ observed: unsupported
 imported: skeleton
 execution_available: false
 receipt_required: yes
+supports_inspect: yes
 non_execution_reason: review_lane_not_implemented
+future_activation_wave: planned
 ```
 
 Skeleton inspect is available for `network_http`, `database`,

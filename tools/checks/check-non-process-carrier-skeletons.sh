@@ -46,10 +46,12 @@ for text in \
   "skeleton" \
   "execution_available: false" \
   "receipt_required: yes" \
+  "supports_inspect: yes" \
   "carrier.v1" \
   "adapter_not_implemented" \
   "model_provider_carrier_not_implemented" \
   "review_lane_not_implemented" \
+  "SPINE.93A+" \
   "yai carrier inspect database" \
   "make smoke-spine33g"
 do

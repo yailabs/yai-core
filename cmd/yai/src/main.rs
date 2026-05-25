@@ -857,7 +857,7 @@ const CARRIER_SKELETONS: &[CarrierSkeleton] = &[
         observed: "planned",
         imported: "skeleton",
         non_execution_reason: "model_provider_carrier_not_implemented",
-        future_activation_wave: "planned",
+        future_activation_wave: "SPINE.93A+",
     },
     CarrierSkeleton {
         carrier: "review",
@@ -881,7 +881,7 @@ fn print_carrier_skeleton(skeleton: &CarrierSkeleton) {
     println!("imported: {}", skeleton.imported);
     println!("execution_available: false");
     println!("receipt_required: yes");
-    println!("supports_inspect: true");
+    println!("supports_inspect: yes");
     println!("non_execution_reason: {}", skeleton.non_execution_reason);
     println!(
         "future_activation_wave: {}",

@@ -51,7 +51,7 @@ contract: carrier.v1
 status: skeleton
 execution_available: false
 receipt_required: yes
-supports_inspect: true
+supports_inspect: yes
 non_execution_reason:
 carrier_attempted: false
 ```
@@ -59,6 +59,7 @@ carrier_attempted: false
 Default non-execution reason is `adapter_not_implemented`. `model_provider`
 uses `model_provider_carrier_not_implemented`. `review` uses
 `review_lane_not_implemented`.
+The model-provider future activation path is `SPINE.93A+`.
 
 Smoke:
 
