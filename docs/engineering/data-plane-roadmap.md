@@ -113,7 +113,7 @@ SPINE.37  Replay Idempotency + Schema Version Handling              done
 SPINE.38  Replay Diagnostics / Rebuild Report                       done
 SPINE.39  Journal Replay Freeze                                     done
 
-SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned
+SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
 SPINE.41  Graph Relation Write Path                                  planned
 SPINE.42  RuntimeGraph In-Memory Working Set                         planned
 SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
@@ -447,6 +447,21 @@ yai store summary
 The freeze confirms no silent skip, no false complete, no journal fallback,
 schema_mismatch and invalid_json blocking, idempotent second replay and
 `yai.replay_report.v1` completed/failed reports.
+
+SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema adds:
+
+```text
+yai graph schema
+yai graph runtime-status
+```
+
+Graph persistence owns durable typed relations and rebuild truth. RuntimeGraph
+is the in-memory active case working set. HNSW finds candidate nodes and HNSW
+is not graph truth. Context Compiler renders controlled views and Projection
+does not disappear. Persistent truth on disk. Computational shape in memory.
+HNSW is not graph truth. Projection does not disappear.
+The wave defines schema/status only and makes no graph store implementation
+claim.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

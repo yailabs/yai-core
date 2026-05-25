@@ -1,12 +1,13 @@
 # Data Context Runtime / RuntimeGraph
 
-Status: SPINE.33M.
+Status: SPINE.40 schema boundary active.
 
 Purpose: define how durable data-plane truth becomes fast runtime computation.
 
 ## Doctrine
 
 Truth lives on durable planes. Computation happens in runtime working sets.
+Persistent truth on disk. Computational shape in memory.
 
 YAI does not choose between Ladybug and an in-memory graph. YAI separates:
 
@@ -21,12 +22,18 @@ The canonical split is:
 
 ```text
 LMDB stores records.
+Graph persistence stores durable typed relations.
 Ladybug stores relations.
 DuckDB stores facts.
 RuntimeGraph computes over the active case.
 HNSW finds candidate nodes.
 Context Compiler renders controlled views.
 ```
+
+SPINE.40 makes the schema/status part inspectable. Graph persistence owns
+durable typed relations. RuntimeGraph is the in-memory active case working set.
+HNSW finds candidate nodes and HNSW is not graph truth. Context Compiler
+renders controlled views. Projection does not disappear.
 
 ## Plane Roles
 

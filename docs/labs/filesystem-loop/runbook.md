@@ -226,3 +226,24 @@ invalid_json -> records_written: 0
 
 The old `docs/manuals/manual-filesystem-loop-validation` path is not the active
 filesystem-loop replay lab path.
+
+## Graph Schema Boundary
+
+SPINE.40 exposes graph schema and RuntimeGraph boundary status without claiming
+graph persistence implementation.
+
+```bash
+yai graph schema
+yai graph runtime-status
+```
+
+Expected posture:
+
+```text
+graph_store_claim: none
+status: planned
+role: in_memory_active_case_working_set
+durable_truth: graph_persistence
+hnsw: future_candidate_index
+context_compiler: future_consumer
+```

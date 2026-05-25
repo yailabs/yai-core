@@ -1,6 +1,6 @@
 # Data Context Runtime / RuntimeGraph
 
-Status: SPINE.33M.
+Status: SPINE.40 schema boundary active.
 
 Purpose: track the doctrine and roadmap correction that separates durable
 truth from runtime graph computation.
@@ -12,6 +12,8 @@ YAI separates durable truth from runtime computation.
 ```text
 Truth lives on durable planes.
 Computation happens in runtime working sets.
+Persistent truth on disk.
+Computational shape in memory.
 ```
 
 ```text
@@ -26,6 +28,7 @@ Short form:
 
 ```text
 LMDB stores records.
+Graph persistence stores durable typed relations.
 Ladybug stores relations.
 DuckDB stores facts.
 RuntimeGraph computes over the active case.
@@ -33,12 +36,17 @@ HNSW finds candidate nodes.
 Context Compiler renders controlled views.
 ```
 
+SPINE.40 adds the schema/status surface for this doctrine. Graph persistence
+owns durable typed relations. RuntimeGraph is the in-memory active case working
+set. HNSW finds candidate nodes and HNSW is not graph truth. Projection does
+not disappear.
+
 ## Corrected Graph Block
 
 The graph block is no longer framed as Ladybug-only runtime graph work.
 
 ```text
-SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema
+SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema done
 SPINE.41 Graph Relation Write Path
 SPINE.42 RuntimeGraph In-Memory Working Set
 SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store

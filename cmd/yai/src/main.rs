@@ -56,7 +56,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.39 Journal Replay Freeze");
+    println!("status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -209,6 +209,8 @@ fn print_usage() {
     println!("       yai decision inspect --journal <path>");
     println!("       yai receipt summary --journal <path>");
     println!("       yai graph summary --journal <path>");
+    println!("       yai graph schema");
+    println!("       yai graph runtime-status");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -5713,6 +5715,92 @@ fn graph_summary(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+const GRAPH_NODE_KINDS: &[&str] = &[
+    "case",
+    "subject",
+    "operation",
+    "attempt",
+    "decision",
+    "dispatch",
+    "carrier",
+    "receipt",
+    "effect",
+    "observation",
+    "divergence",
+    "policy",
+    "projection",
+    "memory_candidate",
+    "model_output",
+    "model_interpretation",
+    "record",
+    "unknown",
+];
+
+const GRAPH_EDGE_KINDS: &[&str] = &[
+    "belongs_to_case",
+    "subject_participates_in_case",
+    "attempt_targets_subject",
+    "decision_controls_attempt",
+    "dispatch_routes_decision",
+    "carrier_realizes_dispatch",
+    "receipt_records_effect",
+    "observation_checks_effect",
+    "divergence_describes_mismatch",
+    "policy_constrains_subject",
+    "policy_constrains_operation",
+    "projection_exposes_record",
+    "model_output_produces_interpretation",
+    "memory_derived_from_receipt",
+    "record_materializes_node",
+    "derived_from",
+    "supports",
+    "contradicts",
+    "unknown",
+];
+
+fn graph_schema(args: &[String]) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err("usage: yai graph schema".to_string());
+    }
+    println!("graph_schema:");
+    println!("  node_kinds:");
+    for kind in GRAPH_NODE_KINDS {
+        println!("  - {kind}");
+    }
+    println!();
+    println!("  edge_kinds:");
+    for kind in GRAPH_EDGE_KINDS {
+        println!("  - {kind}");
+    }
+    println!();
+    println!("graph_persistence:");
+    println!("  status: doctrine_schema_only");
+    println!("  durable_truth: typed_relations");
+    println!("  graph_store_claim: none");
+    println!("runtime_graph:");
+    println!("  status: planned");
+    println!("  role: in_memory_active_case_working_set");
+    println!("  hnsw: future_candidate_index");
+    println!("  context_compiler: future_consumer");
+    Ok(())
+}
+
+fn graph_runtime_status(args: &[String]) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err("usage: yai graph runtime-status".to_string());
+    }
+    println!("runtime_graph:");
+    println!("  status: planned");
+    println!("  role: in_memory_active_case_working_set");
+    println!("  durable_truth: graph_persistence");
+    println!("  hnsw: future_candidate_index");
+    println!("  context_compiler: future_consumer");
+    println!("  graph_store_claim: none");
+    println!("  graph_persistence: durable_typed_relations");
+    println!("  implementation_claim: schema_boundary_only");
+    Ok(())
+}
+
 fn memory_summary(args: &[String]) -> Result<(), String> {
     let path = journal_arg(args)?;
     let journal = Journal::load_jsonl(&path)
@@ -5998,6 +6086,18 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = graph_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("schema") => {
+            if let Err(error) = graph_schema(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("runtime-status") => {
+            if let Err(error) = graph_runtime_status(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

@@ -59,7 +59,7 @@ require_phrase "docs/engineering/journal-replay-freeze.md" "No old docs/manuals 
 require_phrase "docs/labs/filesystem-loop/runbook.md" "Journal Replay Freeze"
 require_phrase "docs/labs/filesystem-loop/runbook.md" "docs/labs/filesystem-loop"
 require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.39  Journal Replay Freeze                                     done"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         planned"
+require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done"
 require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.39  Journal Replay Freeze                                     done"
 require_phrase "docs/engineering/current-status.md" "SPINE.39 Journal Replay Freeze completed"
 require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.39"

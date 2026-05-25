@@ -135,3 +135,23 @@ records_written: 0
 
 The freeze output must not imply silent skip, false complete or journal
 fallback behavior.
+
+## Graph Schema Output
+
+SPINE.40 graph output is schema/status only:
+
+```text
+graph_schema:
+node_kinds:
+edge_kinds:
+graph_store_claim: none
+runtime_graph:
+status: planned
+role: in_memory_active_case_working_set
+durable_truth: graph_persistence
+hnsw: future_candidate_index
+context_compiler: future_consumer
+```
+
+It must not imply graph store implementation, HNSW implementation or Context
+Compiler implementation.

@@ -1131,6 +1131,39 @@ make check-journal-replay-freeze
 make smoke-spine39
 ```
 
+## SPINE.40 Graph Persistence / RuntimeGraph Schema Loop
+
+`tests/smoke/graph-runtimegraph-schema/test_graph_runtimegraph_schema.c`
+proves graph node kind roundtrip, graph edge kind roundtrip and RuntimeGraph
+boundary constants.
+
+The CLI smoke verifies:
+
+```text
+yai graph schema prints node_kinds and edge_kinds
+yai graph runtime-status says planned
+runtime_graph role is in_memory_active_case_working_set
+graph_store_claim is none
+```
+
+The doctrine being protected is:
+
+```text
+Graph persistence owns durable typed relations.
+RuntimeGraph is the in-memory active case working set.
+HNSW finds candidate nodes.
+HNSW is not graph truth.
+Context Compiler renders controlled views.
+Projection does not disappear.
+Persistent truth on disk.
+Computational shape in memory.
+```
+
+```text
+make check-graph-runtimegraph-doctrine
+make smoke-spine40
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

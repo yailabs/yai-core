@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.39 Journal Replay Freeze.
+Status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
 
 ## Completed Foundation
 
@@ -76,6 +76,12 @@ adds durable `yai.replay_report.v1` replay reports with `journal_identity`,
 `compatibility`, `cursor_line`, `records_written`, `records_duplicate`,
 `invalid_entries` and failed report diagnostics. SPINE.39 freezes the full
 journal replay block before graph persistence and RuntimeGraph work.
+SPINE.40 defines graph persistence / RuntimeGraph doctrine and schema:
+Graph persistence owns durable typed relations and rebuild truth, RuntimeGraph
+is the in-memory active case working set, HNSW finds candidate nodes, HNSW is
+not graph truth, Context Compiler renders controlled views and Projection does
+not disappear. Persistent truth on disk. Computational shape in memory.
+HNSW is not graph truth. Projection does not disappear.
 
 Current:
 
@@ -118,6 +124,7 @@ SPINE.36 Journal Replay to LMDB completed.
 SPINE.37 Replay Idempotency + Schema Version Handling completed.
 SPINE.38 Replay Diagnostics / Rebuild Report completed.
 SPINE.39 Journal Replay Freeze completed.
+SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -125,7 +132,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
+SPINE.41 Graph Relation Write Path.
 ```
 
 Foundation status:
@@ -164,6 +171,7 @@ replay idempotency/schema metadata active
 idempotent replay v0 active
 replay diagnostics report active
 journal replay freeze active
+graph persistence / RuntimeGraph schema active
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active

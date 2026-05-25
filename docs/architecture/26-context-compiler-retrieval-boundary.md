@@ -59,6 +59,14 @@ candidate set:
 HNSW is candidate retrieval. HNSW is not graph. HNSW is not memory. HNSW is not
 decision authority.
 
+SPINE.40 makes the graph side of this boundary explicit. Graph persistence owns
+durable typed relations and rebuild truth. RuntimeGraph is the in-memory active
+case working set. RuntimeGraph is the in-memory active case working set. HNSW
+finds candidate nodes and HNSW is not graph truth.
+HNSW finds candidate nodes.
+Context Compiler renders controlled views. Projection does not disappear.
+Persistent truth on disk. Computational shape in memory.
+
 HNSW is a rebuildable proximity index over retrieval units. It stores vectors
 and refs, not authority. HNSW corruption must not destroy case truth.
 

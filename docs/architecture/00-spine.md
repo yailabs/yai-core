@@ -49,6 +49,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Replay diagnostics/report | [34-replay-diagnostics-rebuild-report.md](34-replay-diagnostics-rebuild-report.md) |
 | Journal replay freeze | [36-journal-replay-freeze.md](36-journal-replay-freeze.md) |
 | Data Context Runtime / RuntimeGraph | [31-data-context-runtime-runtimegraph.md](31-data-context-runtime-runtimegraph.md) |
+| Graph persistence / RuntimeGraph schema | [37-graph-persistence-runtimegraph.md](37-graph-persistence-runtimegraph.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |
 | Filesystem target | [../engineering/filesystem-target.md](../engineering/filesystem-target.md) |
@@ -88,6 +89,7 @@ ingest
 -> record store
 -> LMDB durable indexed record lookup
 -> graph persistence / Ladybug relations
+-> graph schema / durable typed relations
 -> RuntimeGraph active case working set
 -> index/query
 -> retrieval units / HNSW candidates
@@ -165,6 +167,8 @@ through external environment/adapters after naked model behavior is measurable.
 YAI separates durable truth from runtime computation.
 
 ```text
+Persistent truth on disk.
+Computational shape in memory.
 Truth lives on durable planes.
 Computation happens in runtime working sets.
 ```
@@ -174,18 +178,20 @@ separate:
 
 ```text
 LMDB stores records.
-Ladybug stores relations.
+Graph persistence stores durable typed relations.
 DuckDB stores facts.
 RuntimeGraph computes over the active case.
 HNSW finds candidate nodes.
 Context Compiler renders controlled views.
 ```
 
-Ladybug is graph persistence, relation truth and rebuild contract. RuntimeGraph
-is the in-memory working graph for the active case/session. HNSW is a
+Graph persistence owns durable typed relations, relation truth and rebuild
+contract. RuntimeGraph is the in-memory active case working set for the active
+case/session. HNSW finds candidate nodes and HNSW is not graph truth. It is a
 rebuildable proximity index over retrieval units bound to RuntimeGraph nodes.
-Context Compiler builds temporary controlled projections/model contexts from
-RuntimeGraph, retrieval candidates, policy, facts and token budgets.
+Context Compiler renders controlled views and builds temporary controlled
+projections/model contexts from RuntimeGraph, retrieval candidates, policy,
+facts and token budgets. Projection does not disappear.
 
 The future retrieval block includes:
 

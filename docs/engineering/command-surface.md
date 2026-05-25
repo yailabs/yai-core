@@ -860,6 +860,24 @@ RuntimeGraph working sets and HNSW Candidate -> RuntimeGraph Expansion, but
 SPINE.33M implements no `yai runtime-graph`, `yai retrieval` or `yai context`
 command.
 
+SPINE.40 adds the first graph schema/status command surface:
+
+```text
+yai graph schema
+yai graph runtime-status
+```
+
+`yai graph schema` prints graph node kinds and edge kinds plus
+`graph_store_claim: none`. `yai graph runtime-status` reports RuntimeGraph as
+`planned`, with role `in_memory_active_case_working_set`, durable truth
+`graph_persistence`, HNSW as `future_candidate_index` and Context Compiler as
+`future_consumer`.
+
+Graph persistence owns durable typed relations. RuntimeGraph is the in-memory active case working set.
+HNSW finds candidate nodes and HNSW is not graph truth.
+Context Compiler renders controlled views. Projection does not disappear.
+Persistent truth on disk. Computational shape in memory.
+
 ## Projection Commands
 
 | Primitive | View | Command | Lab test | Docs |

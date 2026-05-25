@@ -111,6 +111,12 @@ SPINE.39 adopts Journal Replay Freeze. `journal inspect`, `journal replay`,
 journal-to-LMDB path with no silent skip, no false completion and no journal
 fallback.
 
+SPINE.40 adopts Graph Persistence / RuntimeGraph Doctrine + Schema. Graph
+persistence owns durable typed relations and rebuild truth. RuntimeGraph is the
+in-memory active case working set. HNSW finds candidate nodes, HNSW is not
+graph truth, Context Compiler renders controlled views and Projection does not
+disappear.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -142,6 +148,7 @@ fallback.
 | 0034 | Journal replay to LMDB | Journal replay writes valid records through the LMDB record/index path and treats existing records as idempotent duplicates. |
 | 0035 | Replay idempotency/schema | Replay metadata tracks journal_identity, cursor_line, record_schema and compatibility. |
 | 0036 | Journal replay freeze | Journal replay is frozen as the diagnostic, idempotent, report-producing path from journal to LMDB. |
+| 0037 | Graph persistence / RuntimeGraph | Graph persistence owns durable typed relations; RuntimeGraph owns active in-memory case computation. |
 
 ## Combined Doctrine
 

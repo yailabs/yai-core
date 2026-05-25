@@ -136,3 +136,25 @@ invalid_json writes no records
 no false complete
 no journal fallback
 ```
+
+## Graph Schema Checks
+
+SPINE.40 adds schema/status checks that are useful before graph relation write
+work begins.
+
+```bash
+yai graph schema
+yai graph runtime-status
+```
+
+Expected signals:
+
+```text
+graph_schema:
+node_kinds:
+edge_kinds:
+graph_store_claim: none
+runtime_graph:
+status: planned
+role: in_memory_active_case_working_set
+```
