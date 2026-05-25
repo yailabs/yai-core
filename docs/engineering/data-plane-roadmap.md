@@ -108,7 +108,7 @@ SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
 SPINE.34  LMDB Record Plane Freeze                                  done
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                done
-SPINE.36  Journal Replay to LMDB                                    planned
+SPINE.36  Journal Replay to LMDB                                    done
 SPINE.37  Replay Idempotency + Schema Version Handling              planned
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
 SPINE.39  Journal Replay Freeze                                     planned
@@ -377,6 +377,25 @@ Journal is replay/audit. LMDB is durable indexed record lookup. Journal inspect
 does not write LMDB, does not rebuild LMDB and does not create a no silent
 journal fallback exception. Duplicate detection prepares later idempotency
 work, but full replay waits for SPINE.36.
+
+SPINE.36 Journal Replay to LMDB adds:
+
+```text
+yai journal replay --path <journal.jsonl>
+yai journal replay --path <journal.jsonl> --dry-run
+records_seen
+records_written
+records_duplicate
+records_skipped
+idempotent
+```
+
+Journal replay to LMDB uses the frozen LMDB record/index path and writes
+`yai.record.v1` envelopes into records_by_id, records_by_case, records_by_kind,
+records_by_subject and records_by_receipt. Dry-run writes nothing. Invalid
+journal input blocks replay with no silent skip. Existing LMDB records are
+reported as records_duplicate so a second replay is idempotent. Store queries
+continue to have no journal fallback.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

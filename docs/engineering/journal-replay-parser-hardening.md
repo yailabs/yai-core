@@ -116,6 +116,6 @@ inspection. It also checks that inspection does not create an LMDB path.
 
 ## Next
 
-SPINE.36 Journal Replay to LMDB may materialize replay into the frozen
-`yai.record.v1` plane. It must keep replay diagnostics visible and preserve the
+SPINE.36 Journal Replay to LMDB materializes replay into the frozen
+`yai.record.v1` plane. It keeps replay diagnostics visible and preserves the
 SPINE.34 LMDB no silent journal fallback rule.

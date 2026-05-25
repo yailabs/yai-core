@@ -44,6 +44,7 @@ system truth unless the external system binds or reports through YAI protocols.
 | Hot state plane | [16-hot-state-plane.md](16-hot-state-plane.md) |
 | LMDB record plane | [17-lmdb-record-plane.md](17-lmdb-record-plane.md) |
 | Journal replay boundary | [33-journal-replay-boundary.md](33-journal-replay-boundary.md) |
+| Journal replay to LMDB | [34-journal-replay-to-lmdb.md](34-journal-replay-to-lmdb.md) |
 | Data Context Runtime / RuntimeGraph | [31-data-context-runtime-runtimegraph.md](31-data-context-runtime-runtimegraph.md) |
 | Active roadmap | [../engineering/four-repo-roadmap.md](../engineering/four-repo-roadmap.md) |
 | Current status | [../engineering/current-status.md](../engineering/current-status.md) |

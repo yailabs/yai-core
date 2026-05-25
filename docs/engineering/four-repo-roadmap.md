@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.35 Journal Replay Doctrine + Parser Hardening. | SPINE.36 Journal Replay to LMDB. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.36 Journal Replay to LMDB. | SPINE.37 Replay Idempotency + Schema Version Handling. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -87,10 +87,11 @@ substrate. SPINE.33J through SPINE.33M reserve retrieval, model runtime,
 Context Compiler and RuntimeGraph boundaries. SPINE.34 freezes the LMDB record
 plane as `yai.record.v1` durable indexed lookup before journal replay begins.
 SPINE.35 hardens the journal replay boundary with diagnostic parser inspection
-and no LMDB writes.
+and no LMDB writes. SPINE.36 adds explicit journal replay to LMDB with dry-run
+reporting and basic idempotent replay.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.36.
+delivery is SPINE.37.
 
 ## Canonical Macro Labels
 
@@ -244,7 +245,7 @@ SPINE.33M Data Context Runtime / RuntimeGraph Doctrine              done
 SPINE.34  LMDB Record Plane Freeze                                  done
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                done
-SPINE.36  Journal Replay to LMDB                                    planned
+SPINE.36  Journal Replay to LMDB                                    done
 SPINE.37  Replay Idempotency + Schema Version Handling              planned
 SPINE.38  Replay Diagnostics / Rebuild Report                       planned
 SPINE.39  Journal Replay Freeze                                     planned

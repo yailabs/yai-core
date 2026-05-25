@@ -54,7 +54,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.33I Carrier Receipt / Divergence Hardening");
+    println!("status: SPINE.36 Journal Replay to LMDB");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -68,6 +68,7 @@ fn print_info() {
     println!("provider-runtime: planned surface active");
     println!("device-registry: active");
     println!("journal_inspection: file-based JSONL v0");
+    println!("journal_replay: LMDB materialization v0");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -192,6 +193,7 @@ fn print_usage() {
     println!("       yai store record list --receipt <receipt_ref> [--limit <N>]");
     println!("       yai store tail --journal <path>");
     println!("       yai journal inspect --path <journal.jsonl> [--show-errors]");
+    println!("       yai journal replay --path <journal.jsonl> [--dry-run]");
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
@@ -2679,6 +2681,122 @@ fn journal_inspect(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+fn journal_replay(args: &[String]) -> Result<(), String> {
+    let path = PathBuf::from(named_arg(args, "--path")?);
+    let dry_run = args.iter().any(|arg| arg == "--dry-run");
+    let lmdb_path = record_store_path();
+    if !path.exists() {
+        println!("journal_replay: failed");
+        println!("journal_path: {}", path.display());
+        println!("lmdb_path: {}", lmdb_path.display());
+        println!("lines_total: 0");
+        println!("valid_entries: 0");
+        println!("invalid_entries: 0");
+        println!("unsupported_entries: 0");
+        println!("duplicate_entries: 0");
+        println!("records_seen: 0");
+        println!("records_written: 0");
+        println!("records_duplicate: 0");
+        println!("records_skipped: 0");
+        println!("replay_ready: no");
+        println!("reason: missing_journal");
+        return Ok(());
+    }
+    if !path.is_file() {
+        println!("journal_replay: failed");
+        println!("journal_path: {}", path.display());
+        println!("lmdb_path: {}", lmdb_path.display());
+        println!("lines_total: 0");
+        println!("valid_entries: 0");
+        println!("invalid_entries: 0");
+        println!("unsupported_entries: 0");
+        println!("duplicate_entries: 0");
+        println!("records_seen: 0");
+        println!("records_written: 0");
+        println!("records_duplicate: 0");
+        println!("records_skipped: 0");
+        println!("replay_ready: no");
+        println!("reason: journal_unavailable");
+        return Ok(());
+    }
+
+    let inspection = Journal::inspect_jsonl(&path)
+        .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    if !inspection.replay_ready() {
+        println!("journal_replay: failed");
+        println!("journal_path: {}", path.display());
+        println!("lmdb_path: {}", lmdb_path.display());
+        println!("lines_total: {}", inspection.lines_total);
+        println!("valid_entries: {}", inspection.valid_entries);
+        println!("invalid_entries: {}", inspection.invalid_entries);
+        println!("unsupported_entries: {}", inspection.unsupported_entries);
+        println!("duplicate_entries: {}", inspection.duplicate_entries);
+        println!("records_seen: {}", inspection.valid_entries);
+        println!("records_written: 0");
+        println!("records_duplicate: 0");
+        println!("records_skipped: {}", inspection.lines_total);
+        println!("replay_ready: no");
+        println!("reason: {}", replay_failure_reason(&inspection));
+        return Ok(());
+    }
+
+    if dry_run {
+        println!("journal_replay: dry_run");
+        println!("journal_path: {}", path.display());
+        println!("lmdb_path: {}", lmdb_path.display());
+        println!("lines_total: {}", inspection.lines_total);
+        println!("valid_entries: {}", inspection.valid_entries);
+        println!("invalid_entries: {}", inspection.invalid_entries);
+        println!("unsupported_entries: {}", inspection.unsupported_entries);
+        println!("duplicate_entries: {}", inspection.duplicate_entries);
+        println!("records_to_write: {}", inspection.valid_entries);
+        println!("would_write_lmdb: yes");
+        println!("replay_ready: yes");
+        return Ok(());
+    }
+
+    let journal = Journal::load_jsonl(&path)
+        .map_err(|error| format!("journal replay failed to load journal: {error}"))?;
+    let store = LmdbRecordStore::open(&lmdb_path)
+        .map_err(|error| format!("journal replay failed to open LMDB: {error}"))?;
+    let report = store.import_journal_with_report(&journal, &path.display().to_string())?;
+    let status = LmdbRecordStore::status(&lmdb_path);
+    println!("journal_replay: completed");
+    println!("journal_path: {}", path.display());
+    println!("lmdb_path: {}", lmdb_path.display());
+    println!("lines_total: {}", inspection.lines_total);
+    println!("valid_entries: {}", inspection.valid_entries);
+    println!("invalid_entries: {}", inspection.invalid_entries);
+    println!("unsupported_entries: {}", inspection.unsupported_entries);
+    println!("duplicate_entries: {}", inspection.duplicate_entries);
+    println!("records_seen: {}", report.records_seen);
+    println!("records_written: {}", report.records_written);
+    println!("records_duplicate: {}", report.records_duplicate);
+    println!("records_skipped: {}", report.records_skipped);
+    println!("replay_ready: yes");
+    println!("record_store_status: {}", status.status.as_str());
+    println!(
+        "idempotent: {}",
+        bool_word(
+            report.records_seen > 0
+                && report.records_written == 0
+                && report.records_duplicate == report.records_seen
+        )
+    );
+    Ok(())
+}
+
+fn replay_failure_reason(inspection: &yai_core_engine::journal::JournalInspection) -> String {
+    if inspection.invalid_entries > 0 {
+        return "invalid_json".to_string();
+    }
+    inspection
+        .diagnostics
+        .first()
+        .map(|diagnostic| diagnostic.error_code.clone())
+        .unwrap_or_else(|| "not_replay_ready".to_string())
+}
+
 fn import_journal_to_record_store(journal_path: &std::path::Path) -> Result<(), String> {
     let journal = Journal::load_jsonl(journal_path)
         .map_err(|error| format!("record store import failed to load journal: {error}"))?;
@@ -5038,6 +5156,12 @@ fn main() {
         }
         Some("journal") if args.get(1).map(String::as_str) == Some("inspect") => {
             if let Err(error) = journal_inspect(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("journal") if args.get(1).map(String::as_str) == Some("replay") => {
+            if let Err(error) = journal_replay(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

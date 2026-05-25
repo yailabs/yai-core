@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.35 Journal Replay Doctrine + Parser Hardening.
+Status: SPINE.36 Journal Replay to LMDB.
 
 ## Completed Foundation
 
@@ -68,6 +68,8 @@ record-store validation.
 SPINE.35 hardens the journal replay boundary with diagnostic parser inspection,
 visible invalid_json, invalid_schema, unsupported_kind and duplicate statuses,
 and no LMDB writes.
+SPINE.36 implements explicit journal replay to LMDB with dry-run reporting,
+basic idempotent replay, invalid input blocking and store query validation.
 
 Current:
 
@@ -106,6 +108,7 @@ SPINE.33L Provider Runtime / LAN Target Surface v0 completed.
 SPINE.33M Data Context Runtime / RuntimeGraph Doctrine completed.
 SPINE.34 LMDB Record Plane Freeze completed.
 SPINE.35 Journal Replay Doctrine + Parser Hardening completed.
+SPINE.36 Journal Replay to LMDB completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -113,7 +116,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.36 Journal Replay to LMDB.
+SPINE.37 Replay Idempotency + Schema Version Handling.
 ```
 
 Foundation status:
@@ -147,6 +150,8 @@ LMDB CLI manual validation active
 LMDB record-plane freeze active
 journal replay parser hardening active
 journal inspect diagnostics active
+journal replay to LMDB active
+idempotent replay v0 active
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
@@ -225,6 +230,7 @@ hot-state-plane.md
 lmdb-record-plane.md
 lmdb-record-plane-freeze.md
 journal-replay-parser-hardening.md
+journal-replay-to-lmdb.md
 pack-format.md
 pack-roadmap.md
 testing.md

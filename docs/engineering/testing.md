@@ -1040,6 +1040,27 @@ make check-journal-replay-boundary
 make smoke-spine35
 ```
 
+## SPINE.36 Journal Replay to LMDB Loop
+
+```text
+journal replay dry-run writes nothing
+valid journal replay writes records to LMDB
+store summary reports ready and non-zero records
+case-index list sees replayed records
+second replay is idempotent
+corrupt journal fails before write
+```
+
+`tests/smoke/journal-replay-to-lmdb/test_journal_replay_to_lmdb.sh` proves
+journal replay to LMDB. It uses isolated temp journals and `YAI_HOME`, verifies
+`records_written`, `records_duplicate`, `invalid_entries`, store summary and
+case-index lookup.
+
+```text
+make check-journal-replay-to-lmdb
+make smoke-spine36
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

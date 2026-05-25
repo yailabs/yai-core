@@ -94,6 +94,10 @@ SPINE.35 adopts Journal Replay Doctrine + Parser Hardening. Journal is
 replay/audit, LMDB is durable indexed record lookup, replay diagnostics are
 mandatory and `yai journal inspect` reports readiness without LMDB writes.
 
+SPINE.36 adopts Journal Replay to LMDB. Replay materializes valid journal
+residue into the LMDB record plane through the frozen writer, reports
+records_written and records_duplicate, and keeps no journal fallback semantics.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -122,6 +126,7 @@ mandatory and `yai journal inspect` reports readiness without LMDB writes.
 | 0031 | Data Context Runtime / RuntimeGraph | Durable graph truth is separated from runtime graph computation, HNSW candidate retrieval and compiled projection output. |
 | 0032 | LMDB record plane freeze | `yai.record.v1` id/case/kind/subject/receipt lookup is frozen with no journal fallback. |
 | 0033 | Journal replay boundary | Journal inspect reports invalid_json, invalid_schema, unsupported_kind, duplicate and replay readiness without writing LMDB. |
+| 0034 | Journal replay to LMDB | Journal replay writes valid records through the LMDB record/index path and treats existing records as idempotent duplicates. |
 
 ## Combined Doctrine
 

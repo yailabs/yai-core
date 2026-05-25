@@ -88,5 +88,5 @@ change the frozen SPINE.34 no silent journal fallback rule for LMDB queries.
 
 ## Roadmap Placement
 
-SPINE.35 hardens parser and doctrine. SPINE.36 can then implement journal
-replay to LMDB against the frozen `yai.record.v1` lookup and index posture.
+SPINE.35 hardens parser and doctrine. SPINE.36 implements journal replay to
+LMDB against the frozen `yai.record.v1` lookup and index posture.

@@ -86,6 +86,14 @@ pub struct RecordListResult {
     pub records: Vec<StoredRecordEnvelope>,
 }
 
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct JournalImportReport {
+    pub records_seen: usize,
+    pub records_written: usize,
+    pub records_duplicate: usize,
+    pub records_skipped: usize,
+}
+
 impl LmdbRecordStore {
     pub fn open(path: impl AsRef<Path>) -> Result<Self, String> {
         let path = path.as_ref();
@@ -160,16 +168,33 @@ impl LmdbRecordStore {
     }
 
     pub fn import_journal(&self, journal: &Journal, journal_ref: &str) -> Result<(), String> {
+        self.import_journal_with_report(journal, journal_ref)
+            .map(|_| ())
+    }
+
+    pub fn import_journal_with_report(
+        &self,
+        journal: &Journal,
+        journal_ref: &str,
+    ) -> Result<JournalImportReport, String> {
         let mut txn = self
             .env
             .begin_rw_txn()
             .map_err(|error| format!("failed to start LMDB journal import: {error}"))?;
+        let mut report = JournalImportReport::default();
         for (index, record) in journal.records().iter().enumerate() {
+            report.records_seen += 1;
             let source_ref = format!("{journal_ref}#{}", index + 1);
+            if self.record_exists_txn(&txn, &record.id)? {
+                report.records_duplicate += 1;
+                continue;
+            }
             self.put_record(&mut txn, record, &source_ref)?;
+            report.records_written += 1;
         }
         txn.commit()
-            .map_err(|error| format!("failed to commit LMDB journal import: {error}"))
+            .map_err(|error| format!("failed to commit LMDB journal import: {error}"))?;
+        Ok(report)
     }
 
     pub fn summary(&self) -> Result<RecordStoreSummary, String> {
@@ -323,6 +348,17 @@ impl LmdbRecordStore {
             })?;
         }
         Ok(())
+    }
+
+    fn record_exists_txn(&self, txn: &RwTransaction<'_>, record_id: &str) -> Result<bool, String> {
+        let id_key = format!("record:id:{record_id}");
+        match txn.get(self.records_by_id, &id_key) {
+            Ok(_) => Ok(true),
+            Err(Error::NotFound) => Ok(false),
+            Err(error) => Err(format!(
+                "failed to check records_by_id {record_id}: {error}"
+            )),
+        }
     }
 
     fn get_record_by_id_txn(
@@ -534,6 +570,57 @@ mod tests {
         assert!(carrier_request
             .raw_json
             .contains("\"source\":{\"plane\":\"journal\""));
+
+        drop(store);
+        fs::remove_dir_all(path).expect("remove LMDB test store");
+    }
+
+    #[test]
+    fn journal_import_report_is_idempotent() {
+        let path = temp_store_path("journal-import-idempotent");
+        let store = LmdbRecordStore::open(&path).expect("open LMDB test store");
+        let mut journal = Journal::new();
+        journal.append(Record::from_parts(
+            "rec:journal-import-one",
+            "case:journal-import",
+            RecordKind::Receipt,
+            "subject:journal-import",
+            "op:journal-import",
+            "decision:journal-import",
+            "receipt:journal-import",
+            "receipt:journal-import",
+        ));
+        journal.append(Record::from_parts(
+            "rec:journal-import-two",
+            "case:journal-import",
+            RecordKind::Divergence,
+            "subject:journal-import",
+            "op:journal-import",
+            "decision:journal-import",
+            "receipt:journal-import",
+            "divergence:none",
+        ));
+
+        let first = store
+            .import_journal_with_report(&journal, "journal-import-test")
+            .expect("first journal import");
+        assert_eq!(first.records_seen, 2);
+        assert_eq!(first.records_written, 2);
+        assert_eq!(first.records_duplicate, 0);
+
+        let second = store
+            .import_journal_with_report(&journal, "journal-import-test")
+            .expect("second journal import");
+        assert_eq!(second.records_seen, 2);
+        assert_eq!(second.records_written, 0);
+        assert_eq!(second.records_duplicate, 2);
+
+        let summary = store.summary().expect("summary");
+        assert_eq!(summary.records_total, 2);
+        assert_eq!(summary.records_by_case, 2);
+        assert_eq!(summary.records_by_kind, 2);
+        assert_eq!(summary.records_by_subject, 2);
+        assert_eq!(summary.records_by_receipt, 2);
 
         drop(store);
         fs::remove_dir_all(path).expect("remove LMDB test store");
