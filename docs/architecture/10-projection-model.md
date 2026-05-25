@@ -58,6 +58,11 @@ Projection is not truth. Projection reads case-world material, records,
 receipts, graph, facts, memory, reconcile and policy posture. It must not
 become UI state, dashboard authority or API truth.
 
+Future Vector Retrieval / HNSW may help narrow candidate material for a
+projection, but retrieval candidates are not projection truth. Candidates must
+remain scoped by case, subject and policy, and must carry evidence provenance
+before they influence model-visible context, decisions or memory.
+
 SPINE.4 defines Case View Quality (`CVQ`) as the canonical vector for measuring
 whether a projection is useful enough for controlled behavior:
 

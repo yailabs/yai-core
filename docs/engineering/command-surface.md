@@ -520,6 +520,22 @@ Skeleton inspect is available for `network_http`, `database`,
 `repository_git`, `service`, `endpoint`, `socket`, `listener`,
 `model_provider` and `review`. It does not execute carrier effects.
 
+Reserved future commands for the retrieval and runner roadmap rebase:
+
+```text
+yai retrieval status
+yai retrieval build
+yai retrieval query
+yai retrieval candidates
+yai model-runtime status
+yai model-runtime inspect
+yai model-runtime invoke --dry-run
+```
+
+These commands are not implemented by SPINE.33J. They are reserved so future
+roadmap work has an explicit command-surface placeholder without implying
+HNSW, vector DB, embedding, DS4 or model runner support.
+
 ## Projection Commands
 
 | Primitive | View | Command | Manual test | Docs |

@@ -80,6 +80,7 @@ ingest
 -> LMDB durable indexed record lookup
 -> graph
 -> index/query
+-> vector retrieval / HNSW candidates
 -> memory
 -> reconcile
 -> observability / evaluation
@@ -145,6 +146,35 @@ operationally through gates, decision and carrier
 
 Agent frameworks are not first. Agents become later subjects, actors or sources
 through external environment/adapters after naked model behavior is measurable.
+
+## Vector Retrieval / HNSW Doctrine
+
+Vector Retrieval / HNSW is a derived candidate-retrieval substrate. It is not
+graph truth, memory truth, lineage truth, decision authority or policy
+authority. It may support similarity search, context narrowing, evidence recall
+assistance, memory candidate support and model-context cost reduction.
+
+Canonical rule:
+
+```text
+A YAI decision may use HNSW/vector-retrieval candidates,
+but no YAI decision may be justified by vector proximity alone.
+```
+
+HNSW finds. Case scope filters. Policy validates. Evidence justifies.
+Record/graph/facts provide basis. Memory consolidates only if authorized.
+
+## Model Runtime / Runner Doctrine
+
+YAI may own model runner contracts, invocation envelopes, receipts, local runner
+adapters and specialized runtime harnesses. YAI must not immediately reinvent
+llama.cpp, Ollama, MLX, vLLM, DS4 or every GGUF/local-model runtime.
+
+Inference engines load models, run tokens and manage KV/cache/model-specific
+execution. YAI owns case binding, projection, authority, prompt/invocation
+envelopes, model carriers, provider/runner subjects, receipts, model output
+import, behavior facts and memory/reconcile consequences. Runner output is not
+case authority.
 
 ## Core Invariants
 

@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-retrieval-runner-roadmap build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -187,6 +187,7 @@ check-docs:
 	@./tools/checks/check-host-observation-probe.sh
 	@./tools/checks/check-carrier-coverage-matrix.sh
 	@./tools/checks/check-non-process-carrier-skeletons.sh
+	@./tools/checks/check-retrieval-runner-roadmap.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -232,6 +233,9 @@ check-host-observation-probe:
 
 check-carrier-coverage-matrix:
 	@./tools/checks/check-carrier-coverage-matrix.sh
+
+check-retrieval-runner-roadmap:
+	@./tools/checks/check-retrieval-runner-roadmap.sh
 
 check-non-process-carrier-skeletons:
 	@./tools/checks/check-non-process-carrier-skeletons.sh

@@ -329,6 +329,11 @@ and socket boundary subjects, provider request/result and transport material,
 and subject observers for non-process skeleton posture. No `yai-dev` source
 file was modified.
 
+SPINE.33J is planned after SPINE.33I and before SPINE.34 as a roadmap/doctrine
+rebase only. It will reserve Vector Retrieval / HNSW as candidate retrieval,
+not graph/memory/decision authority, and reserve Model Runtime / Runner
+Boundary work without claiming YAI is a universal inference engine.
+
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,
 externalized, quarantined, marked compatibility-only, marked delete-later, left

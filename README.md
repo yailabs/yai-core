@@ -87,7 +87,9 @@ YAI is built around a few constraints:
 - Effects need receipts, not only logs.
 - Records are durable operational material, not chat history.
 - Projections and memory are derived from residue, not free text alone.
+- Vector retrieval can provide candidates, not graph, memory or decision truth.
 - Provider engines remain separate and may be local, remote, custom, or mocked.
+- Model runtimes and runners are invoked boundaries, not case authority.
 - Enforcement strength depends on the boundary YAI owns, interposes, or
   observes.
 

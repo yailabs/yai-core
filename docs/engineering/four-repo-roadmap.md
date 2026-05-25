@@ -95,6 +95,7 @@ DATA
 VIEW
 CONTROL
 MEMORY
+RETRIEVAL
 RECONCILE
 HOST
 MODEL
@@ -194,6 +195,7 @@ SPINE.33F Carrier Coverage Matrix + Mode Taxonomy                  done
 SPINE.33G Non-Process Carrier Skeletons                            done
 SPINE.33H Carrier Outcome Harness                                  planned
 SPINE.33I Carrier Receipt / Divergence Hardening                   planned
+SPINE.33J Retrieval and Model Runtime Roadmap Rebase                planned
 SPINE.34  LMDB Record Plane Freeze                                  planned
 
 SPINE.35  Journal Replay Doctrine + Parser Hardening                planned
@@ -223,6 +225,13 @@ SPINE.55  Projection Authority / Redaction Alignment                planned
 SPINE.56  Projection Memory / Divergence Patch                      planned
 SPINE.57  Model-Visible Delta Smoke + CLI                           planned
 SPINE.58  Live Projection Freeze                                    planned
+
+SPINE.58A Vector Retrieval / HNSW Boundary Doctrine                 planned
+SPINE.58B Vector Payload Schema + Embedding Manifest                planned
+SPINE.58C HNSW Candidate Index Build / Rebuild                      planned
+SPINE.58D Case / Subject / Policy Scoped Retrieval Query            planned
+SPINE.58E Retrieval Residue + Cost / Recall Facts                   planned
+SPINE.58F Vector Retrieval Freeze                                   planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned
@@ -263,6 +272,11 @@ SPINE.90  Model Output Claim Import                                 planned
 SPINE.91  Naked Local Model Case Experiment                         planned
 SPINE.92  Model Behavior Trace                                      planned
 SPINE.93  Model Carrier                                             planned
+SPINE.93A Model Runtime / Runner Boundary Doctrine                  planned
+SPINE.93B Runner Adapter Contract + Invocation Envelope             planned
+SPINE.93C Specialized Local Runner Harness                          planned
+SPINE.93D Runner Receipt + KV / Context State Boundary              planned
+SPINE.93E Model Runtime Boundary Freeze                             planned
 SPINE.94  Model / Provider Freeze                                   planned
 
 SPINE.95  Policy Pack Skeleton                                      planned
@@ -293,6 +307,69 @@ SPINE.117 Core Conformance Harness                                  planned
 SPINE.118 Console Projection Handoff Prep                           planned
 SPINE.119 YAI-dev Harness Prep                                      planned
 SPINE.120 Local Core Milestone Freeze                               planned
+```
+
+## Vector Retrieval / HNSW Doctrine
+
+Vector retrieval is a candidate-retrieval substrate. It is derived,
+rebuildable and scoped. It does not own truth. It does not replace graph,
+memory or policy.
+
+HNSW may support similarity search, context narrowing, evidence recall
+assistance, memory candidate support and model-context cost reduction. Every
+candidate must be grounded in case-visible evidence before influencing
+decisions or memory.
+
+Boundary phrases for future guards: vector retrieval is candidate retrieval;
+not graph; not memory; not decision authority. The future payload work includes
+an embedding manifest, and future query work is case / subject / policy scoped retrieval.
+
+Canonical rule:
+
+```text
+A YAI decision may use HNSW/vector-retrieval candidates,
+but no YAI decision may be justified by vector proximity alone.
+```
+
+Operational chain:
+
+```text
+HNSW finds.
+Case scope filters.
+Policy validates.
+Evidence justifies.
+Record/graph/facts provide basis.
+Memory consolidates only if authorized.
+```
+
+## Model Runtime / Runner Doctrine
+
+YAI may own runner boundaries and adapters. YAI should not initially become a
+universal inference engine. YAI treats engines/runners as subjects invoked
+through model carrier contracts. A runner produces outputs and receipts, not
+case authority.
+
+Boundary phrases for future guards: Model Runtime / Runner Boundary; not universal inference engine; runner output is not authority.
+
+Boundary:
+
+```text
+Inference engine:
+  loads model
+  runs tokens
+  manages KV/cache/model-specific execution
+
+YAI:
+  case binding
+  projection
+  authority
+  prompt/invocation envelope
+  model carrier
+  provider/runner subject
+  receipt
+  model output import
+  behavior facts
+  memory/reconcile consequences
 ```
 
 ## Implementation Wave Rule
