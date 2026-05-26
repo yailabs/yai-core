@@ -144,7 +144,7 @@ SPINE.40 graph output is schema/status only:
 graph_schema:
 node_kinds:
 edge_kinds:
-graph_store_claim: none
+relation_write_path: active_minimal
 runtime_graph:
 status: planned
 role: in_memory_active_case_working_set
@@ -153,5 +153,39 @@ hnsw: future_candidate_index
 context_compiler: future_consumer
 ```
 
-It must not imply graph store implementation, HNSW implementation or Context
+It must not imply RuntimeGraph implementation, HNSW implementation or Context
 Compiler implementation.
+
+## Graph Relation Write Path Output
+
+SPINE.41 graph relation output is active-minimal relation materialization:
+
+```bash
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
+```
+
+```text
+graph_materialize:
+schema: yai.graph_relation.v1
+graph_store: lmdb_graph_relations_v0
+relations_written:
+relations_duplicate:
+relations_skipped:
+runtime_graph_updated: false
+
+graph_relations:
+relations_total:
+relation_id:
+edge_kind:
+source_record_id:
+```
+
+Expected edge examples:
+
+```text
+decision_controls_attempt
+receipt_records_effect
+```
+
+RuntimeGraph remains planned. Ladybug integration remains future.

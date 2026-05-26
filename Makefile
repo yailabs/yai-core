@@ -10,7 +10,7 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-journal-replay-freeze check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap check-graph-runtimegraph-doctrine build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke check clean
+.PHONY: info check-layout check-docs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-journal-replay-freeze check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap check-graph-runtimegraph-doctrine check-graph-relation-write-path build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke check clean
 
 CC ?= cc
 AR ?= ar
@@ -154,15 +154,16 @@ SMOKE_REPLAY_IDEMPOTENCY_SCHEMA := tests/smoke/replay-idempotency-schema-version
 SMOKE_REPLAY_DIAGNOSTICS_REPORT := tests/smoke/replay-diagnostics-report/test_replay_diagnostics_report.sh
 SMOKE_JOURNAL_REPLAY_FREEZE := tests/smoke/journal-replay-freeze/test_journal_replay_freeze.sh
 SMOKE_GRAPH_RUNTIMEGRAPH_SCHEMA := $(BUILD_DIR)/test_graph_runtimegraph_schema
+SMOKE_GRAPH_RELATION_WRITE_PATH := tests/smoke/graph-relation-write-path/test_graph_relation_write_path.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema\n"
-	@printf "next: SPINE.41 Graph Relation Write Path\n"
+	@printf "status: SPINE.41 Graph Relation Write Path\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.41 Graph Relation Write Path\n"
+	@printf "next: SPINE.42 RuntimeGraph In-Memory Working Set\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -217,6 +218,7 @@ check-docs:
 	@./tools/checks/check-provider-runtime-lan-target-surface.sh
 	@./tools/checks/check-data-context-runtime-roadmap.sh
 	@./tools/checks/check-graph-runtimegraph-doctrine.sh
+	@./tools/checks/check-graph-relation-write-path.sh
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -295,6 +297,9 @@ check-data-context-runtime-roadmap:
 
 check-graph-runtimegraph-doctrine:
 	@./tools/checks/check-graph-runtimegraph-doctrine.sh
+
+check-graph-relation-write-path:
+	@./tools/checks/check-graph-relation-write-path.sh
 
 check-non-process-carrier-skeletons:
 	@./tools/checks/check-non-process-carrier-skeletons.sh
@@ -583,11 +588,14 @@ smoke-spine40: $(SMOKE_GRAPH_RUNTIMEGRAPH_SCHEMA) build-rust
 	@$(YAI_BIN) graph schema | grep -F -- "- decision_controls_attempt" >/dev/null
 	@$(YAI_BIN) graph runtime-status | grep -F -- "status: planned" >/dev/null
 	@$(YAI_BIN) graph runtime-status | grep -F -- "role: in_memory_active_case_working_set" >/dev/null
-	@$(YAI_BIN) graph runtime-status | grep -F -- "graph_store_claim: none" >/dev/null
+	@$(YAI_BIN) graph runtime-status | grep -F -- "relation_write_path: active_minimal" >/dev/null
 	@printf "graph_schema:node_kinds ok\n"
 	@printf "graph_schema:edge_kinds ok\n"
 	@printf "runtime_graph:boundary ok\n"
-	@printf "no_graph_store_claim:confirmed\n"
+	@printf "no_runtime_graph_claim:confirmed\n"
+
+smoke-spine41: build-rust
+	@$(SMOKE_GRAPH_RELATION_WRITE_PATH)
 
 smoke-spine33a: $(SMOKE_CONTROL_CARRIER_SUBSTRATE) build-rust
 	@$(SMOKE_CONTROL_CARRIER_SUBSTRATE)
@@ -719,7 +727,7 @@ smoke-spine33i: $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) build-rust
 smoke-spine33l: build-rust
 	@$(SMOKE_PROVIDER_RUNTIME_SURFACE)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41
 
 check: check-layout check-docs build smoke
 

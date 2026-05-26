@@ -114,7 +114,7 @@ SPINE.38  Replay Diagnostics / Rebuild Report                       done
 SPINE.39  Journal Replay Freeze                                     done
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
-SPINE.41  Graph Relation Write Path                                  planned
+SPINE.41  Graph Relation Write Path                                  done
 SPINE.42  RuntimeGraph In-Memory Working Set                         planned
 SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
 SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
@@ -462,6 +462,26 @@ does not disappear. Persistent truth on disk. Computational shape in memory.
 HNSW is not graph truth. Projection does not disappear.
 The wave defines schema/status only and makes no graph store implementation
 claim.
+
+SPINE.41 Graph Relation Write Path adds:
+
+```text
+yai.graph_relation.v1
+lmdb_graph_relations_v0
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
+```
+
+Graph materialization derives typed relations from LMDB records. The first
+relations include `decision_controls_attempt`, `receipt_records_effect`,
+`policy_constrains_subject`, `projection_exposes_record`,
+`divergence_describes_mismatch` and `record_materializes_node`.
+
+Each relation has a `relation_id`, `source_record_id` and
+`source_record_kind`. Materialization is idempotent and reports
+`relations_written`, `relations_duplicate` and `relations_skipped`.
+
+RuntimeGraph remains planned. Ladybug integration remains future.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

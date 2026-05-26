@@ -31,7 +31,8 @@ use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::lmdb::{
-    LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata, RECORD_SCHEMA,
+    LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata, GRAPH_RELATION_SCHEMA,
+    GRAPH_RELATION_STORE_NAME, RECORD_SCHEMA,
 };
 use yai_core_engine::store::Store;
 
@@ -56,7 +57,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema");
+    println!("status: SPINE.41 Graph Relation Write Path");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -71,6 +72,7 @@ fn print_info() {
     println!("device-registry: active");
     println!("journal_inspection: file-based JSONL v0");
     println!("journal_replay: LMDB materialization with schema/cursor/report metadata v0");
+    println!("graph_relation_write_path: active_minimal");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -211,6 +213,8 @@ fn print_usage() {
     println!("       yai graph summary --journal <path>");
     println!("       yai graph schema");
     println!("       yai graph runtime-status");
+    println!("       yai graph materialize --case <case_ref>");
+    println!("       yai graph relations --case <case_ref> [--limit <N>]");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -5774,9 +5778,10 @@ fn graph_schema(args: &[String]) -> Result<(), String> {
     }
     println!();
     println!("graph_persistence:");
-    println!("  status: doctrine_schema_only");
+    println!("  status: active_minimal");
     println!("  durable_truth: typed_relations");
-    println!("  graph_store_claim: none");
+    println!("  relation_write_path: active_minimal");
+    println!("  graph_store: {GRAPH_RELATION_STORE_NAME}");
     println!("runtime_graph:");
     println!("  status: planned");
     println!("  role: in_memory_active_case_working_set");
@@ -5795,9 +5800,61 @@ fn graph_runtime_status(args: &[String]) -> Result<(), String> {
     println!("  durable_truth: graph_persistence");
     println!("  hnsw: future_candidate_index");
     println!("  context_compiler: future_consumer");
-    println!("  graph_store_claim: none");
+    println!("  relation_write_path: active_minimal");
+    println!("  graph_store: {GRAPH_RELATION_STORE_NAME}");
     println!("  graph_persistence: durable_typed_relations");
-    println!("  implementation_claim: schema_boundary_only");
+    println!("  implementation_claim: relation_write_path_only");
+    Ok(())
+}
+
+fn graph_materialize(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let report = store.materialize_graph_relations_for_case(&case_ref)?;
+    println!("graph_materialize:");
+    println!("case_ref: {case_ref}");
+    println!("source: lmdb_records");
+    println!("relations_seen: {}", report.relations_seen);
+    println!("relations_written: {}", report.relations_written);
+    println!("relations_duplicate: {}", report.relations_duplicate);
+    println!("relations_skipped: {}", report.relations_skipped);
+    println!("schema: {GRAPH_RELATION_SCHEMA}");
+    println!("graph_store: {GRAPH_RELATION_STORE_NAME}");
+    println!("runtime_graph_updated: false");
+    Ok(())
+}
+
+fn graph_relations(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let limit = parse_limit(args)?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let result = store.list_graph_relations_by_case(&case_ref, limit)?;
+    println!("graph_relations:");
+    println!("case_ref: {case_ref}");
+    println!("relations_total: {}", result.relations_total);
+    println!("limit: {limit}");
+    if result.relations.is_empty() {
+        println!("relations: none");
+    } else {
+        println!("relations:");
+        for relation in result.relations {
+            println!("- relation_id: {}", relation.relation_id);
+            println!("  edge_kind: {}", relation.edge_kind);
+            println!("  from_ref: {}", relation.from_ref);
+            println!("  to_ref: {}", relation.to_ref);
+            println!("  source_record_id: {}", relation.source_record_id);
+        }
+    }
     Ok(())
 }
 
@@ -6098,6 +6155,18 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("runtime-status") => {
             if let Err(error) = graph_runtime_status(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("materialize") => {
+            if let Err(error) = graph_materialize(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("relations") => {
+            if let Err(error) = graph_relations(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

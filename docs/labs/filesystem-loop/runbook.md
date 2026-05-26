@@ -240,10 +240,35 @@ yai graph runtime-status
 Expected posture:
 
 ```text
-graph_store_claim: none
+relation_write_path: active_minimal
 status: planned
 role: in_memory_active_case_working_set
 durable_truth: graph_persistence
 hnsw: future_candidate_index
 context_compiler: future_consumer
+```
+
+## Graph Relation Write Path
+
+SPINE.41 materializes typed graph relations from LMDB records. RuntimeGraph remains planned.
+Ladybug integration remains future.
+
+```bash
+yai graph schema
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
+```
+
+Expected signals:
+
+```text
+schema: yai.graph_relation.v1
+graph_store: lmdb_graph_relations_v0
+relations_written:
+relations_duplicate:
+relations_skipped:
+runtime_graph_updated: false
+edge_kind: decision_controls_attempt
+edge_kind: receipt_records_effect
+source_record_id:
 ```

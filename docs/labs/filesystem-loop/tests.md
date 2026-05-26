@@ -153,8 +153,30 @@ Expected signals:
 graph_schema:
 node_kinds:
 edge_kinds:
-graph_store_claim: none
+relation_write_path: active_minimal
 runtime_graph:
 status: planned
 role: in_memory_active_case_working_set
+```
+
+## Graph Relation Write Path Checks
+
+SPINE.41 checks graph relation materialization from replayed LMDB records.
+RuntimeGraph remains planned. Ladybug integration remains future.
+
+```bash
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
+```
+
+Expected signals:
+
+```text
+schema: yai.graph_relation.v1
+relations_written: N
+second materialize relations_written: 0
+second materialize relations_duplicate: N
+edge_kind: decision_controls_attempt
+edge_kind: receipt_records_effect
+runtime_graph_updated: false
 ```

@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema. | SPINE.41 Graph Relation Write Path. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.41 Graph Relation Write Path. | SPINE.42 RuntimeGraph In-Memory Working Set. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -98,12 +98,16 @@ path from append-only replay/audit residue into LMDB before graph persistence
 begins. SPINE.40 defines Graph persistence as durable typed relations and
 RuntimeGraph as the in-memory active case working set; HNSW finds candidate
 nodes, HNSW is not graph truth, Context Compiler renders controlled views and
-Projection does not disappear. Persistent truth on disk. Computational shape in
-memory.
-Computational shape in memory.
+Projection does not disappear. Persistent truth on disk. Computational shape in memory.
+SPINE.41 adds the first minimal graph relation write path:
+`yai.graph_relation.v1` relations are derived from LMDB records, written to
+`lmdb_graph_relations_v0` and inspected by case with
+`yai graph materialize --case <case_ref>` and
+`yai graph relations --case <case_ref>`. RuntimeGraph remains planned.
+Ladybug integration remains future.
 
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.41.
+delivery is SPINE.42.
 
 ## Canonical Macro Labels
 
@@ -263,7 +267,7 @@ SPINE.38  Replay Diagnostics / Rebuild Report                       done
 SPINE.39  Journal Replay Freeze                                     done
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
-SPINE.41  Graph Relation Write Path                                  planned
+SPINE.41  Graph Relation Write Path                                  done
 SPINE.42  RuntimeGraph In-Memory Working Set                         planned
 SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
 SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned

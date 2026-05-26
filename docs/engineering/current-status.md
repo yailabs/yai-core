@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
+Status: SPINE.41 Graph Relation Write Path.
 
 ## Completed Foundation
 
@@ -81,7 +81,12 @@ Graph persistence owns durable typed relations and rebuild truth, RuntimeGraph
 is the in-memory active case working set, HNSW finds candidate nodes, HNSW is
 not graph truth, Context Compiler renders controlled views and Projection does
 not disappear. Persistent truth on disk. Computational shape in memory.
-HNSW is not graph truth. Projection does not disappear.
+HNSW is not graph truth. Projection does not disappear. SPINE.41 adds the first
+minimal graph relation write path: `yai.graph_relation.v1` relations are
+derived from LMDB records, written to `lmdb_graph_relations_v0` and inspected
+with `yai graph materialize --case <case_ref>` and
+`yai graph relations --case <case_ref>`. RuntimeGraph remains planned.
+Ladybug integration remains future.
 
 Current:
 
@@ -125,6 +130,7 @@ SPINE.37 Replay Idempotency + Schema Version Handling completed.
 SPINE.38 Replay Diagnostics / Rebuild Report completed.
 SPINE.39 Journal Replay Freeze completed.
 SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema completed.
+SPINE.41 Graph Relation Write Path completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -132,7 +138,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.41 Graph Relation Write Path.
+SPINE.42 RuntimeGraph In-Memory Working Set.
 ```
 
 Foundation status:
@@ -172,6 +178,7 @@ idempotent replay v0 active
 replay diagnostics report active
 journal replay freeze active
 graph persistence / RuntimeGraph schema active
+graph relation write path active_minimal
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
@@ -181,6 +188,7 @@ non-process carrier skeletons active
 context compiler retrieval doctrine active
 Data Context Runtime doctrine active
 RuntimeGraph active case working set doctrine active
+RuntimeGraph remains planned for implementation
 model runtime MTP doctrine active
 provider runtime LAN target surface active
 device registry v0 active

@@ -7,6 +7,10 @@ Status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
 SPINE.40 starts the graph block after the journal replay freeze. It separates
 durable relation truth from active in-memory graph computation.
 
+SPINE.41 adds an active-minimal relation write path over LMDB records using
+`yai.graph_relation.v1`. RuntimeGraph remains planned. Ladybug integration
+remains future.
+
 Canonical rule:
 
 ```text
@@ -94,18 +98,24 @@ unknown
 ```bash
 yai graph schema
 yai graph runtime-status
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
 ```
 
-`yai graph schema` prints the node and edge schema plus a no-store claim.
+`yai graph schema` prints the node and edge schema plus the active-minimal
+relation write path.
 `yai graph runtime-status` says RuntimeGraph is planned and identifies
 `graph_persistence`, `future_candidate_index` and `future_consumer` boundaries.
+`yai graph materialize` writes `yai.graph_relation.v1` to
+`lmdb_graph_relations_v0`. `yai graph relations` lists relation ids, edge kinds
+and `source_record_id` provenance by case.
 
 ## Non-Goals
 
 ```text
 No full graph persistence engine.
 No Ladybug integration.
-No RuntimeGraph working set beyond schema/status.
+No RuntimeGraph working set beyond schema/status and relation write path.
 No graph rebuild.
 No HNSW.
 No context compiler.

@@ -117,6 +117,10 @@ in-memory active case working set. HNSW finds candidate nodes, HNSW is not
 graph truth, Context Compiler renders controlled views and Projection does not
 disappear.
 
+SPINE.41 adopts Graph Relation Write Path. `yai.graph_relation.v1` relations
+are derived from LMDB records and stored in `lmdb_graph_relations_v0`;
+RuntimeGraph remains planned and Ladybug integration remains future.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -149,6 +153,7 @@ disappear.
 | 0035 | Replay idempotency/schema | Replay metadata tracks journal_identity, cursor_line, record_schema and compatibility. |
 | 0036 | Journal replay freeze | Journal replay is frozen as the diagnostic, idempotent, report-producing path from journal to LMDB. |
 | 0037 | Graph persistence / RuntimeGraph | Graph persistence owns durable typed relations; RuntimeGraph owns active in-memory case computation. |
+| 0038 | Graph relation write path | `yai.graph_relation.v1` materializes typed relations from LMDB records before RuntimeGraph or Ladybug integration. |
 
 ## Combined Doctrine
 

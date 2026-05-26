@@ -49,6 +49,7 @@ file-header-standard.md
 filesystem-target.md
 four-repo-roadmap.md
 graph-persistence-runtimegraph.md
+graph-relation-write-path.md
 hot-state-plane.md
 host-observation-probe.md
 journal-replay-parser-hardening.md

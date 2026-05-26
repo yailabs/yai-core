@@ -5,6 +5,8 @@ Status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
 ## Executive Summary
 
 SPINE.40 defines graph persistence and RuntimeGraph as separate surfaces.
+SPINE.41 adds an active-minimal `yai.graph_relation.v1` relation write path
+from LMDB records.
 
 Graph persistence is the future durable relation truth / rebuild contract.
 Graph persistence owns durable typed relations. RuntimeGraph is the future
@@ -20,6 +22,8 @@ Added commands:
 ```bash
 yai graph schema
 yai graph runtime-status
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> --limit 20
 ```
 
 Changed commands:
@@ -60,6 +64,8 @@ indexes, reverse adjacency indexes, case indexes, subject indexes, policy
 indexes and retrieval-unit bindings.
 
 SPINE.40 does not implement that working set. It exposes schema/status only.
+SPINE.41 still does not implement RuntimeGraph. It writes durable graph
+relations to `lmdb_graph_relations_v0`.
 
 ## CLI Output
 
@@ -69,7 +75,7 @@ SPINE.40 does not implement that working set. It exposes schema/status only.
 graph_schema:
 node_kinds:
 edge_kinds:
-graph_store_claim: none
+relation_write_path: active_minimal
 ```
 
 `yai graph runtime-status` must expose:
@@ -81,8 +87,23 @@ role: in_memory_active_case_working_set
 durable_truth: graph_persistence
 hnsw: future_candidate_index
 context_compiler: future_consumer
-graph_store_claim: none
+relation_write_path: active_minimal
+graph_store: lmdb_graph_relations_v0
 ```
+
+`yai graph materialize` must expose:
+
+```text
+schema: yai.graph_relation.v1
+relations_written:
+relations_duplicate:
+relations_skipped:
+runtime_graph_updated: false
+```
+
+`yai graph relations` must expose `relation_id`, `edge_kind` and
+`source_record_id`. Required edge examples include `decision_controls_attempt`
+and `receipt_records_effect`.
 
 ## Validation
 
@@ -94,14 +115,15 @@ target/debug/yai graph runtime-status
 ```
 
 Smoke verifies graph node kind roundtrip, graph edge kind roundtrip, CLI schema
-output, runtime boundary output and no graph persistence implementation claim.
+output, runtime boundary output and no RuntimeGraph implementation claim.
 
 ## Non-Goals
 
 ```text
 No full graph persistence engine.
 No Ladybug integration yet.
-No RuntimeGraph working set implementation beyond minimal schema/status.
+No RuntimeGraph working set implementation beyond minimal schema/status and
+relation write path.
 No graph rebuild.
 No HNSW.
 No context compiler.

@@ -868,15 +868,31 @@ yai graph runtime-status
 ```
 
 `yai graph schema` prints graph node kinds and edge kinds plus
-`graph_store_claim: none`. `yai graph runtime-status` reports RuntimeGraph as
-`planned`, with role `in_memory_active_case_working_set`, durable truth
-`graph_persistence`, HNSW as `future_candidate_index` and Context Compiler as
-`future_consumer`.
+the active-minimal relation write path. `yai graph runtime-status` reports
+RuntimeGraph as `planned`, with role `in_memory_active_case_working_set`,
+durable truth `graph_persistence`, HNSW as `future_candidate_index` and Context
+Compiler as `future_consumer`.
 
 Graph persistence owns durable typed relations. RuntimeGraph is the in-memory active case working set.
 HNSW finds candidate nodes and HNSW is not graph truth.
 Context Compiler renders controlled views. Projection does not disappear.
 Persistent truth on disk. Computational shape in memory.
+
+SPINE.41 adds the first graph relation write commands:
+
+```text
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref> [--limit <N>]
+```
+
+`yai graph materialize` derives `yai.graph_relation.v1` from LMDB records and
+writes to `lmdb_graph_relations_v0`. It reports `relation_id` provenance,
+`source_record_id`, `relations_written`, `relations_duplicate` and
+`relations_skipped`. The required derived edges include
+`decision_controls_attempt` and `receipt_records_effect`.
+
+`yai graph relations` lists relations by case. RuntimeGraph remains planned.
+Ladybug integration remains future.
 
 ## Projection Commands
 

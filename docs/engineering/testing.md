@@ -1143,7 +1143,7 @@ The CLI smoke verifies:
 yai graph schema prints node_kinds and edge_kinds
 yai graph runtime-status says planned
 runtime_graph role is in_memory_active_case_working_set
-graph_store_claim is none
+relation_write_path is active_minimal
 ```
 
 The doctrine being protected is:
@@ -1162,6 +1162,33 @@ Computational shape in memory.
 ```text
 make check-graph-runtimegraph-doctrine
 make smoke-spine40
+```
+
+## SPINE.41 Graph Relation Write Path Loop
+
+`tests/smoke/graph-relation-write-path/test_graph_relation_write_path.sh`
+replays a small journal into LMDB, materializes graph relations and lists them
+by case.
+
+The CLI smoke verifies:
+
+```text
+yai graph materialize --case case:spine41
+schema: yai.graph_relation.v1
+relations_written non-zero
+second materialize is duplicate-aware
+yai graph relations --case case:spine41 --limit 30
+edge_kind: decision_controls_attempt
+edge_kind: receipt_records_effect
+runtime_graph_updated: false
+```
+
+SPINE.41 keeps RuntimeGraph remains planned. Ladybug integration remains future
+while proving typed graph relation write path behavior.
+
+```text
+make check-graph-relation-write-path
+make smoke-spine41
 ```
 
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
