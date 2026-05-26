@@ -59,3 +59,20 @@ make smoke-spine42
 The smoke verifies active-minimal runtime status, non-zero node and edge counts
 after graph materialization, populated incoming/outgoing indexes, empty-case
 zero behavior, resident service planned posture and no active HNSW.
+
+## SPINE.43 Rebuild Link
+
+RuntimeGraph rebuild extends this working set with:
+
+```bash
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild --case <case_ref> --from graph-relations
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+```
+
+The rebuild chain is journal to LMDB to graph relations to
+`runtime_graph_rebuild` to `runtime-summary`. It emits
+`yai.runtime_graph_rebuild_report.v1`. RuntimeGraph is not durable truth and
+resident service planned remains the posture.
+The active lab path is `docs/labs/filesystem-loop`.

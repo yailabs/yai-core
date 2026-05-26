@@ -68,3 +68,15 @@ No HNSW.
 No retrieval units.
 No Context Compiler.
 No graph query planner.
+
+## Rebuild Boundary
+
+SPINE.43 adds RuntimeGraph rebuild:
+
+```text
+journal -> LMDB -> graph relations -> runtime_graph_rebuild -> runtime-summary
+```
+
+The report schema is `yai.runtime_graph_rebuild_report.v1`. RuntimeGraph is not
+durable truth. RuntimeGraph is not durable truth and resident service planned
+remains the posture. The active lab path is `docs/labs/filesystem-loop`.

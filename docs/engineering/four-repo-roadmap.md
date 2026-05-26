@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.42 RuntimeGraph In-Memory Working Set. | SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store. | SPINE.44 RuntimeGraph Query / Causal Path / Diagnostics. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -109,6 +109,14 @@ RuntimeGraph in-memory working set loaded from graph relations with
 `yai graph runtime-load --case <case_ref>`. The working set is
 per-command ephemeral; resident service, HNSW and Context Compiler remain
 future.
+SPINE.43 adds RuntimeGraph rebuild: `yai graph rebuild --case <case_ref>
+--from journal --path <journal.jsonl>` runs journal replay to LMDB, graph
+relations materialization and RuntimeGraph load, while `yai graph rebuild
+--case <case_ref> --from graph-relations` rebuilds from existing graph
+relations. Rebuild emits `yai.runtime_graph_rebuild_report.v1`,
+`runtime_graph_rebuild` and `runtime-summary` evidence. RuntimeGraph is not
+durable truth. RuntimeGraph is not durable truth and resident service planned
+remains the posture. The active lab path is `docs/labs/filesystem-loop`.
 
 Do not schedule future work with the old NEW numbering. The next active
 delivery is SPINE.43.
@@ -273,7 +281,7 @@ SPINE.39  Journal Replay Freeze                                     done
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
 SPINE.41  Graph Relation Write Path                                  done
 SPINE.42  RuntimeGraph In-Memory Working Set                         done
-SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
+SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     done
 SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
 SPINE.45  Graph + RuntimeGraph Freeze                                planned
 

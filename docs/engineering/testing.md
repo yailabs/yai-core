@@ -125,7 +125,7 @@ target/debug/yai hot status
 ```text
 runtime/install path commands are inspectable
 pack and foundation guards are callable directly
-filesystem-loop lab policy pack fixtures are staged before provider attach
+filesystem-loop lab pack fixture files are staged before provider attach
 daemon filesystem loop materializes subject:policy-pack and policy/projection/authority residue
 yai doctor reports runtime and hot-state status
 yai hot status handles missing, corrupt and valid snapshots
@@ -152,15 +152,17 @@ build/yaid --version
 Manual pack fixture checkpoint:
 
 ```text
-cp docs/labs/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/
-python -m json.tool "$YAI_RUN/policy-packs/filesystem-sandbox-policy.json"
+mkdir -p "$YAI_RUN/pack-fixture/policies"
+cp docs/labs/filesystem-loop/pack-fixture/pack.yaml "$YAI_RUN/pack-fixture"/
+cp docs/labs/filesystem-loop/pack-fixture/policies/*.json "$YAI_RUN/pack-fixture/policies"/
+python -m json.tool "$YAI_RUN/pack-fixture/policies/filesystem-sandbox-policy.json"
 yai daemon run-filesystem-loop --socket "$YAI_SOCKET"
 grep 'subject:policy-pack' "$JOURNAL"
 grep 'policy:manual-filesystem-sandbox-v0' "$JOURNAL"
 ```
 
-This proves the current filesystem-loop lab fixture posture. It does not imply a `yai pack`
-runtime command exists.
+This proves the current filesystem-loop lab fixture posture. It does not imply
+a generic pack runtime command exists.
 
 ## SPINE.28B Source Surface Cleanup
 
@@ -1651,3 +1653,35 @@ binaries only; it must not delete `YAI_HOME`, which is user data.
 ## Rule
 
 Tests must not depend on one agent framework. Every failure should produce a divergence, receipt gap, denied decision or explicit unsupported-mode result.
+
+## SPINE.43 RuntimeGraph Rebuild Loop
+
+`tests/smoke/runtimegraph-rebuild/test_runtimegraph_rebuild.sh` validates the
+RuntimeGraph rebuild chain:
+
+```text
+journal -> LMDB -> graph relations -> runtime_graph_rebuild -> runtime-summary
+```
+
+The smoke verifies journal rebuild, report readback, graph-relations rebuild,
+duplicate-aware second rebuild, missing-case zero behavior, bad-journal failed
+status and resident service planned posture.
+
+```bash
+make check-runtimegraph-rebuild
+make smoke-spine43
+```
+
+Required command surface:
+
+```bash
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+yai graph rebuild --case <case_ref> --from graph-relations
+```
+
+Required output includes `yai.runtime_graph_rebuild_report.v1`,
+`runtime_graph_rebuild`, `journal`, `LMDB`, `graph relations`,
+`runtime-summary`, `resident service planned` and the rule that RuntimeGraph is
+not durable truth. RuntimeGraph is not durable truth.

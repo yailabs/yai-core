@@ -126,6 +126,10 @@ minimal as a per-command ephemeral in-memory working set loaded from graph
 relations. Graph persistence is durable truth; resident service, HNSW and
 Context Compiler remain future.
 
+SPINE.43 adopts RuntimeGraph Rebuild. RuntimeGraph rebuild reconstructs the
+per-command working set from journal, LMDB and graph relations, emits
+`yai.runtime_graph_rebuild_report.v1` and keeps RuntimeGraph non-durable.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -160,6 +164,7 @@ Context Compiler remain future.
 | 0037 | Graph persistence / RuntimeGraph | Graph persistence owns durable typed relations; RuntimeGraph owns active in-memory case computation. |
 | 0038 | Graph relation write path | `yai.graph_relation.v1` materializes typed relations from LMDB records before RuntimeGraph or Ladybug integration. |
 | 0039 | RuntimeGraph working set | RuntimeGraph loads graph relations into a per-command ephemeral in-memory working set without owning durable truth. |
+| 0040 | RuntimeGraph rebuild | RuntimeGraph rebuild produces a diagnostic report from journal, LMDB and graph relations without making RuntimeGraph durable truth. |
 
 ## Combined Doctrine
 

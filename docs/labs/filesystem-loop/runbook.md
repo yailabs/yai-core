@@ -315,3 +315,34 @@ resident: false
 
 `case:missing` must report zero nodes and zero edges. RuntimeGraph is an
 in-memory working set only; graph persistence is durable truth.
+
+## RuntimeGraph Rebuild
+
+SPINE.43 rebuilds RuntimeGraph from replayable and durable sources. RuntimeGraph
+is not durable truth; it remains a per-command ephemeral working set. Resident
+service planned remains future work. The active lab path is
+`docs/labs/filesystem-loop`.
+
+```bash
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+yai graph rebuild --case <case_ref> --from graph-relations
+```
+
+Expected signals:
+
+```text
+runtime_graph_rebuild:
+report_schema: yai.runtime_graph_rebuild_report.v1
+journal
+LMDB
+graph relations
+runtime-summary
+resident service planned
+```
+
+Bad journals must fail cleanly with `journal_replay_status: failed`,
+`rebuild_status: failed`, zero RuntimeGraph nodes/edges and no fake resident
+RuntimeGraph service. Do not clean up or include `docs/labs/nvidia` changes in
+this RuntimeGraph rebuild wave.

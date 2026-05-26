@@ -78,3 +78,22 @@ case:missing edges_total: 0
 hnsw: future_candidate_index
 context_compiler: future_consumer
 ```
+
+## RuntimeGraph Rebuild Checks
+
+SPINE.43 checks RuntimeGraph rebuild from replayable and durable sources.
+RuntimeGraph is not durable truth; the active lab path is
+`docs/labs/filesystem-loop`.
+
+```bash
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+yai graph rebuild --case <case_ref> --from graph-relations
+```
+
+Expected signals include `RuntimeGraph rebuild`, `runtime_graph_rebuild`,
+`report_schema: yai.runtime_graph_rebuild_report.v1`, `journal`, `LMDB`,
+`graph relations`, `runtime-summary`, `resident service planned`, completed
+journal/materialize/runtime statuses, missing-case zero nodes/edges and bad
+journal failure without a false complete.

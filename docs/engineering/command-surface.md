@@ -945,14 +945,14 @@ hot-state source.
 | Primitive | View | Command | Lab test | Docs |
 |---|---|---|---|---|
 | pack doctrine | required pack doctrine doc/phrases | `make check-pack-doctrine` | `make check-pack-doctrine` | `pack-format.md`, `pack-roadmap.md` |
-| filesystem-loop lab policy pack fixtures | staged pack material before provider attach | shell copy/JSON validation in lab | `cp docs/labs/filesystem-loop/policy-packs/*.json "$YAI_RUN/policy-packs"/` | `docs/labs/filesystem-loop/runbook.md` |
+| filesystem-loop lab pack fixture files | staged pack material before provider attach | shell copy/JSON validation in lab | `cp docs/labs/filesystem-loop/pack-fixture/policies/*.json "$YAI_RUN/pack-fixture/policies"/` | `docs/labs/filesystem-loop/runbook.md` |
 | pack-derived case residue | materialized policy/projection/authority records | `yai daemon run-filesystem-loop --socket <path>` | `grep subject:policy-pack "$JOURNAL"` | `docs/labs/filesystem-loop/runbook.md` |
 | active docs | canonical engineering doc set | `make check-docs` | `make check-docs` | `README.md` |
 
 Pack runtime commands are not implemented yet. SPINE.21 only provides pack
-doctrine and guards. The filesystem loop lab stages policy pack fixtures and
+doctrine and guards. The filesystem loop lab stages pack fixture files and
 the daemon loop materializes their current posture into journal records for the
-filesystem-loop lab case. Do not document a `yai pack` command until the pack runtime exists.
+filesystem-loop lab case. Do not document a generic pack runtime command until the pack runtime exists.
 
 ## Foundation / Layout Checks
 
@@ -1059,4 +1059,36 @@ make smoke-spine29
 make smoke-spine30
 make check-hot-state-freeze
 make check-lmdb-record-plane-doctrine
+```
+
+## RuntimeGraph Rebuild Commands
+
+SPINE.43 adds RuntimeGraph rebuild. RuntimeGraph rebuild runs the durable
+chain from journal or existing graph relations into a per-command RuntimeGraph
+working set and writes `yai.runtime_graph_rebuild_report.v1`.
+
+```bash
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild --case <case_ref> --from graph-relations
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+```
+
+`yai graph rebuild --from journal` runs journal replay to LMDB, graph
+materialization and RuntimeGraph load. `yai graph rebuild --from
+graph-relations` loads from existing graph relations. RuntimeGraph is not
+durable truth. RuntimeGraph is not durable truth and resident service planned
+remains the runtime posture.
+
+Required output:
+
+```text
+runtime_graph_rebuild:
+journal_replay_status:
+graph_materialize_status:
+runtime_graph_status:
+nodes_total:
+edges_total:
+rebuild_status:
+report_schema: yai.runtime_graph_rebuild_report.v1
 ```

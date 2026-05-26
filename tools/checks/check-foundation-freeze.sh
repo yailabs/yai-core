@@ -66,6 +66,7 @@ process-carrier-signal-control.md
 provider-runtime-lan-target-surface.md
 replay-idempotency-schema-version.md
 replay-diagnostics-rebuild-report.md
+runtimegraph-rebuild.md
 runtimegraph-working-set.md
 source-surface.md
 testing.md

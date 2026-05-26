@@ -69,3 +69,27 @@ dirty: no
 stale: no
 resident: false
 ```
+
+## RuntimeGraph Rebuild Output
+
+SPINE.43 output reports RuntimeGraph rebuild through
+`yai.runtime_graph_rebuild_report.v1`. RuntimeGraph is not durable truth; the
+journal to LMDB to graph relations chain stays explicit. The active lab path is
+`docs/labs/filesystem-loop`.
+
+```text
+runtime_graph_rebuild:
+source_mode: journal
+journal_replay_status: completed
+graph_materialize_status: completed
+runtime_graph_status: completed
+nodes_total: <non-zero>
+edges_total: <non-zero>
+rebuild_status: completed
+report_schema: yai.runtime_graph_rebuild_report.v1
+```
+
+The graph relations path must include `source_mode: graph_relations`, graph
+relations counts, `runtime-summary`, and resident service planned. Bad journals
+must report `journal_replay_status: failed`, `rebuild_status: failed`, zero
+nodes/edges and the specific error such as `invalid_json`.

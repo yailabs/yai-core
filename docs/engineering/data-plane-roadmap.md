@@ -116,7 +116,7 @@ SPINE.39  Journal Replay Freeze                                     done
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
 SPINE.41  Graph Relation Write Path                                  done
 SPINE.42  RuntimeGraph In-Memory Working Set                         done
-SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
+SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     done
 SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
 SPINE.45  Graph + RuntimeGraph Freeze                                planned
 
@@ -490,6 +490,21 @@ yai graph runtime-status
 yai graph runtime-load --case <case_ref>
 yai graph runtime-summary --case <case_ref>
 ```
+
+SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store adds:
+
+```text
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild --case <case_ref> --from graph-relations
+yai graph rebuild-report --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+```
+
+RuntimeGraph rebuild proves the chain from journal to LMDB to graph relations
+to `runtime_graph_rebuild` and `runtime-summary`. It emits
+`yai.runtime_graph_rebuild_report.v1`. RuntimeGraph is not durable truth and
+resident service planned remains the posture.
+The active lab path is `docs/labs/filesystem-loop`.
 
 RuntimeGraph is now an active-minimal in-memory working set loaded from
 `yai.graph_relation.v1` graph relations. It reports `nodes_total`,

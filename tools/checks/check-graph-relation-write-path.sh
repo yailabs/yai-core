@@ -82,7 +82,8 @@ if grep -RIn 'docs/manuals/manual-filesystem-loop-validation' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |
   grep -v 'not the active' |
   grep -v 'replaces' |
-  grep -v 'historical' >/dev/null; then
+  grep -v 'historical' |
+  grep -v 'pre-redirect' >/dev/null; then
   printf 'active docs contain unqualified old filesystem-loop manual path\n' >&2
   exit 1
 fi

@@ -378,3 +378,8 @@ SPINE.42	../yai-dev/src/substrate/graph/*	in-memory graph-like working set	yai	R
 SPINE.42	../yai-dev/src/substrate/views/*	view graph posture	yai	RuntimeGraph future Context Compiler consumer	mine_concept	none	complete	read-only; context compiler remains future
 SPINE.42	../yai-dev/src/lineage/*	lineage traversal posture	yai	outgoing incoming adjacency counts	mine_concept	none	complete	read-only; no causal path planner yet
 SPINE.42	../yai-dev/src/runtime/observation/*	runtime observation graph posture	yai	active-case working set inspection	mine_concept	none	complete	read-only; observation graph concepts classified only
+SPINE.43	../yai-dev/src/substrate/graph/*	runtime graph rebuild posture	yai	RuntimeGraph rebuild report and graph relation source chain	mine_concept	none	complete	read-only; no Ladybug integration and no resident service
+SPINE.43	../yai-dev/src/substrate/views/*	view rebuild posture	yai	runtime-summary after rebuild	mine_concept	none	complete	read-only; Context Compiler remains future
+SPINE.43	../yai-dev/src/lineage/*	lineage replay posture	yai	rebuild from journal LMDB graph relations	mine_concept	none	complete	read-only; causal path diagnostics reserved for SPINE.44
+SPINE.43	../yai-dev/src/runtime/observation/*	observation graph rebuild posture	yai	rebuild warnings and failed journal diagnostics	mine_concept	none	complete	read-only; observation graph concepts classified only
+SPINE.43	../yai-dev/src/runtime/execution/process_replay.c	replay chain posture	yai	journal to LMDB to graph relations to RuntimeGraph	mine_concept	none	complete	read-only; no carrier/provider behavior changes

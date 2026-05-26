@@ -31,8 +31,8 @@ use yai_core_engine::query::{QueryFilter, QueryResult};
 use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::lmdb::{
-    LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata, GRAPH_RELATION_SCHEMA,
-    GRAPH_RELATION_STORE_NAME, RECORD_SCHEMA,
+    GraphMaterializeReport, LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata,
+    RuntimeGraphLoadResult, GRAPH_RELATION_SCHEMA, GRAPH_RELATION_STORE_NAME, RECORD_SCHEMA,
 };
 use yai_core_engine::store::Store;
 
@@ -57,7 +57,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.42 RuntimeGraph In-Memory Working Set");
+    println!("status: SPINE.43 RuntimeGraph Rebuild");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -73,7 +73,7 @@ fn print_info() {
     println!("journal_inspection: file-based JSONL v0");
     println!("journal_replay: LMDB materialization with schema/cursor/report metadata v0");
     println!("graph_relation_write_path: active_minimal");
-    println!("runtime_graph: active_minimal per_command_ephemeral");
+    println!("runtime_graph: active_minimal per_command_ephemeral rebuildable");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -218,6 +218,9 @@ fn print_usage() {
     println!("       yai graph relations --case <case_ref> [--limit <N>]");
     println!("       yai graph runtime-load --case <case_ref>");
     println!("       yai graph runtime-summary --case <case_ref>");
+    println!("       yai graph rebuild --case <case_ref> --from graph-relations");
+    println!("       yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>");
+    println!("       yai graph rebuild-report --case <case_ref>");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -2007,6 +2010,33 @@ fn replay_report_dir() -> PathBuf {
 
 fn replay_report_path(journal_identity: &str) -> PathBuf {
     replay_report_dir().join(format!("{journal_identity}.replay-report.json"))
+}
+
+fn runtime_graph_rebuild_report_dir() -> PathBuf {
+    yai_home()
+        .join("store")
+        .join("graph")
+        .join("rebuild-reports")
+}
+
+fn runtime_graph_rebuild_report_path(case_ref: &str) -> PathBuf {
+    runtime_graph_rebuild_report_dir().join(format!(
+        "{}.runtime-graph-rebuild-report.json",
+        safe_case_ref_for_filename(case_ref)
+    ))
+}
+
+fn safe_case_ref_for_filename(case_ref: &str) -> String {
+    case_ref
+        .chars()
+        .map(|ch| {
+            if ch.is_ascii_alphanumeric() || ch == '-' || ch == '_' || ch == '.' {
+                ch
+            } else {
+                '_'
+            }
+        })
+        .collect()
 }
 
 struct RecordStoreStatus {
@@ -5847,6 +5877,410 @@ fn graph_runtime_load(args: &[String], summary_only: bool) -> Result<(), String>
     Ok(())
 }
 
+#[derive(Clone, Debug)]
+struct RuntimeGraphRebuildReport {
+    case_ref: String,
+    source_mode: String,
+    journal_path: String,
+    journal_identity: String,
+    lmdb_path: String,
+    graph_relation_source: String,
+    records_seen: usize,
+    records_written: usize,
+    records_duplicate: usize,
+    relations_seen: usize,
+    relations_written: usize,
+    relations_duplicate: usize,
+    relations_skipped: usize,
+    nodes_total: usize,
+    edges_total: usize,
+    outgoing_index_entries: usize,
+    incoming_index_entries: usize,
+    runtime_generation: usize,
+    dirty: bool,
+    stale: bool,
+    journal_replay_status: String,
+    graph_materialize_status: String,
+    runtime_graph_status: String,
+    rebuild_status: String,
+    errors: Vec<String>,
+    warnings: Vec<String>,
+}
+
+impl RuntimeGraphRebuildReport {
+    fn empty(case_ref: &str, source_mode: &str) -> Self {
+        Self {
+            case_ref: case_ref.to_string(),
+            source_mode: source_mode.to_string(),
+            journal_path: String::new(),
+            journal_identity: String::new(),
+            lmdb_path: record_store_path().display().to_string(),
+            graph_relation_source: GRAPH_RELATION_STORE_NAME.to_string(),
+            records_seen: 0,
+            records_written: 0,
+            records_duplicate: 0,
+            relations_seen: 0,
+            relations_written: 0,
+            relations_duplicate: 0,
+            relations_skipped: 0,
+            nodes_total: 0,
+            edges_total: 0,
+            outgoing_index_entries: 0,
+            incoming_index_entries: 0,
+            runtime_generation: 0,
+            dirty: false,
+            stale: false,
+            journal_replay_status: "not_applicable".to_string(),
+            graph_materialize_status: "not_started".to_string(),
+            runtime_graph_status: "not_started".to_string(),
+            rebuild_status: "not_started".to_string(),
+            errors: Vec::new(),
+            warnings: Vec::new(),
+        }
+    }
+
+    fn with_runtime_graph(mut self, graph: &RuntimeGraphLoadResult) -> Self {
+        self.nodes_total = graph.nodes_total;
+        self.edges_total = graph.edges_total;
+        self.outgoing_index_entries = graph.outgoing_index_entries;
+        self.incoming_index_entries = graph.incoming_index_entries;
+        self.runtime_generation = graph.generation;
+        self.dirty = graph.dirty;
+        self.stale = graph.stale;
+        self.runtime_graph_status = "completed".to_string();
+        if graph.edges_total == 0 {
+            self.warnings
+                .push("no_graph_relations_for_case".to_string());
+        }
+        self
+    }
+}
+
+fn graph_rebuild(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let source_mode = named_arg(args, "--from")?;
+    match source_mode.as_str() {
+        "graph-relations" => graph_rebuild_from_graph_relations(&case_ref),
+        "journal" => {
+            let path = PathBuf::from(named_arg(args, "--path")?);
+            graph_rebuild_from_journal(&case_ref, &path)
+        }
+        other => Err(format!("unsupported_rebuild_source: {other}")),
+    }
+}
+
+fn graph_rebuild_from_graph_relations(case_ref: &str) -> Result<(), String> {
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        let mut report = RuntimeGraphRebuildReport::empty(case_ref, "graph_relations");
+        report.rebuild_status = "missing_source".to_string();
+        report.errors.push("record_store_not_ready".to_string());
+        let report_path = write_runtime_graph_rebuild_report(&report)?;
+        print_runtime_graph_rebuild(&report, &report_path);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let graph = store.load_runtime_graph_for_case(case_ref)?;
+    let mut report =
+        RuntimeGraphRebuildReport::empty(case_ref, "graph_relations").with_runtime_graph(&graph);
+    report.relations_seen = graph.edges_total;
+    report.graph_materialize_status = "not_applicable".to_string();
+    report.rebuild_status = "completed".to_string();
+    let report_path = write_runtime_graph_rebuild_report(&report)?;
+    print_runtime_graph_rebuild(&report, &report_path);
+    Ok(())
+}
+
+fn graph_rebuild_from_journal(case_ref: &str, path: &Path) -> Result<(), String> {
+    let mut report = RuntimeGraphRebuildReport::empty(case_ref, "journal");
+    report.journal_path = path.display().to_string();
+    if !path.exists() || !path.is_file() {
+        let profile = replay_profile_for_missing(path);
+        report.journal_identity = profile.journal_identity;
+        report.journal_replay_status = "failed".to_string();
+        report.rebuild_status = "missing_source".to_string();
+        report.errors.push("missing_journal".to_string());
+        let report_path = write_runtime_graph_rebuild_report(&report)?;
+        print_runtime_graph_rebuild(&report, &report_path);
+        println!("reason: missing_journal");
+        return Ok(());
+    }
+
+    let inspection = Journal::inspect_jsonl(path)
+        .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+    let contents = fs::read_to_string(path).map_err(|error| {
+        format!(
+            "failed to read {} for runtime graph rebuild identity: {error}",
+            path.display()
+        )
+    })?;
+    let profile = replay_profile_for_inspection(path, &contents, &inspection);
+    report.journal_identity = profile.journal_identity.clone();
+    report.records_seen = inspection.valid_entries;
+
+    if !inspection.replay_ready() {
+        let reason = replay_failure_reason(&inspection);
+        report.journal_replay_status = "failed".to_string();
+        report.rebuild_status = "failed".to_string();
+        report.errors.push(reason.clone());
+        let report_path = write_runtime_graph_rebuild_report(&report)?;
+        print_runtime_graph_rebuild(&report, &report_path);
+        println!("reason: {reason}");
+        return Ok(());
+    }
+
+    let journal = Journal::load_jsonl(path)
+        .map_err(|error| format!("runtime graph rebuild failed to load journal: {error}"))?;
+    let store = LmdbRecordStore::open(record_store_path())
+        .map_err(|error| format!("runtime graph rebuild failed to open LMDB: {error}"))?;
+    let started_at = unix_timestamp_string();
+    store.put_replay_metadata(&replay_metadata_in_progress(
+        path,
+        &profile,
+        &inspection,
+        &started_at,
+    ))?;
+    let import_report = store.import_journal_with_report(&journal, &path.display().to_string())?;
+    let metadata = replay_metadata_from_report(
+        path,
+        &profile,
+        &inspection,
+        &import_report,
+        &started_at,
+        &unix_timestamp_string(),
+    );
+    store.put_replay_metadata(&metadata)?;
+
+    let materialize_report = store.materialize_graph_relations_for_case(case_ref)?;
+    let graph = store.load_runtime_graph_for_case(case_ref)?;
+
+    report.records_seen = import_report.records_seen;
+    report.records_written = import_report.records_written;
+    report.records_duplicate = import_report.records_duplicate;
+    apply_materialize_report(&mut report, &materialize_report);
+    report = report.with_runtime_graph(&graph);
+    report.journal_replay_status = "completed".to_string();
+    report.graph_materialize_status = "completed".to_string();
+    report.rebuild_status = "completed".to_string();
+    let report_path = write_runtime_graph_rebuild_report(&report)?;
+    print_runtime_graph_rebuild(&report, &report_path);
+    Ok(())
+}
+
+fn apply_materialize_report(
+    report: &mut RuntimeGraphRebuildReport,
+    materialize_report: &GraphMaterializeReport,
+) {
+    report.relations_seen = materialize_report.relations_seen;
+    report.relations_written = materialize_report.relations_written;
+    report.relations_duplicate = materialize_report.relations_duplicate;
+    report.relations_skipped = materialize_report.relations_skipped;
+}
+
+fn graph_rebuild_report(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let report_path = runtime_graph_rebuild_report_path(&case_ref);
+    if !report_path.is_file() {
+        println!("runtime_graph_rebuild_report:");
+        println!("report_schema: yai.runtime_graph_rebuild_report.v1");
+        println!("rebuild_report: not_found");
+        println!("case_ref: {case_ref}");
+        println!("rebuild_status: not_started");
+        return Ok(());
+    }
+    let report = fs::read_to_string(&report_path)
+        .map_err(|error| format!("failed to read {}: {error}", report_path.display()))?;
+    println!("runtime_graph_rebuild_report:");
+    println!(
+        "report_schema: {}",
+        json_string_or(
+            &report,
+            "report_schema",
+            "yai.runtime_graph_rebuild_report.v1"
+        )
+    );
+    println!("rebuild_report: {}", report_path.display());
+    println!(
+        "case_ref: {}",
+        json_string_or(&report, "case_ref", &case_ref)
+    );
+    println!(
+        "source_mode: {}",
+        json_string_or(&report, "source_mode", "unknown")
+    );
+    println!(
+        "journal_identity: {}",
+        json_string_or(&report, "journal_identity", "none")
+    );
+    println!(
+        "journal_replay_status: {}",
+        json_string_or(&report, "journal_replay_status", "unknown")
+    );
+    println!(
+        "graph_materialize_status: {}",
+        json_string_or(&report, "graph_materialize_status", "unknown")
+    );
+    println!(
+        "runtime_graph_status: {}",
+        json_string_or(&report, "runtime_graph_status", "unknown")
+    );
+    print_report_number(&report, "records_seen", 0);
+    print_report_number(&report, "relations_seen", 0);
+    print_report_number(&report, "relations_written", 0);
+    print_report_number(&report, "relations_duplicate", 0);
+    print_report_number(&report, "nodes_total", 0);
+    print_report_number(&report, "edges_total", 0);
+    print_report_number(&report, "outgoing_index_entries", 0);
+    print_report_number(&report, "incoming_index_entries", 0);
+    println!(
+        "rebuild_status: {}",
+        json_string_or(&report, "rebuild_status", "unknown")
+    );
+    if report.contains("\"no_graph_relations_for_case\"") {
+        println!("warnings:");
+        println!("- no_graph_relations_for_case");
+    }
+    if report.contains("\"invalid_json\"") {
+        println!("errors:");
+        println!("- invalid_json");
+    }
+    Ok(())
+}
+
+fn print_runtime_graph_rebuild(report: &RuntimeGraphRebuildReport, report_path: &Path) {
+    println!("runtime_graph_rebuild:");
+    println!("case_ref: {}", report.case_ref);
+    println!("source_mode: {}", report.source_mode);
+    if !report.journal_path.is_empty() {
+        println!("journal_path: {}", report.journal_path);
+    }
+    if !report.journal_identity.is_empty() {
+        println!("journal_identity: {}", report.journal_identity);
+    }
+    println!("lmdb_path: {}", report.lmdb_path);
+    println!("graph_relation_source: {}", report.graph_relation_source);
+    println!("journal_replay_status: {}", report.journal_replay_status);
+    println!(
+        "graph_materialize_status: {}",
+        report.graph_materialize_status
+    );
+    println!("runtime_graph_status: {}", report.runtime_graph_status);
+    println!("records_seen: {}", report.records_seen);
+    println!("records_written: {}", report.records_written);
+    println!("records_duplicate: {}", report.records_duplicate);
+    println!("relations_seen: {}", report.relations_seen);
+    println!("relations_written: {}", report.relations_written);
+    println!("relations_duplicate: {}", report.relations_duplicate);
+    println!("relations_skipped: {}", report.relations_skipped);
+    println!("nodes_total: {}", report.nodes_total);
+    println!("edges_total: {}", report.edges_total);
+    println!("outgoing_index_entries: {}", report.outgoing_index_entries);
+    println!("incoming_index_entries: {}", report.incoming_index_entries);
+    println!("runtime_generation: {}", report.runtime_generation);
+    println!("dirty: {}", yes_no(report.dirty));
+    println!("stale: {}", yes_no(report.stale));
+    println!("rebuild_status: {}", report.rebuild_status);
+    println!("report_schema: yai.runtime_graph_rebuild_report.v1");
+    println!("rebuild_report: {}", report_path.display());
+    if !report.warnings.is_empty() {
+        println!("warnings:");
+        for warning in &report.warnings {
+            println!("- {warning}");
+        }
+    }
+    if !report.errors.is_empty() {
+        println!("errors:");
+        for error in &report.errors {
+            println!("- {error}");
+        }
+    }
+}
+
+fn write_runtime_graph_rebuild_report(
+    report: &RuntimeGraphRebuildReport,
+) -> Result<PathBuf, String> {
+    fs::create_dir_all(runtime_graph_rebuild_report_dir()).map_err(|error| {
+        format!(
+            "failed to create RuntimeGraph rebuild report dir {}: {error}",
+            runtime_graph_rebuild_report_dir().display()
+        )
+    })?;
+    let report_path = runtime_graph_rebuild_report_path(&report.case_ref);
+    fs::write(&report_path, runtime_graph_rebuild_report_json(report))
+        .map_err(|error| format!("failed to write {}: {error}", report_path.display()))?;
+    Ok(report_path)
+}
+
+fn runtime_graph_rebuild_report_json(report: &RuntimeGraphRebuildReport) -> String {
+    format!(
+        concat!(
+            "{{\n",
+            "  \"report_schema\":\"yai.runtime_graph_rebuild_report.v1\",\n",
+            "  \"case_ref\":\"{}\",\n",
+            "  \"source_mode\":\"{}\",\n",
+            "  \"journal_path\":\"{}\",\n",
+            "  \"journal_identity\":\"{}\",\n",
+            "  \"lmdb_path\":\"{}\",\n",
+            "  \"graph_relation_source\":\"{}\",\n",
+            "  \"records_seen\":{},\n",
+            "  \"records_written\":{},\n",
+            "  \"records_duplicate\":{},\n",
+            "  \"relations_seen\":{},\n",
+            "  \"relations_written\":{},\n",
+            "  \"relations_duplicate\":{},\n",
+            "  \"relations_skipped\":{},\n",
+            "  \"nodes_total\":{},\n",
+            "  \"edges_total\":{},\n",
+            "  \"outgoing_index_entries\":{},\n",
+            "  \"incoming_index_entries\":{},\n",
+            "  \"runtime_generation\":{},\n",
+            "  \"dirty\":\"{}\",\n",
+            "  \"stale\":\"{}\",\n",
+            "  \"journal_replay_status\":\"{}\",\n",
+            "  \"graph_materialize_status\":\"{}\",\n",
+            "  \"runtime_graph_status\":\"{}\",\n",
+            "  \"rebuild_status\":\"{}\",\n",
+            "  \"errors\":[{}],\n",
+            "  \"warnings\":[{}]\n",
+            "}}\n"
+        ),
+        json_escape(&report.case_ref),
+        json_escape(&report.source_mode),
+        json_escape(&report.journal_path),
+        json_escape(&report.journal_identity),
+        json_escape(&report.lmdb_path),
+        json_escape(&report.graph_relation_source),
+        report.records_seen,
+        report.records_written,
+        report.records_duplicate,
+        report.relations_seen,
+        report.relations_written,
+        report.relations_duplicate,
+        report.relations_skipped,
+        report.nodes_total,
+        report.edges_total,
+        report.outgoing_index_entries,
+        report.incoming_index_entries,
+        report.runtime_generation,
+        yes_no(report.dirty),
+        yes_no(report.stale),
+        json_escape(&report.journal_replay_status),
+        json_escape(&report.graph_materialize_status),
+        json_escape(&report.runtime_graph_status),
+        json_escape(&report.rebuild_status),
+        json_string_array(&report.errors),
+        json_string_array(&report.warnings),
+    )
+}
+
+fn json_string_array(values: &[String]) -> String {
+    values
+        .iter()
+        .map(|value| format!("\"{}\"", json_escape(value)))
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
 fn graph_materialize(args: &[String]) -> Result<(), String> {
     let case_ref = named_arg(args, "--case")?;
     let status = LmdbRecordStore::status(record_store_path());
@@ -6215,6 +6649,18 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("runtime-summary") => {
             if let Err(error) = graph_runtime_load(&args[2..], true) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("rebuild") => {
+            if let Err(error) = graph_rebuild(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("rebuild-report") => {
+            if let Err(error) = graph_rebuild_report(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.42 RuntimeGraph In-Memory Working Set.
+Status: SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store.
 
 ## Completed Foundation
 
@@ -92,6 +92,14 @@ RuntimeGraph in-memory working set loaded from graph relations with
 per-command ephemeral, reports nodes, edges, incoming/outgoing adjacency,
 `resident_service: planned`, `hnsw: future_candidate_index` and
 `context_compiler: future_consumer`. Graph persistence is durable truth.
+SPINE.43 adds RuntimeGraph rebuild from journal and existing graph relations.
+The journal path rebuilds through LMDB replay, graph relations and
+RuntimeGraph load; the graph-relations path loads from existing typed
+relations. Rebuild emits `yai.runtime_graph_rebuild_report.v1`,
+`runtime_graph_rebuild` output and `runtime-summary` proof. RuntimeGraph is
+not durable truth. RuntimeGraph is not durable truth and resident service
+planned remains the runtime posture. The active lab path is
+`docs/labs/filesystem-loop`.
 
 Current:
 
@@ -137,6 +145,7 @@ SPINE.39 Journal Replay Freeze completed.
 SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema completed.
 SPINE.41 Graph Relation Write Path completed.
 SPINE.42 RuntimeGraph In-Memory Working Set completed.
+SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -144,7 +153,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store.
+SPINE.44 RuntimeGraph Query / Causal Path / Diagnostics.
 ```
 
 Foundation status:
