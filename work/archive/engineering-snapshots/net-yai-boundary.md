@@ -1,6 +1,6 @@
 # NET / YAI Boundary
 
-Status: NET.SPINE.0 root component scaffold
+Status: NET.SPINE.0R integrated module topology
 Authority: YAI repository
 
 YAI controls authority.
@@ -35,4 +35,6 @@ External nodes execute capabilities.
 
 NET facts can inform YAI decisions. They do not decide YAI decisions.
 
-See `net/docs/boundary.md` and `net/docs/yai-integration.md`.
+See `work/spines/net-spine.md` for the authoritative NET spine and
+`work/archive/architecture-snapshots/net-root-substrate.md` for the architecture
+snapshot.

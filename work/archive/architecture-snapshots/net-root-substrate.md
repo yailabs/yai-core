@@ -1,6 +1,6 @@
 # NET Root Substrate
 
-Status: NET.SPINE.0 root component scaffold
+Status: NET.SPINE.0R integrated module topology
 Authority: YAI repository
 
 NET is the root-level runtime communication substrate inside YAI.
@@ -9,8 +9,8 @@ YAI controls authority.
 NET moves streams.
 External nodes execute capabilities.
 
-The concrete component lives at `net/`. Detailed component docs live in
-`net/docs/`.
+The concrete component lives at `net/`. Public headers live at
+`include/yai/net/`. Internal planning and spine material lives under `work/`.
 
 ## Boundary
 
@@ -31,6 +31,6 @@ contracts.
 
 ## Current State
 
-NET.SPINE.0 mounts the component scaffold, public vocabulary headers, docs,
-Makefile targets and boundary guard. It does not implement discovery,
-transport, routing, server behavior or external node execution.
+NET.SPINE.0R realigns NET from repository-shaped scaffold to integrated YAI
+module topology. It does not implement discovery, transport, routing, server
+behavior or external node execution.

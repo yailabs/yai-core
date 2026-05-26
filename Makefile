@@ -189,10 +189,14 @@ info:
 	@printf "install-local: active PREFIX=%s YAI_HOME=%s\n" "$(PREFIX)" "$(YAI_HOME)"
 
 net-info:
-	@$(MAKE) -C net info
+	@printf "net: yai runtime communication module\n"
+	@printf "status: integrated scaffold\n"
+	@printf "discovery: not implemented\n"
+	@printf "transport: not implemented\n"
+	@printf "routing: not implemented\n"
+	@printf "external-nodes: planned\n"
 
 check-net-boundary:
-	@$(MAKE) -C net check
 	@./tools/checks/check-net-boundary.sh
 
 check-layout:

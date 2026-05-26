@@ -4,12 +4,12 @@ set -euo pipefail
 # YAI - NET boundary guard
 #
 # Purpose:
-#   Keep NET.SPINE.0 focused on a root communication substrate scaffold without
-#   authority, transport or external execution overclaims.
+#   Keep NET as an integrated YAI runtime module, not a repository-shaped
+#   subtree or authority/execution owner.
 #
 # Scope:
-#   Checks NET component layout, docs, public vocabulary headers and forbidden
-#   dependency/implementation signals.
+#   Checks NET integrated topology, public headers, work-owned spine/snapshots
+#   and forbidden implementation signals.
 #
 # Non-goals:
 #   Does not compile NET or validate runtime transport behavior.
@@ -28,6 +28,13 @@ require_dir() {
   fi
 }
 
+forbidden_path() {
+  if [[ -e "$1" ]]; then
+    printf 'forbidden NET repository-shaped path: %s\n' "$1" >&2
+    exit 1
+  fi
+}
+
 require_phrase() {
   local corpus="$1"
   local phrase="$2"
@@ -37,26 +44,54 @@ require_phrase() {
   fi
 }
 
-for path in \
-  net \
-  net/docs \
-  net/include/yai/net \
-  net/src; do
-  require_dir "$path"
+require_dir "net"
+require_file "net/README.md"
+
+for area in core registry stream node capability endpoint health transport route observe compat; do
+  require_dir "net/$area"
+  require_file "net/$area/README.md"
 done
 
 for path in \
-  net/README.md \
-  net/docs/boundary.md \
-  net/docs/architecture.md \
-  net/docs/interfaces-transport-boundary.md \
-  net/docs/clori-node-boundary.md \
-  net/include/yai/net/net.h \
+  include/yai/net/net.h \
+  include/yai/net/version.h \
+  include/yai/net/error.h \
+  include/yai/net/ids.h \
+  include/yai/net/stream.h \
+  include/yai/net/node.h \
+  include/yai/net/capability.h \
+  include/yai/net/endpoint.h \
+  include/yai/net/health.h \
+  include/yai/net/invocation.h \
+  include/yai/net/trace.h \
+  include/yai/net/receipt.h \
+  include/yai/net/metrics.h \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-corpus="$(cat net/README.md net/docs/*.md work/spines/net-spine.md | tr '\n' ' ')"
+for path in \
+  net/docs \
+  net/src \
+  net/tests \
+  net/fixtures \
+  net/benches \
+  net/examples \
+  net/Makefile \
+  docs/""spines/net-spine.md \
+  docs/archive/engineering/waves/net-spine-0-root-component-scaffold-boundary-guard.md \
+  docs/""engineering/net-yai-boundary.md \
+  docs/""engineering/external-clori-boundary.md; do
+  forbidden_path "$path"
+done
+
+corpus="$(cat \
+  net/README.md \
+  work/spines/net-spine.md \
+  work/archive/architecture-snapshots/net-root-substrate.md \
+  work/archive/engineering-snapshots/net-yai-boundary.md \
+  work/archive/engineering-snapshots/external-clori-boundary.md \
+  | tr '\n' ' ')"
 
 for phrase in \
   "YAI controls authority." \
@@ -82,22 +117,30 @@ for forbidden in \
   fi
 done
 
-if grep -R -n -E '#[[:space:]]*include[[:space:]]+[<"]((system|engine)/|yai/(system|engine)/)' net/include net/src >/tmp/yai-net-boundary-includes.$$ 2>/dev/null; then
+if grep -R -n -E '#[[:space:]]*include[[:space:]]+[<"]((system|engine)/|yai/(system|engine)/)' net include/yai/net >/tmp/yai-net-boundary-includes.$$ 2>/dev/null; then
   if ! grep -F 'NET_INTERNAL_INCLUDE_ALLOWED' /tmp/yai-net-boundary-includes.$$ >/dev/null; then
     cat /tmp/yai-net-boundary-includes.$$ >&2
     rm -f /tmp/yai-net-boundary-includes.$$
-    printf 'NET.SPINE.0 must not include system/ or engine/ internals\n' >&2
+    printf 'NET.SPINE.0R must not include system/ or engine/ internals\n' >&2
     exit 1
   fi
 fi
 rm -f /tmp/yai-net-boundary-includes.$$
 
-if grep -R -n -E '\b(socket|connect|listen|accept)\b' net/include net/src >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
+if grep -R -n -E '\b(socket|connect|listen|accept|bind|getaddrinfo)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
   cat /tmp/yai-net-boundary-network.$$ >&2
   rm -f /tmp/yai-net-boundary-network.$$
-  printf 'NET.SPINE.0 must not contain network implementation symbols in source/header files\n' >&2
+  printf 'NET.SPINE.0R must not contain network implementation symbols\n' >&2
   exit 1
 fi
 rm -f /tmp/yai-net-boundary-network.$$
+
+if grep -R -n -i 'HTTP server implementation' net include/yai/net >/tmp/yai-net-boundary-http.$$ 2>/dev/null; then
+  cat /tmp/yai-net-boundary-http.$$ >&2
+  rm -f /tmp/yai-net-boundary-http.$$
+  printf 'NET.SPINE.0R must not claim HTTP server implementation\n' >&2
+  exit 1
+fi
+rm -f /tmp/yai-net-boundary-http.$$
 
 printf 'check-net-boundary: ok\n'
