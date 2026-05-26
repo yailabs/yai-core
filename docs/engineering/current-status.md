@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.41 Graph Relation Write Path.
+Status: SPINE.42 RuntimeGraph In-Memory Working Set.
 
 ## Completed Foundation
 
@@ -86,7 +86,12 @@ minimal graph relation write path: `yai.graph_relation.v1` relations are
 derived from LMDB records, written to `lmdb_graph_relations_v0` and inspected
 with `yai graph materialize --case <case_ref>` and
 `yai graph relations --case <case_ref>`. RuntimeGraph remains planned.
-Ladybug integration remains future.
+Ladybug integration remains future. SPINE.42 adds an active-minimal
+RuntimeGraph in-memory working set loaded from graph relations with
+`yai graph runtime-load --case <case_ref>`. The working set is
+per-command ephemeral, reports nodes, edges, incoming/outgoing adjacency,
+`resident_service: planned`, `hnsw: future_candidate_index` and
+`context_compiler: future_consumer`. Graph persistence is durable truth.
 
 Current:
 
@@ -131,6 +136,7 @@ SPINE.38 Replay Diagnostics / Rebuild Report completed.
 SPINE.39 Journal Replay Freeze completed.
 SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema completed.
 SPINE.41 Graph Relation Write Path completed.
+SPINE.42 RuntimeGraph In-Memory Working Set completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -138,7 +144,7 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.42 RuntimeGraph In-Memory Working Set.
+SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store.
 ```
 
 Foundation status:
@@ -179,6 +185,7 @@ replay diagnostics report active
 journal replay freeze active
 graph persistence / RuntimeGraph schema active
 graph relation write path active_minimal
+RuntimeGraph working set active_minimal
 control/carrier substrate primitives active
 host observation probe active
 carrier coverage matrix active
@@ -188,6 +195,7 @@ non-process carrier skeletons active
 context compiler retrieval doctrine active
 Data Context Runtime doctrine active
 RuntimeGraph active case working set doctrine active
+RuntimeGraph resident service planned
 RuntimeGraph remains planned for implementation
 model runtime MTP doctrine active
 provider runtime LAN target surface active

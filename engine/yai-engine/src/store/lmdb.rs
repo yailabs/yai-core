@@ -122,6 +122,42 @@ pub struct GraphMaterializeReport {
     pub relations_skipped: usize,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RuntimeGraphNode {
+    pub node_ref: String,
+    pub node_kind: String,
+    pub case_ref: String,
+    pub source_record_ref: String,
+    pub generation: usize,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RuntimeGraphEdge {
+    pub relation_id: String,
+    pub edge_kind: String,
+    pub from_ref: String,
+    pub to_ref: String,
+    pub case_ref: String,
+    pub source_record_id: String,
+    pub generation: usize,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct RuntimeGraphLoadResult {
+    pub case_ref: String,
+    pub nodes_total: usize,
+    pub edges_total: usize,
+    pub outgoing_index_entries: usize,
+    pub incoming_index_entries: usize,
+    pub generation: usize,
+    pub dirty: bool,
+    pub stale: bool,
+    pub source: &'static str,
+    pub durable_truth: &'static str,
+    pub nodes: Vec<RuntimeGraphNode>,
+    pub edges: Vec<RuntimeGraphEdge>,
+}
+
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct JournalImportReport {
     pub records_seen: usize,
@@ -425,6 +461,67 @@ impl LmdbRecordStore {
             .map_err(|error| format!("failed to start LMDB graph relation read: {error}"))?;
         let prefix = format!("graph_relation:case:{case_ref}:");
         self.list_graph_relations_by_index(&txn, self.graph_relations_by_case, &prefix, limit)
+    }
+
+    pub fn load_runtime_graph_for_case(
+        &self,
+        case_ref: &str,
+    ) -> Result<RuntimeGraphLoadResult, String> {
+        let relations = self.list_graph_relations_by_case(case_ref, usize::MAX)?;
+        let generation = 1;
+        let mut nodes = Vec::new();
+        let mut edges = Vec::new();
+        let mut outgoing_refs: Vec<String> = Vec::new();
+        let mut incoming_refs: Vec<String> = Vec::new();
+
+        for relation in relations.relations {
+            push_runtime_node(
+                &mut nodes,
+                RuntimeGraphNode {
+                    node_ref: relation.from_ref.clone(),
+                    node_kind: relation.from_kind.clone(),
+                    case_ref: relation.case_ref.clone(),
+                    source_record_ref: relation.source_record_id.clone(),
+                    generation,
+                },
+            );
+            push_runtime_node(
+                &mut nodes,
+                RuntimeGraphNode {
+                    node_ref: relation.to_ref.clone(),
+                    node_kind: relation.to_kind.clone(),
+                    case_ref: relation.case_ref.clone(),
+                    source_record_ref: relation.source_record_id.clone(),
+                    generation,
+                },
+            );
+            push_unique_string(&mut outgoing_refs, &relation.from_ref);
+            push_unique_string(&mut incoming_refs, &relation.to_ref);
+            edges.push(RuntimeGraphEdge {
+                relation_id: relation.relation_id,
+                edge_kind: relation.edge_kind,
+                from_ref: relation.from_ref,
+                to_ref: relation.to_ref,
+                case_ref: relation.case_ref,
+                source_record_id: relation.source_record_id,
+                generation,
+            });
+        }
+
+        Ok(RuntimeGraphLoadResult {
+            case_ref: case_ref.to_string(),
+            nodes_total: nodes.len(),
+            edges_total: edges.len(),
+            outgoing_index_entries: outgoing_refs.len(),
+            incoming_index_entries: incoming_refs.len(),
+            generation,
+            dirty: false,
+            stale: false,
+            source: "graph_relations",
+            durable_truth: "graph_persistence",
+            nodes,
+            edges,
+        })
     }
 
     fn ensure_schema(&self) -> Result<(), String> {
@@ -1025,6 +1122,23 @@ fn add_relation(
     } else {
         *skipped += 1;
     }
+}
+
+fn push_runtime_node(nodes: &mut Vec<RuntimeGraphNode>, node: RuntimeGraphNode) {
+    if nodes
+        .iter()
+        .any(|existing| existing.node_ref == node.node_ref)
+    {
+        return;
+    }
+    nodes.push(node);
+}
+
+fn push_unique_string(values: &mut Vec<String>, value: &str) {
+    if values.iter().any(|existing| existing == value) {
+        return;
+    }
+    values.push(value.to_string());
 }
 
 fn node_ref_for_record(

@@ -374,3 +374,7 @@ SPINE.41	../yai-dev/src/runtime/execution/operational_receipt.c	receipt/effect r
 SPINE.41	../yai-dev/src/runtime/decision/runtime_decision_receipt_boundary.c	decision/attempt relation posture	yai	decision_controls_attempt relation write	mine_concept	none	complete	read-only; decision relation materialized from LMDB record refs
 SPINE.41	../yai-dev/src/runtime/observation/runtime_transition_engine.c	transition relation posture	yai	divergence_describes_mismatch future path	mine_concept	none	complete	read-only; transition concepts classify future path diagnostics
 SPINE.41	../yai-dev/src/lineage/*	lineage edge posture	yai	source_record_id relation provenance	mine_concept	none	complete	read-only; lineage concepts map to relation provenance only
+SPINE.42	../yai-dev/src/substrate/graph/*	in-memory graph-like working set	yai	RuntimeGraph node edge adjacency working set	mine_concept	none	complete	read-only; per-command ephemeral working set only, no resident service
+SPINE.42	../yai-dev/src/substrate/views/*	view graph posture	yai	RuntimeGraph future Context Compiler consumer	mine_concept	none	complete	read-only; context compiler remains future
+SPINE.42	../yai-dev/src/lineage/*	lineage traversal posture	yai	outgoing incoming adjacency counts	mine_concept	none	complete	read-only; no causal path planner yet
+SPINE.42	../yai-dev/src/runtime/observation/*	runtime observation graph posture	yai	active-case working set inspection	mine_concept	none	complete	read-only; observation graph concepts classified only

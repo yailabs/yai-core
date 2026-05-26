@@ -52,6 +52,6 @@ grep -q "relations_total: 0" <<<"$missing"
 grep -q "relations: none" <<<"$missing"
 
 runtime_status="$(YAI_HOME="$YAI_HOME" "$YAI_BIN" graph runtime-status)"
-grep -q "status: planned" <<<"$runtime_status"
+grep -q "status: active_minimal" <<<"$runtime_status"
 grep -q "relation_write_path: active_minimal" <<<"$runtime_status"
 printf "runtime_graph:not_updated confirmed\n"

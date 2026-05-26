@@ -1191,6 +1191,41 @@ make check-graph-relation-write-path
 make smoke-spine41
 ```
 
+## SPINE.42 RuntimeGraph Working Set Loop
+
+`tests/smoke/runtimegraph-working-set/test_runtimegraph_working_set.sh`
+replays records to LMDB, materializes graph relations and loads an ephemeral
+RuntimeGraph working set.
+
+The CLI smoke verifies:
+
+```text
+yai graph runtime-status
+status: active_minimal
+working_set: per_command_ephemeral
+resident_service: planned
+yai graph runtime-load --case case:spine42
+nodes_total non-zero
+edges_total non-zero
+outgoing_index_entries non-zero
+incoming_index_entries non-zero
+case:missing nodes_total: 0
+case:missing edges_total: 0
+hnsw: future_candidate_index
+durable_truth: graph_persistence
+context_compiler: future_consumer
+```
+
+RuntimeGraph is an in-memory working set. Graph persistence is durable truth.
+RuntimeGraph is loaded from graph relations. HNSW remains future candidate
+index. Context Compiler remains future consumer.
+The SPINE.42 working set is per-command ephemeral.
+
+```text
+make check-runtimegraph-working-set
+make smoke-spine42
+```
+
 ## SPINE.33L Provider Runtime / LAN Target Surface Loop
 
 ```text

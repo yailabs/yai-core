@@ -7,6 +7,10 @@ RuntimeGraph or Ladybug integration. It stores derived typed relations from
 LMDB record truth as `yai.graph_relation.v1` records in the local LMDB graph
 relation namespace.
 
+SPINE.42 loads `yai.graph_relation.v1` into an active-minimal RuntimeGraph
+in-memory working set with `yai graph runtime-load --case <case_ref>`. Graph
+persistence remains durable truth.
+
 ## Boundary
 
 Graph persistence owns durable typed relations. RuntimeGraph remains planned as

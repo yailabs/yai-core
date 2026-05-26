@@ -57,7 +57,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.41 Graph Relation Write Path");
+    println!("status: SPINE.42 RuntimeGraph In-Memory Working Set");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -73,6 +73,7 @@ fn print_info() {
     println!("journal_inspection: file-based JSONL v0");
     println!("journal_replay: LMDB materialization with schema/cursor/report metadata v0");
     println!("graph_relation_write_path: active_minimal");
+    println!("runtime_graph: active_minimal per_command_ephemeral");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -215,6 +216,8 @@ fn print_usage() {
     println!("       yai graph runtime-status");
     println!("       yai graph materialize --case <case_ref>");
     println!("       yai graph relations --case <case_ref> [--limit <N>]");
+    println!("       yai graph runtime-load --case <case_ref>");
+    println!("       yai graph runtime-summary --case <case_ref>");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -5783,8 +5786,11 @@ fn graph_schema(args: &[String]) -> Result<(), String> {
     println!("  relation_write_path: active_minimal");
     println!("  graph_store: {GRAPH_RELATION_STORE_NAME}");
     println!("runtime_graph:");
-    println!("  status: planned");
+    println!("  status: active_minimal");
     println!("  role: in_memory_active_case_working_set");
+    println!("  working_set: per_command_ephemeral");
+    println!("  resident_service: planned");
+    println!("  source: graph_relations");
     println!("  hnsw: future_candidate_index");
     println!("  context_compiler: future_consumer");
     Ok(())
@@ -5795,15 +5801,49 @@ fn graph_runtime_status(args: &[String]) -> Result<(), String> {
         return Err("usage: yai graph runtime-status".to_string());
     }
     println!("runtime_graph:");
-    println!("  status: planned");
+    println!("  status: active_minimal");
     println!("  role: in_memory_active_case_working_set");
+    println!("  working_set: per_command_ephemeral");
+    println!("  resident_service: planned");
+    println!("  source: graph_relations");
     println!("  durable_truth: graph_persistence");
     println!("  hnsw: future_candidate_index");
     println!("  context_compiler: future_consumer");
     println!("  relation_write_path: active_minimal");
     println!("  graph_store: {GRAPH_RELATION_STORE_NAME}");
     println!("  graph_persistence: durable_typed_relations");
-    println!("  implementation_claim: relation_write_path_only");
+    println!("  implementation_claim: ephemeral_working_set_only");
+    Ok(())
+}
+
+fn graph_runtime_load(args: &[String], summary_only: bool) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    let graph = store.load_runtime_graph_for_case(&case_ref)?;
+    if summary_only {
+        println!("runtime_graph_summary:");
+    } else {
+        println!("runtime_graph_load:");
+    }
+    println!("case_ref: {}", graph.case_ref);
+    println!("source: {}", graph.source);
+    println!("nodes_total: {}", graph.nodes_total);
+    println!("edges_total: {}", graph.edges_total);
+    println!("outgoing_index_entries: {}", graph.outgoing_index_entries);
+    println!("incoming_index_entries: {}", graph.incoming_index_entries);
+    println!("generation: {}", graph.generation);
+    println!("dirty: {}", yes_no(graph.dirty));
+    println!("stale: {}", yes_no(graph.stale));
+    println!("durable_truth: {}", graph.durable_truth);
+    println!("resident: false");
+    println!("resident_service: planned");
+    println!("hnsw: future_candidate_index");
+    println!("context_compiler: future_consumer");
     Ok(())
 }
 
@@ -5856,6 +5896,14 @@ fn graph_relations(args: &[String]) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+fn yes_no(value: bool) -> &'static str {
+    if value {
+        "yes"
+    } else {
+        "no"
+    }
 }
 
 fn memory_summary(args: &[String]) -> Result<(), String> {
@@ -6155,6 +6203,18 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("runtime-status") => {
             if let Err(error) = graph_runtime_status(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("runtime-load") => {
+            if let Err(error) = graph_runtime_load(&args[2..], false) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("graph") if args.get(1).map(String::as_str) == Some("runtime-summary") => {
+            if let Err(error) = graph_runtime_load(&args[2..], true) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

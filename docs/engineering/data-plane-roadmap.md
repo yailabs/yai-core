@@ -115,7 +115,7 @@ SPINE.39  Journal Replay Freeze                                     done
 
 SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
 SPINE.41  Graph Relation Write Path                                  done
-SPINE.42  RuntimeGraph In-Memory Working Set                         planned
+SPINE.42  RuntimeGraph In-Memory Working Set                         done
 SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     planned
 SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
 SPINE.45  Graph + RuntimeGraph Freeze                                planned
@@ -482,6 +482,23 @@ Each relation has a `relation_id`, `source_record_id` and
 `relations_written`, `relations_duplicate` and `relations_skipped`.
 
 RuntimeGraph remains planned. Ladybug integration remains future.
+
+SPINE.42 RuntimeGraph In-Memory Working Set adds:
+
+```text
+yai graph runtime-status
+yai graph runtime-load --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+```
+
+RuntimeGraph is now an active-minimal in-memory working set loaded from
+`yai.graph_relation.v1` graph relations. It reports `nodes_total`,
+`edges_total`, `outgoing_index_entries`, `incoming_index_entries`,
+`generation`, `dirty`, `stale` and `resident: false`.
+
+RuntimeGraph is an in-memory working set. Graph persistence is durable truth.
+The first working set is `per_command_ephemeral`; resident service is planned.
+HNSW remains future candidate index. Context Compiler remains future consumer.
 
 SPINE.33A Control / Carrier Substrate Primitives adds:
 

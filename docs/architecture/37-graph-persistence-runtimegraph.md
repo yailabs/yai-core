@@ -11,6 +11,9 @@ SPINE.41 adds an active-minimal relation write path over LMDB records using
 `yai.graph_relation.v1`. RuntimeGraph remains planned. Ladybug integration
 remains future.
 
+SPINE.42 adds an active-minimal RuntimeGraph in-memory working set loaded from
+graph relations. It is per-command ephemeral; resident service remains planned.
+
 Canonical rule:
 
 ```text
@@ -100,22 +103,27 @@ yai graph schema
 yai graph runtime-status
 yai graph materialize --case <case_ref>
 yai graph relations --case <case_ref> --limit 20
+yai graph runtime-load --case <case_ref>
+yai graph runtime-summary --case <case_ref>
 ```
 
 `yai graph schema` prints the node and edge schema plus the active-minimal
 relation write path.
-`yai graph runtime-status` says RuntimeGraph is planned and identifies
-`graph_persistence`, `future_candidate_index` and `future_consumer` boundaries.
+`yai graph runtime-status` says RuntimeGraph is `active_minimal` and identifies
+`per_command_ephemeral`, `graph_persistence`, `future_candidate_index` and
+`future_consumer` boundaries.
 `yai graph materialize` writes `yai.graph_relation.v1` to
 `lmdb_graph_relations_v0`. `yai graph relations` lists relation ids, edge kinds
 and `source_record_id` provenance by case.
+`yai graph runtime-load` builds the in-memory working set and reports node,
+edge, incoming adjacency and outgoing adjacency counts.
 
 ## Non-Goals
 
 ```text
 No full graph persistence engine.
 No Ladybug integration.
-No RuntimeGraph working set beyond schema/status and relation write path.
+No resident RuntimeGraph service.
 No graph rebuild.
 No HNSW.
 No context compiler.

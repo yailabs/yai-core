@@ -145,7 +145,7 @@ records.
 
 ## Optional LAN Provider
 
-Use the provider values from `.yai/env` or the NVIDIA LAN benchmark lab. The
+Use the provider values from `.yai/env` or the external-runtime lab. The
 current observed LAN provider port is `43117`.
 
 ```bash
@@ -230,7 +230,8 @@ filesystem-loop replay lab path.
 ## Graph Schema Boundary
 
 SPINE.40 exposes graph schema and RuntimeGraph boundary status without claiming
-graph persistence implementation.
+graph persistence implementation. SPINE.42 updates RuntimeGraph to an
+active-minimal in-memory working set loaded from graph relations.
 
 ```bash
 yai graph schema
@@ -241,8 +242,10 @@ Expected posture:
 
 ```text
 relation_write_path: active_minimal
-status: planned
+status: active_minimal
 role: in_memory_active_case_working_set
+working_set: per_command_ephemeral
+resident_service: planned
 durable_truth: graph_persistence
 hnsw: future_candidate_index
 context_compiler: future_consumer
@@ -272,3 +275,43 @@ edge_kind: decision_controls_attempt
 edge_kind: receipt_records_effect
 source_record_id:
 ```
+
+## RuntimeGraph In-Memory Working Set
+
+SPINE.42 loads graph relations into a per-command ephemeral RuntimeGraph
+in-memory working set. The resident service remains planned, graph persistence
+is durable truth, HNSW future candidate index work remains future and Context
+Compiler future consumer work remains future.
+
+```bash
+yai graph materialize --case <case_ref>
+yai graph runtime-status
+yai graph runtime-load --case <case_ref>
+yai graph runtime-load --case case:missing
+```
+
+Expected signals:
+
+```text
+runtime_graph:
+status: active_minimal
+working_set: per_command_ephemeral
+resident_service: planned
+source: graph_relations
+durable_truth: graph_persistence
+hnsw: future_candidate_index
+context_compiler: future_consumer
+
+runtime_graph_load:
+nodes_total:
+edges_total:
+outgoing_index_entries:
+incoming_index_entries:
+generation: 1
+dirty: no
+stale: no
+resident: false
+```
+
+`case:missing` must report zero nodes and zero edges. RuntimeGraph is an
+in-memory working set only; graph persistence is durable truth.

@@ -74,16 +74,19 @@ int main(void) {
     }
 
     assert(yai_runtime_graph_boundary_current(&boundary) == YAI_OK);
-    assert(strcmp(boundary.status, "planned") == 0);
+    assert(strcmp(boundary.status, "active_minimal") == 0);
     assert(strcmp(boundary.role, "in_memory_active_case_working_set") == 0);
+    assert(strcmp(boundary.working_set, "per_command_ephemeral") == 0);
+    assert(strcmp(boundary.resident_service, "planned") == 0);
+    assert(strcmp(boundary.source, "graph_relations") == 0);
     assert(strcmp(boundary.durable_truth, "graph_persistence") == 0);
     assert(strcmp(boundary.hnsw, "future_candidate_index") == 0);
     assert(strcmp(boundary.context_compiler, "future_consumer") == 0);
-    assert(strcmp(boundary.graph_store_claim, "none") == 0);
+    assert(strcmp(boundary.graph_store_claim, "lmdb_graph_relations_v0") == 0);
 
     printf("graph_schema:node_kinds ok\n");
     printf("graph_schema:edge_kinds ok\n");
     printf("runtime_graph:boundary ok\n");
-    printf("no_graph_store_claim:confirmed\n");
+    printf("runtime_graph:active_minimal ok\n");
     return 0;
 }

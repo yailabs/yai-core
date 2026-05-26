@@ -6,6 +6,9 @@
 typedef struct yai_runtime_graph_boundary {
     const char *status;
     const char *role;
+    const char *working_set;
+    const char *resident_service;
+    const char *source;
     const char *durable_truth;
     const char *hnsw;
     const char *context_compiler;

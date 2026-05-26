@@ -6,6 +6,9 @@ SPINE.41 makes graph relations explicit and inspectable by materializing
 `yai.graph_relation.v1` from existing LMDB records. RuntimeGraph remains planned.
 Ladybug integration remains future.
 
+SPINE.42 loads those graph relations into an active-minimal RuntimeGraph
+in-memory working set. Graph persistence remains durable truth.
+
 ## Command Surface
 
 ```bash

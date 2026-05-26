@@ -121,6 +121,11 @@ SPINE.41 adopts Graph Relation Write Path. `yai.graph_relation.v1` relations
 are derived from LMDB records and stored in `lmdb_graph_relations_v0`;
 RuntimeGraph remains planned and Ladybug integration remains future.
 
+SPINE.42 adopts RuntimeGraph In-Memory Working Set. RuntimeGraph is active
+minimal as a per-command ephemeral in-memory working set loaded from graph
+relations. Graph persistence is durable truth; resident service, HNSW and
+Context Compiler remain future.
+
 ## Decision Set
 
 | ADR | Decision | Effect |
@@ -154,6 +159,7 @@ RuntimeGraph remains planned and Ladybug integration remains future.
 | 0036 | Journal replay freeze | Journal replay is frozen as the diagnostic, idempotent, report-producing path from journal to LMDB. |
 | 0037 | Graph persistence / RuntimeGraph | Graph persistence owns durable typed relations; RuntimeGraph owns active in-memory case computation. |
 | 0038 | Graph relation write path | `yai.graph_relation.v1` materializes typed relations from LMDB records before RuntimeGraph or Ladybug integration. |
+| 0039 | RuntimeGraph working set | RuntimeGraph loads graph relations into a per-command ephemeral in-memory working set without owning durable truth. |
 
 ## Combined Doctrine
 

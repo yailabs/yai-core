@@ -1,191 +1,71 @@
-# Filesystem Loop Lab Outputs
+# Filesystem Loop Outputs Compatibility Pointer
 
-Status: output/report contract.
+Status: compatibility pointer.
 
-The filesystem-loop lab produces local daemon logs, journal residue and optional
-provider prompt output. These are evidence inputs, not publication reports.
-
-## Local Output
+The compact output surface is now run-local:
 
 ```text
-$YAI_HOME/run/yaid.log
-$YAI_HOME/cases/manual-filesystem-loop/policy-packs/
-<active journal path>
-$YAI_HOME/store/lmdb/
+docs/labs/filesystem-loop/runs/YYYYMMDD-<slug>/
+  run.md
+  report.md
+  manifest.json
+  metrics.json
+  assets/
 ```
 
-Raw local output should not be committed.
-
-## Journal Replay Output
-
-SPINE.36 journal replay to LMDB produces command output, not a report file by
-default.
-
-Important fields:
+Aggregate output is test-local:
 
 ```text
-journal_replay: dry_run|completed|failed
-replay_status: not_started|in_progress|completed|partial|failed|incompatible
-journal_identity:
-record_schema:
-journal_schema:
-compatibility:
-cursor_line:
-records_written: N
-records_duplicate: N
-invalid_entries: N
-record_store_status: ready
-idempotent: yes|no
+docs/labs/filesystem-loop/analytics/
 ```
 
-The LMDB directory is local runtime state and should not be committed.
-
-## Replay Status Output
-
-SPINE.37 adds replay metadata output:
-
-```text
-journal_replay_status:
-journal_identity: ...
-record_schema: yai.record.v1
-journal_schema: yai.store.record.v0
-cursor_line: N
-replay_status: completed
-compatibility: compatible
-```
-
-Schema mismatch must remain visibly non-completed:
-
-```text
-compatibility: schema_mismatch
-records_written: 0
-replay_status: incompatible
-```
-
-## Curated Output
-
-Curated model behavior examples live under:
-
-```text
-docs/labs/model-behavior/
-```
-
-Benchmark reports live under:
-
-```text
-docs/labs/nvidia/reports/
-```
-
-Do not mix filesystem-loop validation transcripts with benchmark reports unless
-a report explicitly declares the transcript as supporting evidence.
-## Replay Diagnostics / Rebuild Report
-
-Replay output now includes a durable report pointer:
-
-```text
-journal_replay: completed
-journal_identity: journal:...
-records_written: 28
-records_duplicate: 0
-cursor_line: 28
-replay_report: YAI_HOME/store/replay/reports/<journal_identity>.replay-report.json
-```
-
-`yai journal replay-report --path <journal.jsonl>` prints
-`replay_report_schema: yai.replay_report.v1`, `compatibility`, `cursor_line`,
-`records_written`, `records_duplicate`, `invalid_entries`, `idempotent` and the
-failed report summary when corrupt input blocks replay.
-
-## Journal Replay Freeze Output
-
-SPINE.39 freezes the output contract for filesystem-loop replay checks:
-
-```text
-journal inspect -> replay_ready: yes|no
-journal replay --dry-run -> would_write_lmdb: yes
-journal replay -> journal_replay: completed|failed
-journal replay-status -> journal_replay_status:
-journal replay-report -> replay_report_schema: yai.replay_report.v1
-store summary -> record_store_status: ready
-```
-
-Required fields:
-
-```text
-journal_identity:
-record_schema:
-journal_schema:
-compatibility:
-cursor_line:
-replay_status:
-records_written:
-records_duplicate:
-records_skipped:
-invalid_entries:
-idempotent:
-```
-
-Schema and parser failures remain explicit:
-
-```text
-schema_mismatch
-invalid_json
-records_written: 0
-```
-
-The freeze output must not imply silent skip, false complete or journal
-fallback behavior.
-
-## Graph Schema Output
-
-SPINE.40 graph output is schema/status only:
-
-```text
-graph_schema:
-node_kinds:
-edge_kinds:
-relation_write_path: active_minimal
-runtime_graph:
-status: planned
-role: in_memory_active_case_working_set
-durable_truth: graph_persistence
-hnsw: future_candidate_index
-context_compiler: future_consumer
-```
-
-It must not imply RuntimeGraph implementation, HNSW implementation or Context
-Compiler implementation.
+This file remains only for repository guards that still check the historical
+`outputs.md` path.
 
 ## Graph Relation Write Path Output
 
-SPINE.41 graph relation output is active-minimal relation materialization:
+SPINE.41 graph relation output is active-minimal relation materialization.
+RuntimeGraph remains planned at the SPINE.41 boundary. Ladybug integration remains future.
 
 ```bash
 yai graph materialize --case <case_ref>
 yai graph relations --case <case_ref> --limit 20
 ```
 
-```text
-graph_materialize:
-schema: yai.graph_relation.v1
-graph_store: lmdb_graph_relations_v0
-relations_written:
-relations_duplicate:
-relations_skipped:
-runtime_graph_updated: false
+Expected fields include `schema: yai.graph_relation.v1`,
+`relation_id:`, `source_record_id:`, `edge_kind: decision_controls_attempt`
+and `edge_kind: receipt_records_effect`.
 
-graph_relations:
-relations_total:
-relation_id:
-edge_kind:
-source_record_id:
+## RuntimeGraph Working Set Output
+
+SPINE.42 RuntimeGraph output is an active-minimal per-command ephemeral
+in-memory working set loaded from graph relations. Graph persistence is durable
+truth, HNSW future candidate index work remains future and Context Compiler
+future consumer work remains future.
+
+```bash
+yai graph runtime-status
+yai graph runtime-load --case <case_ref>
+yai graph runtime-load --case case:missing
 ```
 
-Expected edge examples:
-
 ```text
-decision_controls_attempt
-receipt_records_effect
-```
+runtime_graph:
+status: active_minimal
+role: in_memory_active_case_working_set
+working_set: per_command_ephemeral
+resident_service: planned
+source: graph_relations
+durable_truth: graph_persistence
+hnsw: future_candidate_index
+context_compiler: future_consumer
 
-RuntimeGraph remains planned. Ladybug integration remains future.
+runtime_graph_load:
+nodes_total:
+edges_total:
+outgoing_index_entries:
+incoming_index_entries:
+dirty: no
+stale: no
+resident: false
+```

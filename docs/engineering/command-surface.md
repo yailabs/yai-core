@@ -894,6 +894,27 @@ writes to `lmdb_graph_relations_v0`. It reports `relation_id` provenance,
 `yai graph relations` lists relations by case. RuntimeGraph remains planned.
 Ladybug integration remains future.
 
+SPINE.42 activates the first RuntimeGraph working set command surface:
+
+```text
+yai graph runtime-status
+yai graph runtime-load --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+```
+
+The working set is per-command ephemeral and the resident service is planned.
+
+`yai graph runtime-status` now reports `status: active_minimal`,
+`working_set: per_command_ephemeral`, `resident_service: planned`,
+`source: graph_relations`, `durable_truth: graph_persistence`,
+`hnsw: future_candidate_index` and `context_compiler: future_consumer`.
+
+`yai graph runtime-load` loads the case-local in-memory working set from graph
+relations and prints `nodes_total`, `edges_total`, `outgoing_index_entries`,
+`incoming_index_entries`, `dirty: no`, `stale: no` and `resident: false`.
+Graph persistence is durable truth. HNSW remains future candidate index.
+Context Compiler remains future consumer.
+
 ## Projection Commands
 
 | Primitive | View | Command | Lab test | Docs |

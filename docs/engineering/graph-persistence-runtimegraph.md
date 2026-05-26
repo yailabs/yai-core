@@ -7,6 +7,8 @@ Status: SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema.
 SPINE.40 defines graph persistence and RuntimeGraph as separate surfaces.
 SPINE.41 adds an active-minimal `yai.graph_relation.v1` relation write path
 from LMDB records.
+SPINE.42 adds an active-minimal RuntimeGraph in-memory working set loaded from
+graph relations.
 
 Graph persistence is the future durable relation truth / rebuild contract.
 Graph persistence owns durable typed relations. RuntimeGraph is the future
@@ -24,6 +26,8 @@ yai graph schema
 yai graph runtime-status
 yai graph materialize --case <case_ref>
 yai graph relations --case <case_ref> --limit 20
+yai graph runtime-load --case <case_ref>
+yai graph runtime-summary --case <case_ref>
 ```
 
 Changed commands:
@@ -66,6 +70,8 @@ indexes and retrieval-unit bindings.
 SPINE.40 does not implement that working set. It exposes schema/status only.
 SPINE.41 still does not implement RuntimeGraph. It writes durable graph
 relations to `lmdb_graph_relations_v0`.
+SPINE.42 implements RuntimeGraph as a per-command ephemeral working set. It
+writes no durable truth and does not start a resident service.
 
 ## CLI Output
 
@@ -82,8 +88,11 @@ relation_write_path: active_minimal
 
 ```text
 runtime_graph:
-status: planned
+status: active_minimal
 role: in_memory_active_case_working_set
+working_set: per_command_ephemeral
+resident_service: planned
+source: graph_relations
 durable_truth: graph_persistence
 hnsw: future_candidate_index
 context_compiler: future_consumer
@@ -122,8 +131,7 @@ output, runtime boundary output and no RuntimeGraph implementation claim.
 ```text
 No full graph persistence engine.
 No Ladybug integration yet.
-No RuntimeGraph working set implementation beyond minimal schema/status and
-relation write path.
+No resident RuntimeGraph service.
 No graph rebuild.
 No HNSW.
 No context compiler.
