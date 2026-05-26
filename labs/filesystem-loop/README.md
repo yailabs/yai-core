@@ -6,10 +6,9 @@ Purpose: validate that YAI can run a bounded filesystem case through
 command-surface checks, daemon smoke paths, pack fixture material, case
 residue, prompt evidence and provider-boundary posture.
 
-This lab is the source of truth for filesystem-loop validation. The executable
-notebook has been restored from the historical Italian manual notebook and now
-lives at `notebook.ipynb`; `runbook.md` is the static Markdown copy of that
-notebook.
+This lab is the source of truth for filesystem-loop validation. `runbook.md`
+owns the complete CLI procedure. `notebook.ipynb` is a short guided human demo
+that calls official commands instead of embedding automation scripts.
 
 ## Canonical Files
 
@@ -31,7 +30,7 @@ notebook.
 - Case boundary and provider-boundary posture.
 - Prompt labs that preserve exact prompt text used against the case view.
 - Prompt/query catalog execution through `run.sh --prompt-id <id>`.
-- Root notebook summaries over available compact runs.
+- Notebook-guided inspection over available compact runs.
 
 ## Protocol
 
@@ -108,8 +107,8 @@ Non-goals:
 | Prompted calls | 1 |
 | Model outputs | 0 |
 
-The root notebook contains the full filesystem-loop execution path. It also
-reads `runs/*/metrics.json` and can regenerate local tables from run metrics.
+The root notebook demonstrates the current path with short, official commands.
+Use `runbook.md` for the full filesystem-loop terminal procedure.
 
 ## RuntimeGraph Compatibility Notes
 

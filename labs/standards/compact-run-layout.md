@@ -43,9 +43,10 @@ interpretation, limitations and next run.
 
 `metrics.json` is the normalized machine-readable metric package for one run.
 
-`notebook.ipynb` is the canonical executable notebook for the lab/test. It
-contains operational cells, prompt/workload cells when applicable, and local
-metric review cells.
+`notebook.ipynb` is the canonical guided notebook for the lab/test. It is a
+human-readable demo with short explanations and official commands. It calls
+`run.sh`, `make`, `yai` or shared helpers instead of containing long
+orchestration scripts.
 
 `prompts.json` is the lab-local prompt/query authority. `run.sh --list-prompts`
 lists entries; `run.sh --prompt-id <id>` executes exactly one entry and stores
@@ -53,8 +54,9 @@ the resolved payload under run `assets/`.
 
 `README.md` is the lab/test entry point and protocol.
 
-`runbook.md` is the terminal procedure. It may be a static Markdown copy of the
-notebook in the same order.
+`runbook.md` is the complete CLI procedure. It may include setup, environment
+variables, run commands, report generation commands and validation commands
+that are too detailed for the notebook.
 
 `run.sh` is the lab-local helper for creating new compact run folders.
 
@@ -78,9 +80,12 @@ append duplicate blocks.
 - Keep exactly one canonical notebook at the lab/test root.
 - Keep exactly one prompt catalog at the lab/test root.
 - Do not use separate manual or protocol files in canonical labs.
+- Do not hide prompt authority, JSON generation, shell loops, cleanup
+  orchestration or daemon bootstrap inside notebooks.
 - Do not create `outputs.md`, `tests.md`, per-run `run.md`, lab-level report
   directories or lab-level analytics directories for canonical labs.
-- Keep `runbook.md` aligned with the lab-root notebook.
+- Keep `runbook.md` aligned with the lab-root notebook, but let the runbook be
+  the fuller terminal procedure.
 - Runs must identify which `pack-fixture/` material was used when applicable.
 - Generated figures must be derived from existing run metrics/assets and must
   appear in `report.md`.

@@ -2,7 +2,7 @@
 
 Status: LAB.DOCS.0.
 
-`lab-standards` defines the documentation rules used by YAI lab work.
+`labs/standards` defines the documentation rules used by YAI lab work.
 
 It does not define a product surface. It does not define public narrative. It
 does not validate scientific truth. It defines structure, metadata, evidence
@@ -69,7 +69,10 @@ next run. A generated figure that is not included in `report.md` should not be
 kept.
 
 `README.md` owns the lab purpose, scope and protocol. `runbook.md` is the
-terminal procedure and may be a static Markdown copy of the canonical notebook.
+complete terminal procedure. `notebook.ipynb` is a guided human demo: linear,
+readable and limited to official commands that call `run.sh`, `make`, `yai` or
+shared helpers. It must not hide bootstrap scripts, JSON generation, prompt
+registries or long shell orchestration in notebook cells.
 `run.sh` is the local helper that creates new compact run folders.
 `prompts.json` is the text authority for prompts and queries; notebooks and
 runbooks may show prompt text for humans, but they should reference prompt IDs

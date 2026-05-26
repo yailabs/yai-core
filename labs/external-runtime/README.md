@@ -5,8 +5,9 @@ Status: canonical lab for local provider and external runtime readiness checks.
 Purpose: record provider reachability, authentication state, model inventory and
 runtime smoke evidence without centering the lab on a vendor-specific folder.
 
-The executable source is `notebook.ipynb`; `runbook.md` is the static Markdown
-copy of that notebook.
+`runbook.md` owns the complete CLI procedure. `notebook.ipynb` is a short
+guided human demo that calls official commands instead of embedding provider
+automation.
 
 ## Canonical Files
 
@@ -38,7 +39,7 @@ copy of that notebook.
 - Small HNSW smoke panels when present.
 - Prompt/request payload preservation for provider calls.
 - Prompt catalog execution through `run.sh --prompt-id <id>`.
-- Root notebook summaries over compact run folders.
+- Notebook-guided inspection over compact run folders.
 
 ## Protocol
 
@@ -92,9 +93,8 @@ curl metadata and provider response under run `assets/`.
 | Prompt payload preserved | Yes |
 | Benchmark executed | No |
 
-The root notebook follows the same structure as the filesystem-loop notebook:
-environment setup first, explicit workload/probe cells next, then compact run
-metrics review.
+The root notebook follows the human-guided shape used by filesystem-loop:
+short explanation, official commands and report inspection.
 
 ## Boundary
 

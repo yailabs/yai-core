@@ -1,147 +1,59 @@
 # External Runtime Runbook
 
-Status: static runbook copy of `notebook.ipynb`.
+Status: canonical CLI procedure.
 
-The notebook is the executable source. This runbook preserves the same order, prompts and commands for terminal use.
+This runbook is the complete terminal procedure for the external-runtime lab.
+The notebook is a guided human demo; provider probing and report generation
+belong to `run.sh` and `labs/shared/bin/`.
 
-# External Runtime Notebook
+## Prerequisites
 
-Status: canonical lab notebook.
+Run commands from the repository root:
 
-This notebook follows the same lab-root notebook/runbook pattern used by `filesystem-loop`: configure environment once, run explicit probes, preserve prompt payloads, and read compact run metrics from `runs/*/metrics.json`.
-
-## Execution Layout
-
-Run the cells from top to bottom only when you intentionally execute a provider or smoke workload. Existing run summaries can be loaded without executing probes.
-
-```text
-Operator machine: this notebook, probe scripts, report packaging
-Local provider host: OpenAI-compatible provider, usually on port 43117
-Run folders: labs/external-runtime/runs/YYYYMMDD-<slug>/
+```bash
+pwd
+test -f labs/external-runtime/README.md
+test -x labs/external-runtime/run.sh
+python3 -m json.tool labs/external-runtime/prompts.json >/tmp/yai-external-prompts.json
 ```
 
-## Provider Boundary
+Provider defaults:
 
-The current live-provider port is `43117` unless a future run proves otherwise. Port `44317` is negative evidence only and should not be used as the live path.
-
-Provider prompts are benchmark inputs. A prompted provider run is incomplete unless the request payload or prompt artifact is stored under that run `assets/` directory.
-
-## Notebook Environment
-
-Run this once before operational cells. It finds the repository root, loads `.yai/env` if present, and sets default provider values without writing secrets to notebook output.
-
-```python
-from pathlib import Path
-import json
-import os
-
-
-def find_repo_root(start: Path) -> Path:
-    for candidate in [start, *start.parents]:
-        if (candidate / "cmd/yai/Cargo.toml").is_file() and (candidate / "labs/external-runtime").is_dir():
-            return candidate
-    raise RuntimeError("repo root not found")
-
-ROOT = find_repo_root(Path.cwd().resolve())
-os.chdir(ROOT)
-
-env_file = ROOT / ".yai/env"
-if env_file.exists():
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        value = value.strip().strip('"').strip("'")
-        os.environ.setdefault(key.strip(), value)
-
-os.environ.setdefault("YAI_PROVIDER_HOST", "localhost")
-os.environ.setdefault("YAI_PROVIDER_PORT", "43117")
-os.environ.setdefault("YAI_PROVIDER_MODEL", "qwen-local")
-os.environ.setdefault("YAI_EXTERNAL_RUNTIME_OUT", "benchmarks/external-runtime")
-
-print("repo", ROOT)
-print("provider", f"{os.environ['YAI_PROVIDER_HOST']}:{os.environ['YAI_PROVIDER_PORT']}")
-print("model", os.environ["YAI_PROVIDER_MODEL"])
+```bash
+export YAI_PROVIDER_HOST="${YAI_PROVIDER_HOST:-127.0.0.1}"
+export YAI_PROVIDER_PORT="${YAI_PROVIDER_PORT:-43117}"
+export YAI_PROVIDER_MODEL="${YAI_PROVIDER_MODEL:-qwen-local}"
 ```
 
-## Prompt Catalog
+Do not put secrets or endpoint credentials in notebooks, reports or prompt
+catalogs.
 
-Provider prompt text lives in `prompts.json`. List available prompts before
-running one:
+## Prompt Listing
+
+Prompt text authority is `labs/external-runtime/prompts.json`.
 
 ```bash
 labs/external-runtime/run.sh --list-prompts
 ```
 
-## Current Provider Probe
+## Provider Probe Run
 
-This cell executes the `local-provider-ready` prompt through the lab-local run
-script. `run.sh` resolves the prompt from `prompts.json`, invokes
-`labs/shared/bin/probe-local-provider.sh`, and writes the request payload
-and provider response under the compact run `assets/` directory.
-
-<!-- yai-prompt-preview:local-provider-ready -->
-Prompt `local-provider-ready` (provider-chat)
-
-Local provider reachability smoke prompt.
-
-```text
-Rispondi in una frase: provider locale pronto sulla porta 43117.
-```
+Run exactly one provider prompt:
 
 ```bash
-set -eu
-
-labs/external-runtime/run.sh --slug local-provider-ready --prompt-id local-provider-ready
+labs/external-runtime/run.sh \
+  --slug canon6-provider-probe \
+  --prompt-id local-provider-ready
 ```
 
-## Optional HNSW Smoke
+The run script resolves the prompt from `prompts.json`, calls
+`labs/shared/bin/probe-local-provider.sh`, and stores request payload, curl
+metadata, provider responses and summary under run `assets/`.
 
-This is a smoke workload for the measurement path, not a full benchmark. It has no language-model prompt because it is synthetic vector-search data.
-
-```bash
-set -eu
-
-OUT="${YAI_EXTERNAL_RUNTIME_OUT:-benchmarks/external-runtime}/hnsw-smoke-$(date +%Y%m%d-%H%M%S)"
-
-python3 labs/shared/bin/run-hnsw-benchmark.py \
-  --n 1000 \
-  --dim 64 \
-  --queries 20 \
-  --k 10 \
-  --m 16 \
-  --ef-construction 100 \
-  --ef-search 64 \
-  --out "$OUT"
-
-printf 'hnsw_out=%s\n' "$OUT"
-```
-
-## Existing Run Metrics
-
-This cell does not execute probes. It loads compact run metrics from `runs/*/metrics.json` for local review.
-
-```python
-from pathlib import Path
-import json
-
-run_root = Path("labs/external-runtime/runs")
-metrics = []
-for path in sorted(run_root.glob("*/metrics.json")):
-    item = json.loads(path.read_text())
-    item["metrics_path"] = str(path)
-    metrics.append(item)
-
-metrics
-```
-
-## Compact Run Output
-
-New external-runtime runs must be represented as:
+Expected run package:
 
 ```text
-labs/external-runtime/runs/YYYYMMDD-<slug>/
+labs/external-runtime/runs/YYYYMMDD-canon6-provider-probe/
   transcript.md
   report.md
   manifest.json
@@ -149,10 +61,76 @@ labs/external-runtime/runs/YYYYMMDD-<slug>/
   assets/
 ```
 
-`report.md` is the human analytical artifact for that run. `assets/` holds logs, prompt payloads, SVG, HTML, JSON and other attachments. Do not place `notebook.ipynb` inside run assets.
+If the provider is unavailable, keep the generated run. The report should state
+provider unavailable and must not claim provider readiness.
 
-## Pack Fixture
+## Structural Smoke Fallback
 
-No `pack-fixture/` is currently defined for this lab. If a future test needs
-imported operational material, create it using
-`labs/standards/pack-fixture-contract.md`.
+Use this when no local provider should be contacted:
+
+```bash
+labs/external-runtime/run.sh \
+  --slug structural-smoke \
+  --command "true"
+```
+
+This is structural evidence only. It is not a provider benchmark and not a
+model-quality evaluation.
+
+## Report and Figure Regeneration
+
+After a run exists, compose report-first tables and figures:
+
+```bash
+python3 labs/shared/bin/generate-run-figures.py \
+  --run-dir labs/external-runtime/runs/<run-dir> \
+  --update-report \
+  --overwrite
+```
+
+Generated figures are supporting evidence inside `report.md`. The final human
+artifact is `report.md`; `transcript.md` is raw chronological execution
+evidence; `metrics.json` is machine-readable data; `assets/` contains
+attachments.
+
+## Output Inspection
+
+```bash
+ls labs/external-runtime/runs/<run-dir>
+sed -n '1,200p' labs/external-runtime/runs/<run-dir>/transcript.md
+sed -n '1,220p' labs/external-runtime/runs/<run-dir>/report.md
+python3 -m json.tool labs/external-runtime/runs/<run-dir>/manifest.json
+python3 -m json.tool labs/external-runtime/runs/<run-dir>/metrics.json
+find labs/external-runtime/runs/<run-dir>/assets -maxdepth 2 -type f | sort
+```
+
+## Validation
+
+```bash
+python3 -m json.tool labs/external-runtime/notebook.ipynb
+bash -n labs/external-runtime/run.sh
+bash -n labs/shared/bin/probe-local-provider.sh
+tools/checks/check-lab-notebooks.sh
+tools/checks/check-labs-layout.sh
+tools/checks/check-lab-run-contract.sh
+make check-lab-notebooks
+make check-labs
+make check-lab-runs
+make check-docs
+```
+
+## Failure Interpretation
+
+- HTTP failures are endpoint evidence, not provider-quality conclusions.
+- Missing provider timing, token usage or response content must be reported as
+  `Not measured`.
+- A structural smoke run does not attach a provider.
+- Do not infer hardware benchmark, throughput, production readiness or model
+  quality from this lab.
+
+## Boundary
+
+External-runtime reports local provider evidence only. Provider endpoint status,
+curl timing and request/response artifacts are evidence for that run. They are
+not a benchmark unless a benchmark run records explicit quantitative
+measurements and limitations.

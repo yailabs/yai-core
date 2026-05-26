@@ -13,7 +13,7 @@ fixture, prompt catalog and runs.
 labs/
   README.md
   registry.md
-  _shared/bin/
+  shared/bin/
   filesystem-loop/
   external-runtime/
 ```
@@ -82,9 +82,10 @@ compact run package.
 ## Rules
 
 - `README.md` is the lab entry point and protocol.
-- `runbook.md` is the executable terminal procedure.
-- Each lab/test owns one canonical executable notebook at lab root.
-- `runbook.md` is the static Markdown copy of the lab-root notebook.
+- `runbook.md` is the complete executable terminal procedure.
+- Each lab/test owns one canonical human-guided notebook at lab root.
+- `notebook.ipynb` is a short guided demo that calls official commands; it is
+  not hidden automation.
 - `prompts.json` is the prompt/query authority for that lab.
 - `run.sh` creates a compact run folder under its own lab.
 - `run.sh --prompt-id <id>` executes exactly one catalog prompt/query and

@@ -5,7 +5,7 @@
 #   Ensure committed lab runs use the compact run package contract.
 #
 # Scope:
-#   Checks docs/labs run folders for manifest, metrics, transcript, report and
+#   Checks labs run folders for manifest, metrics, transcript, report and
 #   asset structure.
 #
 # Non-goals:
@@ -66,11 +66,11 @@ done
 
 [ "$found_run" -eq 1 ] || fail "no run directories found under labs/*/runs"
 
-if find docs/labs -path '*/runs/*/run.md' -print -quit | grep -q .; then
+if find labs -path '*/runs/*/run.md' -print -quit | grep -q .; then
   fail "run.md exists under labs/*/runs"
 fi
 
-if find docs/labs -path '*/runs/*/assets/notebook.ipynb' -print -quit | grep -q .; then
+if find labs -path '*/runs/*/assets/notebook.ipynb' -print -quit | grep -q .; then
   fail "notebook.ipynb exists under run assets"
 fi
 

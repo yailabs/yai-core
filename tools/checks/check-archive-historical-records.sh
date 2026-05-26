@@ -5,7 +5,7 @@
 #   Ensure archived Markdown records are visibly historical.
 #
 # Scope:
-#   Scans docs/archive Markdown files for the required first-line banner.
+#   Scans legacy archive Markdown files for the required first-line banner.
 #
 # Non-goals:
 #   Does not validate active documentation content.
@@ -16,7 +16,7 @@ BANNER='Historical/superseded engineering record. Not an active source of truth.
 HITS=/tmp/yai-archive-banner-missing
 rm -f "$HITS"
 
-find "$ROOT/docs/archive" -type f -name '*.md' | sort | while IFS= read -r file; do
+find "$ROOT/work/archive/legacy-docs" -type f -name '*.md' | sort | while IFS= read -r file; do
   first_line=$(sed -n '1p' "$file")
   if [ "$first_line" != "$BANNER" ]; then
     printf '%s\n' "$file" >>"$HITS"

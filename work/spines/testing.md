@@ -1838,3 +1838,18 @@ Review/control coverage checks `review_request`, `review_decision`,
 `control_pending`, approve, deny, defer and quarantine. The approve path is
 graph/query visible; deny, defer and quarantine no-execution posture remains
 covered by SPINE.44C.
+
+## SPINE.45A Documentation Root Canon Collapse
+
+`tools/checks/check-doc-root-canon.sh` validates the documentation root canon:
+
+```bash
+make check-doc-root-canon
+make check-docs
+```
+
+The guard fails if active `docs/internal`, `docs/engineering`, `docs/spines`,
+`docs/product`, `docs/reference`, `docs/status`, `docs/protocols`, `docs/adr`,
+`docs/labs` or `docs/lab-standards` roots return. It also verifies the compact
+architecture docs, `labs/`, `labs/standards`, `work/`, `work/spines` and
+`work/inventories/extraction-inventory.tsv`.

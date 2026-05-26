@@ -1,6 +1,17 @@
 #!/usr/bin/env sh
 set -eu
 
+# YAI - documentation root canon guard
+#
+# Purpose:
+#   Ensure docs/ stays curated, while labs/ and work/ own execution material.
+#
+# Scope:
+#   Checks active root layout and active references to old documentation roots.
+#
+# Non-goals:
+#   Does not validate historical archive content.
+
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 cd "$ROOT"
 

@@ -76,6 +76,7 @@ runtimegraph-rebuild.md
 runtimegraph-query-causal-path.md
 runtimegraph-working-set.md
 source-surface.md
+spine45a-documentation-root-canon-collapse.md
 testing.md
 wave-template.md
 '

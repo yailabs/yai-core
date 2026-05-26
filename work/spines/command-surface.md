@@ -1218,3 +1218,15 @@ Ladybug future persistence integration remain outside this block.
 `review_request`, `review_decision` and `control_pending` are graph-visible
 when actual refs exist. Approve is graph/query visible; deny, defer and
 quarantine preserve no-execution posture.
+
+## SPINE.45A Documentation Root Canon Commands
+
+SPINE.45A adds no `yai` commands. It adds one repository validation target:
+
+```bash
+make check-doc-root-canon
+```
+
+`make check-docs` includes `check-doc-root-canon`. The target verifies that
+`docs/` is curated architecture documentation only, `labs/` is the lab root and
+`work/` owns spines, waves, inventories and archives.

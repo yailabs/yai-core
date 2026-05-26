@@ -1,7 +1,7 @@
 # Agent Operating Appendix
 
 Status: active doctrine  
-Owner: docs/engineering  
+Owner: work/agents
 Purpose: Define minimum operating rules for agents editing this repository.  
 Not source of truth for: product roadmap details or legal policy.
 

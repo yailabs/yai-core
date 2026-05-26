@@ -52,7 +52,7 @@ assets.
 - `report.md` should include summary, what was executed, evidence table,
   metrics table, generated figures, artifact index, missing measurements,
   interpretation, limitations and next run.
-- The lab-root `notebook.ipynb` may read run metrics and regenerate charts or
-  tables.
+- The lab-root `notebook.ipynb` may guide a human through official commands and
+  inspect generated reports. It must not become the hidden automation script.
 - No report should point to loose images without a manifest entry.
 - A compact run must not use `run.md` as an active run surface.

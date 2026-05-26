@@ -19,6 +19,8 @@ Agents writing lab documents must follow this protocol.
 15. Do not infer production pack behavior from `pack-fixture/` files.
 16. Treat `report.md` as the final human artifact; figures support the report,
     not the reverse.
+17. Keep lab notebooks human-guided; move orchestration scripts into `run.sh`
+    or `labs/shared/bin/`.
 
 ## Required Agent Checks
 
@@ -37,9 +39,15 @@ While writing:
 - separate observations from interpretation;
 - preserve missing data as missing;
 - keep run artifacts in `assets/` for compact runs;
-- keep the canonical notebook at lab/test root;
-- keep `runbook.md` as the static Markdown copy of the canonical notebook;
+- keep the canonical notebook at lab/test root as a guided human demo;
+- keep `runbook.md` as the complete CLI procedure;
 - keep `prompts.json` as the prompt/query text authority;
+- do not embed prompt bodies in notebooks except as read-only inspection output
+  from the prompt catalog;
+- do not put long shell control flow, JSON construction, daemon bootstrap or
+  cleanup orchestration in notebooks;
+- call `run.sh`, `make`, `yai` or shared helper scripts from notebooks instead
+  of reimplementing those scripts in cells;
 - do not put `notebook.ipynb` inside run assets;
 - keep resolved prompt payloads as run assets when they affect results;
 - record which `pack-fixture/` material was used when a lab run uses fixture

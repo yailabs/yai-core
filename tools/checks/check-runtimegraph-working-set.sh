@@ -76,7 +76,7 @@ require_phrase "Makefile" "smoke-spine42"
 require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.42"
 
 if grep -RIn 'historical filesystem-loop manual' \
-  docs/engineering docs/architecture docs/labs README.md 2>/dev/null |
+  work/spines docs/architecture labs README.md 2>/dev/null |
   grep -v 'not the active' |
   grep -v 'replaces' |
   grep -v 'historical' |

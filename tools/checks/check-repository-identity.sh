@@ -29,14 +29,12 @@ for path in \
   cmd \
   tools \
   docs/README.md \
-  docs/adr \
   docs/architecture \
-  docs/engineering \
-  docs/internal \
-  docs/labs \ \
-  docs/product \
-  docs/protocols \
-  docs/status \
+  docs/index.md \
+  labs \
+  work/spines \
+  work/waves \
+  work/agents \
   include \
   system \
   proto \
@@ -50,7 +48,7 @@ do
       --exclude-dir=.git \
       --exclude-dir=build \
       --exclude-dir=target \
-      --exclude-dir=docs/archive \
+      --exclude-dir=work/archive \
       --exclude-dir=repo-readiness \
       "$PATTERN" "$ROOT/$path" >>"$HITS" 2>/dev/null || true
   fi

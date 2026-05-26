@@ -40,6 +40,9 @@ lab-root notebook when applicable
 - Keep `transcript.md` raw and chronological.
 - Use `report.md` for interpretation, tables, figure references, missing
   measurements and limitations.
+- Keep notebooks as human-guided demos. Complete rerun procedure belongs in
+  `runbook.md`; run capture belongs in `run.sh`; reusable implementation
+  belongs in `labs/shared/bin/`.
 - Record prompt text or message payloads for prompted runs as assets.
 - Record `pack-fixture/` files used by a run when fixture input material affects
   the case setup or interpretation.

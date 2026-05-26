@@ -5,7 +5,7 @@
 #   Ensure labs use the canonical README/runbook/notebook/run compact layout.
 #
 # Scope:
-#   Checks docs/labs root, lab entries, run scripts and legacy lab paths.
+#   Checks labs root, lab entries, run scripts and legacy lab paths.
 #
 # Non-goals:
 #   Does not execute labs or validate run results.
@@ -31,7 +31,7 @@ forbid_path() {
   [ ! -e "$1" ] || fail "forbidden path exists: $1"
 }
 
-require_dir "docs/lab-standards"
+require_dir "labs/standards"
 legacy_manuals_dir="docs/""manuals"
 legacy_standards_dir="labs/scientific-doc""s"
 legacy_lab_tools="tools/""labs"
@@ -59,6 +59,7 @@ found_lab=0
 for lab_dir in labs/*; do
   [ -d "$lab_dir" ] || continue
   [ "$lab_dir" != "labs/shared" ] || continue
+  [ "$lab_dir" != "labs/standards" ] || continue
   case "$lab_dir" in
     labs/filesystem-loop|labs/external-runtime) ;;
     *) fail "unexpected lab directory: $lab_dir" ;;
@@ -88,18 +89,18 @@ for lab_dir in labs/*; do
   fi
 done
 
-[ "$found_lab" -eq 1 ] || fail "no lab directories found under docs/labs"
+[ "$found_lab" -eq 1 ] || fail "no lab directories found under labs"
 
-if find docs/labs -path "*/${legacy_policy_packs}" -print -quit | grep -q .; then
-  fail "legacy policy pack directory exists under docs/labs"
+if find labs -path "*/${legacy_policy_packs}" -print -quit | grep -q .; then
+  fail "legacy policy pack directory exists under labs"
 fi
 
-if find docs/labs \( -name manual.md -o -name test.md -o -name run.md \) -print -quit | grep -q .; then
-  fail "legacy manual/test/run surface exists under docs/labs"
+if find labs \( -name manual.md -o -name test.md -o -name run.md \) -print -quit | grep -q .; then
+  fail "legacy manual/test/run surface exists under labs"
 fi
 
-if find docs/labs -path '*/analytics/*' -print -quit | grep -q .; then
-  fail "legacy analytics directory exists under docs/labs"
+if find labs -path '*/analytics/*' -print -quit | grep -q .; then
+  fail "legacy analytics directory exists under labs"
 fi
 
 if grep -R "tools/""labs" README.md docs Makefile tools configs >/dev/null 2>&1; then

@@ -34,15 +34,15 @@ run.
 
 `metrics.json`: normalized metrics for the single run.
 
-`notebook.ipynb`: canonical executable notebook for the lab/test. It may run
-operational cells, prompt/workload cells when applicable, and local metric
-review cells.
+`notebook.ipynb`: canonical guided notebook for the lab/test. It uses short
+explanations and official commands; it does not contain long orchestration
+scripts.
 
 `prompts.json`: canonical prompt/query catalog for the lab/test.
 
 `README.md`: lab entry point and protocol.
 
-`runbook.md`: executable terminal procedure. It may mirror `notebook.ipynb`.
+`runbook.md`: complete executable terminal procedure.
 
 `run.sh`: local helper that creates a compact run folder under this lab.
 
@@ -57,8 +57,8 @@ run. Notebook copies do not belong here.
 - A run must be understandable from `transcript.md` and `report.md`.
 - A test must be understandable from `README.md`, `runbook.md`,
   `notebook.ipynb` and `run.sh`.
-- The notebook is the executable source; the runbook is the static terminal
-  copy.
+- The notebook is a human-guided demo; the runbook is the complete terminal
+  procedure.
 - Prompt text authority lives in `prompts.json`; runbooks and notebooks may
   display prompts for human readability.
 - Canonical labs do not use separate manual or protocol files.
