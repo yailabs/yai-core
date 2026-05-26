@@ -69,3 +69,8 @@ make smoke-spine41
 The smoke verifies graph materialization from LMDB records, idempotent second
 materialization, relation listing, `decision_controls_attempt`,
 `receipt_records_effect` and `runtime_graph_updated: false`.
+
+SPINE.45 extends the frozen relation coverage with minimal review/control
+relations: `review_request_for_attempt`, `review_decision_resolves_request`,
+`control_pending_blocks_attempt` and `review_resolution_produces_receipt`.
+They are emitted only from existing refs.

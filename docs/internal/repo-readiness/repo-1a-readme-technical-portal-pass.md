@@ -45,7 +45,7 @@ docs/legal.md
 docs/engineering/command-surface.md
 docs/engineering/source-surface.md
 docs/engineering/testing.md
-docs/manuals/manual-filesystem-loop-validation.md
+legacy manuals surface/manual-filesystem-loop-validation.md
 docs/architecture/README.md
 docs/internal/repo-readiness/surface-inventory.md
 docs/internal/repo-readiness/repo-0-legal-reset.md
@@ -102,7 +102,7 @@ Relevant current locations:
 docs/architecture/
 docs/engineering/
 docs/status/
-docs/manuals/
+legacy manuals surface/
 docs/archive/
 docs/internal/repo-readiness/surface-inventory.md
 ```

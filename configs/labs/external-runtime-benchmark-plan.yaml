@@ -1,13 +1,13 @@
-plan_id: external_runtime_lan_baseline_v1
+plan_id: external_runtime_local_baseline_v1
 status: local_lab
 operator_host: macbook
-provider_host: linux_lan
+provider_host: localhost
 output_root: benchmarks/external-runtime
 
 provider:
-  target: lan
+  target: local
   protocol: openai_compatible
-  preferred_base_url: http://<linux-lan-ip>:43117/v1
+  preferred_base_url: http://localhost:43117/v1
   chat_endpoint: /chat/completions
   model_endpoint: /models
   launch_is_manual: true
@@ -28,14 +28,14 @@ hardware_baseline:
 
 workloads:
   - id: w1-smoke
-    prompt: "Rispondi in una frase: provider LAN pronto."
-    max_tokens: 64
+    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_id: local-provider-ready
   - id: w2-technical-summary
-    prompt: "Scrivi un riassunto tecnico breve del boundary provider in YAI."
-    max_tokens: 256
+    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_id: local-provider-boundary-summary
   - id: w3-long-report
-    prompt: "Scrivi un report tecnico breve su YAI, provider LAN e ricevute osservabili."
-    max_tokens: 512
+    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_id: local-provider-observable-receipts
   - id: hnsw-synthetic-20k
     kind: hnsw_synthetic
     n: 20000

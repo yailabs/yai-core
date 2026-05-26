@@ -1070,6 +1070,73 @@ fn derive_graph_relations(
         );
     }
 
+    if record.record_kind == "review_request" {
+        let summary = json_string_field(&record.raw_json, "summary").unwrap_or_default();
+        let review_ref = summary_token_value_or(&summary, "review_id", &record.record_id);
+        add_relation(
+            &mut relations,
+            skipped,
+            relation_from_record(
+                record,
+                "review_request_for_attempt",
+                "review_request",
+                &review_ref,
+                "attempt",
+                &attempt_id,
+                created_at_unix_ms,
+            ),
+        );
+        add_relation(
+            &mut relations,
+            skipped,
+            relation_from_record(
+                record,
+                "review_resolution_produces_receipt",
+                "review_request",
+                &review_ref,
+                "receipt",
+                &receipt_id,
+                created_at_unix_ms,
+            ),
+        );
+    }
+
+    if record.record_kind == "review_decision" {
+        let summary = json_string_field(&record.raw_json, "summary").unwrap_or_default();
+        let review_ref = summary_token_value_or(&summary, "review_id", "");
+        add_relation(
+            &mut relations,
+            skipped,
+            relation_from_record(
+                record,
+                "review_decision_resolves_request",
+                "review_decision",
+                &record.record_id,
+                "review_request",
+                &review_ref,
+                created_at_unix_ms,
+            ),
+        );
+    }
+
+    if record.record_kind == "control_pending" {
+        let summary = json_string_field(&record.raw_json, "summary").unwrap_or_default();
+        let pending_ref = summary_token_value_or(&summary, "pending_id", &record.record_id);
+        add_relation(
+            &mut relations,
+            skipped,
+            relation_from_record(
+                record,
+                "control_pending_blocks_attempt",
+                "control_pending",
+                &pending_ref,
+                "attempt",
+                &attempt_id,
+                created_at_unix_ms,
+            ),
+        );
+    }
+
     relations
 }
 
@@ -1155,6 +1222,15 @@ fn node_ref_for_record(
         "decision" | "decision_basis" | "gate_result" => {
             fallback_ref(decision_id, &record.record_id)
         }
+        "review_request" => {
+            let summary = json_string_field(&record.raw_json, "summary").unwrap_or_default();
+            summary_token_value_or(&summary, "review_id", &record.record_id)
+        }
+        "control_pending" => {
+            let summary = json_string_field(&record.raw_json, "summary").unwrap_or_default();
+            summary_token_value_or(&summary, "pending_id", &record.record_id)
+        }
+        "review_decision" => record.record_id.clone(),
         "receipt" | "effect_receipt" | "filesystem_receipt" => {
             fallback_ref(receipt_id, &record.record_id)
         }
@@ -1173,6 +1249,9 @@ fn node_kind_for_record(record_kind: &str) -> &'static str {
         "subject_binding" | "subject_state" => "subject",
         "attempt" => "attempt",
         "decision" | "decision_basis" | "gate_result" => "decision",
+        "review_request" => "review_request",
+        "review_decision" => "review_decision",
+        "control_pending" => "control_pending",
         "carrier_request" => "dispatch",
         "receipt" | "effect_receipt" | "filesystem_receipt" => "receipt",
         "policy_rule" | "receipt_requirement" | "authority_scope" => "policy",
@@ -1190,6 +1269,16 @@ fn fallback_ref(preferred: &str, fallback: &str) -> String {
     } else {
         preferred.to_string()
     }
+}
+
+fn summary_token_value_or(summary: &str, key: &str, fallback: &str) -> String {
+    let prefix = format!("{key}:");
+    summary
+        .split_whitespace()
+        .find_map(|part| part.strip_prefix(&prefix))
+        .filter(|value| !value.is_empty())
+        .unwrap_or(fallback)
+        .to_string()
 }
 
 fn has_subject_ref(subject_ref: &str) -> bool {

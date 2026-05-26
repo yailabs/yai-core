@@ -54,3 +54,16 @@ duplicate-aware second rebuild, missing case behavior, bad journal failure and
 resident service planned posture.
 
 The active lab path is `docs/labs/filesystem-loop`.
+
+## SPINE.44 Query Link
+
+After rebuild, `yai graph fanout`, `yai graph fanin`, `yai graph
+neighborhood` and `yai graph path --max-depth 4` inspect the active-case
+RuntimeGraph working set. RuntimeGraph is not a generic graph database. These
+commands provide bounded traversal diagnostics, causal path inspection,
+edge-kind filter support for fanout/fanin/neighborhood, parseable plain output
+and future color-aware graph inspection semantics.
+
+SPINE.45 freezes runtime graph rebuild and
+`yai.runtime_graph_rebuild_report.v1` for journal and graph-relations rebuild
+sources. Review/control records are graph-visible when actual refs exist.

@@ -10,6 +10,8 @@ during a lab test.
 
 A pack fixture is not a pack runtime, installer, registry backend,
 materialization API, command implementation or source-root production pack.
+It must not imply any production command such as a pack installer or runtime
+loader.
 
 ## Allowed Material Areas
 
@@ -40,6 +42,7 @@ should not be created unless they help the specific test.
 - Record which fixture files were used by each run.
 - Mark unknown materialization behavior as `unknown` or `not implemented`.
 - Do not infer production pack behavior from fixture files.
+- Do not create a separate repository-root fixture registry for lab inputs.
 
 ## Filesystem-Loop Pilot
 

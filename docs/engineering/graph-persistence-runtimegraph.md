@@ -138,5 +138,11 @@ No context compiler.
 No memory consolidation.
 No DuckDB facts.
 No carrier/provider behavior changes.
-No docs/manuals path updates.
+No legacy manual path updates.
 ```
+
+SPINE.45 freezes graph persistence with `yai.graph_relation.v1`, graph
+materialize, graph relations and RuntimeGraph consumers. RuntimeGraph is not
+durable truth. HNSW future, Context Compiler future and Ladybug future
+persistence integration remain explicit. Review/control records are
+graph-visible when actual refs exist.

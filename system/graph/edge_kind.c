@@ -12,6 +12,14 @@ const char *yai_graph_schema_edge_kind_string(yai_graph_schema_edge_kind_t kind)
         return "attempt_targets_subject";
     case YAI_GRAPH_SCHEMA_EDGE_DECISION_CONTROLS_ATTEMPT:
         return "decision_controls_attempt";
+    case YAI_GRAPH_SCHEMA_EDGE_REVIEW_REQUEST_FOR_ATTEMPT:
+        return "review_request_for_attempt";
+    case YAI_GRAPH_SCHEMA_EDGE_REVIEW_DECISION_RESOLVES_REQUEST:
+        return "review_decision_resolves_request";
+    case YAI_GRAPH_SCHEMA_EDGE_CONTROL_PENDING_BLOCKS_ATTEMPT:
+        return "control_pending_blocks_attempt";
+    case YAI_GRAPH_SCHEMA_EDGE_REVIEW_RESOLUTION_PRODUCES_RECEIPT:
+        return "review_resolution_produces_receipt";
     case YAI_GRAPH_SCHEMA_EDGE_DISPATCH_ROUTES_DECISION:
         return "dispatch_routes_decision";
     case YAI_GRAPH_SCHEMA_EDGE_CARRIER_REALIZES_DISPATCH:
@@ -59,6 +67,14 @@ yai_status_t yai_graph_schema_edge_kind_from_string(const char *value,
         *kind = YAI_GRAPH_SCHEMA_EDGE_ATTEMPT_TARGETS_SUBJECT;
     } else if (strcmp(value, "decision_controls_attempt") == 0) {
         *kind = YAI_GRAPH_SCHEMA_EDGE_DECISION_CONTROLS_ATTEMPT;
+    } else if (strcmp(value, "review_request_for_attempt") == 0) {
+        *kind = YAI_GRAPH_SCHEMA_EDGE_REVIEW_REQUEST_FOR_ATTEMPT;
+    } else if (strcmp(value, "review_decision_resolves_request") == 0) {
+        *kind = YAI_GRAPH_SCHEMA_EDGE_REVIEW_DECISION_RESOLVES_REQUEST;
+    } else if (strcmp(value, "control_pending_blocks_attempt") == 0) {
+        *kind = YAI_GRAPH_SCHEMA_EDGE_CONTROL_PENDING_BLOCKS_ATTEMPT;
+    } else if (strcmp(value, "review_resolution_produces_receipt") == 0) {
+        *kind = YAI_GRAPH_SCHEMA_EDGE_REVIEW_RESOLUTION_PRODUCES_RECEIPT;
     } else if (strcmp(value, "dispatch_routes_decision") == 0) {
         *kind = YAI_GRAPH_SCHEMA_EDGE_DISPATCH_ROUTES_DECISION;
     } else if (strcmp(value, "carrier_realizes_dispatch") == 0) {

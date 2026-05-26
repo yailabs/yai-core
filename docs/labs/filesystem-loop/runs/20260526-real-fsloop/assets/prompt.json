@@ -1,0 +1,16 @@
+{
+  "id": "lab-a-orientamento-01",
+  "kind": "yai-prompt",
+  "description": "Lab A: Orientamento prompt 1",
+  "role": "user",
+  "content": "Quali subject sono vincolati a questo caso?",
+  "tags": [
+    "lab-a-orientamento"
+  ],
+  "expected_evidence": [
+    "assets/prompt.json",
+    "assets/prompt.txt",
+    "assets/command.stdout.txt",
+    "assets/command.stderr.txt"
+  ]
+}

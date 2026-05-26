@@ -7,6 +7,7 @@ docs/labs/<lab>/
   README.md
   runbook.md
   notebook.ipynb
+  prompts.json
   run.sh
   pack-fixture/
   runs/
@@ -24,7 +25,10 @@ docs/labs/<lab>/
 commands, terminal output, prompts, responses, errors and ordered notes. It
 does not carry scientific frontmatter.
 
-`report.md`: analytical report for the single run.
+`report.md`: analytical report for the single run. It is the final human
+artifact and composes summary, execution, evidence tables, generated figures,
+artifact index, missing measurements, interpretation, limitations and next
+run.
 
 `manifest.json`: run artifact map.
 
@@ -33,6 +37,8 @@ does not carry scientific frontmatter.
 `notebook.ipynb`: canonical executable notebook for the lab/test. It may run
 operational cells, prompt/workload cells when applicable, and local metric
 review cells.
+
+`prompts.json`: canonical prompt/query catalog for the lab/test.
 
 `README.md`: lab entry point and protocol.
 
@@ -53,10 +59,16 @@ run. Notebook copies do not belong here.
   `notebook.ipynb` and `run.sh`.
 - The notebook is the executable source; the runbook is the static terminal
   copy.
+- Prompt text authority lives in `prompts.json`; runbooks and notebooks may
+  display prompts for human readability.
 - Canonical labs do not use separate manual or protocol files.
 - Assets are attachments; they are not the primary report surface.
 - `report.md` is the per-run analytical artifact.
+- Generated figures are valid only when they are derived from run evidence,
+  listed in `manifest.json` and included in `report.md`.
 - No separate aggregate directory is canonical.
+- Do not create lab-level outputs, tests, reports or analytics directories for
+  canonical lab evidence.
 - Runs must identify `pack-fixture/` material when fixture input affects setup,
   materialization posture or interpretation.
 - New runs must not use mandatory `raw/`, `normalized/`, `figures/`,

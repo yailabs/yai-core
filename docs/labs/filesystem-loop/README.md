@@ -6,10 +6,10 @@ Purpose: validate that YAI can run a bounded filesystem case through
 command-surface checks, daemon smoke paths, pack fixture material, case
 residue, prompt evidence and provider-boundary posture.
 
-This lab replaces `docs/manuals/manual-filesystem-loop-validation.md` as the
-source of truth. The executable notebook has been restored from the historical
-Italian manual notebook and now lives at `notebook.ipynb`; `runbook.md` is the
-static Markdown copy of that notebook.
+This lab is the source of truth for filesystem-loop validation. The executable
+notebook has been restored from the historical Italian manual notebook and now
+lives at `notebook.ipynb`; `runbook.md` is the static Markdown copy of that
+notebook.
 
 ## Canonical Files
 
@@ -18,6 +18,7 @@ static Markdown copy of that notebook.
 | Entry point and protocol | `docs/labs/filesystem-loop/README.md` |
 | Runbook | `docs/labs/filesystem-loop/runbook.md` |
 | Notebook | `docs/labs/filesystem-loop/notebook.ipynb` |
+| Prompt catalog | `docs/labs/filesystem-loop/prompts.json` |
 | Run script | `docs/labs/filesystem-loop/run.sh` |
 | Runs | `docs/labs/filesystem-loop/runs/` |
 | Pack fixture | `docs/labs/filesystem-loop/pack-fixture/` |
@@ -29,6 +30,7 @@ static Markdown copy of that notebook.
 - Pack fixture selection and case materialization posture.
 - Case boundary and provider-boundary posture.
 - Prompt labs that preserve exact prompt text used against the case view.
+- Prompt/query catalog execution through `run.sh --prompt-id <id>`.
 - Root notebook summaries over available compact runs.
 
 ## Protocol
@@ -51,6 +53,17 @@ runs/YYYYMMDD-<slug>/
   metrics.json
   assets/
 ```
+
+Prompt text authority:
+
+```text
+docs/labs/filesystem-loop/prompts.json
+```
+
+`run.sh --list-prompts` lists catalog entries. `run.sh --prompt-id <id>`
+executes one prompt/query at a time, stores the resolved `assets/prompt.json`
+and `assets/prompt.txt`, then captures stdout, stderr and exit status in the
+run package.
 
 ## Inputs / Pack Fixture
 
@@ -78,25 +91,25 @@ Non-goals:
 
 | Run | Status | Report |
 |---|---|---|
-| `20260526-smoke` | completed | `runs/20260526-smoke/report.md` |
-| `20260526-qwen3-filesystem-loop-historical` | historical_baseline | `runs/20260526-qwen3-filesystem-loop-historical/report.md` |
+| `20260526-real-fsloop` | current prompt-catalog execution attempt | `runs/20260526-real-fsloop/report.md` |
+| `20260526-canon6-smoke` | retained structural smoke | `runs/20260526-canon6-smoke/report.md` |
 
 ## Current Summary
 
 | Metric | Value |
 |---|---:|
 | Runs counted | 2 |
-| Completed runs | 1 |
-| Historical baseline runs | 1 |
-| Commands executed | 3 |
-| Commands passed | 3 |
-| Commands failed | 0 |
-| Prompted calls | 6 |
-| Model outputs | 6 |
+| Completed run packages | 2 |
+| Structural smoke runs | 1 |
+| Prompt-catalog runs | 1 |
+| Commands executed | 2 |
+| Commands passed | 1 |
+| Commands failed | 1 |
+| Prompted calls | 1 |
+| Model outputs | 0 |
 
-The root notebook contains the full filesystem-loop execution path, including
-the historical provider prompt labs. It also reads `runs/*/metrics.json` and can
-regenerate local tables from run metrics.
+The root notebook contains the full filesystem-loop execution path. It also
+reads `runs/*/metrics.json` and can regenerate local tables from run metrics.
 
 ## RuntimeGraph Compatibility Notes
 
@@ -153,3 +166,75 @@ node/edge totals and an invalid input reason when available.
 Use `runbook.md` for the full terminal procedure. Use `notebook.ipynb` for the
 manual analytical notebook path. Use `run.sh` to create a new compact run
 folder under this lab.
+
+Create the current structural smoke package with:
+
+```bash
+docs/labs/filesystem-loop/run.sh --slug canon6-smoke --command "make check-docs"
+```
+
+Create the current prompt-catalog execution attempt with:
+
+```bash
+YAI=target/debug/yai docs/labs/filesystem-loop/run.sh --slug real-fsloop --prompt-id lab-a-orientamento-01
+```
+
+List prompt catalog entries with:
+
+```bash
+docs/labs/filesystem-loop/run.sh --list-prompts
+```
+
+Execute one catalog prompt at a time with:
+
+```bash
+docs/labs/filesystem-loop/run.sh --slug <slug> --prompt-id <prompt-id>
+```
+
+Each run writes `transcript.md`, `report.md`, `metrics.json`,
+`manifest.json` and supporting attachments under `assets/`.
+
+After a run exists, compose report-first tables and figures with:
+
+```bash
+python3 docs/labs/_shared/bin/generate-run-figures.py --run-dir docs/labs/filesystem-loop/runs/<run> --update-report --overwrite
+```
+
+Automation/test review mode is non-interactive. `yai daemon
+run-filesystem-review-loop --socket <socket>` records a `require_review`
+pending item, prints `review_required: yes`, `status: pending_operator`,
+`carrier_attempted: false`, `execution_performed: false` and `next_commands`,
+then exits. `subject:linenoise-terminal is prompt surface`; operator reviewer
+authority belongs to `subject:operator-reviewer`. The follow-up commands are
+`approve`, `deny`, `defer` and `quarantine`.
+
+CLI review automation uses `control pending`, `control show`, `control review --interactive`,
+`control watch` and `control wait`. `not_a_tty` is the
+expected non-interactive response for interactive review. Guard vocabulary:
+operator reviewer authority, `subject:operator-reviewer is review authority`,
+`next_commands`.
+
+The review-loop matrix belongs to this lab, not to a separate model-behavior
+lab. It keeps approve, deny, defer, quarantine, `pending_operator`,
+`next_commands`, `wait timeout`, bounded `watch`, model proposal observed,
+model cannot approve and automatic proposed-op gate import is future work in
+one filesystem-loop evidence surface. Model output remains claim/proposal
+material; it cannot approve, mutate decisions or execute a carrier.
+
+## Review Loop Test Matrix
+
+SPINE.44C aligns the review loop test matrix inside
+`docs/labs/filesystem-loop`. The matrix covers
+blocked outside-sandbox writes, `pending_operator` review-required writes,
+`next_commands`, approve, deny, defer, quarantine, `wait timeout`, bounded
+`watch`, resolved wait and non-TTY interactive handling.
+
+Non-execution states keep `carrier_attempted: false` and
+`execution_performed: false`. `approve` may execute only after the local
+operator reviewer resolves the pending request; `deny`, `defer` and
+`quarantine` do not execute the filesystem carrier.
+
+Model proposal observed, model cannot approve, and automatic proposed-op gate
+import is future work. Model-facing posture is documented here so the lab
+distinguishes projection boundary, model proposal, control pending/review,
+carrier execution and receipt.

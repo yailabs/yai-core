@@ -1,0 +1,56 @@
+{
+  "schema": "yai.lab.prompts.v1",
+  "lab": "external-runtime",
+  "prompts": [
+    {
+      "id": "local-provider-ready",
+      "kind": "provider-chat",
+      "description": "Local provider reachability smoke prompt.",
+      "role": "user",
+      "content": "Rispondi in una frase: provider locale pronto sulla porta 43117.",
+      "max_tokens": 96,
+      "temperature": 0,
+      "tags": ["local-provider", "smoke", "readiness"],
+      "expected_evidence": [
+        "assets/prompt.json",
+        "assets/prompt.txt",
+        "assets/local-provider-probe/chat-request.json",
+        "assets/local-provider-probe/chat.json",
+        "assets/local-provider-probe/models.curl-meta.txt",
+        "assets/local-provider-probe/chat.curl-meta.txt"
+      ]
+    },
+    {
+      "id": "local-provider-boundary-summary",
+      "kind": "provider-chat",
+      "description": "Short technical summary of the local provider boundary.",
+      "role": "user",
+      "content": "Scrivi un riassunto tecnico breve del boundary provider in YAI.",
+      "max_tokens": 256,
+      "temperature": 0,
+      "tags": ["local-provider", "boundary"],
+      "expected_evidence": [
+        "assets/prompt.json",
+        "assets/prompt.txt",
+        "assets/local-provider-probe/chat-request.json",
+        "assets/local-provider-probe/chat.json"
+      ]
+    },
+    {
+      "id": "local-provider-observable-receipts",
+      "kind": "provider-chat",
+      "description": "Brief report prompt about provider evidence and observable receipts.",
+      "role": "user",
+      "content": "Scrivi un report tecnico breve su YAI, provider locale e ricevute osservabili.",
+      "max_tokens": 512,
+      "temperature": 0,
+      "tags": ["local-provider", "receipts", "report"],
+      "expected_evidence": [
+        "assets/prompt.json",
+        "assets/prompt.txt",
+        "assets/local-provider-probe/chat-request.json",
+        "assets/local-provider-probe/chat.json"
+      ]
+    }
+  ]
+}

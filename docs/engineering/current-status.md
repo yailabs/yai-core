@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store.
+Status: SPINE.45 Graph + RuntimeGraph Freeze.
 
 ## Completed Foundation
 
@@ -100,6 +100,41 @@ relations. Rebuild emits `yai.runtime_graph_rebuild_report.v1`,
 not durable truth. RuntimeGraph is not durable truth and resident service
 planned remains the runtime posture. The active lab path is
 `docs/labs/filesystem-loop`.
+SPINE.44 adds RuntimeGraph fanout, fanin, neighborhood and causal path
+diagnostics. RuntimeGraph is not a generic graph database; query is bounded
+traversal over the active-case working set. The edge-kind filter applies to
+fanout, fanin and neighborhood. Path diagnostics use max-depth and return
+`path_status: not_found` when no causal path exists. Plain output remains
+parseable and color-aware graph inspection remains future console/studio
+visual doctrine.
+SPINE.44A adds the active operator review / deferred action loop v0 for
+filesystem sandbox writes. `require_review` creates a `pending_operator` item;
+approve may execute the safe reviewed filesystem write, while deny, defer and
+quarantine keep `carrier_attempted: false` and `execution_performed: false`.
+Automation/test mode emits `review_required: yes`, `status:
+pending_operator` and `next_commands`, then exits without waiting for operator
+input.
+`subject:linenoise-terminal is prompt surface`; operator reviewer authority is
+separate and local-dev scoped.
+SPINE.44B adds the CLI review interaction surface over that durable state:
+`control pending` and `control show` are automation views, `control review
+--interactive` is TTY-scoped and returns `not_a_tty` without a terminal,
+`control watch` polls state changes and `control wait` supports timeout-based
+automation. `next_commands` makes the pending queue directly scriptable.
+`subject:operator-reviewer is review authority`.
+SPINE.44C aligns the review loop test matrix across `docs/labs/filesystem-loop`
+and `docs/labs/filesystem-loop`. The matrix proves blocked, `pending_operator`,
+approve, deny, defer, quarantine, `next_commands`, `wait timeout`, bounded
+`watch` and non-TTY behavior. Non-execution paths keep
+`carrier_attempted: false` and `execution_performed: false`. Model-facing
+posture is explicit: model proposal observed, model cannot approve, and
+automatic proposed-op gate import is future work.
+SPINE.45 freezes graph schema, `yai.graph_relation.v1`, graph materialize,
+graph relations, RuntimeGraph runtime-load/runtime-summary, runtime graph
+rebuild, `yai.runtime_graph_rebuild_report.v1`, fanout, fanin, neighborhood,
+causal path, bounded traversal, edge-kind filter, path found, path not_found
+and empty case. RuntimeGraph is not durable truth. Review/control records are
+graph-visible when actual refs exist.
 
 Current:
 
@@ -146,6 +181,11 @@ SPINE.40 Graph Persistence / RuntimeGraph Doctrine + Schema completed.
 SPINE.41 Graph Relation Write Path completed.
 SPINE.42 RuntimeGraph In-Memory Working Set completed.
 SPINE.43 RuntimeGraph Rebuild from Journal / LMDB / Graph Store completed.
+SPINE.44 RuntimeGraph Query / Causal Path / Diagnostics completed.
+SPINE.44A Operator Review / Deferred Action Loop v0 completed.
+SPINE.44B CLI Review Interaction Surface completed.
+SPINE.44C Review Loop Test Matrix + Lab Alignment completed.
+SPINE.45 Graph + RuntimeGraph Freeze completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -153,8 +193,30 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.44 RuntimeGraph Query / Causal Path / Diagnostics.
+SPINE.45 Graph + RuntimeGraph Freeze completed. The graph block is frozen
+with graph schema, `yai.graph_relation.v1`, graph materialize, graph
+relations, RuntimeGraph runtime-load/runtime-summary, runtime graph rebuild,
+`yai.runtime_graph_rebuild_report.v1`, fanout, fanin, neighborhood, causal
+path, bounded traversal, edge-kind filter, path found, path not_found and empty
+case.
+
+RuntimeGraph is not durable truth and remains per-command ephemeral. Plain
+output remains parseable and color-aware graph inspection remains doctrine.
+HNSW future, Context Compiler future and Ladybug future persistence integration
+remain future. `review_request`, `review_decision` and `control_pending` are
+graph-visible when actual refs exist; approve is graph/query visible, while
+deny, defer and quarantine preserve no-execution posture through SPINE.44C.
+
+SPINE.46 DuckDB Fact Plane Doctrine + Schema.
 ```
+
+Guard vocabulary: control pending, control show, control review --interactive,
+control watch, control wait, next_commands, not_a_tty, pending_operator,
+approve, deny, defer, quarantine, carrier_attempted: false,
+execution_performed: false, wait timeout, watch, model proposal observed,
+model cannot approve, automatic proposed-op gate import is future work,
+subject:linenoise-terminal is prompt surface, subject:operator-reviewer is
+review authority, docs/labs/filesystem-loop, docs/labs/filesystem-loop.
 
 Foundation status:
 

@@ -130,3 +130,10 @@ No context compiler.
 No DuckDB facts.
 No memory consolidation.
 ```
+
+SPINE.45 freezes this graph persistence block with `yai.graph_relation.v1`,
+graph materialize, graph relations and RuntimeGraph consumers. RuntimeGraph is
+not durable truth; HNSW future, Context Compiler future and Ladybug future
+persistence integration remain outside the freeze. Review/control records
+(`review_request`, `review_decision`, `control_pending`) are now graph-visible
+when actual refs exist.

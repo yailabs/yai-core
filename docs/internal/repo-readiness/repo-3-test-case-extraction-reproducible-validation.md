@@ -21,9 +21,9 @@ of the default public validation baseline.
 - `docs/quickstart.md`
 - `docs/engineering/testing.md`
 - `docs/engineering/command-surface.md`
-- `docs/manuals/manual-filesystem-loop-validation.md`
-- `docs/labs/model-behavior/README.md`
-- `docs/labs/model-behavior/filesystem-loop-qwen3-8b-q4.md`
+- `legacy manuals surface/manual-filesystem-loop-validation.md`
+- `docs/labs/filesystem-loop/README.md`
+- `docs/labs/filesystem-loop/prompts.json`
 - `tests/README.md`
 - `tests/smoke/`
 - `Makefile`

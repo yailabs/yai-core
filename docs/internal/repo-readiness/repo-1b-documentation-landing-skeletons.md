@@ -26,7 +26,7 @@ docs/legal.md
 docs/engineering/command-surface.md
 docs/engineering/source-surface.md
 docs/engineering/testing.md
-docs/manuals/manual-filesystem-loop-validation.md
+legacy manuals surface/manual-filesystem-loop-validation.md
 docs/architecture/README.md
 docs/architecture/01-terminology.md
 ```
@@ -60,7 +60,7 @@ The new public docs still link to current engineering references:
 docs/engineering/command-surface.md
 docs/engineering/source-surface.md
 docs/engineering/testing.md
-docs/manuals/manual-filesystem-loop-validation.md
+legacy manuals surface/manual-filesystem-loop-validation.md
 docs/architecture/README.md
 ```
 

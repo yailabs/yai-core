@@ -39,6 +39,7 @@ carrier-outcome-harness.md
 carrier-receipt-divergence.md
 carrier-contract-v1.md
 carrier-coverage-matrix.md
+cli-review-interaction-surface.md
 command-surface.md
 control-carrier-rebase.md
 current-status.md
@@ -50,6 +51,7 @@ file-header-standard.md
 filesystem-target.md
 four-repo-roadmap.md
 graph-persistence-runtimegraph.md
+graph-runtimegraph-freeze.md
 graph-relation-write-path.md
 hot-state-plane.md
 host-observation-probe.md
@@ -61,6 +63,7 @@ lmdb-record-plane-freeze.md
 net-yai-boundary.md
 non-process-carrier-skeletons.md
 operation-dispatch-multiplex.md
+operator-review-deferred-loop.md
 operational-extraction-contract.md
 pack-format.md
 pack-roadmap.md
@@ -68,7 +71,9 @@ process-carrier-signal-control.md
 provider-runtime-lan-target-surface.md
 replay-idempotency-schema-version.md
 replay-diagnostics-rebuild-report.md
+review-loop-test-matrix.md
 runtimegraph-rebuild.md
+runtimegraph-query-causal-path.md
 runtimegraph-working-set.md
 source-surface.md
 testing.md

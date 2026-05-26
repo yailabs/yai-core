@@ -52,7 +52,7 @@ behavior must update:
 
 ```text
 docs/labs/filesystem-loop/runbook.md
-docs/labs/filesystem-loop/tests.md
+docs/labs/filesystem-loop/runbook.md
 ```
 
 SPINE.33F adds the carrier coverage matrix above this route surface. Route

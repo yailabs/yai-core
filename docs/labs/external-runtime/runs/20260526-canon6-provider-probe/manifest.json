@@ -1,0 +1,49 @@
+{
+  "schema": "yai.compact-run.v0",
+  "lab": "external-runtime",
+  "run_slug": "20260526-canon6-provider-probe",
+  "status": "command_recorded",
+  "created_at": "2026-05-26T16:10:19Z",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets_dir": "assets",
+  "command_provided": true,
+  "assets": [
+    "assets/C001-command-status.svg",
+    "assets/C002-provider-endpoint-status.svg",
+    "assets/C003-response-artifact-presence.svg",
+    "assets/C004-provider-response-time.svg",
+    "assets/command.stderr.txt",
+    "assets/command.stdout.txt",
+    "assets/generated-figures.json",
+    "assets/generated-tables.md",
+    "assets/local-provider-probe/chat-request.json",
+    "assets/local-provider-probe/chat.curl-meta.txt",
+    "assets/local-provider-probe/chat.json",
+    "assets/local-provider-probe/chat.stderr.txt",
+    "assets/local-provider-probe/meta.json",
+    "assets/local-provider-probe/models.curl-meta.txt",
+    "assets/local-provider-probe/models.json",
+    "assets/local-provider-probe/models.stderr.txt",
+    "assets/local-provider-probe/summary.md",
+    "assets/prompt.json",
+    "assets/prompt.txt"
+  ],
+  "limitations": [
+    "One-prompt external-runtime run.",
+    "No provider quality, model quality, hardware benchmark or benchmark superiority claim."
+  ],
+  "generated_evidence": {
+    "schema": "yai.run.generated-evidence.v1",
+    "figures_index": "assets/generated-figures.json",
+    "tables": "assets/generated-tables.md",
+    "figures": [
+      "assets/C001-command-status.svg",
+      "assets/C002-provider-endpoint-status.svg",
+      "assets/C003-response-artifact-presence.svg",
+      "assets/C004-provider-response-time.svg"
+    ]
+  }
+}

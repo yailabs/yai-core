@@ -14,6 +14,12 @@ const char *yai_graph_node_kind_string(yai_graph_node_kind_t kind) {
         return "attempt";
     case YAI_GRAPH_NODE_DECISION:
         return "decision";
+    case YAI_GRAPH_NODE_REVIEW_REQUEST:
+        return "review_request";
+    case YAI_GRAPH_NODE_REVIEW_DECISION:
+        return "review_decision";
+    case YAI_GRAPH_NODE_CONTROL_PENDING:
+        return "control_pending";
     case YAI_GRAPH_NODE_DISPATCH:
         return "dispatch";
     case YAI_GRAPH_NODE_CARRIER:
@@ -59,6 +65,12 @@ yai_status_t yai_graph_node_kind_from_string(const char *value,
         *kind = YAI_GRAPH_NODE_ATTEMPT;
     } else if (strcmp(value, "decision") == 0) {
         *kind = YAI_GRAPH_NODE_DECISION;
+    } else if (strcmp(value, "review_request") == 0) {
+        *kind = YAI_GRAPH_NODE_REVIEW_REQUEST;
+    } else if (strcmp(value, "review_decision") == 0) {
+        *kind = YAI_GRAPH_NODE_REVIEW_DECISION;
+    } else if (strcmp(value, "control_pending") == 0) {
+        *kind = YAI_GRAPH_NODE_CONTROL_PENDING;
     } else if (strcmp(value, "dispatch") == 0) {
         *kind = YAI_GRAPH_NODE_DISPATCH;
     } else if (strcmp(value, "carrier") == 0) {

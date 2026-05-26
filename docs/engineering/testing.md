@@ -248,8 +248,7 @@ The operator-facing lab runbook for this command surface is:
 
 ```text
 docs/labs/filesystem-loop/runbook.md
-docs/labs/filesystem-loop/tests.md
-docs/labs/filesystem-loop/outputs.md
+docs/labs/filesystem-loop/runbook.md
 ```
 
 ```text
@@ -1685,3 +1684,157 @@ Required output includes `yai.runtime_graph_rebuild_report.v1`,
 `runtime_graph_rebuild`, `journal`, `LMDB`, `graph relations`,
 `runtime-summary`, `resident service planned` and the rule that RuntimeGraph is
 not durable truth. RuntimeGraph is not durable truth.
+
+## SPINE.44 RuntimeGraph Query / Causal Path Loop
+
+`tests/smoke/runtimegraph-query/test_runtimegraph_query.sh` validates
+RuntimeGraph fanout, fanin, neighborhood and causal path diagnostics.
+
+```bash
+yai graph fanout --case <case_ref> --node <ref>
+yai graph fanin --case <case_ref> --node <ref>
+yai graph neighborhood --case <case_ref> --node <ref> --depth 1
+yai graph path --case <case_ref> --from <ref> --to <ref> --max-depth 4
+```
+
+RuntimeGraph is not a generic graph database. The smoke verifies fanout,
+fanin, neighborhood, causal path found, causal path not_found, edge-kind
+filter behavior, bounded traversal, max-depth clamping and empty-case output.
+Plain output remains parseable. Color-aware graph inspection is documented for
+future console/studio use under `docs/labs/filesystem-loop`.
+
+Guard vocabulary: RuntimeGraph is not a generic graph database; fanout, fanin,
+neighborhood, bounded traversal, causal path, max-depth, edge-kind filter,
+color-aware graph inspection, plain output remains parseable.
+
+## SPINE.44A Operator Review / Deferred Action Loop
+
+`tests/smoke/operator-review-loop/test_operator_review_loop.sh` validates the
+filesystem review loop:
+
+```bash
+yai daemon run-filesystem-review-loop --socket <socket>
+yai control pending --case case:new12-filesystem
+yai control show review:new12-fs-write-review
+yai control approve review:new12-fs-write-review --reason "smoke approve"
+```
+
+The smoke covers outside-sandbox denial, `require_review` to
+`pending_operator`, approve, deny, defer, quarantine, persisted review records,
+filesystem receipts and graph materialization over review/control records.
+The review loop is scriptable: it emits `review_required: yes`, `status:
+pending_operator`, `carrier_attempted: false`, `execution_performed: false`
+and `next_commands`, then exits without waiting for operator input.
+`subject:linenoise-terminal is prompt surface`; operator reviewer authority is
+separate. Deny, defer and quarantine keep `carrier_attempted: false` and
+`execution_performed: false`.
+
+Guard vocabulary: require_review, pending_operator, approve, deny, defer,
+quarantine, carrier_attempted: false, execution_performed: false,
+subject:linenoise-terminal is prompt surface, operator reviewer authority,
+docs/labs/filesystem-loop.
+
+## SPINE.44B CLI Review Interaction Surface
+
+`tests/smoke/operator-review-cli/test_operator_review_cli.sh` validates the
+scriptable and interactive-facing review CLI:
+
+```bash
+yai control pending --case case:new12-filesystem
+yai control show review:new12-fs-write-review
+yai control review --case case:new12-filesystem --interactive
+yai control watch --case case:new12-filesystem --interval-ms 500 --max-events 5
+yai control wait review:new12-fs-write-review --timeout 1
+```
+
+The smoke checks that `control pending` prints `next_commands`, `control show`
+exposes the authority boundary, non-TTY interactive review returns
+`not_a_tty`, watch reports a pending event and wait reports timeout before
+resolution. `approve` executes the reviewed filesystem write; `deny`, `defer`
+and `quarantine` keep `carrier_attempted: false` and
+`execution_performed: false`.
+
+Authority boundary:
+
+```text
+subject:linenoise-terminal is prompt surface
+subject:operator-reviewer is review authority
+```
+
+Guard vocabulary: control pending, control show, control review --interactive,
+control watch, control wait, next_commands, not_a_tty, pending_operator,
+approve, deny, defer, quarantine, carrier_attempted: false,
+execution_performed: false, subject:linenoise-terminal is prompt surface,
+subject:operator-reviewer is review authority, docs/labs/filesystem-loop.
+
+## SPINE.44C Review Loop Test Matrix
+
+`tests/smoke/review-loop-test-matrix/test_review_loop_test_matrix.sh`
+validates the complete review loop matrix:
+
+```bash
+make smoke-spine44c
+```
+
+The smoke verifies blocked outside-sandbox writes, `pending_operator`,
+`next_commands`, approve, deny, defer, quarantine, `wait timeout`, resolved
+wait, bounded `watch` and non-TTY interactive handling. Non-execution paths
+keep `carrier_attempted: false` and `execution_performed: false`.
+
+Expected smoke labels:
+
+```text
+review_matrix:blocked ok
+review_matrix:pending ok
+review_matrix:approve executed ok
+review_matrix:deny no_execution ok
+review_matrix:defer no_execution ok
+review_matrix:quarantine no_execution ok
+review_matrix:next_commands ok
+review_matrix:wait_timeout ok
+review_matrix:wait_resolved ok
+review_matrix:watch ok
+review_matrix:non_tty ok
+```
+
+Lab alignment lives in `docs/labs/filesystem-loop` and
+`docs/labs/filesystem-loop`. The model lab records model proposal observed,
+model cannot approve, and automatic proposed-op gate import is future work.
+
+## SPINE.45 Graph + RuntimeGraph Freeze
+
+`tests/smoke/graph-runtimegraph-freeze/test_graph_runtimegraph_freeze.sh`
+validates the frozen graph lifecycle: graph schema, `yai.graph_relation.v1`,
+graph materialize, graph relations, RuntimeGraph runtime-load/runtime-summary,
+runtime graph rebuild, `yai.runtime_graph_rebuild_report.v1`, fanout, fanin,
+neighborhood, causal path, bounded traversal, edge-kind filter, path found,
+path not_found and empty case.
+
+Expected labels:
+
+```text
+graph_freeze:schema ok
+graph_freeze:materialize ok
+graph_freeze:relations ok
+graph_freeze:runtime_load ok
+graph_freeze:runtime_rebuild ok
+graph_freeze:rebuild_report ok
+graph_freeze:fanout ok
+graph_freeze:fanin ok
+graph_freeze:neighborhood ok
+graph_freeze:path_found ok
+graph_freeze:path_not_found ok
+graph_freeze:empty_case ok
+graph_freeze:bounded ok
+graph_freeze:review_records visible_or_classified
+```
+
+RuntimeGraph is not durable truth; it remains per-command ephemeral. Plain
+output remains parseable and color-aware graph inspection remains doctrine.
+HNSW future, Context Compiler future and Ladybug future persistence integration
+are non-goals.
+
+Review/control coverage checks `review_request`, `review_decision`,
+`control_pending`, approve, deny, defer and quarantine. The approve path is
+graph/query visible; deny, defer and quarantine no-execution posture remains
+covered by SPINE.44C.

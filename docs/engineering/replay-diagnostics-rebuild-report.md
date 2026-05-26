@@ -29,7 +29,7 @@ Reports live under:
 YAI_HOME/store/replay/reports/<journal_identity>.replay-report.json
 ```
 
-No old docs/manuals path updates are part of SPINE.38.
+No legacy manual path updates are part of SPINE.38.
 
 SPINE.39 freezes `replay-report` as the durable replay evidence command.
 Reports remain `yai.replay_report.v1` and must preserve `journal_identity`,

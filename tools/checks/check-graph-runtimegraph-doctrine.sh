@@ -63,12 +63,12 @@ require_phrase "Makefile" "check-graph-runtimegraph-doctrine"
 require_phrase "Makefile" "smoke-spine40"
 require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.40"
 
-if grep -RIn 'docs/manuals/manual-filesystem-loop-validation' \
+if grep -RIn 'historical filesystem-loop manual' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |
   grep -v 'not the active' |
   grep -v 'replaces' |
   grep -v 'historical' |
   grep -v 'pre-redirect' >/dev/null; then
-  printf 'active docs contain unqualified old filesystem-loop manual path\n' >&2
+  printf 'active docs contain unqualified legacy filesystem-loop manual path\n' >&2
   exit 1
 fi

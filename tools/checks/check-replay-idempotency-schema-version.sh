@@ -56,7 +56,7 @@ done
 
 require_phrase "docs/engineering/replay-idempotency-schema-version.md" "schema_mismatch"
 require_phrase "docs/engineering/replay-idempotency-schema-version.md" "compat_legacy"
-require_phrase "docs/engineering/replay-idempotency-schema-version.md" "No old docs/manuals path updates"
+require_phrase "docs/engineering/replay-idempotency-schema-version.md" "No legacy manual path updates"
 require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"
 require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.38  Replay Diagnostics / Rebuild Report                       done"
 require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"

@@ -1,0 +1,12 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "lab": "filesystem-loop",
+  "run_slug": "20260526-real-fsloop",
+  "status": "command_recorded",
+  "created_at": "2026-05-26T18:42:31Z",
+  "command_exit_code": 2,
+  "measurements": {
+    "prompt_id": "lab-a-orientamento-01",
+    "prompt_kind": "yai-prompt"
+  }
+}

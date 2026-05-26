@@ -87,7 +87,7 @@ Filesystem loop, journal, LMDB and carrier manual checks use:
 docs/labs/filesystem-loop/
 ```
 
-Old `docs/manuals/manual-filesystem-loop-validation` material is not the active
+Old filesystem-loop manual material is not the active
 lab path.
 
 ## Validation
@@ -120,5 +120,5 @@ No memory consolidation.
 No RuntimeGraph.
 No HNSW.
 No carrier/provider changes.
-No old docs/manuals active updates.
+No legacy manual active updates.
 ```

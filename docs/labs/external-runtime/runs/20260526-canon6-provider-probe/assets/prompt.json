@@ -1,0 +1,22 @@
+{
+  "id": "local-provider-ready",
+  "kind": "provider-chat",
+  "description": "Local provider reachability smoke prompt.",
+  "role": "user",
+  "content": "Rispondi in una frase: provider locale pronto sulla porta 43117.",
+  "max_tokens": 96,
+  "temperature": 0,
+  "tags": [
+    "local-provider",
+    "smoke",
+    "readiness"
+  ],
+  "expected_evidence": [
+    "assets/prompt.json",
+    "assets/prompt.txt",
+    "assets/local-provider-probe/chat-request.json",
+    "assets/local-provider-probe/chat.json",
+    "assets/local-provider-probe/models.curl-meta.txt",
+    "assets/local-provider-probe/chat.curl-meta.txt"
+  ]
+}

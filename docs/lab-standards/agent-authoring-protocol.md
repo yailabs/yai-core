@@ -17,6 +17,8 @@ Agents writing lab documents must follow this protocol.
 13. Link manifest entries when reports use figures, charts, diagrams or tables.
 14. Do not create or publish a prompted benchmark without a prompt artifact.
 15. Do not infer production pack behavior from `pack-fixture/` files.
+16. Treat `report.md` as the final human artifact; figures support the report,
+    not the reverse.
 
 ## Required Agent Checks
 
@@ -37,13 +39,20 @@ While writing:
 - keep run artifacts in `assets/` for compact runs;
 - keep the canonical notebook at lab/test root;
 - keep `runbook.md` as the static Markdown copy of the canonical notebook;
+- keep `prompts.json` as the prompt/query text authority;
 - do not put `notebook.ipynb` inside run assets;
-- keep prompts as explicit assets or metric fields when they affect results;
+- keep resolved prompt payloads as run assets when they affect results;
 - record which `pack-fixture/` material was used when a lab run uses fixture
   input material;
 - distinguish pack fixture material from materialized case state;
 - mark unknown materialization behavior as `unknown` or `not implemented`;
 - declare visual provenance and source data;
+- generate figures only from existing run metrics or declared run assets;
+- omit unsupported charts instead of inventing values;
+- reference generated figures from both `report.md` and `manifest.json`;
+- use markdown tables instead of SVG when a tiny categorical table is clearer;
+- keep diagnostic presence/absence figures out of benchmark interpretation;
+- add missing-measurement and limitation sections when evidence is absent;
 - avoid broad validity language unless supported.
 
 Before completion:
@@ -64,6 +73,7 @@ For new canonical lab work, create:
 README.md
 runbook.md
 notebook.ipynb
+prompts.json
 run.sh
 runs/YYYYMMDD-<run-slug>/
   transcript.md
@@ -73,7 +83,8 @@ runs/YYYYMMDD-<run-slug>/
   assets/
 ```
 
-Do not create separate aggregate folders.
+Do not create separate aggregate folders, manuals surfaces, lab-level outputs
+or lab-level tests files for canonical labs.
 
 Before finishing any lab structure change, run:
 

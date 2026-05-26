@@ -77,7 +77,7 @@ Filesystem loop, journal, LMDB and carrier manual checks live under:
 docs/labs/filesystem-loop/
 ```
 
-The old `docs/manuals/manual-filesystem-loop-validation` path is not the active
+The old filesystem-loop manual path is not the active
 lab path.
 
 ## Freeze Validation

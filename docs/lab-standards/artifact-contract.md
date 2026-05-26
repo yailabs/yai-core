@@ -34,9 +34,21 @@ declare that the prompt is `Not available`.
 In compact runs, artifacts are grouped under `assets/`; `manifest.json` and
 `metrics.json` provide the machine-readable surface.
 
+The lab-root `README.md`, `runbook.md`, `notebook.ipynb`, `run.sh` and
+`prompts.json` are protocol/execution surfaces, not run attachments. A run may
+copy the resolved prompt payload into `assets/`, but it must not copy the
+lab-root notebook into run assets.
+
+`transcript.md` is raw chronological execution evidence. `report.md` is the
+final human analytical artifact for a run. `metrics.json` is normalized
+machine-readable data used by the report and figures. `assets/` contains
+attachments, including prompt payloads, logs, generated tables and SVG figures.
+
 Raw data and normalized data must not be conflated.
 
 Generated figures must identify their source data when the source exists.
+Generated figures are supporting evidence inside `report.md`; they are not the
+report itself.
 
 Logs may be artifacts, but logs alone do not create a claim.
 
@@ -70,3 +82,14 @@ lab-specific profile. The canonical notebook is at lab root.
 
 Generated visuals must be listed in `manifest.json` before a report treats them
 as report artifacts.
+
+Canonical labs do not preserve separate manuals, lab-level outputs files or
+lab-level tests files as active artifacts.
+
+Generated figure indexes, such as `assets/generated-figures.json`, are run
+artifacts. They must be based on existing run evidence and should state when a
+candidate chart was omitted because source data was unavailable.
+
+Generated report tables, such as `assets/generated-tables.md`, are run
+artifacts. They should be referenced from `report.md` when they summarize the
+same evidence used by generated figures.

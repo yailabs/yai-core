@@ -1,0 +1,38 @@
+{
+  "schema": "yai.compact-run.v0",
+  "lab": "filesystem-loop",
+  "run_slug": "20260526-real-fsloop",
+  "status": "command_recorded",
+  "created_at": "2026-05-26T18:42:31Z",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets_dir": "assets",
+  "command_provided": true,
+  "assets": [
+    "assets/C001-command-status.svg",
+    "assets/C002-execution-evidence-counts.svg",
+    "assets/C003-prompt-response-sequence.svg",
+    "assets/command.stderr.txt",
+    "assets/command.stdout.txt",
+    "assets/generated-figures.json",
+    "assets/generated-tables.md",
+    "assets/prompt.json",
+    "assets/prompt.txt"
+  ],
+  "limitations": [
+    "One-prompt filesystem-loop run.",
+    "No model quality, provider readiness, hardware benchmark or benchmark superiority claim."
+  ],
+  "generated_evidence": {
+    "schema": "yai.run.generated-evidence.v1",
+    "figures_index": "assets/generated-figures.json",
+    "tables": "assets/generated-tables.md",
+    "figures": [
+      "assets/C001-command-status.svg",
+      "assets/C002-execution-evidence-counts.svg",
+      "assets/C003-prompt-response-sequence.svg"
+    ]
+  }
+}

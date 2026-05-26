@@ -1,0 +1,57 @@
+{
+  "schema": "yai.run.generated-evidence.v1",
+  "source_run": "20260526-canon6-smoke",
+  "lab": "filesystem-loop",
+  "generated_at_utc": "2026-05-26T18:44:26Z",
+  "source_files": [
+    "transcript.md",
+    "manifest.json",
+    "metrics.json",
+    "assets/"
+  ],
+  "tables": "assets/generated-tables.md",
+  "figures": [
+    {
+      "id": "C001",
+      "type": "figure",
+      "title": "Command status",
+      "source_run": "20260526-canon6-smoke",
+      "source_data": [
+        "metrics.json:command_exit_code"
+      ],
+      "generation_method": "docs/labs/_shared/bin/generate-run-figures.py",
+      "output_path": "assets/C001-command-status.svg",
+      "format": "svg",
+      "created_at": "2026-05-26T18:44:26Z",
+      "caption": "The recorded command exit code is 0.",
+      "limitation": "Diagnostic execution status only; this is not a benchmark or quality measurement.",
+      "diagnostic": true
+    },
+    {
+      "id": "C002",
+      "type": "figure",
+      "title": "Execution evidence counts",
+      "source_run": "20260526-canon6-smoke",
+      "source_data": [
+        "transcript.md",
+        "assets/command.stdout.txt",
+        "assets/command.stderr.txt",
+        "metrics.json"
+      ],
+      "generation_method": "docs/labs/_shared/bin/generate-run-figures.py",
+      "output_path": "assets/C002-execution-evidence-counts.svg",
+      "format": "svg",
+      "created_at": "2026-05-26T18:44:26Z",
+      "caption": "Counts summarize observable evidence channels captured by the run.",
+      "limitation": "Counts are inferred from run files and do not measure correctness, latency or model quality.",
+      "diagnostic": true
+    }
+  ],
+  "missing_measurements": [
+    "Benchmark throughput, hardware, VRAM and model-quality measurements: Not measured",
+    "Command duration or endpoint timing: Not measured",
+    "Filesystem receipt evidence: Not measured",
+    "Model or command response sequence: Not measured",
+    "Prompt ID and resolved prompt payload: Not measured"
+  ]
+}

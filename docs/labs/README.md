@@ -5,7 +5,7 @@ Status: canonical home for real lab procedures, notebooks and runs.
 `docs/labs/` owns material that can be run, repeated, curated or summarized.
 Root stays light: shared contracts live in `docs/lab-standards/`, and each lab
 owns its own README/protocol, runbook, notebook, run script, optional pack
-fixture and runs.
+fixture, prompt catalog and runs.
 
 ## Canonical Root
 
@@ -13,6 +13,7 @@ fixture and runs.
 docs/labs/
   README.md
   registry.md
+  _shared/bin/
   filesystem-loop/
   external-runtime/
 ```
@@ -24,6 +25,7 @@ docs/labs/<lab>/
   README.md
   runbook.md
   notebook.ipynb
+  prompts.json
   run.sh
   pack-fixture/
   runs/
@@ -44,7 +46,14 @@ docs/labs/registry.md
 ```
 
 Root registry entries point to each lab purpose, runbook, notebook, pack
-fixture posture and latest run.
+fixture posture, prompt catalog and latest run.
+
+Current latest runs:
+
+| Lab | Latest run |
+|---|---|
+| filesystem-loop | `filesystem-loop/runs/20260526-real-fsloop/` |
+| external-runtime | `external-runtime/runs/20260526-canon6-provider-probe/` |
 
 ## Lab Standards
 
@@ -76,11 +85,18 @@ compact run package.
 - `runbook.md` is the executable terminal procedure.
 - Each lab/test owns one canonical executable notebook at lab root.
 - `runbook.md` is the static Markdown copy of the lab-root notebook.
+- `prompts.json` is the prompt/query authority for that lab.
 - `run.sh` creates a compact run folder under its own lab.
+- `run.sh --prompt-id <id>` executes exactly one catalog prompt/query and
+  stores the resolved payload under run `assets/`.
+- `docs/labs/_shared/bin/` contains shared lab helper tools; lab helpers do
+  not live under repository-root `tools/`.
 - `pack-fixture/` is optional lab/test input material shaped toward pack
   doctrine. It is not a pack runtime or production source root.
 - Every compact run has `transcript.md`, `report.md`, `manifest.json`,
   `metrics.json` and `assets/`.
+- `report.md` is the final human artifact for a run; generated tables and SVG
+  figures support the report and must be listed in `manifest.json`.
 - Historical expanded layouts should be folded into compact runs before use.
 - Raw local benchmark output may be referenced, but the committed lab surface is
   the compact run package.

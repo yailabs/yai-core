@@ -47,3 +47,13 @@ Clean blocked, executed and observed scenarios remain consistent.
 This is not receipt persistence, graph repair, LMDB behavior or new carrier
 execution. It is the consistency layer that SPINE.34 can depend on before the
 record plane freeze.
+
+## Operator Review Link
+
+SPINE.44A makes review/deferred/quarantine posture active. `require_review`
+creates a `pending_operator` item. Approve may continue to the filesystem
+carrier only when the sandbox target is safe. Deny, defer and quarantine keep
+`carrier_attempted: false` and `execution_performed: false` and create explicit
+receipt residue. `subject:linenoise-terminal is prompt surface`; operator
+reviewer authority is separate. The active lab path is
+`docs/labs/filesystem-loop`.

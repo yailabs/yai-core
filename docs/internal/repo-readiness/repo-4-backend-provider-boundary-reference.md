@@ -21,8 +21,8 @@ The document is not DS4-centered. DS4 is listed only as a hardware-gated sketch.
 - `docs/index.md`
 - `docs/quickstart.md`
 - `docs/test-cases.md`
-- `docs/labs/model-behavior/README.md`
-- `docs/labs/model-behavior/filesystem-loop-qwen3-8b-q4.md`
+- `docs/labs/filesystem-loop/README.md`
+- `docs/labs/filesystem-loop/prompts.json`
 - `docs/engineering/command-surface.md`
 - `docs/engineering/testing.md`
 

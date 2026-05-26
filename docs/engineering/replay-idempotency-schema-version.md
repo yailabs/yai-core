@@ -170,7 +170,7 @@ No memory consolidation.
 No RuntimeGraph.
 No HNSW.
 No carrier/provider changes.
-No old docs/manuals path updates.
+No legacy manual path updates.
 ```
 
 ## Freeze Note

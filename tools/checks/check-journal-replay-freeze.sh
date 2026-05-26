@@ -53,7 +53,7 @@ done
 
 require_phrase "docs/engineering/journal-replay-freeze.md" "no journal fallback"
 require_phrase "docs/engineering/journal-replay-freeze.md" "false completion"
-require_phrase "docs/engineering/journal-replay-freeze.md" "No old docs/manuals active updates"
+require_phrase "docs/engineering/journal-replay-freeze.md" "No legacy manual active updates"
 require_phrase "docs/labs/filesystem-loop/runbook.md" "Journal Replay Freeze"
 require_phrase "docs/labs/filesystem-loop/runbook.md" "docs/labs/filesystem-loop"
 require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.39  Journal Replay Freeze                                     done"
@@ -64,12 +64,12 @@ require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.39"
 require_phrase "Makefile" "check-journal-replay-freeze"
 require_phrase "Makefile" "smoke-spine39"
 
-if grep -RIn 'docs/manuals/manual-filesystem-loop-validation' \
+if grep -RIn 'historical filesystem-loop manual' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |
   grep -v 'not the active' |
   grep -v 'replaces' |
   grep -v 'historical' |
   grep -v 'pre-redirect' >/dev/null; then
-  printf 'active docs contain unqualified old filesystem-loop manual path\n' >&2
+  printf 'active docs contain unqualified legacy filesystem-loop manual path\n' >&2
   exit 1
 fi

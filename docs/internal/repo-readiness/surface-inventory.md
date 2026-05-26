@@ -87,10 +87,10 @@ THIRD_PARTY_NOTICES.md
 | `docs/status/` | Implementation status and import map. | mixed | move | Valuable for maintainers; too much wave history for public first contact. | `docs/internal/status/` |
 | `docs/status/implementation-status.md` | Long wave history and current status. | no | move | Should not be first-contact public documentation. | `docs/internal/status/implementation-status.md` |
 | `docs/protocols/` | First protocol shapes for records, receipts, projection, policy, memory, etc. | mixed | keep | Useful advanced technical reference, but should not be in the short public path until indexed. | `docs/protocols/` with link from `docs/architecture.md` only when stable |
-| `docs/manuals/` | Operator validation manual and notebooks, with example policy packs. | mixed | move | Manual content is useful, notebooks should move to the requested notebook legacy area or be linked from test cases. | Markdown extract to `docs/quickstart.md` and `docs/test-cases.md`; notebooks to `notebooks/legacy/` |
-| `docs/manuals/manual-filesystem-loop-validation.md` | Detailed local validation runbook. | yes | rewrite | Good source for quickstart/test docs, too long for public portal. | `docs/quickstart.md` and `docs/test-cases.md` |
-| `docs/manuals/*.ipynb` | Manual validation notebooks, including Italian companion. | mixed | move | Notebooks are requested under `notebooks/legacy/`; keep as legacy validation assets. | `notebooks/legacy/` |
-| `docs/manuals/examples/` | Policy pack fixtures for filesystem-loop validation. | yes | move | Fixtures should live with examples or tests depending on purpose. | `examples/cases/filesystem-loop/` or `tests/cases/filesystem-loop/fixtures/` |
+| `legacy manuals surface/` | Operator validation manual and notebooks, with example policy packs. | mixed | move | Manual content is useful, notebooks should move to the requested notebook legacy area or be linked from test cases. | Markdown extract to `docs/quickstart.md` and `docs/test-cases.md`; notebooks to `notebooks/legacy/` |
+| `legacy manuals surface/manual-filesystem-loop-validation.md` | Detailed local validation runbook. | yes | rewrite | Good source for quickstart/test docs, too long for public portal. | `docs/quickstart.md` and `docs/test-cases.md` |
+| `legacy manuals surface/*.ipynb` | Manual validation notebooks, including Italian companion. | mixed | move | Notebooks are requested under `notebooks/legacy/`; keep as legacy validation assets. | `notebooks/legacy/` |
+| `legacy manuals surface/examples/` | Policy pack fixtures for filesystem-loop validation. | yes | move | Fixtures should live with examples or tests depending on purpose. | `examples/cases/filesystem-loop/` or `tests/cases/filesystem-loop/fixtures/` |
 | `docs/product/` | Positioning and wedge notes. | no | archive | Product positioning is not part of the technical public facade and risks sounding like marketing. | `docs/internal/product/` or `docs/archive/product/` |
 | `docs/adr/` | Decision records and compendium. | mixed | keep | Useful for serious readers, but not primary portal material. | `docs/adr/` linked from `docs/architecture.md` as advanced context |
 | `docs/archive/` | Historical engineering waves, maps, superseded docs, placeholder roots. | no | keep | Correct place for old material; keep out of main reading order. | `docs/archive/` |
@@ -156,7 +156,7 @@ tests/cases/
 | `CONTRIBUTING.md` | Contribution scope, non-production posture, checks, expectations. | `Makefile`, `tools/checks/`, `docs/engineering/testing.md` |
 | `SECURITY.md` | Security reporting and supported scope. | New content required; legal/security owner required |
 | `docs/index.md` | Documentation portal. | `docs/README.md`, corrected |
-| `docs/quickstart.md` | Minimal local build/run/test path. | `README.md`, `docs/manuals/manual-filesystem-loop-validation.md`, `Makefile` |
+| `docs/quickstart.md` | Minimal local build/run/test path. | `README.md`, `legacy manuals surface/manual-filesystem-loop-validation.md`, `Makefile` |
 | `docs/technical-brief.md` | Compact technical overview without marketing copy. | `README.md`, `docs/architecture/00-spine.md`, `docs/architecture/01-terminology.md` |
 | `docs/architecture.md` | Public architecture summary and boundaries. | `docs/architecture/README.md`, architecture series |
 | `docs/commands.md` | Supported command surface. | `docs/engineering/command-surface.md`, `Makefile` |
@@ -170,11 +170,11 @@ tests/cases/
 
 | Current | Proposed target | Action | Notes |
 |---|---|---|---|
-| `docs/manuals/manual-filesystem-loop-validation.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.ipynb` | move | Preserve as legacy validation notebook. |
-| `docs/manuals/manual-filesystem-loop-validation.it.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.it.ipynb` | move | Preserve as legacy/localized validation notebook. |
-| `docs/manuals/requirements-notebook.txt` | `notebooks/legacy/requirements.txt` | move | Keep with notebooks. |
-| `docs/manuals/examples/filesystem-loop/pack-fixture/` | `examples/cases/filesystem-loop/pack-fixture/` | move | These are better as case examples if kept public. |
-| `docs/manuals/examples/filesystem-loop/` | `tests/cases/filesystem-loop/fixtures/` | alternative move | If they are primarily validation fixtures, prefer test location instead of examples. Choose one owner. |
+| `legacy manuals surface/manual-filesystem-loop-validation.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.ipynb` | move | Preserve as legacy validation notebook. |
+| `legacy manuals surface/manual-filesystem-loop-validation.it.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.it.ipynb` | move | Preserve as legacy/localized validation notebook. |
+| `legacy manuals surface/requirements-notebook.txt` | `notebooks/legacy/requirements.txt` | move | Keep with notebooks. |
+| `legacy manuals surface/examples/filesystem-loop/pack-fixture/` | `examples/cases/filesystem-loop/pack-fixture/` | move | These are better as case examples if kept public. |
+| `legacy manuals surface/examples/filesystem-loop/` | `tests/cases/filesystem-loop/fixtures/` | alternative move | If they are primarily validation fixtures, prefer test location instead of examples. Choose one owner. |
 | `docs/product/` | `docs/internal/product/` | move | Keep product notes out of public technical facade. |
 | `docs/status/` | `docs/internal/status/` | move | Keep implementation history available but not first-contact public. |
 | Long-form `docs/engineering/*.md` wave/planning files | `docs/internal/engineering/` | move | Extract concise public docs first. Do not strand links. |
@@ -251,7 +251,7 @@ notebooks/legacy/
   Link repair is required before making it a public portal.
 - `docs/product/` exists inside the public docs tree. It should move internal or
   archive before outreach to avoid mixing technical facade and positioning.
-- `docs/manuals/` contains notebooks and validation fixtures. Decide whether the
+- `legacy manuals surface/` contains notebooks and validation fixtures. Decide whether the
   primary owner is examples, tests, or legacy notebooks before moving files.
 - `examples/` and several `tests/*` categories are placeholders. Empty public
   surfaces may look unfinished unless the README/docs explain their status.
@@ -297,7 +297,7 @@ docs/archive/
 docs/architecture/
 docs/engineering/
 docs/internal/
-docs/manuals/
+legacy manuals surface/
 docs/product/
 docs/protocols/
 docs/reference/

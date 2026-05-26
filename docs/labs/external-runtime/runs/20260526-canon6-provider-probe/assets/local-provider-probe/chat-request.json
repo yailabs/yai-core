@@ -1,0 +1,12 @@
+{
+  "model": "qwen-local",
+  "stream": false,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Rispondi in una frase: provider locale pronto sulla porta 43117."
+    }
+  ],
+  "max_tokens": 96,
+  "temperature": 0.0
+}

@@ -11,4 +11,4 @@ report.
 
 The wave keeps journal as replay/audit chronology and LMDB as durable record
 plane. It does not add graph rebuild, DuckDB facts, memory consolidation,
-RuntimeGraph, HNSW, carrier/provider changes or old docs/manuals updates.
+RuntimeGraph, HNSW, carrier/provider changes or old legacy manuals surface updates.

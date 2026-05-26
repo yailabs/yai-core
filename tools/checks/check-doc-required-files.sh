@@ -5,7 +5,7 @@
 #   Ensure the active documentation set needed by current waves exists.
 #
 # Scope:
-#   Checks required active docs, lab docs, compatibility manuals and ADR files.
+#   Checks required active docs, lab docs and ADR files.
 #
 # Non-goals:
 #   Does not validate every doc phrase.
@@ -64,18 +64,18 @@ for file in \
   docs/engineering/wave-template.md \
   docs/labs/README.md \
   docs/labs/registry.md \
+  docs/labs/_shared/bin/probe-local-provider.sh \
+  docs/labs/_shared/bin/read-lab-prompt.py \
   docs/labs/filesystem-loop/README.md \
   docs/labs/filesystem-loop/runbook.md \
   docs/labs/filesystem-loop/notebook.ipynb \
   docs/labs/filesystem-loop/run.sh \
+  docs/labs/filesystem-loop/prompts.json \
   docs/labs/external-runtime/README.md \
   docs/labs/external-runtime/runbook.md \
   docs/labs/external-runtime/notebook.ipynb \
   docs/labs/external-runtime/run.sh \
-  docs/manuals/README.md \
-  docs/manuals/manual-filesystem-loop-validation.md \
-  docs/manuals/manual-filesystem-loop-validation.ipynb \
-  docs/manuals/manual-filesystem-loop-validation.it.ipynb \
+  docs/labs/external-runtime/prompts.json \
   docs/adr/0017-packs-as-case-materialization-units.md \
   docs/adr/0018-hot-state-is-not-truth.md \
   docs/adr/0020-control-carrier-substrate.md \

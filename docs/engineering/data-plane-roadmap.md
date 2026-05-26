@@ -117,8 +117,11 @@ SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done
 SPINE.41  Graph Relation Write Path                                  done
 SPINE.42  RuntimeGraph In-Memory Working Set                         done
 SPINE.43  RuntimeGraph Rebuild from Journal / LMDB / Graph Store     done
-SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             planned
-SPINE.45  Graph + RuntimeGraph Freeze                                planned
+SPINE.44  RuntimeGraph Query / Causal Path / Diagnostics             done
+SPINE.44A Operator Review / Deferred Action Loop v0                  done
+SPINE.44B CLI Review Interaction Surface                             done
+SPINE.44C Review Loop Test Matrix + Lab Alignment                    done
+SPINE.45  Graph + RuntimeGraph Freeze                                done
 
 SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
 SPINE.47  Receipt / Decision / Projection Facts                     planned
@@ -168,6 +171,36 @@ SPINE.78  Memory Quality Facts                                      planned
 SPINE.79  Observability Debug Commands                              planned
 SPINE.80  Data Plane Milestone Freeze                               planned
 ```
+
+SPINE.44B keeps review/control state durable and makes the CLI a rendering and
+resolution surface: `control pending`, `control show`, `control review --interactive`, `control watch`, `control wait`, `next_commands` and
+`not_a_tty`. `pending_operator` remains explicit. `approve` may continue to the
+carrier, while `deny`, `defer` and `quarantine` keep `carrier_attempted: false`
+and `execution_performed: false`. `subject:linenoise-terminal is prompt surface`;
+`subject:operator-reviewer is review authority`. The active lab path is
+`docs/labs/filesystem-loop`.
+
+SPINE.44C aligns the review loop test matrix before graph/runtimegraph freeze.
+The matrix spans `docs/labs/filesystem-loop` and `docs/labs/filesystem-loop`:
+approve, deny, defer, quarantine, `pending_operator`, `next_commands`, `wait
+timeout`, bounded `watch`, `carrier_attempted: false` and
+`execution_performed: false` are explicit. Model proposal observed, model
+cannot approve, and automatic proposed-op gate import is future work.
+
+Review matrix guard: wait timeout; model proposal observed; model cannot
+approve; automatic proposed-op gate import is future work.
+
+SPINE.45 freezes the graph/runtimegraph block before DuckDB facts: graph
+schema, `yai.graph_relation.v1`, graph materialize, graph relations,
+RuntimeGraph runtime-load/runtime-summary, runtime graph rebuild,
+`yai.runtime_graph_rebuild_report.v1`, fanout, fanin, neighborhood, causal
+path, bounded traversal, edge-kind filter, path found, path not_found and empty
+case. RuntimeGraph is not durable truth. Plain output remains parseable;
+color-aware graph inspection remains doctrine. HNSW future, Context Compiler
+future and Ladybug future persistence integration remain out of scope.
+`review_request`, `review_decision` and `control_pending` are graph-visible
+when actual refs exist; approve is graph/query visible and deny, defer and
+quarantine preserve no-execution posture.
 
 ## Hot Plane v0
 
@@ -629,3 +662,28 @@ fact: usage, policy trigger, review burden, violation and effectiveness facts
 memory: pack-derived user/organization method memory
 projection: pack-derived model/operator/audit views
 ```
+
+## SPINE.44 RuntimeGraph Query
+
+SPINE.44 RuntimeGraph Query / Causal Path / Diagnostics adds:
+
+```bash
+yai graph fanout --case <case_ref> --node <ref>
+yai graph fanin --case <case_ref> --node <ref>
+yai graph neighborhood --case <case_ref> --node <ref> --depth 1
+yai graph path --case <case_ref> --from <ref> --to <ref> --max-depth 4
+```
+
+RuntimeGraph is not a generic graph database. Query is bounded traversal over
+active-case RuntimeGraph data. The edge-kind filter applies to fanout, fanin
+and neighborhood. Plain output remains parseable and color-aware graph
+inspection remains future visual doctrine in `docs/labs/filesystem-loop`.
+
+## SPINE.44A Operator Review Loop
+
+SPINE.44A inserts the control loop needed before freezing graph layers:
+`require_review` becomes `pending_operator`, and approve, deny, defer and
+quarantine produce explicit review/control residue. `subject:linenoise-terminal
+is prompt surface`; operator reviewer authority is separate. Deny, defer and
+quarantine keep `carrier_attempted: false` and `execution_performed: false`.
+The active lab path is `docs/labs/filesystem-loop`.

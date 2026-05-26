@@ -1,0 +1,77 @@
+{
+  "schema": "yai.run.generated-evidence.v1",
+  "source_run": "20260526-real-fsloop",
+  "lab": "filesystem-loop",
+  "generated_at_utc": "2026-05-26T18:44:45Z",
+  "source_files": [
+    "transcript.md",
+    "manifest.json",
+    "metrics.json",
+    "assets/"
+  ],
+  "tables": "assets/generated-tables.md",
+  "figures": [
+    {
+      "id": "C001",
+      "type": "figure",
+      "title": "Command status",
+      "source_run": "20260526-real-fsloop",
+      "source_data": [
+        "metrics.json:command_exit_code"
+      ],
+      "generation_method": "docs/labs/_shared/bin/generate-run-figures.py",
+      "output_path": "assets/C001-command-status.svg",
+      "format": "svg",
+      "created_at": "2026-05-26T18:44:45Z",
+      "caption": "The recorded command exit code is 2.",
+      "limitation": "Diagnostic execution status only; this is not a benchmark or quality measurement.",
+      "diagnostic": true
+    },
+    {
+      "id": "C002",
+      "type": "figure",
+      "title": "Execution evidence counts",
+      "source_run": "20260526-real-fsloop",
+      "source_data": [
+        "transcript.md",
+        "assets/command.stdout.txt",
+        "assets/command.stderr.txt",
+        "metrics.json"
+      ],
+      "generation_method": "docs/labs/_shared/bin/generate-run-figures.py",
+      "output_path": "assets/C002-execution-evidence-counts.svg",
+      "format": "svg",
+      "created_at": "2026-05-26T18:44:45Z",
+      "caption": "Counts summarize observable evidence channels captured by the run.",
+      "limitation": "Counts are inferred from run files and do not measure correctness, latency or model quality.",
+      "diagnostic": true
+    },
+    {
+      "id": "C003",
+      "type": "figure",
+      "title": "Prompt execution sequence",
+      "source_run": "20260526-real-fsloop",
+      "source_data": [
+        "transcript.md",
+        "assets/prompt.json",
+        "assets/prompt.txt",
+        "assets/command.stdout.txt",
+        "assets/command.stderr.txt"
+      ],
+      "generation_method": "docs/labs/_shared/bin/generate-run-figures.py",
+      "output_path": "assets/C003-prompt-response-sequence.svg",
+      "format": "svg",
+      "created_at": "2026-05-26T18:44:45Z",
+      "caption": "The sequence shows prompt/request evidence and the captured command outcome.",
+      "limitation": "The sequence is categorical and chronological; it does not score response quality.",
+      "diagnostic": false
+    }
+  ],
+  "missing_measurements": [
+    "Benchmark throughput, hardware, VRAM and model-quality measurements: Not measured",
+    "Command duration or endpoint timing: Not measured",
+    "Filesystem receipt evidence: Not measured",
+    "Model or command response sequence: Not measured",
+    "Pack fixture use during run: Not measured"
+  ]
+}

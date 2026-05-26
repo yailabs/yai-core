@@ -7,36 +7,44 @@ to a model, provider, agent or notebook cell that affects the measured output.
 
 ## Required Fields
 
-Each prompt artifact must declare:
+Each lab prompt catalog entry must declare:
 
 ```text
 id
-source_run
+kind
+description
 role
 content
-source_file
-purpose
-expected_output
-limitations
+optional max_tokens
+optional temperature
+tags
+expected evidence files
 ```
 
-## Directory
+## Catalog and Run Assets
 
-Prompt artifacts live under each run:
+Prompt text authority lives beside the lab:
 
 ```text
-assets/
-  P001-<prompt-slug>.md
+docs/labs/<lab>/prompts.json
+```
+
+Resolved prompt artifacts live under each prompted run:
+
+```text
+assets/prompt.json
+assets/prompt.txt
 ```
 
 ## Rules
 
 - Do not benchmark a model interaction without recording the prompt.
-- Use one prompt artifact per distinct prompt or message set.
+- Use one catalog ID per distinct prompt or message set.
 - Record `Not applicable` only for runs that do not call a model/provider.
 - Record `Not available` for historical runs where the prompt cannot be
   reconstructed.
 - Do not include secrets, authorization headers or private environment values.
-- If a notebook cell defines the prompt, either link that cell or copy the
-  prompt into a numbered prompt artifact.
+- Notebooks and runbooks may show prompt text for human readability, but they
+  must not become the hidden source of prompt text.
 - Different workloads should use different prompt IDs.
+- `run.sh --prompt-id <id>` executes exactly one prompt/query by default.

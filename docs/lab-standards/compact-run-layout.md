@@ -11,6 +11,7 @@ docs/labs/<test>/
   README.md
   runbook.md
   notebook.ipynb
+  prompts.json
   run.sh
   pack-fixture/
   runs/
@@ -33,7 +34,10 @@ runs/YYYYMMDD-<run-slug>/
 commands, output, prompts, responses, errors and notes in order. It must not
 contain scientific frontmatter.
 
-`report.md` is the analytical report for one run.
+`report.md` is the analytical report for one run. It is the final human
+artifact and should include summary, what was executed, evidence and metrics
+tables, generated figures, artifact index, missing measurements,
+interpretation, limitations and next run.
 
 `manifest.json` is the artifact map for one run.
 
@@ -42,6 +46,10 @@ contain scientific frontmatter.
 `notebook.ipynb` is the canonical executable notebook for the lab/test. It
 contains operational cells, prompt/workload cells when applicable, and local
 metric review cells.
+
+`prompts.json` is the lab-local prompt/query authority. `run.sh --list-prompts`
+lists entries; `run.sh --prompt-id <id>` executes exactly one entry and stores
+the resolved payload under run `assets/`.
 
 `README.md` is the lab/test entry point and protocol.
 
@@ -56,6 +64,10 @@ doctrine. It is not a pack runtime, installer or production source root.
 `assets/` contains logs, prompts, JSON, SVG, HTML, CSV or other files needed by
 that run. Notebook copies do not belong in run assets.
 
+Generated report sections should be stable and replaceable, for example inside
+`yai-generated-report` markers, so rerunning figure/report generation does not
+append duplicate blocks.
+
 ## Rules
 
 - Do not create separate aggregate directories.
@@ -64,6 +76,11 @@ that run. Notebook copies do not belong in run assets.
   `exports/` as mandatory run subfolders for new runs.
 - Do not place README files inside run folders or run assets.
 - Keep exactly one canonical notebook at the lab/test root.
+- Keep exactly one prompt catalog at the lab/test root.
 - Do not use separate manual or protocol files in canonical labs.
+- Do not create `outputs.md`, `tests.md`, per-run `run.md`, lab-level report
+  directories or lab-level analytics directories for canonical labs.
 - Keep `runbook.md` aligned with the lab-root notebook.
 - Runs must identify which `pack-fixture/` material was used when applicable.
+- Generated figures must be derived from existing run metrics/assets and must
+  appear in `report.md`.

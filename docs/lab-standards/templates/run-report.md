@@ -23,6 +23,8 @@ superseded_by:
 
 ## Run Summary
 
+## What Was Executed
+
 ## Protocol Reference
 
 ## Transcript Reference
@@ -41,11 +43,23 @@ See `transcript.md`.
 
 ## Metrics
 
+## Evidence Table
+
+## Metrics Table
+
+## Generated Figures
+
+## Artifact Index
+
+## Missing Measurements
+
 ## Results
 
 ## Interpretation
 
 ## Limitations
+
+## Next Run
 
 ## Reproducibility
 

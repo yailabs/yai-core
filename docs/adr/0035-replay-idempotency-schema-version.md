@@ -69,5 +69,5 @@ No memory consolidation.
 No RuntimeGraph.
 No HNSW.
 No carrier/provider changes.
-No old docs/manuals updates.
+No old legacy manuals surface updates.
 ```

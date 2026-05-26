@@ -85,8 +85,8 @@ activity scoped to a case, not as provider ownership of the case.
 
 Current repository evidence is limited:
 
-- `llama-server` has been used in the model-behavior lab under
-  `docs/labs/model-behavior/`.
+- `llama-server` has been used by local provider and filesystem-loop lab evidence under
+  `docs/labs/external-runtime/` and `docs/labs/filesystem-loop/`.
 - The lab shows case enter, provider attach, prompt dry run, model prompt,
   model output, model interpretation residue, and post-run records.
 - The lab is representative and non-deterministic. It is not a benchmark,

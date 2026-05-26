@@ -76,3 +76,16 @@ The rebuild chain is journal to LMDB to graph relations to
 `yai.runtime_graph_rebuild_report.v1`. RuntimeGraph is not durable truth and
 resident service planned remains the posture.
 The active lab path is `docs/labs/filesystem-loop`.
+
+## SPINE.44 Query Link
+
+RuntimeGraph query adds fanout, fanin, neighborhood and causal path diagnostics
+over the working set. RuntimeGraph is not a generic graph database. Traversal
+is bounded traversal, path diagnostics use max-depth, and fanout, fanin and
+neighborhood support the edge-kind filter. Plain output remains parseable and
+color-aware graph inspection remains future visual doctrine.
+
+SPINE.45 freezes runtime-load and runtime-summary as per-command ephemeral
+RuntimeGraph surfaces. RuntimeGraph is not durable truth; HNSW future, Context
+Compiler future and Ladybug future persistence integration remain out of
+scope.

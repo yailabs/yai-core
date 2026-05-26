@@ -1,0 +1,9 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "lab": "filesystem-loop",
+  "run_slug": "20260526-canon6-smoke",
+  "status": "command_recorded",
+  "created_at": "2026-05-26T16:14:48Z",
+  "command_exit_code": 0,
+  "measurements": {}
+}

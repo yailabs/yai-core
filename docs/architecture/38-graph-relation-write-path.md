@@ -78,3 +78,8 @@ No Ladybug dependency or integration.
 No graph query planner.
 No HNSW.
 No Context Compiler.
+
+SPINE.45 freezes the graph relation write path with review/control relation
+coverage. `review_request_for_attempt`, `review_decision_resolves_request`,
+`control_pending_blocks_attempt` and `review_resolution_produces_receipt` are
+derived only from existing refs. RuntimeGraph is not durable truth.

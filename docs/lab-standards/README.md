@@ -9,7 +9,8 @@ does not validate scientific truth. It defines structure, metadata, evidence
 discipline, reproducibility and review rules.
 
 This directory is not a lab. It is not a test. It is methodology, contracts and
-templates for authoring lab, test, run and report documents.
+templates for authoring lab, test, run and report documents. Real executable
+lab/test material lives under `docs/labs/`.
 
 ## Contents
 
@@ -49,15 +50,34 @@ templates for authoring lab, test, run and report documents.
 ## LAB.DOCS.1 Additions
 
 Test runs and generated visual artifacts must follow the compact run contract.
-Each lab/test owns one canonical root `notebook.ipynb`. Each execution lives
-under `runs/YYYYMMDD-<run-slug>/` with `transcript.md`, `report.md`,
-`manifest.json`, `metrics.json` and `assets/`.
+Each lab/test owns one canonical root `notebook.ipynb` and one prompt/query
+catalog at `prompts.json`. Each execution lives under
+`runs/YYYYMMDD-<run-slug>/` with `transcript.md`, `report.md`, `manifest.json`,
+`metrics.json` and `assets/`.
+
+Generated figures are derived from run `metrics.json`, `manifest.json` and
+declared assets. SVG is the default static output format. The default
+scientific figure stack is numpy, pandas and matplotlib. Unsupported charts are
+omitted rather than inferred, and generated figures must be referenced from
+both `report.md` and `manifest.json`.
+
+Reports are report-first: `transcript.md` records raw chronological evidence,
+`metrics.json` normalizes machine-readable values, `assets/` stores
+attachments, and `report.md` composes the human-readable summary, tables,
+figures, artifact index, missing measurements, interpretation, limitations and
+next run. A generated figure that is not included in `report.md` should not be
+kept.
 
 `README.md` owns the lab purpose, scope and protocol. `runbook.md` is the
 terminal procedure and may be a static Markdown copy of the canonical notebook.
 `run.sh` is the local helper that creates new compact run folders.
+`prompts.json` is the text authority for prompts and queries; notebooks and
+runbooks may show prompt text for humans, but they should reference prompt IDs
+instead of becoming hidden prompt registries.
 
-No separate aggregate directory is canonical.
+No separate aggregate directory is canonical. Do not create a manuals surface,
+scientific-docs surface, per-lab analytics directory, or separate manual/test
+Markdown files for canonical labs.
 
 Prompted runs must also keep prompt artifacts as run assets. A benchmark that
 calls a provider or model without recording its prompt is incomplete.

@@ -16,7 +16,7 @@ Run the cells from top to bottom only when you intentionally execute a provider 
 
 ```text
 Operator machine: this notebook, probe scripts, report packaging
-LAN provider host: OpenAI-compatible provider, usually on port 43117
+Local provider host: OpenAI-compatible provider, usually on port 43117
 Run folders: docs/labs/external-runtime/runs/YYYYMMDD-<slug>/
 ```
 
@@ -55,43 +55,45 @@ if env_file.exists():
         value = value.strip().strip('"').strip("'")
         os.environ.setdefault(key.strip(), value)
 
-os.environ.setdefault("YAI_PROVIDER_HOST", "172.20.10.3")
+os.environ.setdefault("YAI_PROVIDER_HOST", "localhost")
 os.environ.setdefault("YAI_PROVIDER_PORT", "43117")
 os.environ.setdefault("YAI_PROVIDER_MODEL", "qwen-local")
-os.environ.setdefault("YAI_PROVIDER_PROMPT", "Rispondi in una frase: provider LAN pronto sulla porta 43117.")
 os.environ.setdefault("YAI_EXTERNAL_RUNTIME_OUT", "benchmarks/external-runtime")
 
 print("repo", ROOT)
 print("provider", f"{os.environ['YAI_PROVIDER_HOST']}:{os.environ['YAI_PROVIDER_PORT']}")
 print("model", os.environ["YAI_PROVIDER_MODEL"])
-print("prompt", os.environ["YAI_PROVIDER_PROMPT"])
 ```
 
-## Provider Probe Prompt
+## Prompt Catalog
 
-The provider readiness probe uses this prompt unless a run overrides `YAI_PROVIDER_PROMPT`:
+Provider prompt text lives in `prompts.json`. List available prompts before
+running one:
 
-```text
-Rispondi in una frase: provider LAN pronto sulla porta 43117.
+```bash
+docs/labs/external-runtime/run.sh --list-prompts
 ```
 
 ## Current Provider Probe
 
-This cell executes the LAN provider probe and writes raw probe output under `benchmarks/external-runtime/`. Convert the output into a compact run folder only after reviewing secrets and provenance.
+This cell executes the `local-provider-ready` prompt through the lab-local run
+script. `run.sh` resolves the prompt from `prompts.json`, invokes
+`docs/labs/_shared/bin/probe-local-provider.sh`, and writes the request payload
+and provider response under the compact run `assets/` directory.
+
+<!-- yai-prompt-preview:local-provider-ready -->
+Prompt `local-provider-ready` (provider-chat)
+
+Local provider reachability smoke prompt.
+
+```text
+Rispondi in una frase: provider locale pronto sulla porta 43117.
+```
 
 ```bash
 set -eu
 
-OUT="${YAI_EXTERNAL_RUNTIME_OUT:-benchmarks/external-runtime}/lan-provider-$(date +%Y%m%d-%H%M%S)"
-
-tools/labs/probe-lan-provider.sh \
-  --host "${YAI_PROVIDER_HOST:-172.20.10.3}" \
-  --port "${YAI_PROVIDER_PORT:-43117}" \
-  --model "${YAI_PROVIDER_MODEL:-qwen-local}" \
-  --prompt "${YAI_PROVIDER_PROMPT:-Rispondi in una frase: provider LAN pronto sulla porta 43117.}" \
-  --out "$OUT"
-
-printf 'probe_out=%s\n' "$OUT"
+docs/labs/external-runtime/run.sh --slug local-provider-ready --prompt-id local-provider-ready
 ```
 
 ## Optional HNSW Smoke
@@ -103,7 +105,7 @@ set -eu
 
 OUT="${YAI_EXTERNAL_RUNTIME_OUT:-benchmarks/external-runtime}/hnsw-smoke-$(date +%Y%m%d-%H%M%S)"
 
-python3 tools/labs/run-hnsw-benchmark.py \
+python3 docs/labs/_shared/bin/run-hnsw-benchmark.py \
   --n 1000 \
   --dim 64 \
   --queries 20 \

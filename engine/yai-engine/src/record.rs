@@ -47,6 +47,9 @@ pub enum RecordKind {
     InteractionThread,
     InteractionTurn,
     ParticipantViewFrame,
+    ReviewRequest,
+    ReviewDecision,
+    ControlPending,
 }
 
 impl RecordKind {
@@ -84,6 +87,9 @@ impl RecordKind {
             Self::InteractionThread => "interaction_thread",
             Self::InteractionTurn => "interaction_turn",
             Self::ParticipantViewFrame => "participant_view_frame",
+            Self::ReviewRequest => "review_request",
+            Self::ReviewDecision => "review_decision",
+            Self::ControlPending => "control_pending",
         }
     }
 
@@ -121,6 +127,9 @@ impl RecordKind {
             "interaction_thread" => Some(Self::InteractionThread),
             "interaction_turn" => Some(Self::InteractionTurn),
             "participant_view_frame" => Some(Self::ParticipantViewFrame),
+            "review_request" => Some(Self::ReviewRequest),
+            "review_decision" => Some(Self::ReviewDecision),
+            "control_pending" => Some(Self::ControlPending),
             _ => None,
         }
     }

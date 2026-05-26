@@ -11,7 +11,7 @@ A primitive that cannot be inspected is not operational yet.
 This file maps SPINE.20-SPINE.32 primitives to their current view, command,
 lab test and documentation surface. It does not define new core semantics.
 The operator-facing runbook is `docs/labs/filesystem-loop/runbook.md`.
-Historical files under `docs/manuals/` are compatibility redirects only.
+The canonical operator surface is the lab tree; the old manuals surface has been removed.
 
 ## Runtime Commands
 
@@ -1092,3 +1092,129 @@ edges_total:
 rebuild_status:
 report_schema: yai.runtime_graph_rebuild_report.v1
 ```
+
+## RuntimeGraph Query Commands
+
+SPINE.44 adds bounded traversal diagnostics over the per-command RuntimeGraph
+working set. RuntimeGraph is not a generic graph database.
+
+```bash
+yai graph fanout --case <case_ref> --node <ref> [--edge-kind <kind>] [--limit <N>]
+yai graph fanin --case <case_ref> --node <ref> [--edge-kind <kind>] [--limit <N>]
+yai graph neighborhood --case <case_ref> --node <ref> --depth 1 [--edge-kind <kind>]
+yai graph path --case <case_ref> --from <ref> --to <ref> --max-depth 4
+```
+
+Fanout, fanin and neighborhood accept an edge-kind filter. Neighborhood and
+causal path diagnostics are bounded traversal only; max-depth clamps prevent
+unbounded search. Plain output remains parseable. Color-aware graph inspection
+is future visual doctrine for console/studio views.
+
+The active lab path is `docs/labs/filesystem-loop`.
+
+Guard vocabulary: RuntimeGraph is not a generic graph database; fanout, fanin,
+neighborhood, bounded traversal, causal path, max-depth, edge-kind filter,
+color-aware graph inspection, plain output remains parseable.
+
+## Operator Review Commands
+
+SPINE.44A adds the first active review/deferred/quarantine loop. A filesystem
+write may stop at `require_review`, appear as `pending_operator`, and resolve
+through an operator reviewer authority.
+
+```bash
+yai daemon run-filesystem-review-loop --socket <socket>
+yai control pending --case <case_ref>
+yai control show <review_id>
+yai control review --case <case_ref> --interactive
+yai control watch --case <case_ref> --interval-ms 500 --max-events 5
+yai control wait <review_id> --timeout 1
+yai control approve <review_id> --reason "<reason>"
+yai control deny <review_id> --reason "<reason>"
+yai control defer <review_id> --reason "<reason>"
+yai control quarantine <review_id> --reason "<reason>"
+```
+
+For automation and smoke tests, `yai daemon run-filesystem-review-loop` prints
+`review_required: yes`, `status: pending_operator`, `carrier_attempted:
+false`, `execution_performed: false` and `next_commands`, then exits.
+
+SPINE.44B adds the CLI interaction surface. `control pending` includes
+`next_commands` for automation. `control show` exposes the operation target,
+policy reason and authority boundary. `control review --interactive` prompts
+only when a TTY is present and returns `not_a_tty` otherwise. `control watch`
+polls state changes and `control wait` exits on resolution or timeout.
+
+`subject:linenoise-terminal is prompt surface`. Operator reviewer authority is
+separate and local-dev scoped. Deny, defer and quarantine keep
+`carrier_attempted: false` and `execution_performed: false`.
+Authority boundary: `subject:operator-reviewer is review authority`.
+
+The active lab path is `docs/labs/filesystem-loop`.
+
+Guard vocabulary: control pending, control show, control review --interactive,
+control watch, control wait, next_commands, not_a_tty, pending_operator,
+approve, deny, defer, quarantine, carrier_attempted: false,
+execution_performed: false, subject:linenoise-terminal is prompt surface,
+subject:operator-reviewer is review authority, docs/labs/filesystem-loop.
+
+## Review Loop Test Matrix Commands
+
+SPINE.44C adds no new command semantics. It aligns the command surface with
+the review matrix in `docs/labs/filesystem-loop` and the model posture notes in
+`docs/labs/filesystem-loop`.
+
+Matrix commands:
+
+```bash
+yai daemon run-filesystem-review-loop --socket <socket>
+yai control pending --case <case_ref>
+yai control show <review_id>
+yai control approve <review_id> --reason "..."
+yai control deny <review_id> --reason "..."
+yai control defer <review_id> --reason "..."
+yai control quarantine <review_id> --reason "..."
+yai control wait <review_id> --timeout <seconds>
+yai control watch --case <case_ref> --max-events <N>
+```
+
+The matrix proves `pending_operator`, `next_commands`, `wait timeout`, bounded
+`watch`, approve, deny, defer and quarantine. Deny, defer and quarantine keep
+`carrier_attempted: false` and `execution_performed: false`.
+
+Model-facing posture remains separate: model proposal observed, model cannot
+approve, and automatic proposed-op gate import is future work.
+
+Review matrix guard: model proposal observed; model cannot approve; automatic
+proposed-op gate import is future work.
+
+## SPINE.45 Graph + RuntimeGraph Freeze Commands
+
+SPINE.45 freezes the graph command surface without adding commands:
+
+```bash
+yai graph schema
+yai graph runtime-status
+yai graph materialize --case <case_ref>
+yai graph relations --case <case_ref>
+yai graph runtime-load --case <case_ref>
+yai graph runtime-summary --case <case_ref>
+yai graph rebuild --case <case_ref> --from journal --path <journal.jsonl>
+yai graph rebuild --case <case_ref> --from graph-relations
+yai graph rebuild-report --case <case_ref>
+yai graph fanout --case <case_ref> --node <ref> [--edge-kind <kind>] [--limit <N>]
+yai graph fanin --case <case_ref> --node <ref> [--edge-kind <kind>] [--limit <N>]
+yai graph neighborhood --case <case_ref> --node <ref> [--depth <N>] [--limit <N>]
+yai graph path --case <case_ref> --from <ref> --to <ref> [--max-depth <N>]
+```
+
+The frozen output includes `yai.graph_relation.v1`,
+`yai.runtime_graph_rebuild_report.v1`, fanout, fanin, neighborhood, causal
+path, bounded traversal and edge-kind filter. Plain output remains parseable;
+color-aware graph inspection remains documented visual doctrine.
+
+RuntimeGraph is not durable truth. HNSW future, Context Compiler future and
+Ladybug future persistence integration remain outside this block.
+`review_request`, `review_decision` and `control_pending` are graph-visible
+when actual refs exist. Approve is graph/query visible; deny, defer and
+quarantine preserve no-execution posture.

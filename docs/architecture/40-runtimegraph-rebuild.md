@@ -68,7 +68,21 @@ No Ladybug integration.
 No HNSW.
 No retrieval units.
 No Context Compiler.
-No docs/manuals update.
+No legacy manual update.
 No docs/labs/nvidia cleanup.
 
 The active lab path is `docs/labs/filesystem-loop`.
+
+## Query Boundary
+
+SPINE.44 adds RuntimeGraph fanout, fanin, neighborhood and causal path
+diagnostics after rebuild. RuntimeGraph is not a generic graph database; query
+is bounded traversal over the rebuilt active-case working set. The edge-kind
+filter applies to fanout, fanin and neighborhood. Path diagnostics use
+max-depth. Plain output remains parseable and color-aware graph inspection is
+future console/studio doctrine.
+
+SPINE.45 freezes runtime graph rebuild with
+`yai.runtime_graph_rebuild_report.v1` and validates rebuild from journal and
+from graph relations. RuntimeGraph is not durable truth. Review/control
+records are graph-visible when actual refs exist.
