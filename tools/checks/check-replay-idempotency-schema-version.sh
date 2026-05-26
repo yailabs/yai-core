@@ -25,18 +25,18 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/35-replay-idempotency-schema-version.md"
-require_file "docs/engineering/replay-idempotency-schema-version.md"
-require_file "docs/adr/0035-replay-idempotency-schema-version.md"
-require_file "docs/archive/engineering/waves/spine37-replay-idempotency-schema-version.md"
+require_file "work/archive/architecture-snapshots/35-replay-idempotency-schema-version.md"
+require_file "work/archive/engineering-snapshots/replay-idempotency-schema-version.md"
+require_file "work/archive/adr/0035-replay-idempotency-schema-version.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine37-replay-idempotency-schema-version.md"
 require_file "tests/smoke/replay-idempotency-schema-version/test_replay_idempotency_schema_version.sh"
 
 for file in \
-  "docs/architecture/35-replay-idempotency-schema-version.md" \
-  "docs/engineering/replay-idempotency-schema-version.md" \
-  "docs/adr/0035-replay-idempotency-schema-version.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md"; do
+  "work/archive/architecture-snapshots/35-replay-idempotency-schema-version.md" \
+  "work/archive/engineering-snapshots/replay-idempotency-schema-version.md" \
+  "work/archive/adr/0035-replay-idempotency-schema-version.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md"; do
   require_phrase "$file" "replay cursor"
   require_phrase "$file" "journal_identity"
   require_phrase "$file" "record_schema"
@@ -46,7 +46,7 @@ for file in \
 done
 
 for file in \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "filesystem-loop"
   require_phrase "$file" "journal_identity"
   require_phrase "$file" "record_schema"
@@ -54,12 +54,12 @@ for file in \
   require_phrase "$file" "cursor_line"
 done
 
-require_phrase "docs/engineering/replay-idempotency-schema-version.md" "schema_mismatch"
-require_phrase "docs/engineering/replay-idempotency-schema-version.md" "compat_legacy"
-require_phrase "docs/engineering/replay-idempotency-schema-version.md" "No legacy manual path updates"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.38  Replay Diagnostics / Rebuild Report                       done"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"
-require_phrase "docs/engineering/current-status.md" "SPINE.37 Replay Idempotency + Schema Version Handling completed"
+require_phrase "work/archive/engineering-snapshots/replay-idempotency-schema-version.md" "schema_mismatch"
+require_phrase "work/archive/engineering-snapshots/replay-idempotency-schema-version.md" "compat_legacy"
+require_phrase "work/archive/engineering-snapshots/replay-idempotency-schema-version.md" "No legacy manual path updates"
+require_phrase "work/spines/yai-spine.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"
+require_phrase "work/spines/yai-spine.md" "SPINE.38  Replay Diagnostics / Rebuild Report                       done"
+require_phrase "work/spines/data-plane.md" "SPINE.37  Replay Idempotency + Schema Version Handling              done"
+require_phrase "work/spines/current-status.md" "SPINE.37 Replay Idempotency + Schema Version Handling completed"
 require_phrase "Makefile" "check-replay-idempotency-schema-version"
 require_phrase "Makefile" "smoke-spine37"

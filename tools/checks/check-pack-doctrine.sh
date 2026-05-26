@@ -12,11 +12,11 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
-FORMAT="$ROOT/docs/engineering/pack-format.md"
-ARCH="$ROOT/docs/architecture/15-pack-materialization.md"
-ROADMAP="$ROOT/docs/engineering/four-repo-roadmap.md"
-ADR="$ROOT/docs/adr/0017-packs-as-case-materialization-units.md"
-INVENTORY="$ROOT/docs/internal/extraction-inventory.tsv"
+FORMAT="$ROOT/work/archive/engineering-snapshots/pack-format.md"
+ARCH="$ROOT/work/archive/architecture-snapshots/15-pack-materialization.md"
+ROADMAP="$ROOT/work/spines/yai-spine.md"
+ADR="$ROOT/work/archive/adr/0017-packs-as-case-materialization-units.md"
+INVENTORY="$ROOT/work/inventories/extraction-inventory.tsv"
 
 for file in "$FORMAT" "$ARCH" "$ROADMAP" "$ADR" "$INVENTORY"; do
   if [ ! -f "$file" ]; then

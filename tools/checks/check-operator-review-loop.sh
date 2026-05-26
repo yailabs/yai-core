@@ -22,25 +22,25 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/42-operator-review-deferred-loop.md"
-require_file "docs/engineering/operator-review-deferred-loop.md"
-require_file "docs/adr/0042-operator-review-deferred-loop.md"
-require_file "docs/archive/engineering/waves/spine44a-operator-review-deferred-loop.md"
-require_file "docs/labs/filesystem-loop/README.md"
-require_file "docs/labs/filesystem-loop/runbook.md"
-require_file "docs/labs/filesystem-loop/prompts.json"
+require_file "work/archive/architecture-snapshots/42-operator-review-deferred-loop.md"
+require_file "work/archive/engineering-snapshots/operator-review-deferred-loop.md"
+require_file "work/archive/adr/0042-operator-review-deferred-loop.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine44a-operator-review-deferred-loop.md"
+require_file "labs/filesystem-loop/README.md"
+require_file "labs/filesystem-loop/runbook.md"
+require_file "labs/filesystem-loop/prompts.json"
 require_file "tests/smoke/operator-review-loop/test_operator_review_loop.sh"
 
 for file in \
-  "docs/architecture/42-operator-review-deferred-loop.md" \
-  "docs/engineering/operator-review-deferred-loop.md" \
-  "docs/adr/0042-operator-review-deferred-loop.md" \
-  "docs/archive/engineering/waves/spine44a-operator-review-deferred-loop.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/42-operator-review-deferred-loop.md" \
+  "work/archive/engineering-snapshots/operator-review-deferred-loop.md" \
+  "work/archive/adr/0042-operator-review-deferred-loop.md" \
+  "work/archive/legacy-docs/engineering/waves/spine44a-operator-review-deferred-loop.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "require_review"
   require_phrase "$file" "pending_operator"
   require_phrase "$file" "approve"
@@ -51,7 +51,7 @@ for file in \
   require_phrase "$file" "execution_performed: false"
   require_phrase "$file" "subject:linenoise-terminal is prompt surface"
   require_phrase "$file" "operator reviewer authority"
-  require_phrase "$file" "docs/labs/filesystem-loop"
+  require_phrase "$file" "labs/filesystem-loop"
 done
 
 require_phrase "cmd/yai/src/main.rs" "run-filesystem-review-loop"
@@ -61,7 +61,7 @@ require_phrase "cmd/yai/src/main.rs" "yai control approve {review_id} --reason"
 require_phrase "cmd/yai/src/main.rs" "control pending --case <case_ref>"
 require_phrase "tests/smoke/operator-review-loop/test_operator_review_loop.sh" "review_required: yes"
 require_phrase "tests/smoke/operator-review-loop/test_operator_review_loop.sh" "next_commands:"
-require_phrase "docs/labs/filesystem-loop/prompts.json" "operator-review-pending-contract"
+require_phrase "labs/filesystem-loop/prompts.json" "operator-review-pending-contract"
 require_phrase "Makefile" "smoke-spine44a"
 
 printf 'check-operator-review-loop: ok\n'

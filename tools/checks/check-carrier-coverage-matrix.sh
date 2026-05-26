@@ -28,15 +28,15 @@ require_text() {
   }
 }
 
-require_file docs/architecture/23-carrier-coverage-matrix.md
-require_file docs/engineering/carrier-coverage-matrix.md
-require_file docs/adr/0025-carrier-coverage-matrix.md
-require_file docs/archive/engineering/waves/spine33f-carrier-coverage-matrix.md
+require_file work/archive/architecture-snapshots/23-carrier-coverage-matrix.md
+require_file work/archive/engineering-snapshots/carrier-coverage-matrix.md
+require_file work/archive/adr/0025-carrier-coverage-matrix.md
+require_file work/archive/legacy-docs/engineering/waves/spine33f-carrier-coverage-matrix.md
 require_file include/yai/effect/carrier_mode.h
 require_file include/yai/effect/carrier_coverage.h
 
-doctrine="docs/architecture/23-carrier-coverage-matrix.md"
-commands="docs/engineering/command-surface.md"
+doctrine="work/archive/architecture-snapshots/23-carrier-coverage-matrix.md"
+commands="work/spines/command-surface.md"
 
 for text in \
   "controlled" \

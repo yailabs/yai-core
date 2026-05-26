@@ -23,26 +23,26 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/43-cli-review-interaction-surface.md"
-require_file "docs/engineering/cli-review-interaction-surface.md"
-require_file "docs/adr/0043-cli-review-interaction-surface.md"
-require_file "docs/archive/engineering/waves/spine44b-cli-review-interaction-surface.md"
-require_file "docs/labs/filesystem-loop/README.md"
-require_file "docs/labs/filesystem-loop/runbook.md"
+require_file "work/archive/architecture-snapshots/43-cli-review-interaction-surface.md"
+require_file "work/archive/engineering-snapshots/cli-review-interaction-surface.md"
+require_file "work/archive/adr/0043-cli-review-interaction-surface.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine44b-cli-review-interaction-surface.md"
+require_file "labs/filesystem-loop/README.md"
+require_file "labs/filesystem-loop/runbook.md"
 require_file "tests/smoke/operator-review-cli/test_operator_review_cli.sh"
 
 for file in \
-  "docs/architecture/43-cli-review-interaction-surface.md" \
-  "docs/engineering/cli-review-interaction-surface.md" \
-  "docs/adr/0043-cli-review-interaction-surface.md" \
-  "docs/archive/engineering/waves/spine44b-cli-review-interaction-surface.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/engineering/four-repo-roadmap.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/43-cli-review-interaction-surface.md" \
+  "work/archive/engineering-snapshots/cli-review-interaction-surface.md" \
+  "work/archive/adr/0043-cli-review-interaction-surface.md" \
+  "work/archive/legacy-docs/engineering/waves/spine44b-cli-review-interaction-surface.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "work/spines/yai-spine.md" \
+  "work/spines/data-plane.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "control pending"
   require_phrase "$file" "control show"
   require_phrase "$file" "control review --interactive"
@@ -59,7 +59,7 @@ for file in \
   require_phrase "$file" "execution_performed: false"
   require_phrase "$file" "subject:linenoise-terminal is prompt surface"
   require_phrase "$file" "subject:operator-reviewer is review authority"
-  require_phrase "$file" "docs/labs/filesystem-loop"
+  require_phrase "$file" "labs/filesystem-loop"
 done
 
 require_phrase "cmd/yai/src/main.rs" "control review --case <case_ref> --interactive"

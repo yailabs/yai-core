@@ -31,15 +31,15 @@ require_text() {
 require_file include/yai/effect/carrier_skeleton.h
 require_file system/effect/carrier_skeleton.c
 require_file tests/smoke/non-process-carrier-skeletons/test_non_process_carrier_skeletons.c
-require_file docs/architecture/24-non-process-carrier-skeletons.md
-require_file docs/engineering/non-process-carrier-skeletons.md
-require_file docs/adr/0026-non-process-carrier-skeletons.md
-require_file docs/archive/engineering/waves/spine33g-non-process-carrier-skeletons.md
+require_file work/archive/architecture-snapshots/24-non-process-carrier-skeletons.md
+require_file work/archive/engineering-snapshots/non-process-carrier-skeletons.md
+require_file work/archive/adr/0026-non-process-carrier-skeletons.md
+require_file work/archive/legacy-docs/engineering/waves/spine33g-non-process-carrier-skeletons.md
 
 for family in network_http database repository_git service endpoint socket listener model_provider review; do
   require_text system/effect/carrier_skeleton.c "$family"
   require_text cmd/yai/src/main.rs "$family"
-  require_text docs/engineering/non-process-carrier-skeletons.md "$family"
+  require_text work/archive/engineering-snapshots/non-process-carrier-skeletons.md "$family"
 done
 
 for text in \
@@ -55,7 +55,7 @@ for text in \
   "yai carrier inspect database" \
   "make smoke-spine33g"
 do
-  require_text docs/engineering/non-process-carrier-skeletons.md "$text"
+  require_text work/archive/engineering-snapshots/non-process-carrier-skeletons.md "$text"
 done
 
 require_text Makefile "check-non-process-carrier-skeletons"

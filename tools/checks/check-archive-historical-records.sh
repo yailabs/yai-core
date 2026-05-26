@@ -29,7 +29,7 @@ if [ -s "$HITS" ]; then
   exit 1
 fi
 
-if [ ! -f "$ROOT/docs/archive/README.md" ]; then
+if [ ! -f "$ROOT/work/archive/legacy-docs/README.md" ]; then
   printf 'archive README missing\n' >&2
   exit 1
 fi

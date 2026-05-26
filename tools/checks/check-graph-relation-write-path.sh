@@ -22,16 +22,16 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/38-graph-relation-write-path.md"
-require_file "docs/engineering/graph-relation-write-path.md"
-require_file "docs/adr/0038-graph-relation-write-path.md"
-require_file "docs/archive/engineering/waves/spine41-graph-relation-write-path.md"
+require_file "work/archive/architecture-snapshots/38-graph-relation-write-path.md"
+require_file "work/archive/engineering-snapshots/graph-relation-write-path.md"
+require_file "work/archive/adr/0038-graph-relation-write-path.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine41-graph-relation-write-path.md"
 require_file "tests/smoke/graph-relation-write-path/test_graph_relation_write_path.sh"
 
 for file in \
-  "docs/architecture/38-graph-relation-write-path.md" \
-  "docs/engineering/graph-relation-write-path.md" \
-  "docs/adr/0038-graph-relation-write-path.md"; do
+  "work/archive/architecture-snapshots/38-graph-relation-write-path.md" \
+  "work/archive/engineering-snapshots/graph-relation-write-path.md" \
+  "work/archive/adr/0038-graph-relation-write-path.md"; do
   require_phrase "$file" "yai.graph_relation.v1"
   require_phrase "$file" "graph materialize"
   require_phrase "$file" "graph relations"
@@ -44,12 +44,12 @@ for file in \
 done
 
 for file in \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/engineering/four-repo-roadmap.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "work/spines/yai-spine.md" \
+  "work/spines/data-plane.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "yai.graph_relation.v1"
   require_phrase "$file" "graph materialize"
   require_phrase "$file" "graph relations"
@@ -58,9 +58,9 @@ for file in \
 done
 
 for file in \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/spines/command-surface.md" \
+  "work/spines/data-plane.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "decision_controls_attempt"
   require_phrase "$file" "receipt_records_effect"
   require_phrase "$file" "relation_id"
@@ -74,7 +74,7 @@ require_phrase "engine/yai-engine/src/store/lmdb.rs" "GRAPH_RELATION_SCHEMA"
 require_phrase "engine/yai-engine/src/store/lmdb.rs" "lmdb_graph_relations_v0"
 require_phrase "Makefile" "check-graph-relation-write-path"
 require_phrase "Makefile" "smoke-spine41"
-require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.41"
+require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.41"
 
 if grep -RIn 'historical filesystem-loop manual' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |

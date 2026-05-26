@@ -29,16 +29,16 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/32-lmdb-record-plane-freeze.md"
-require_file "docs/engineering/lmdb-record-plane-freeze.md"
-require_file "docs/adr/0032-lmdb-record-plane-freeze.md"
-require_file "docs/archive/engineering/waves/spine34-lmdb-record-plane-freeze.md"
+require_file "work/archive/architecture-snapshots/32-lmdb-record-plane-freeze.md"
+require_file "work/archive/engineering-snapshots/lmdb-record-plane-freeze.md"
+require_file "work/archive/adr/0032-lmdb-record-plane-freeze.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine34-lmdb-record-plane-freeze.md"
 require_file "tests/smoke/record-store-freeze/test_record_store_freeze.sh"
 
 for file in \
-  "docs/architecture/32-lmdb-record-plane-freeze.md" \
-  "docs/engineering/lmdb-record-plane-freeze.md" \
-  "docs/adr/0032-lmdb-record-plane-freeze.md"
+  "work/archive/architecture-snapshots/32-lmdb-record-plane-freeze.md" \
+  "work/archive/engineering-snapshots/lmdb-record-plane-freeze.md" \
+  "work/archive/adr/0032-lmdb-record-plane-freeze.md"
 do
   require_phrase "$file" "SPINE.34 LMDB Record Plane Freeze"
   require_phrase "$file" "LMDB is durable indexed record lookup"
@@ -54,11 +54,11 @@ do
   require_phrase "$file" "divergence"
 done
 
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.34  LMDB Record Plane Freeze                                  done"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.34  LMDB Record Plane Freeze                                  done"
-require_phrase "docs/engineering/current-status.md" "SPINE.34 LMDB Record Plane Freeze completed"
-require_phrase "docs/engineering/command-surface.md" "SPINE.34 adds no new command"
-require_phrase "docs/engineering/testing.md" "make smoke-spine34"
+require_phrase "work/spines/yai-spine.md" "SPINE.34  LMDB Record Plane Freeze                                  done"
+require_phrase "work/spines/data-plane.md" "SPINE.34  LMDB Record Plane Freeze                                  done"
+require_phrase "work/spines/current-status.md" "SPINE.34 LMDB Record Plane Freeze completed"
+require_phrase "work/spines/command-surface.md" "SPINE.34 adds no new command"
+require_phrase "work/spines/testing.md" "make smoke-spine34"
 require_phrase "Makefile" "check-lmdb-record-plane-freeze"
 require_phrase "Makefile" "smoke-spine34"
 

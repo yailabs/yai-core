@@ -28,16 +28,16 @@ require_text() {
   }
 }
 
-require_file docs/architecture/21-process-carrier-signal-control.md
-require_file docs/engineering/process-carrier-signal-control.md
-require_file docs/adr/0023-process-carrier-signal-control.md
-require_file docs/archive/engineering/waves/spine33d-process-carrier-signal-control.md
+require_file work/archive/architecture-snapshots/21-process-carrier-signal-control.md
+require_file work/archive/engineering-snapshots/process-carrier-signal-control.md
+require_file work/archive/adr/0023-process-carrier-signal-control.md
+require_file work/archive/legacy-docs/engineering/waves/spine33d-process-carrier-signal-control.md
 require_file include/yai/effect/process_carrier.h
 require_file include/yai/effect/process_signal.h
 require_file include/yai/effect/process_state.h
 
-doctrine="docs/architecture/21-process-carrier-signal-control.md"
-commands="docs/engineering/command-surface.md"
+doctrine="work/archive/architecture-snapshots/21-process-carrier-signal-control.md"
+commands="work/spines/command-surface.md"
 
 for text in \
   "SIGTERM" \

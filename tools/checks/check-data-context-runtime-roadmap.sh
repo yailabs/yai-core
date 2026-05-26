@@ -27,10 +27,10 @@ require_text() {
   }
 }
 
-require_file docs/architecture/31-data-context-runtime-runtimegraph.md
-require_file docs/engineering/data-context-runtime-runtimegraph.md
-require_file docs/adr/0031-data-context-runtime-runtimegraph.md
-require_file docs/archive/engineering/waves/spine33m-data-context-runtime-runtimegraph.md
+require_file work/archive/architecture-snapshots/31-data-context-runtime-runtimegraph.md
+require_file work/archive/engineering-snapshots/data-context-runtime-runtimegraph.md
+require_file work/archive/adr/0031-data-context-runtime-runtimegraph.md
+require_file work/archive/legacy-docs/engineering/waves/spine33m-data-context-runtime-runtimegraph.md
 
 for text in \
   "Truth lives on durable planes" \
@@ -49,10 +49,10 @@ for text in \
   "SPINE.42 RuntimeGraph In-Memory Working Set" \
   "SPINE.58D HNSW Candidate -> RuntimeGraph Expansion"
 do
-  require_text docs/engineering/data-context-runtime-runtimegraph.md "$text"
+  require_text work/archive/engineering-snapshots/data-context-runtime-runtimegraph.md "$text"
 done
 
-for file in docs/engineering/four-repo-roadmap.md docs/engineering/data-plane-roadmap.md docs/architecture/00-spine.md; do
+for file in work/spines/yai-spine.md work/spines/data-plane.md work/archive/architecture-snapshots/00-spine.md; do
   require_text "$file" "RuntimeGraph"
   require_text "$file" "Data Context Runtime"
   require_text "$file" "HNSW Candidate -> RuntimeGraph Expansion"

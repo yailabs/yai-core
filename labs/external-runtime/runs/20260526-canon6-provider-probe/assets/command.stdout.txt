@@ -1,0 +1,1 @@
+local provider probe written: /home/mothx/COMPUTER_SCIENCE/DEV_CODE/YAI/yai/labs/external-runtime/runs/20260526-canon6-provider-probe/assets/local-provider-probe

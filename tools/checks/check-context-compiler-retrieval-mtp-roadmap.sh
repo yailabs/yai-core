@@ -29,14 +29,14 @@ require_text() {
   }
 }
 
-roadmap="docs/engineering/four-repo-roadmap.md"
-data_roadmap="docs/engineering/data-plane-roadmap.md"
-spine="docs/architecture/00-spine.md"
-projection="docs/architecture/10-projection-model.md"
-context_doc="docs/architecture/26-context-compiler-retrieval-boundary.md"
-mtp_doc="docs/architecture/27-model-runtime-mtp-boundary.md"
-commands="docs/engineering/command-surface.md"
-archive="docs/archive/engineering/waves/spine33k-context-compiler-retrieval-mtp-roadmap-correction.md"
+roadmap="work/spines/yai-spine.md"
+data_roadmap="work/spines/data-plane.md"
+spine="work/archive/architecture-snapshots/00-spine.md"
+projection="work/archive/architecture-snapshots/10-projection-model.md"
+context_doc="work/archive/architecture-snapshots/26-context-compiler-retrieval-boundary.md"
+mtp_doc="work/archive/architecture-snapshots/27-model-runtime-mtp-boundary.md"
+commands="work/spines/command-surface.md"
+archive="work/archive/legacy-docs/engineering/waves/spine33k-context-compiler-retrieval-mtp-roadmap-correction.md"
 
 for file in "$roadmap" "$data_roadmap" "$spine" "$projection" "$context_doc" "$mtp_doc" "$commands" "$archive"; do
   require_file "$file"

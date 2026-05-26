@@ -22,26 +22,26 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/40-runtimegraph-rebuild.md"
-require_file "docs/engineering/runtimegraph-rebuild.md"
-require_file "docs/adr/0040-runtimegraph-rebuild.md"
-require_file "docs/archive/engineering/waves/spine43-runtimegraph-rebuild.md"
+require_file "work/archive/architecture-snapshots/40-runtimegraph-rebuild.md"
+require_file "work/archive/engineering-snapshots/runtimegraph-rebuild.md"
+require_file "work/archive/adr/0040-runtimegraph-rebuild.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine43-runtimegraph-rebuild.md"
 require_file "tests/smoke/runtimegraph-rebuild/test_runtimegraph_rebuild.sh"
 
 for file in \
-  "docs/architecture/40-runtimegraph-rebuild.md" \
-  "docs/engineering/runtimegraph-rebuild.md" \
-  "docs/adr/0040-runtimegraph-rebuild.md" \
-  "docs/archive/engineering/waves/spine43-runtimegraph-rebuild.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/engineering/four-repo-roadmap.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/architecture/39-runtimegraph-working-set.md" \
-  "docs/engineering/runtimegraph-working-set.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/40-runtimegraph-rebuild.md" \
+  "work/archive/engineering-snapshots/runtimegraph-rebuild.md" \
+  "work/archive/adr/0040-runtimegraph-rebuild.md" \
+  "work/archive/legacy-docs/engineering/waves/spine43-runtimegraph-rebuild.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "work/spines/yai-spine.md" \
+  "work/spines/data-plane.md" \
+  "work/archive/architecture-snapshots/39-runtimegraph-working-set.md" \
+  "work/archive/engineering-snapshots/runtimegraph-working-set.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "RuntimeGraph rebuild"
   require_phrase "$file" "yai.runtime_graph_rebuild_report.v1"
   require_phrase "$file" "journal"
@@ -51,7 +51,7 @@ for file in \
   require_phrase "$file" "runtime_graph_rebuild"
   require_phrase "$file" "resident service planned"
   require_phrase "$file" "RuntimeGraph is not durable truth"
-  require_phrase "$file" "docs/labs/filesystem-loop"
+  require_phrase "$file" "labs/filesystem-loop"
 done
 
 require_phrase "cmd/yai/src/main.rs" "graph rebuild --case <case_ref> --from journal"
@@ -59,7 +59,7 @@ require_phrase "cmd/yai/src/main.rs" "graph rebuild-report --case <case_ref>"
 require_phrase "cmd/yai/src/main.rs" "yai.runtime_graph_rebuild_report.v1"
 require_phrase "Makefile" "check-runtimegraph-rebuild"
 require_phrase "Makefile" "smoke-spine43"
-require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.43"
+require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.43"
 
 if grep -RIn 'historical filesystem-loop manual' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |

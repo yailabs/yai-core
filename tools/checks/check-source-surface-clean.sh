@@ -42,12 +42,12 @@ for dir in system/store system/graph system/index system/memory system/projectio
   fi
 done
 
-if ! grep -Fq 'system/ is not a second data engine' "$ROOT/docs/engineering/source-surface.md"; then
+if ! grep -Fq 'system/ is not a second data engine' "$ROOT/work/spines/source-surface.md"; then
   printf 'source-surface doctrine missing system/engine boundary\n' >&2
   exit 1
 fi
 
-if ! grep -Fq 'engine/ is the Rust data spine target' "$ROOT/docs/engineering/source-surface.md"; then
+if ! grep -Fq 'engine/ is the Rust data spine target' "$ROOT/work/spines/source-surface.md"; then
   printf 'source-surface doctrine missing Rust engine ownership\n' >&2
   exit 1
 fi

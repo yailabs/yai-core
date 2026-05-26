@@ -28,17 +28,17 @@ require_text() {
   }
 }
 
-require_file docs/architecture/20-carrier-contract-v1.md
-require_file docs/engineering/carrier-contract-v1.md
-require_file docs/adr/0022-carrier-contract-v1.md
-require_file docs/archive/engineering/waves/spine33c-carrier-contract-v1-filesystem-adapter.md
+require_file work/archive/architecture-snapshots/20-carrier-contract-v1.md
+require_file work/archive/engineering-snapshots/carrier-contract-v1.md
+require_file work/archive/adr/0022-carrier-contract-v1.md
+require_file work/archive/legacy-docs/engineering/waves/spine33c-carrier-contract-v1-filesystem-adapter.md
 require_file include/yai/effect/carrier_contract.h
 require_file include/yai/effect/carrier_outcome.h
 require_file include/yai/effect/carrier_receipt.h
 
-doctrine="docs/architecture/20-carrier-contract-v1.md"
-engineering="docs/engineering/carrier-contract-v1.md"
-commands="docs/engineering/command-surface.md"
+doctrine="work/archive/architecture-snapshots/20-carrier-contract-v1.md"
+engineering="work/archive/engineering-snapshots/carrier-contract-v1.md"
+commands="work/spines/command-surface.md"
 
 for text in \
   "carrier.v1" \

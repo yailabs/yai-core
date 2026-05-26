@@ -31,10 +31,10 @@ require_text() {
 require_file include/yai/effect/carrier_outcome_harness.h
 require_file system/effect/carrier_outcome_harness.c
 require_file tests/smoke/carrier-outcome-harness/test_carrier_outcome_harness.c
-require_file docs/architecture/25-carrier-outcome-harness.md
-require_file docs/engineering/carrier-outcome-harness.md
-require_file docs/adr/0027-carrier-outcome-harness.md
-require_file docs/archive/engineering/waves/spine33h-carrier-outcome-harness.md
+require_file work/archive/architecture-snapshots/25-carrier-outcome-harness.md
+require_file work/archive/engineering-snapshots/carrier-outcome-harness.md
+require_file work/archive/adr/0027-carrier-outcome-harness.md
+require_file work/archive/legacy-docs/engineering/waves/spine33h-carrier-outcome-harness.md
 
 for text in \
   "carrier outcome harness" \
@@ -57,7 +57,7 @@ for text in \
   "unsupported_carrier_family" \
   "yai carrier outcome-test"
 do
-  require_text docs/engineering/carrier-outcome-harness.md "$text"
+  require_text work/archive/engineering-snapshots/carrier-outcome-harness.md "$text"
 done
 
 require_text cmd/yai/src/main.rs "outcome-test"

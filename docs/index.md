@@ -1,8 +1,7 @@
 # YAI Documentation
 
-This is the public documentation entrypoint for YAI. Start here if you are
-evaluating the repository from the outside and want the short technical path
-before entering older architecture or engineering notes.
+This is the curated documentation entrypoint for YAI. Start here for stable
+architecture and public technical orientation.
 
 YAI is a local control runtime for case-bound AI operation. It gives model,
 provider, tool, operator, and system activity an operational boundary: case,
@@ -41,25 +40,23 @@ and license files are authoritative for current posture.
 - [Glossary](glossary.md)
 - [Legal posture](legal.md)
 
-## Current Engineering References
+## Architecture
 
-These are useful today, but they still contain internal planning/history and
-should be read as current engineering references rather than polished public
-guides:
+- [Architecture index](architecture/README.md)
+- [System](architecture/system.md)
+- [Data runtime](architecture/data-runtime.md)
+- [Control runtime](architecture/control-runtime.md)
+- [Model runtime](architecture/model-runtime.md)
+- [Protocols](architecture/protocols.md)
+- [Decisions](architecture/decisions.md)
 
-- [Command surface](engineering/command-surface.md)
-- [Source surface](engineering/source-surface.md)
-- [Testing](engineering/testing.md)
-- [Test cases](test-cases.md)
-- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
-- [Architecture notes](architecture/README.md)
+## Work And Labs
 
-## Advanced And Internal Docs
+Operational material is outside `docs/`:
 
-- `docs/adr/` contains architecture decision records.
-- `docs/protocols/` contains early protocol shapes.
-- `docs/archive/` contains historical engineering material.
-- `docs/internal/` contains repository readiness and internal planning records.
+- `labs/` contains experiments, runbooks, notebooks, outputs and reports.
+- `work/` contains spines, waves, inventories, repo-readiness notes, agent notes
+  and archives.
 
 ## Legal And Contribution
 
@@ -74,9 +71,7 @@ YAI is source-available, not open source by default. Technical feedback is
 welcome, but broad external contribution is not open yet unless maintainers
 explicitly scope the change.
 
-## What Is Still Being Split
+## Documentation Canon
 
-The public documentation surface is being split gradually from older
-architecture, manual, and engineering material. The current public pages are
-short entrypoints. Command and daemon references will be split into focused
-public docs in later passes.
+`docs/` is curated architecture documentation. It is not the lab root, wave
+archive, inventory root or agent execution folder.

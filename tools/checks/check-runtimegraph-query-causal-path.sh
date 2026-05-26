@@ -24,21 +24,21 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/40-runtimegraph-query-causal-path.md"
-require_file "docs/engineering/runtimegraph-query-causal-path.md"
-require_file "docs/adr/0040-runtimegraph-query-causal-path.md"
-require_file "docs/archive/engineering/waves/spine44-runtimegraph-query-causal-path.md"
-require_file "docs/labs/filesystem-loop/runbook.md"
+require_file "work/archive/architecture-snapshots/40-runtimegraph-query-causal-path.md"
+require_file "work/archive/engineering-snapshots/runtimegraph-query-causal-path.md"
+require_file "work/archive/adr/0040-runtimegraph-query-causal-path.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine44-runtimegraph-query-causal-path.md"
+require_file "labs/filesystem-loop/runbook.md"
 require_file "tests/smoke/runtimegraph-query/test_runtimegraph_query.sh"
 
 for file in \
-  "docs/architecture/40-runtimegraph-query-causal-path.md" \
-  "docs/engineering/runtimegraph-query-causal-path.md" \
-  "docs/adr/0040-runtimegraph-query-causal-path.md" \
-  "docs/archive/engineering/waves/spine44-runtimegraph-query-causal-path.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/40-runtimegraph-query-causal-path.md" \
+  "work/archive/engineering-snapshots/runtimegraph-query-causal-path.md" \
+  "work/archive/adr/0040-runtimegraph-query-causal-path.md" \
+  "work/archive/legacy-docs/engineering/waves/spine44-runtimegraph-query-causal-path.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "fanout"
   require_phrase "$file" "fanin"
   require_phrase "$file" "neighborhood"
@@ -51,7 +51,7 @@ for file in \
   require_phrase "$file" "plain output remains parseable"
 done
 
-require_phrase "docs/architecture/40-runtimegraph-query-causal-path.md" "docs/labs/filesystem-loop"
+require_phrase "work/archive/architecture-snapshots/40-runtimegraph-query-causal-path.md" "labs/filesystem-loop"
 require_phrase "cmd/yai/src/main.rs" "graph fanout --case <case_ref>"
 require_phrase "cmd/yai/src/main.rs" "graph_path:"
 require_phrase "Makefile" "smoke-spine44"

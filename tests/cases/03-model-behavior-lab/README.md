@@ -24,8 +24,8 @@ general provider support claim.
 Start with:
 
 ```text
-docs/labs/model-behavior/README.md
-docs/labs/model-behavior/filesystem-loop-qwen3-8b-q4.md
+labs/model-behavior/README.md
+labs/model-behavior/filesystem-loop-qwen3-8b-q4.md
 ```
 
 The artifact records the runbook command posture and sanitized output. Raw
@@ -51,5 +51,5 @@ local logs should not be committed.
 ## Deeper References
 
 - [Public test cases](../../../docs/test-cases.md)
-- [Model behavior lab artifacts](../../../docs/labs/model-behavior/README.md)
-- [Filesystem loop lab artifact](../../../docs/labs/model-behavior/filesystem-loop-qwen3-8b-q4.md)
+- [Model behavior lab artifacts](../../../labs/model-behavior/README.md)
+- [Filesystem loop lab artifact](../../../labs/model-behavior/filesystem-loop-qwen3-8b-q4.md)

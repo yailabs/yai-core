@@ -33,18 +33,18 @@ forbid_path() {
 
 require_dir "docs/lab-standards"
 legacy_manuals_dir="docs/""manuals"
-legacy_standards_dir="docs/labs/scientific-doc""s"
+legacy_standards_dir="labs/scientific-doc""s"
 legacy_lab_tools="tools/""labs"
 legacy_policy_packs="policy-""packs"
 forbid_path "$legacy_manuals_dir"
 forbid_path "$legacy_standards_dir"
 forbid_path "$legacy_lab_tools"
 
-require_file "docs/labs/README.md"
-require_file "docs/labs/registry.md"
-require_dir "docs/labs/_shared/bin"
+require_file "labs/README.md"
+require_file "labs/registry.md"
+require_dir "labs/shared/bin"
 
-for shared_tool in docs/labs/_shared/bin/*; do
+for shared_tool in labs/shared/bin/*; do
   [ -f "$shared_tool" ] || continue
   case "$shared_tool" in
     *.sh)
@@ -56,11 +56,11 @@ done
 
 found_lab=0
 
-for lab_dir in docs/labs/*; do
+for lab_dir in labs/*; do
   [ -d "$lab_dir" ] || continue
-  [ "$lab_dir" != "docs/labs/_shared" ] || continue
+  [ "$lab_dir" != "labs/shared" ] || continue
   case "$lab_dir" in
-    docs/labs/filesystem-loop|docs/labs/external-runtime) ;;
+    labs/filesystem-loop|labs/external-runtime) ;;
     *) fail "unexpected lab directory: $lab_dir" ;;
   esac
   found_lab=1

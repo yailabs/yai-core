@@ -25,26 +25,26 @@ require_phrase() {
   fi
 }
 
-require_file "docs/engineering/review-loop-test-matrix.md"
-require_file "docs/archive/engineering/waves/spine44c-review-loop-test-matrix.md"
-require_file "docs/labs/filesystem-loop/README.md"
-require_file "docs/labs/filesystem-loop/runbook.md"
-require_file "docs/labs/filesystem-loop/prompts.json"
+require_file "work/archive/engineering-snapshots/review-loop-test-matrix.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine44c-review-loop-test-matrix.md"
+require_file "labs/filesystem-loop/README.md"
+require_file "labs/filesystem-loop/runbook.md"
+require_file "labs/filesystem-loop/prompts.json"
 require_file "tests/smoke/review-loop-test-matrix/test_review_loop_test_matrix.sh"
 
 for file in \
-  "docs/engineering/review-loop-test-matrix.md" \
-  "docs/archive/engineering/waves/spine44c-review-loop-test-matrix.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/engineering/four-repo-roadmap.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/architecture/42-operator-review-deferred-loop.md" \
-  "docs/architecture/43-cli-review-interaction-surface.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/engineering-snapshots/review-loop-test-matrix.md" \
+  "work/archive/legacy-docs/engineering/waves/spine44c-review-loop-test-matrix.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "work/spines/yai-spine.md" \
+  "work/spines/data-plane.md" \
+  "work/archive/architecture-snapshots/42-operator-review-deferred-loop.md" \
+  "work/archive/architecture-snapshots/43-cli-review-interaction-surface.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "approve"
   require_phrase "$file" "deny"
   require_phrase "$file" "defer"
@@ -58,7 +58,7 @@ for file in \
   require_phrase "$file" "model proposal observed"
   require_phrase "$file" "model cannot approve"
   require_phrase "$file" "automatic proposed-op gate import is future work"
-  require_phrase "$file" "docs/labs/filesystem-loop"
+  require_phrase "$file" "labs/filesystem-loop"
 done
 
 require_phrase "Makefile" "check-review-loop-test-matrix"

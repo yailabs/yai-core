@@ -25,19 +25,19 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/34-replay-diagnostics-rebuild-report.md"
-require_file "docs/engineering/replay-diagnostics-rebuild-report.md"
-require_file "docs/adr/0034-replay-diagnostics-rebuild-report.md"
-require_file "docs/archive/engineering/waves/spine38-replay-diagnostics-rebuild-report.md"
+require_file "work/archive/architecture-snapshots/34-replay-diagnostics-rebuild-report.md"
+require_file "work/archive/engineering-snapshots/replay-diagnostics-rebuild-report.md"
+require_file "work/archive/adr/0034-replay-diagnostics-rebuild-report.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine38-replay-diagnostics-rebuild-report.md"
 require_file "tests/smoke/replay-diagnostics-report/test_replay_diagnostics_report.sh"
 
 for file in \
-  "docs/architecture/34-replay-diagnostics-rebuild-report.md" \
-  "docs/engineering/replay-diagnostics-rebuild-report.md" \
-  "docs/adr/0034-replay-diagnostics-rebuild-report.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/34-replay-diagnostics-rebuild-report.md" \
+  "work/archive/engineering-snapshots/replay-diagnostics-rebuild-report.md" \
+  "work/archive/adr/0034-replay-diagnostics-rebuild-report.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "yai.replay_report.v1"
   require_phrase "$file" "replay-report"
   require_phrase "$file" "journal_identity"
@@ -49,8 +49,8 @@ for file in \
   require_phrase "$file" "failed report"
 done
 
-require_phrase "docs/labs/filesystem-loop/runbook.md" "docs/labs/filesystem-loop"
-require_phrase "docs/internal/extraction-inventory.tsv" "wave=SPINE.38"
-require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.38"
+require_phrase "labs/filesystem-loop/runbook.md" "labs/filesystem-loop"
+require_phrase "work/inventories/extraction-inventory.tsv" "wave=SPINE.38"
+require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.38"
 require_phrase "Makefile" "check-replay-diagnostics-report"
 require_phrase "Makefile" "smoke-spine38"

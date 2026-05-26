@@ -34,14 +34,14 @@ require_file "include/yai/effect/dispatch.h"
 require_file "include/yai/effect/receipt_guarantee.h"
 require_file "include/yai/control/gate_outcome.h"
 require_file "include/yai/observation/host_observation.h"
-require_file "docs/architecture/18-control-carrier-substrate.md"
-require_file "docs/engineering/control-carrier-rebase.md"
-require_file "docs/adr/0020-control-carrier-substrate.md"
+require_file "work/archive/architecture-snapshots/18-control-carrier-substrate.md"
+require_file "work/archive/engineering-snapshots/control-carrier-rebase.md"
+require_file "work/archive/adr/0020-control-carrier-substrate.md"
 
 for file in \
-  "docs/architecture/18-control-carrier-substrate.md" \
-  "docs/engineering/control-carrier-rebase.md" \
-  "docs/adr/0020-control-carrier-substrate.md"
+  "work/archive/architecture-snapshots/18-control-carrier-substrate.md" \
+  "work/archive/engineering-snapshots/control-carrier-rebase.md" \
+  "work/archive/adr/0020-control-carrier-substrate.md"
 do
   require_text "$file" "carrier family"
   require_text "$file" "gate outcome"

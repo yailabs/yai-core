@@ -30,14 +30,14 @@ require_text() {
   }
 }
 
-roadmap="docs/engineering/four-repo-roadmap.md"
-current="docs/engineering/current-status.md"
-commands="docs/engineering/command-surface.md"
-testing="docs/engineering/testing.md"
-architecture="docs/architecture/28-provider-runtime-lan-target-surface.md"
-engineering="docs/engineering/provider-runtime-lan-target-surface.md"
-adr="docs/adr/0028-provider-runtime-lan-target-surface.md"
-archive="docs/archive/engineering/waves/spine33l-provider-runtime-lan-target-surface.md"
+roadmap="work/spines/yai-spine.md"
+current="work/spines/current-status.md"
+commands="work/spines/command-surface.md"
+testing="work/spines/testing.md"
+architecture="work/archive/architecture-snapshots/28-provider-runtime-lan-target-surface.md"
+engineering="work/archive/engineering-snapshots/provider-runtime-lan-target-surface.md"
+adr="work/archive/adr/0028-provider-runtime-lan-target-surface.md"
+archive="work/archive/legacy-docs/engineering/waves/spine33l-provider-runtime-lan-target-surface.md"
 makefile="Makefile"
 
 for file in "$roadmap" "$current" "$commands" "$testing" "$architecture" "$engineering" "$adr" "$archive" "$makefile"; do

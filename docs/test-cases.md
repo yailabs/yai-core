@@ -140,8 +140,8 @@ The low-level smoke tests live under `tests/smoke/`. They remain the current
 implementation-level validation owner for many runtime, daemon, hot-state,
 projection, and record-store paths.
 
-Use [docs/engineering/testing.md](engineering/testing.md) and
-[docs/engineering/command-surface.md](engineering/command-surface.md) for the
+Use [work/spines/testing.md](engineering/testing.md) and
+[work/spines/command-surface.md](engineering/command-surface.md) for the
 current deeper engineering view. Those references may still include internal or
 historical material.
 

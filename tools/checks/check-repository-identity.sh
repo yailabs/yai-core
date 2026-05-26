@@ -62,12 +62,12 @@ if [ -s "$HITS" ]; then
   exit 1
 fi
 
-if ! grep -Fq 'Repository Identity Cutover' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
+if ! grep -Fq 'Repository Identity Cutover' "$ROOT/work/spines/yai-spine.md"; then
   printf 'repository identity cutover missing from roadmap\n' >&2
   exit 1
 fi
 
-if ! grep -Fq 'yai-dev' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
+if ! grep -Fq 'yai-dev' "$ROOT/work/spines/yai-spine.md"; then
   printf 'yai-dev role missing from roadmap\n' >&2
   exit 1
 fi

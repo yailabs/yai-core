@@ -30,16 +30,16 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/33-journal-replay-boundary.md"
-require_file "docs/engineering/journal-replay-parser-hardening.md"
-require_file "docs/adr/0033-journal-replay-boundary.md"
-require_file "docs/archive/engineering/waves/spine35-journal-replay-parser-hardening.md"
+require_file "work/archive/architecture-snapshots/33-journal-replay-boundary.md"
+require_file "work/archive/engineering-snapshots/journal-replay-parser-hardening.md"
+require_file "work/archive/adr/0033-journal-replay-boundary.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine35-journal-replay-parser-hardening.md"
 require_file "tests/smoke/journal-replay-boundary/test_journal_replay_boundary.sh"
 
 for file in \
-  "docs/architecture/33-journal-replay-boundary.md" \
-  "docs/engineering/journal-replay-parser-hardening.md" \
-  "docs/adr/0033-journal-replay-boundary.md"
+  "work/archive/architecture-snapshots/33-journal-replay-boundary.md" \
+  "work/archive/engineering-snapshots/journal-replay-parser-hardening.md" \
+  "work/archive/adr/0033-journal-replay-boundary.md"
 do
   require_phrase "$file" "Journal is replay/audit"
   require_phrase "$file" "LMDB is durable indexed record lookup"
@@ -52,11 +52,11 @@ do
   require_phrase "$file" "idempotency"
 done
 
-require_phrase "docs/engineering/command-surface.md" "yai journal inspect --path <journal.jsonl> [--show-errors]"
-require_phrase "docs/engineering/testing.md" "make smoke-spine35"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.35  Journal Replay Doctrine + Parser Hardening                done"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.35  Journal Replay Doctrine + Parser Hardening                done"
-require_phrase "docs/engineering/current-status.md" "SPINE.35 Journal Replay Doctrine + Parser Hardening completed"
+require_phrase "work/spines/command-surface.md" "yai journal inspect --path <journal.jsonl> [--show-errors]"
+require_phrase "work/spines/testing.md" "make smoke-spine35"
+require_phrase "work/spines/yai-spine.md" "SPINE.35  Journal Replay Doctrine + Parser Hardening                done"
+require_phrase "work/spines/data-plane.md" "SPINE.35  Journal Replay Doctrine + Parser Hardening                done"
+require_phrase "work/spines/current-status.md" "SPINE.35 Journal Replay Doctrine + Parser Hardening completed"
 require_phrase "Makefile" "check-journal-replay-boundary"
 require_phrase "Makefile" "smoke-spine35"
 

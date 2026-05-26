@@ -39,7 +39,7 @@ validate_json() {
 
 found_run=0
 
-for runs_dir in docs/labs/*/runs; do
+for runs_dir in labs/*/runs; do
   [ -d "$runs_dir" ] || continue
 
   for run_dir in "$runs_dir"/*; do
@@ -64,10 +64,10 @@ for runs_dir in docs/labs/*/runs; do
   done
 done
 
-[ "$found_run" -eq 1 ] || fail "no run directories found under docs/labs/*/runs"
+[ "$found_run" -eq 1 ] || fail "no run directories found under labs/*/runs"
 
 if find docs/labs -path '*/runs/*/run.md' -print -quit | grep -q .; then
-  fail "run.md exists under docs/labs/*/runs"
+  fail "run.md exists under labs/*/runs"
 fi
 
 if find docs/labs -path '*/runs/*/assets/notebook.ipynb' -print -quit | grep -q .; then

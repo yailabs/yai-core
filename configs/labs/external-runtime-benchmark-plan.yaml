@@ -28,13 +28,13 @@ hardware_baseline:
 
 workloads:
   - id: w1-smoke
-    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_catalog: labs/external-runtime/prompts.json
     prompt_id: local-provider-ready
   - id: w2-technical-summary
-    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_catalog: labs/external-runtime/prompts.json
     prompt_id: local-provider-boundary-summary
   - id: w3-long-report
-    prompt_catalog: docs/labs/external-runtime/prompts.json
+    prompt_catalog: labs/external-runtime/prompts.json
     prompt_id: local-provider-observable-receipts
   - id: hnsw-synthetic-20k
     kind: hnsw_synthetic

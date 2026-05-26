@@ -29,17 +29,17 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/17-lmdb-record-plane.md"
-require_file "docs/engineering/lmdb-record-plane.md"
-require_file "docs/adr/0019-lmdb-record-plane.md"
-require_file "docs/archive/engineering/waves/spine29-lmdb-record-plane-doctrine-schema.md"
-require_file "docs/engineering/data-plane-roadmap.md"
-require_file "docs/engineering/command-surface.md"
+require_file "work/archive/architecture-snapshots/17-lmdb-record-plane.md"
+require_file "work/archive/engineering-snapshots/lmdb-record-plane.md"
+require_file "work/archive/adr/0019-lmdb-record-plane.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine29-lmdb-record-plane-doctrine-schema.md"
+require_file "work/spines/data-plane.md"
+require_file "work/spines/command-surface.md"
 
 for file in \
-  "docs/architecture/17-lmdb-record-plane.md" \
-  "docs/engineering/lmdb-record-plane.md" \
-  "docs/adr/0019-lmdb-record-plane.md"
+  "work/archive/architecture-snapshots/17-lmdb-record-plane.md" \
+  "work/archive/engineering-snapshots/lmdb-record-plane.md" \
+  "work/archive/adr/0019-lmdb-record-plane.md"
 do
   require_phrase "$file" "LMDB is durable indexed record lookup"
   require_phrase "$file" "hot state is not LMDB"
@@ -51,9 +51,9 @@ do
   require_phrase "$file" "yai.record.v1"
 done
 
-require_phrase "docs/architecture/17-lmdb-record-plane.md" "SPINE.30 LMDB Record Write Path"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.30 LMDB Record Write Path"
-require_phrase "docs/engineering/command-surface.md" "yai store status"
-require_phrase "docs/engineering/command-surface.md" "record_store_status"
+require_phrase "work/archive/architecture-snapshots/17-lmdb-record-plane.md" "SPINE.30 LMDB Record Write Path"
+require_phrase "work/spines/data-plane.md" "SPINE.30 LMDB Record Write Path"
+require_phrase "work/spines/command-surface.md" "yai store status"
+require_phrase "work/spines/command-surface.md" "record_store_status"
 
 printf 'lmdb-record-plane doctrine: ok\n'

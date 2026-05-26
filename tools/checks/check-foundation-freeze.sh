@@ -80,7 +80,7 @@ testing.md
 wave-template.md
 '
 
-for path in "$ROOT"/docs/engineering/*; do
+for path in "$ROOT"/work/archive/engineering-snapshots/*; do
   name=$(basename "$path")
   if [ -f "$path" ]; then
     case "$allowed_docs" in
@@ -95,12 +95,12 @@ $name
   fi
 done
 
-if ! grep -q 'SPINE.23.*Hot State Doctrine + ABI.*done' "$ROOT/docs/engineering/four-repo-roadmap.md"; then
+if ! grep -q 'SPINE.23.*Hot State Doctrine + ABI.*done' "$ROOT/work/spines/yai-spine.md"; then
   printf 'roadmap does not name SPINE.23 as completed hot-state doctrine sequence\n' >&2
   exit 1
 fi
 
-if ! grep -q 'SPINE.27 Hot State CLI + Manual Validation' "$ROOT/docs/engineering/current-status.md"; then
+if ! grep -q 'SPINE.27 Hot State CLI + Manual Validation' "$ROOT/work/spines/current-status.md"; then
   printf 'current-status does not name SPINE.27 hot state cli manual validation\n' >&2
   exit 1
 fi
@@ -121,13 +121,13 @@ for term in \
   'Validation:' \
   'Commit boundaries'
 do
-  if ! grep -q "$term" "$ROOT/docs/engineering/wave-template.md"; then
+  if ! grep -q "$term" "$ROOT/work/waves/wave-template.md"; then
     printf 'wave-template missing operational contract term: %s\n' "$term" >&2
     exit 1
   fi
 done
 
-if ! grep -q 'An implementation wave must not be only additive inside `yai`' "$ROOT/docs/engineering/operational-extraction-contract.md"; then
+if ! grep -q 'An implementation wave must not be only additive inside `yai`' "$ROOT/work/waves/operational-extraction-contract.md"; then
   printf 'operational extraction additive-only guard missing\n' >&2
   exit 1
 fi

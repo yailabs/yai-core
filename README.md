@@ -16,7 +16,7 @@ file or component license says otherwise.
 -->
 
 <div align="center">
-  <img src="docs/reference/figures/brand/yai-transp.png" alt="YAI" width="220" />
+  <img src="work/archive/reference/figures/brand/yai-transp.png" alt="YAI" width="220" />
 
   <strong>local control runtime for case-bound AI operation</strong>
   <br />
@@ -147,12 +147,12 @@ The README is not the full command reference.
 Agent-facing ownership rules live in:
 
 ```text
-docs/engineering/file-header-standard.md
-docs/engineering/agent-operating-appendix.md
+work/archive/engineering-snapshots/file-header-standard.md
+work/agents/agent-operating-appendix.md
 ```
 
 The current command surface is documented in
-[docs/engineering/command-surface.md](docs/engineering/command-surface.md).
+[work/spines/command-surface.md](work/spines/command-surface.md).
 Treat that document as the current command reference until `docs/commands.md`
 is split out. Failures from unrelated dirty work should be reported, not
 hidden.
@@ -191,7 +191,7 @@ packaging/  packaging material when present
 ```
 
 The current source boundary is described in
-[docs/engineering/source-surface.md](docs/engineering/source-surface.md).
+[work/spines/source-surface.md](work/spines/source-surface.md).
 
 ## Documentation
 
@@ -203,10 +203,10 @@ The current source boundary is described in
 - [Architecture summary](docs/architecture.md)
 - [Glossary](docs/glossary.md)
 - [Legal posture](docs/legal.md)
-- [Current engineering command surface](docs/engineering/command-surface.md)
-- [Current engineering source surface](docs/engineering/source-surface.md)
-- [Testing](docs/engineering/testing.md)
-- [Filesystem loop lab](docs/labs/filesystem-loop/runbook.md)
+- [Current engineering command surface](work/spines/command-surface.md)
+- [Current engineering source surface](work/spines/source-surface.md)
+- [Testing](work/spines/testing.md)
+- [Filesystem loop lab](labs/filesystem-loop/runbook.md)
 
 Engineering references may still include internal or historical material. The
 public documentation surface is being split into shorter focused pages.

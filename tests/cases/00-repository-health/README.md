@@ -40,5 +40,5 @@ and smoke tests.
 ## Deeper References
 
 - [Public test cases](../../../docs/test-cases.md)
-- [Testing doctrine](../../../docs/engineering/testing.md)
+- [Testing doctrine](../../../work/spines/testing.md)
 - [Repository README](../../../README.md)

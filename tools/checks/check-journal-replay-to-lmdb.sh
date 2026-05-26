@@ -30,17 +30,17 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/34-journal-replay-to-lmdb.md"
-require_file "docs/engineering/journal-replay-to-lmdb.md"
-require_file "docs/adr/0034-journal-replay-to-lmdb.md"
-require_file "docs/archive/engineering/waves/spine36-journal-replay-to-lmdb.md"
+require_file "work/archive/architecture-snapshots/34-journal-replay-to-lmdb.md"
+require_file "work/archive/engineering-snapshots/journal-replay-to-lmdb.md"
+require_file "work/archive/adr/0034-journal-replay-to-lmdb.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine36-journal-replay-to-lmdb.md"
 require_file "tests/smoke/journal-replay-to-lmdb/test_journal_replay_to_lmdb.sh"
-require_file "docs/labs/filesystem-loop/runbook.md"
+require_file "labs/filesystem-loop/runbook.md"
 
 for file in \
-  "docs/architecture/34-journal-replay-to-lmdb.md" \
-  "docs/engineering/journal-replay-to-lmdb.md" \
-  "docs/adr/0034-journal-replay-to-lmdb.md"
+  "work/archive/architecture-snapshots/34-journal-replay-to-lmdb.md" \
+  "work/archive/engineering-snapshots/journal-replay-to-lmdb.md" \
+  "work/archive/adr/0034-journal-replay-to-lmdb.md"
 do
   require_phrase "$file" "journal replay to LMDB"
   require_phrase "$file" "idempotent replay"
@@ -52,12 +52,12 @@ do
   require_phrase "$file" "no journal fallback"
 done
 
-require_phrase "docs/engineering/command-surface.md" "yai journal replay --path <journal.jsonl> [--dry-run]"
-require_phrase "docs/engineering/testing.md" "make smoke-spine36"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.36  Journal Replay to LMDB                                    done"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.36  Journal Replay to LMDB                                    done"
-require_phrase "docs/engineering/current-status.md" "SPINE.36 Journal Replay to LMDB completed"
-require_phrase "docs/labs/filesystem-loop/runbook.md" "Journal Replay to LMDB"
+require_phrase "work/spines/command-surface.md" "yai journal replay --path <journal.jsonl> [--dry-run]"
+require_phrase "work/spines/testing.md" "make smoke-spine36"
+require_phrase "work/spines/yai-spine.md" "SPINE.36  Journal Replay to LMDB                                    done"
+require_phrase "work/spines/data-plane.md" "SPINE.36  Journal Replay to LMDB                                    done"
+require_phrase "work/spines/current-status.md" "SPINE.36 Journal Replay to LMDB completed"
+require_phrase "labs/filesystem-loop/runbook.md" "Journal Replay to LMDB"
 require_phrase "Makefile" "check-journal-replay-to-lmdb"
 require_phrase "Makefile" "smoke-spine36"
 

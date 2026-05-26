@@ -28,10 +28,10 @@ require_text() {
 
 require_file include/yai/reconcile/carrier_consistency.h
 require_file system/reconcile/carrier_consistency.c
-require_file docs/architecture/30-carrier-receipt-divergence.md
-require_file docs/engineering/carrier-receipt-divergence.md
-require_file docs/adr/0030-carrier-receipt-divergence.md
-require_file docs/archive/engineering/waves/spine33i-carrier-receipt-divergence.md
+require_file work/archive/architecture-snapshots/30-carrier-receipt-divergence.md
+require_file work/archive/engineering-snapshots/carrier-receipt-divergence.md
+require_file work/archive/adr/0030-carrier-receipt-divergence.md
+require_file work/archive/legacy-docs/engineering/waves/spine33i-carrier-receipt-divergence.md
 require_file tests/smoke/carrier-receipt-divergence/test_carrier_receipt_divergence.c
 
 for text in \
@@ -50,7 +50,7 @@ for text in \
   "no silent repair" \
   "yai carrier reconcile-outcome"
 do
-  require_text docs/engineering/carrier-receipt-divergence.md "$text"
+  require_text work/archive/engineering-snapshots/carrier-receipt-divergence.md "$text"
 done
 
 require_text cmd/yai/src/main.rs "reconcile-outcome"

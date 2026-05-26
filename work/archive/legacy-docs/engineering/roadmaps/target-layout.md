@@ -1,0 +1,385 @@
+Historical/superseded engineering record. Not an active source of truth.
+
+# Target Layout
+
+This document separates architectural destination from the first creation waves.
+It is not a command to create every directory or file immediately.
+
+Rule:
+
+```text
+Target layout is architectural destination.
+NEW.0 creates only doctrine, guards and tracked skeleton roots.
+NEW.1 creates only files needed for the first executable loop.
+```
+
+## 1. Target Layout V2
+
+SPINE.5 extends the filesystem, live data-plane and observability doctrine with
+the core operational spine work breakdown. The future
+`yai-core` repository
+should eventually have this root shape:
+
+```text
+yai-core/
+├── include/
+├── system/
+├── engine/
+├── cmd/
+├── proto/
+├── tests/
+├── packaging/
+├── docs/
+├── tools/
+├── examples/
+├── vendor/
+├── Cargo.toml
+├── Makefile
+├── README.md
+├── LICENSE
+└── VERSION
+```
+
+Meaning:
+
+| Root | Meaning |
+|---|---|
+| `include/` | public C ABI contracts |
+| `system/` | C system plane: daemon, host, carriers, control boundary, FFI bridges |
+| `engine/` | Rust operational data engine: hot state, store, journal, record, graph, query, facts, memory, live projection and reconcile |
+| `cmd/` | binaries: `yai` and `yaid` |
+| `proto/` | schemas and fixtures |
+| `tests/` | smoke, unit, integration and adversarial tests |
+
+These roots are stable machine responsibilities, not feature areas.
+
+Target system shape:
+
+```text
+system/
+├── base/
+├── case/
+├── subject/
+├── op/
+├── control/
+├── effect/
+│   └── carriers/
+├── daemon/
+├── host/
+├── engine_bridge/
+├── internal/
+└── README.md
+```
+
+Target engine shape:
+
+```text
+engine/
+├── Cargo.toml
+├── yai-engine/
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs
+│       ├── residue/
+│       ├── hot/
+│       ├── store/
+│       ├── journal/
+│       ├── record/
+│       ├── graph/
+│       ├── index/
+│       ├── query/
+│       ├── facts/
+│       ├── memory/
+│       ├── projection/
+│       ├── reconcile/
+│       ├── retention/
+│       ├── integrity/
+│       └── ffi/
+├── yai-engine-ffi/
+│   ├── Cargo.toml
+│   └── src/lib.rs
+└── README.md
+```
+
+Target command shape:
+
+```text
+cmd/
+├── yai/
+│   ├── Cargo.toml
+│   └── src/main.rs
+└── yaid/
+    └── main.c
+```
+
+Current bootstrap roots are transitional:
+
+| Current root | Target destination | Status |
+|---|---|---|
+| `lib/` | `system/` plus Rust-owned data logic in `engine/` | removed after NEW.17 |
+| `crates/` | removed after NEW.15 | retired |
+| `ctl/` | removed after NEW.17 | retired |
+| `cmd/yai/` | Rust technical command | active after NEW.15 |
+| top-level `daemon/` | removed after NEW.16 | retired |
+| `cmd/yaid/` | C daemon entrypoint | active after NEW.16 |
+| `system/daemon/` | C daemon support | active after NEW.16 |
+| `system/{store,graph,index,memory,projection,reconcile}` | transitional data logic pending bridge split | NEW.18 target |
+
+The target does not keep `lib/` as an implementation root. NEW.17 moved C
+implementation into `system/`; NEW.18 thins the transitional data-spine C
+folders into bridge code versus Rust engine ownership. Local install layout is
+delayed to NEW.20.
+
+SPINE.3R, SPINE.4 and SPINE.5 add the post-NEW.18B target:
+
+```text
+case_world before subject binding
+projection as live versioned cognitive view
+observability/evaluation as case-view quality plane
+macro-spine coverage for future waves
+system = host/control/carrier/daemon/bridge
+engine = hot/store/journal/record/graph/index/query/facts/memory/projection/reconcile/observability
+```
+
+Shared memory, LMDB, Ladybug and DuckDB are planned-not-created until their
+dedicated data-plane waves. Observability records, debug commands and analytics
+facts are also planned-not-created until dedicated implementation waves.
+
+NEW.13 adds the executable move plan in:
+
+```text
+new13-filesystem-refactor-plan.md
+filesystem-move-matrix.md
+engine-ownership-map.md
+system-ownership-map.md
+```
+
+## 2. NEW.0 Minimal Skeleton
+
+NEW.0 should create the smallest real repository skeleton that prevents drift.
+
+Allowed NEW.0 content:
+
+```text
+docs/
+include/yai/
+lib/
+cmd/
+system/
+ctl/
+cmd/
+proto/
+tests/
+tools/checks/
+Makefile
+README.md
+LICENSE
+VERSION
+```
+
+Allowed NEW.0 files:
+
+```text
+work/archive/architecture-snapshots/00-spine.md
+work/archive/architecture-snapshots/04-subject-model.md
+work/archive/architecture-snapshots/06-control-policy-model.md
+work/archive/engineering-snapshots/target-layout.md
+work/archive/engineering-snapshots/extraction-plan.md
+work/archive/engineering-snapshots/c-abi.md
+work/archive/engineering-snapshots/rust-engine.md
+work/archive/adr/0000-decision-compendium.md
+tools/checks/check-no-old-roots.sh
+```
+
+Allowed NEW.0 tracked skeleton roots:
+
+```text
+include/yai/base
+include/yai/ingest
+include/yai/subject
+include/yai/case
+include/yai/op
+include/yai/control
+include/yai/effect
+include/yai/store
+include/yai/index
+include/yai/graph
+include/yai/memory
+include/yai/projection
+include/yai/reconcile
+lib/base
+lib/ingest
+lib/subject
+lib/case
+lib/op
+lib/control
+lib/effect
+lib/store
+lib/index
+lib/graph
+lib/memory
+lib/projection
+lib/reconcile
+daemon
+ctl
+```
+
+NEW.0 did not create large empty file forests. Bootstrap directories were
+tracked with transitional README markers and guard scripts only; NEW.13 maps
+those markers to target roles and owning refactor waves.
+
+## 3. NEW.1 Minimum Loop Files
+
+NEW.1 creates only files needed for the first executable loop:
+
+```text
+open case
+bind subject
+submit op attempt
+control decision
+null carrier / observed receipt
+append store record
+query projection
+```
+
+Minimum public headers:
+
+```text
+include/yai/base/id.h
+include/yai/base/error.h
+include/yai/case/case_ref.h
+include/yai/subject/subject_ref.h
+include/yai/subject/subject_binding.h
+include/yai/op/attempt.h
+include/yai/control/decision.h
+include/yai/effect/receipt.h
+include/yai/store/record.h
+include/yai/projection/projection.h
+```
+
+Minimum C implementation files:
+
+```text
+system/base/id.c
+system/base/error.c
+system/case/case_ref.c
+system/subject/subject_binding.c
+system/op/attempt.c
+system/control/decision.c
+system/effect/receipt.c
+system/store/record.c
+system/store/journal.c
+system/projection/projection.c
+cmd/yaid/main.c
+system/daemon/ipc.c
+system/daemon/core_loop.c
+system/daemon/daemon_status.c
+```
+
+Minimum Rust files:
+
+```text
+engine/Cargo.toml
+engine/yai-engine/Cargo.toml
+engine/yai-engine/src/lib.rs
+engine/yai-engine/src/store.rs
+engine/yai-engine/src/journal.rs
+engine/yai-engine/src/record.rs
+engine/yai-engine/src/graph.rs
+engine/yai-engine/src/index.rs
+engine/yai-engine/src/memory.rs
+engine/yai-engine/src/projection.rs
+engine/yai-engine/src/query.rs
+engine/yai-engine/src/ffi.rs
+engine/yai-engine-ffi/Cargo.toml
+engine/yai-engine-ffi/src/lib.rs
+cmd/yai/Cargo.toml
+cmd/yai/src/main.rs
+```
+
+The `engine/` paths are the NEW.14 engine target. The `cmd/yai` paths are the
+NEW.15 technical command target. `crates/` is removed after NEW.15.
+
+The planned NEW.14 through NEW.21 sequence moves these bootstrap paths without
+changing smoke behavior.
+
+Minimum tests:
+
+```text
+tests/smoke/open-case
+tests/smoke/bind-subject
+tests/smoke/submit-op
+tests/smoke/deny-op
+tests/smoke/receipt-record
+tests/smoke/query-projection
+tests/guards/no-old-roots
+```
+
+## 4. Forbidden Future Core Roots
+
+```text
+agents
+analytics
+capabilities
+decision
+lineage
+models
+orchestrator
+runtime
+substrate
+governance
+knowledge
+state
+providers
+workflow
+```
+
+The guard must check both root directories and accidental new public include
+roots. Compatibility headers in the current repo can exist until drained, but
+the future `yai-core` must not recreate these names as core roots.
+
+## 5. Repo Split
+
+Current transition workspace:
+
+```text
+YAI/
+├── yai-core/
+├── yai/
+├── interfaces/
+└── console/
+```
+
+Canonical future workspace:
+
+```text
+YAI/
+├── yai-core/
+├── ai-environment/
+├── interfaces/
+└── console/
+```
+
+Ownership:
+
+```text
+yai-core       = canonical new core and local AI operational control core
+yai            = transition concept mine and future ai-environment source
+ai-environment = external AI systems, adapters, tools and workflow lab
+interfaces     = projection/API/SDK/conformance over yai-core primitive truth
+console        = operator client / TUI / human control surface
+```
+
+`yai` is not renamed in SPINE.0. It remains a sibling repo and must not be
+migrated folder-by-folder into `yai-core`.
+
+Core first. Interfaces second. Console later. Platform last.
+
+`yai` belongs in `yai-core` as technical control. Console belongs outside the
+core as a human operator surface consuming projections and operations.
+
+The updated milestone roadmap is maintained in:
+
+```text
+work/spines/yai-spine.md
+```

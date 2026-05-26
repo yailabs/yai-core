@@ -28,17 +28,17 @@ require_text() {
   }
 }
 
-require_file docs/architecture/19-operation-dispatch-multiplex.md
-require_file docs/engineering/operation-dispatch-multiplex.md
-require_file docs/adr/0021-operation-dispatch-multiplex.md
-require_file docs/archive/engineering/waves/spine33b-operation-dispatch-multiplex.md
+require_file work/archive/architecture-snapshots/19-operation-dispatch-multiplex.md
+require_file work/archive/engineering-snapshots/operation-dispatch-multiplex.md
+require_file work/archive/adr/0021-operation-dispatch-multiplex.md
+require_file work/archive/legacy-docs/engineering/waves/spine33b-operation-dispatch-multiplex.md
 require_file include/yai/effect/dispatch_lane.h
 require_file include/yai/effect/dispatch_plan.h
 require_file include/yai/effect/dispatch_multiplex.h
 
-doctrine="docs/architecture/19-operation-dispatch-multiplex.md"
-engineering="docs/engineering/operation-dispatch-multiplex.md"
-commands="docs/engineering/command-surface.md"
+doctrine="work/archive/architecture-snapshots/19-operation-dispatch-multiplex.md"
+engineering="work/archive/engineering-snapshots/operation-dispatch-multiplex.md"
+commands="work/spines/command-surface.md"
 
 for text in \
   "dispatch is separate from decision" \

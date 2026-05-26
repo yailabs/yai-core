@@ -25,19 +25,19 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/36-journal-replay-freeze.md"
-require_file "docs/engineering/journal-replay-freeze.md"
-require_file "docs/adr/0036-journal-replay-freeze.md"
-require_file "docs/archive/engineering/waves/spine39-journal-replay-freeze.md"
+require_file "work/archive/architecture-snapshots/36-journal-replay-freeze.md"
+require_file "work/archive/engineering-snapshots/journal-replay-freeze.md"
+require_file "work/archive/adr/0036-journal-replay-freeze.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine39-journal-replay-freeze.md"
 require_file "tests/smoke/journal-replay-freeze/test_journal_replay_freeze.sh"
 
 for file in \
-  "docs/architecture/36-journal-replay-freeze.md" \
-  "docs/engineering/journal-replay-freeze.md" \
-  "docs/adr/0036-journal-replay-freeze.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/36-journal-replay-freeze.md" \
+  "work/archive/engineering-snapshots/journal-replay-freeze.md" \
+  "work/archive/adr/0036-journal-replay-freeze.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "journal inspect"
   require_phrase "$file" "journal replay"
   require_phrase "$file" "replay-status"
@@ -51,16 +51,16 @@ for file in \
   require_phrase "$file" "invalid_json"
 done
 
-require_phrase "docs/engineering/journal-replay-freeze.md" "no journal fallback"
-require_phrase "docs/engineering/journal-replay-freeze.md" "false completion"
-require_phrase "docs/engineering/journal-replay-freeze.md" "No legacy manual active updates"
-require_phrase "docs/labs/filesystem-loop/runbook.md" "Journal Replay Freeze"
-require_phrase "docs/labs/filesystem-loop/runbook.md" "docs/labs/filesystem-loop"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.39  Journal Replay Freeze                                     done"
-require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done"
-require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.39  Journal Replay Freeze                                     done"
-require_phrase "docs/engineering/current-status.md" "SPINE.39 Journal Replay Freeze completed"
-require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.39"
+require_phrase "work/archive/engineering-snapshots/journal-replay-freeze.md" "no journal fallback"
+require_phrase "work/archive/engineering-snapshots/journal-replay-freeze.md" "false completion"
+require_phrase "work/archive/engineering-snapshots/journal-replay-freeze.md" "No legacy manual active updates"
+require_phrase "labs/filesystem-loop/runbook.md" "Journal Replay Freeze"
+require_phrase "labs/filesystem-loop/runbook.md" "labs/filesystem-loop"
+require_phrase "work/spines/yai-spine.md" "SPINE.39  Journal Replay Freeze                                     done"
+require_phrase "work/spines/yai-spine.md" "SPINE.40  Graph Persistence / RuntimeGraph Doctrine + Schema         done"
+require_phrase "work/spines/data-plane.md" "SPINE.39  Journal Replay Freeze                                     done"
+require_phrase "work/spines/current-status.md" "SPINE.39 Journal Replay Freeze completed"
+require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.39"
 require_phrase "Makefile" "check-journal-replay-freeze"
 require_phrase "Makefile" "smoke-spine39"
 

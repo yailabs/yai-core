@@ -10,4 +10,4 @@ Not source of truth for: core data-plane semantics or public protocol contracts.
 `cmd/yaid` owns the daemon executable entrypoint.
 
 Command output that becomes operator-facing must be reflected in
-`docs/engineering/command-surface.md` and `docs/engineering/testing.md`.
+`work/spines/command-surface.md` and `work/spines/testing.md`.

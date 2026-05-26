@@ -23,40 +23,40 @@ require_phrase() {
   fi
 }
 
-require_file "docs/architecture/39-runtimegraph-working-set.md"
-require_file "docs/engineering/runtimegraph-working-set.md"
-require_file "docs/adr/0039-runtimegraph-working-set.md"
-require_file "docs/archive/engineering/waves/spine42-runtimegraph-working-set.md"
+require_file "work/archive/architecture-snapshots/39-runtimegraph-working-set.md"
+require_file "work/archive/engineering-snapshots/runtimegraph-working-set.md"
+require_file "work/archive/adr/0039-runtimegraph-working-set.md"
+require_file "work/archive/legacy-docs/engineering/waves/spine42-runtimegraph-working-set.md"
 require_file "tests/smoke/runtimegraph-working-set/test_runtimegraph_working_set.sh"
 
 for file in \
-  "docs/architecture/39-runtimegraph-working-set.md" \
-  "docs/engineering/runtimegraph-working-set.md" \
-  "docs/adr/0039-runtimegraph-working-set.md" \
-  "docs/archive/engineering/waves/spine42-runtimegraph-working-set.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/current-status.md" \
-  "docs/engineering/four-repo-roadmap.md" \
-  "docs/engineering/data-plane-roadmap.md" \
-  "docs/architecture/37-graph-persistence-runtimegraph.md" \
-  "docs/architecture/38-graph-relation-write-path.md" \
-  "docs/engineering/graph-persistence-runtimegraph.md" \
-  "docs/engineering/graph-relation-write-path.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/39-runtimegraph-working-set.md" \
+  "work/archive/engineering-snapshots/runtimegraph-working-set.md" \
+  "work/archive/adr/0039-runtimegraph-working-set.md" \
+  "work/archive/legacy-docs/engineering/waves/spine42-runtimegraph-working-set.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/spines/current-status.md" \
+  "work/spines/yai-spine.md" \
+  "work/spines/data-plane.md" \
+  "work/archive/architecture-snapshots/37-graph-persistence-runtimegraph.md" \
+  "work/archive/architecture-snapshots/38-graph-relation-write-path.md" \
+  "work/archive/engineering-snapshots/graph-persistence-runtimegraph.md" \
+  "work/archive/engineering-snapshots/graph-relation-write-path.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "RuntimeGraph"
   require_phrase "$file" "in-memory working set"
 done
 
 for file in \
-  "docs/architecture/39-runtimegraph-working-set.md" \
-  "docs/engineering/runtimegraph-working-set.md" \
-  "docs/engineering/command-surface.md" \
-  "docs/engineering/testing.md" \
-  "docs/engineering/graph-persistence-runtimegraph.md" \
-  "docs/labs/filesystem-loop/README.md" \
-  "docs/labs/filesystem-loop/runbook.md"; do
+  "work/archive/architecture-snapshots/39-runtimegraph-working-set.md" \
+  "work/archive/engineering-snapshots/runtimegraph-working-set.md" \
+  "work/spines/command-surface.md" \
+  "work/spines/testing.md" \
+  "work/archive/engineering-snapshots/graph-persistence-runtimegraph.md" \
+  "labs/filesystem-loop/README.md" \
+  "labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "per-command ephemeral"
   require_phrase "$file" "resident_service: planned"
   require_phrase "$file" "durable_truth: graph_persistence"
@@ -73,7 +73,7 @@ require_phrase "engine/yai-engine/src/store/lmdb.rs" "RuntimeGraphLoadResult"
 require_phrase "engine/yai-engine/src/store/lmdb.rs" "load_runtime_graph_for_case"
 require_phrase "Makefile" "check-runtimegraph-working-set"
 require_phrase "Makefile" "smoke-spine42"
-require_phrase "docs/internal/extraction-inventory.tsv" "SPINE.42"
+require_phrase "work/inventories/extraction-inventory.tsv" "SPINE.42"
 
 if grep -RIn 'historical filesystem-loop manual' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |

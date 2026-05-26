@@ -56,5 +56,5 @@ snapshot does not by itself prove that the record store is broken.
 ## Deeper References
 
 - [Public test cases](../../../docs/test-cases.md)
-- [Command surface](../../../docs/engineering/command-surface.md)
-- [Testing doctrine](../../../docs/engineering/testing.md)
+- [Command surface](../../../work/spines/command-surface.md)
+- [Testing doctrine](../../../work/spines/testing.md)

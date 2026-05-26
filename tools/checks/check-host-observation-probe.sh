@@ -28,17 +28,17 @@ require_text() {
   }
 }
 
-require_file docs/architecture/22-host-observation-probe.md
-require_file docs/engineering/host-observation-probe.md
-require_file docs/adr/0024-host-observation-probe.md
-require_file docs/archive/engineering/waves/spine33e-host-observation-probe.md
+require_file work/archive/architecture-snapshots/22-host-observation-probe.md
+require_file work/archive/engineering-snapshots/host-observation-probe.md
+require_file work/archive/adr/0024-host-observation-probe.md
+require_file work/archive/legacy-docs/engineering/waves/spine33e-host-observation-probe.md
 require_file include/yai/observation/host_probe.h
 require_file include/yai/observation/observation_result.h
 require_file include/yai/observation/observation_target.h
 require_file include/yai/reconcile/divergence_candidate.h
 
-doctrine="docs/architecture/22-host-observation-probe.md"
-commands="docs/engineering/command-surface.md"
+doctrine="work/archive/architecture-snapshots/22-host-observation-probe.md"
+commands="work/spines/command-surface.md"
 
 for text in \
   "observation is not enforcement" \

@@ -22,7 +22,7 @@ in the manual may require external provider/model setup.
 Use the existing manual:
 
 ```text
-docs/manuals/manual-filesystem-loop-validation.md
+work/archive/manuals/manual-filesystem-loop-validation.md
 ```
 
 The manual includes the current setup, daemon lifecycle, filesystem loop,
@@ -48,5 +48,5 @@ hot-state inspection, projection inspection, and optional prompt sections.
 ## Deeper References
 
 - [Public test cases](../../../docs/test-cases.md)
-- [Manual filesystem loop validation](../../../docs/manuals/manual-filesystem-loop-validation.md)
-- [Testing doctrine](../../../docs/engineering/testing.md)
+- [Manual filesystem loop validation](../../../work/archive/manuals/manual-filesystem-loop-validation.md)
+- [Testing doctrine](../../../work/spines/testing.md)

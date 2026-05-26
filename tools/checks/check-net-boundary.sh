@@ -52,11 +52,11 @@ for path in \
   net/docs/interfaces-transport-boundary.md \
   net/docs/clori-node-boundary.md \
   net/include/yai/net/net.h \
-  docs/spines/net-spine.md; do
+  work/spines/net-spine.md; do
   require_file "$path"
 done
 
-corpus="$(cat net/README.md net/docs/*.md docs/spines/net-spine.md | tr '\n' ' ')"
+corpus="$(cat net/README.md net/docs/*.md work/spines/net-spine.md | tr '\n' ' ')"
 
 for phrase in \
   "YAI controls authority." \

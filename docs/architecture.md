@@ -76,22 +76,24 @@ system/     C daemon, control, carriers, host boundary, bridges, transitional sh
 engine/     Rust operational data engine
 cmd/        local binaries: yai and yaid
 tests/      smoke and validation tests
-docs/       public docs and current engineering references
+docs/       curated architecture documentation
+labs/       experiments, runbooks, outputs and reports
+work/       spines, waves, inventories, agent notes and archives
 ```
 
 ## Current Implementation Caveats
 
 Some C data-plane paths are transitional while Rust engine ownership is being
-consolidated. Current command, source, testing, and manual validation details
-remain in engineering references while the public docs are being split.
+consolidated. Current command, source, testing and manual validation details
+live in `work/spines/`, while lab execution material lives in `labs/`.
 
 YAI is not production-ready unless explicitly stated, and provider/backend
 mentions should not be read as tested provider breadth.
 
 ## Deeper References
 
-- [Source surface](engineering/source-surface.md)
-- [Command surface](engineering/command-surface.md)
-- [Testing](engineering/testing.md)
 - [Architecture notes](architecture/README.md)
+- [Data runtime](architecture/data-runtime.md)
+- [Control runtime](architecture/control-runtime.md)
+- [Model runtime](architecture/model-runtime.md)
 - [Glossary](glossary.md)
