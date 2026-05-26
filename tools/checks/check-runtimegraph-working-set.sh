@@ -43,9 +43,8 @@ for file in \
   "docs/architecture/38-graph-relation-write-path.md" \
   "docs/engineering/graph-persistence-runtimegraph.md" \
   "docs/engineering/graph-relation-write-path.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/README.md" \
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "RuntimeGraph"
   require_phrase "$file" "in-memory working set"
 done
@@ -56,9 +55,8 @@ for file in \
   "docs/engineering/command-surface.md" \
   "docs/engineering/testing.md" \
   "docs/engineering/graph-persistence-runtimegraph.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/README.md" \
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "per-command ephemeral"
   require_phrase "$file" "resident_service: planned"
   require_phrase "$file" "durable_truth: graph_persistence"

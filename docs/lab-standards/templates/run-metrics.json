@@ -1,0 +1,12 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "run_slug": "",
+  "lab": "",
+  "status": "draft",
+  "date": "",
+  "new_execution": false,
+  "metrics": {},
+  "prompts": [],
+  "artifacts": [],
+  "limitations": []
+}

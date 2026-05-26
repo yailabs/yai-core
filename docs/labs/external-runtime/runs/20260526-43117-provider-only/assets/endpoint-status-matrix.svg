@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420" role="img">
+<rect width="980" height="420" fill="#ffffff"/>
+<text x="90" y="46" font-family="Arial" font-size="24" font-weight="700" fill="#111827">Endpoint Status Matrix</text>
+<text x="90" y="72" font-family="Arial" font-size="13" fill="#4b5563">Reachability and authentication posture for curated LAN probes.</text>
+<text x="270" y="100" font-family="Arial" font-size="12" fill="#111827">/v1/chat/completions</text>
+<text x="480" y="100" font-family="Arial" font-size="12" fill="#111827">/v1/models</text>
+<text x="90" y="153" font-family="Arial" font-size="13" fill="#111827">172.20.10.3:43117</text>
+<rect x="270" y="118" width="192" height="44" rx="4" fill="#d97706" opacity="0.90"/>
+<text x="282" y="146" font-family="Arial" font-size="12" fill="#ffffff">auth_blocked</text>
+<text x="282" y="160" font-family="Arial" font-size="10" fill="#ffffff">HTTP 401</text>
+<rect x="480" y="118" width="192" height="44" rx="4" fill="#1f9d55" opacity="0.90"/>
+<text x="492" y="146" font-family="Arial" font-size="12" fill="#ffffff">reachable</text>
+<text x="492" y="160" font-family="Arial" font-size="10" fill="#ffffff">HTTP 200</text>
+</svg>

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yai.test-run.v0",
+  "title": "YAI Test Run v0",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_slug",
+    "title",
+    "status",
+    "date",
+    "lab",
+    "run_path",
+    "transcript",
+    "report",
+    "metrics",
+    "assets",
+    "limitations"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "enum": [
+        "yai.test-run.v0",
+        "yai.compact-run.v0"
+      ]
+    },
+    "run_slug": { "type": "string" },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "completed",
+        "incomplete",
+        "historical_baseline",
+        "frozen",
+        "archived",
+        "superseded"
+      ]
+    },
+    "date": { "type": "string" },
+    "lab": { "type": "string" },
+    "run_path": { "type": "string" },
+    "protocol": { "type": "string" },
+    "transcript": { "type": "string" },
+    "report": { "type": "string" },
+    "metrics": { "type": "string" },
+    "commands": { "type": "array" },
+    "assets": { "type": "array" },
+    "new_execution": { "type": "boolean" },
+    "known_nondeterminism": { "type": "array" },
+    "limitations": { "type": "array" }
+  },
+  "additionalProperties": true
+}

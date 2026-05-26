@@ -1,0 +1,47 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "run_slug": "20260526-lan-provider",
+  "status": "completed",
+  "lab": "external-runtime",
+  "date": "2026-05-26",
+  "new_execution": false,
+  "converted_from_existing_report": true,
+  "provider": {
+    "host": "172.20.10.3",
+    "live_port": "43117",
+    "negative_evidence_ports": [
+      "44317"
+    ]
+  },
+  "endpoint_status": {
+    "models_43117": "reachable",
+    "chat_43117": "auth_blocked",
+    "port_44317": "connection_refused"
+  },
+  "endpoint_latency_seconds": {
+    "models_43117": 0.105704,
+    "chat_43117": 0.010073,
+    "models_44317": 1.006924,
+    "chat_44317": 1.053661
+  },
+  "hnsw": {
+    "method": "python_bruteforce",
+    "n": 1000,
+    "dim": 64,
+    "queries": 20,
+    "k": 10,
+    "query_ms_per_query": 2.9110832954756916
+  },
+  "model_inventory": {
+    "format": "gguf",
+    "parameters": 8190735360,
+    "size_bytes": 5021827072,
+    "train_context": 32768,
+    "embedding_size": 4096
+  },
+  "limitations": [
+    "Converted from existing report output.",
+    "Chat generation was auth_blocked.",
+    "No token throughput or VRAM metric is available."
+  ]
+}

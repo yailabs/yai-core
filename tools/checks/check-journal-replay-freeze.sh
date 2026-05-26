@@ -37,9 +37,7 @@ for file in \
   "docs/adr/0036-journal-replay-freeze.md" \
   "docs/engineering/command-surface.md" \
   "docs/engineering/testing.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "journal inspect"
   require_phrase "$file" "journal replay"
   require_phrase "$file" "replay-status"
@@ -70,7 +68,8 @@ if grep -RIn 'docs/manuals/manual-filesystem-loop-validation' \
   docs/engineering docs/architecture docs/labs README.md 2>/dev/null |
   grep -v 'not the active' |
   grep -v 'replaces' |
-  grep -v 'historical' >/dev/null; then
+  grep -v 'historical' |
+  grep -v 'pre-redirect' >/dev/null; then
   printf 'active docs contain unqualified old filesystem-loop manual path\n' >&2
   exit 1
 fi

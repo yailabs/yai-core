@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Provider Topology 3D</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #0f172a; color: #e5e7eb; }
+    main { min-height: 100vh; display: grid; grid-template-columns: 1fr 360px; gap: 28px; padding: 40px; box-sizing: border-box; }
+    .scene { perspective: 1200px; display: grid; place-items: center; }
+    .space { width: 720px; height: 440px; position: relative; transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-34deg); }
+    .plane { position: absolute; inset: 40px; border: 1px solid rgba(148,163,184,.45); background: linear-gradient(135deg, rgba(30,41,59,.88), rgba(15,23,42,.55)); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+    .node { position: absolute; width: 190px; min-height: 82px; padding: 14px; border-radius: 8px; background: #111827; border: 1px solid #334155; transform-style: preserve-3d; transform: translateZ(46px); box-shadow: 0 18px 30px rgba(0,0,0,.30); }
+    .node strong { display: block; color: #f8fafc; font-size: 14px; margin-bottom: 8px; }
+    .node span { display: block; color: #cbd5e1; font-size: 12px; line-height: 1.35; }
+    .operator { left: 80px; top: 230px; border-color: #60a5fa; }
+    .provider { left: 410px; top: 150px; border-color: #34d399; }
+    .auth { left: 410px; top: 280px; border-color: #f59e0b; }
+    .dead { left: 240px; top: 70px; border-color: #ef4444; }
+    .edge { position: absolute; height: 4px; transform-origin: left center; background: #38bdf8; opacity: .78; }
+    .edge.live { left: 260px; top: 250px; width: 235px; transform: rotate(-17deg) translateZ(20px); background: #34d399; }
+    .edge.blocked { left: 278px; top: 285px; width: 220px; transform: rotate(4deg) translateZ(16px); background: #f59e0b; }
+    .edge.deadline { left: 245px; top: 185px; width: 170px; transform: rotate(-38deg) translateZ(12px); background: #ef4444; }
+    aside { align-self: center; background: rgba(15,23,42,.78); border: 1px solid #334155; border-radius: 8px; padding: 22px; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    p { color: #cbd5e1; line-height: 1.45; }
+    code, pre { color: #bfdbfe; }
+    pre { max-height: 320px; overflow: auto; background: #020617; padding: 14px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+<main>
+  <section class="scene" aria-label="3D provider topology">
+    <div class="space">
+      <div class="plane"></div>
+      <div class="edge live"></div>
+      <div class="edge blocked"></div>
+
+      <div class="node operator"><strong>Operator</strong><span>MacBook operator</span><span>YAI repo and report layer</span></div>
+      <div class="node provider"><strong>Provider Live Port</strong><span>172.20.10.3:43117</span><span>/v1/models reachable</span></div>
+      <div class="node auth"><strong>Auth Gate</strong><span>/v1/chat/completions</span><span>auth_blocked</span></div>
+
+    </div>
+  </section>
+  <aside>
+    <h1>Provider Topology 3D</h1>
+    <p>Three-dimensional view of the LAN benchmark boundary. The live model discovery path is separated from the chat authentication gate.</p>
+    <pre>{
+  &quot;operator_host&quot;: &quot;MacBook operator&quot;,
+  &quot;provider_host&quot;: &quot;172.20.10.3&quot;,
+  &quot;live_provider_port&quot;: &quot;43117&quot;,
+  &quot;negative_evidence_ports&quot;: [],
+  &quot;endpoints&quot;: [
+    {
+      &quot;run_id&quot;: &quot;lan-provider-20260526-43117-run3-escalated&quot;,
+      &quot;label&quot;: &quot;Provider port 43117 live probe 2026-05-26 R002&quot;,
+      &quot;role&quot;: &quot;live_provider_probe&quot;,
+      &quot;host&quot;: &quot;172.20.10.3&quot;,
+      &quot;port&quot;: &quot;43117&quot;,
+      &quot;endpoint&quot;: &quot;/v1/models&quot;,
+      &quot;curl_status&quot;: 0,
+      &quot;http_code&quot;: &quot;200&quot;,
+      &quot;time_seconds&quot;: 0.023909,
+      &quot;status&quot;: &quot;reachable&quot;,
+      &quot;error_message&quot;: &quot;&quot;
+    },
+    {
+      &quot;run_id&quot;: &quot;lan-provider-20260526-43117-run3-escalated&quot;,
+      &quot;label&quot;: &quot;Provider port 43117 live probe 2026-05-26 R002&quot;,
+      &quot;role&quot;: &quot;live_provider_probe&quot;,
+      &quot;host&quot;: &quot;172.20.10.3&quot;,
+      &quot;port&quot;: &quot;43117&quot;,
+      &quot;endpoint&quot;: &quot;/v1/chat/completions&quot;,
+      &quot;curl_status&quot;: 0,
+      &quot;http_code&quot;: &quot;401&quot;,
+      &quot;time_seconds&quot;: 0.008594,
+      &quot;status&quot;: &quot;auth_blocked&quot;,
+      &quot;error_message&quot;: &quot;Invalid API Key&quot;
+    }
+  ],
+  &quot;model&quot;: {
+    &quot;model_id&quot;: &quot;Qwen_Qwen3-8B-Q4_K_M.gguf&quot;,
+    &quot;model_path_redacted&quot;: true,
+    &quot;owner&quot;: &quot;llamacpp&quot;,
+    &quot;format&quot;: &quot;gguf&quot;,
+    &quot;parameters&quot;: 8190735360,
+    &quot;size_bytes&quot;: 5021827072,
+    &quot;train_context&quot;: 32768,
+    &quot;embedding_size&quot;: 4096,
+    &quot;run_id&quot;: &quot;lan-provider-20260526-43117-run3-escalated&quot;
+  }
+}</pre>
+  </aside>
+</main>
+</body>
+</html>

@@ -140,6 +140,7 @@ Status: local lab observation.
 | Port | \`$port\` |
 | API base | \`$api_base\` |
 | Model | \`$model\` |
+| Prompt | \`$prompt\` |
 | Created UTC | \`$(date -u +%Y-%m-%dT%H:%M:%SZ)\` |
 
 ## Endpoint Results

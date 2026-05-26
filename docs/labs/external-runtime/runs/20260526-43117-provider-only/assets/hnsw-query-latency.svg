@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="420" viewBox="0 0 860 420" role="img">
+<rect width="860" height="420" fill="#ffffff"/>
+<text x="80" y="46" font-family="Arial" font-size="24" font-weight="700" fill="#111827">HNSW Query Latency</text>
+<text x="80" y="72" font-family="Arial" font-size="13" fill="#4b5563">Query milliseconds per query for curated vector-search smoke runs.</text>
+<text x="80" y="150" font-family="Arial" font-size="12" fill="#111827">HNSW smoke baseline 2026-05-26 (python_bruteforce)</text>
+<rect x="330" y="130" width="560" height="32" rx="3" fill="#2563eb"/>
+<text x="900" y="151" font-family="Arial" font-size="12" fill="#111827">2.911 ms/query</text>
+</svg>

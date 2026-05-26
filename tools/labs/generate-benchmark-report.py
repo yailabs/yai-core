@@ -163,8 +163,15 @@ def first_model_inventory(models_json):
     if data:
         item = data[0]
         meta = item.get("meta") or {}
+        raw_model_id = item.get("id", "")
+        model_id = raw_model_id
+        model_path_redacted = False
+        if isinstance(raw_model_id, str) and raw_model_id.startswith("/"):
+            model_id = Path(raw_model_id).name
+            model_path_redacted = True
         return {
-            "model_id": item.get("id", ""),
+            "model_id": model_id,
+            "model_path_redacted": model_path_redacted,
             "owner": item.get("owned_by", ""),
             "format": (models_json.get("models") or [{}])[0]
             .get("details", {})
@@ -182,6 +189,12 @@ def normalize_provider_probe(root, run_id, run_meta):
     meta = load_json(run_dir / "meta.json")
     models_json = load_json(run_dir / "models.json")
     chat_json = load_json(run_dir / "chat.json")
+    chat_request = load_json(run_dir / "chat-request.json")
+    prompt_text = ""
+    for message in chat_request.get("messages", []):
+        if message.get("role") == "user":
+            prompt_text = message.get("content", "")
+            break
     endpoints = []
     for stem, endpoint in (
         ("models", "/v1/models"),
@@ -222,6 +235,19 @@ def normalize_provider_probe(root, run_id, run_meta):
         },
         "endpoints": endpoints,
         "model_inventory": first_model_inventory(models_json),
+        "prompts": [
+            {
+                "run_id": run_id,
+                "prompt_id": f"{run_id}.P001",
+                "role": "user",
+                "content": prompt_text,
+                "max_tokens": chat_request.get("max_tokens", ""),
+                "temperature": chat_request.get("temperature", ""),
+                "source": "chat-request.json",
+            }
+        ]
+        if prompt_text
+        else [],
     }
 
 
@@ -311,6 +337,7 @@ def normalize_runs(root, curation):
         "hnsw": [],
         "local_model": [],
         "baselines": [],
+        "prompts": [],
     }
     for run_meta in curation.get("curated_runs", []):
         run_id = run_meta["id"]
@@ -319,6 +346,7 @@ def normalize_runs(root, curation):
             item = normalize_provider_probe(root, run_id, run_meta)
             normalized["runs"].append(item["run"])
             normalized["endpoint_probes"].extend(item["endpoints"])
+            normalized["prompts"].extend(item["prompts"])
             if item["model_inventory"]:
                 inventory = item["model_inventory"]
                 inventory["run_id"] = run_id
@@ -483,12 +511,14 @@ def try_plotly_topology_html(path, normalized):
         import plotly.graph_objects as go
 
         curation = normalized["curation"]
+        negative_ports = [str(port) for port in curation.get("negative_evidence_ports", [])]
         nodes = [
             ("Operator", 0, 0, 0, STATUS_COLORS["completed"]),
             ("Provider 43117", 2, 1, 1, STATUS_COLORS["reachable"]),
             ("Chat auth gate", 2, -1, 1.4, STATUS_COLORS["auth_blocked"]),
-            ("Port 44317", 1, 1.8, 0.6, STATUS_COLORS["connection_refused"]),
         ]
+        if negative_ports:
+            nodes.append((f"Port {negative_ports[0]}", 1, 1.8, 0.6, STATUS_COLORS["connection_refused"]))
         fig = go.Figure()
         fig.add_trace(
             go.Scatter3d(
@@ -502,7 +532,10 @@ def try_plotly_topology_html(path, normalized):
                 name="topology",
             )
         )
-        for a, b, status in ((0, 1, "reachable"), (0, 2, "auth_blocked"), (0, 3, "connection_refused")):
+        edges = [(0, 1, "reachable"), (0, 2, "auth_blocked")]
+        if negative_ports:
+            edges.append((0, 3, "connection_refused"))
+        for a, b, status in edges:
             fig.add_trace(
                 go.Scatter3d(
                     x=[nodes[a][1], nodes[b][1]],
@@ -627,6 +660,16 @@ def write_topology_html(path, normalized):
     curation = normalized["curation"]
     endpoints = normalized["endpoint_probes"]
     inventory = normalized["model_inventory"][0] if normalized["model_inventory"] else {}
+    negative_ports = [str(port) for port in curation.get("negative_evidence_ports", [])]
+    dead_edge = '<div class="edge deadline"></div>' if negative_ports else ""
+    dead_node = ""
+    if negative_ports:
+        dead_node = f'<div class="node dead"><strong>Negative Evidence</strong><span>{esc(curation.get("provider_host", ""))}:{esc(negative_ports[0])}</span><span>connection_refused</span></div>'
+    topology_description = (
+        "Three-dimensional view of the LAN benchmark boundary. The live model discovery path is separated from the chat authentication gate and the refused port."
+        if negative_ports
+        else "Three-dimensional view of the LAN benchmark boundary. The live model discovery path is separated from the chat authentication gate."
+    )
     payload = json.dumps(
         {
             "operator_host": curation.get("operator_host", "operator"),
@@ -674,16 +717,16 @@ def write_topology_html(path, normalized):
       <div class="plane"></div>
       <div class="edge live"></div>
       <div class="edge blocked"></div>
-      <div class="edge deadline"></div>
+      {dead_edge}
       <div class="node operator"><strong>Operator</strong><span>{esc(curation.get("operator_host", "MacBook"))}</span><span>YAI repo and report layer</span></div>
       <div class="node provider"><strong>Provider Live Port</strong><span>{esc(curation.get("provider_host", ""))}:{esc(curation.get("live_provider_port", ""))}</span><span>/v1/models reachable</span></div>
       <div class="node auth"><strong>Auth Gate</strong><span>/v1/chat/completions</span><span>auth_blocked</span></div>
-      <div class="node dead"><strong>Negative Evidence</strong><span>{esc(curation.get("provider_host", ""))}:44317</span><span>connection_refused</span></div>
+      {dead_node}
     </div>
   </section>
   <aside>
     <h1>Provider Topology 3D</h1>
-    <p>Three-dimensional view of the LAN benchmark boundary. The live model discovery path is separated from the chat authentication gate and the refused port.</p>
+    <p>{esc(topology_description)}</p>
     <pre>{esc(payload)}</pre>
   </aside>
 </main>
@@ -707,8 +750,33 @@ def write_index_md(path, normalized):
     inventory = normalized["model_inventory"][0] if normalized["model_inventory"] else {}
     hnsw_rows = normalized["hnsw"]
     runs = normalized["runs"]
+    prompts = normalized.get("prompts", [])
     live_port = str(curation.get("live_provider_port", ""))
     negative_ports = [str(p) for p in curation.get("negative_evidence_ports", [])]
+    negative_summary = (
+        f', while {", ".join(negative_ports)} is negative evidence'
+        if negative_ports
+        else " with no negative-evidence port included in this curated run"
+    )
+    if negative_ports:
+        interpretation_rows = [
+            "- Proven: the provider host responds on `43117` for `/v1/models`.",
+            "- Blocked: `/v1/chat/completions` reaches the server but returns `401 Invalid API Key`, classified as `auth_blocked`.",
+            f'- Negative evidence: `{", ".join(negative_ports)}` is retained as `connection_refused` evidence and is not treated as the live provider port.',
+            "- Missing: a valid provider API key is required before chat generation, token throughput and VRAM plots become meaningful.",
+        ]
+    else:
+        interpretation_rows = [
+            "- Proven: the provider host responds on `43117` for `/v1/models`.",
+            "- Blocked: `/v1/chat/completions` reaches the server but returns `401 Invalid API Key`, classified as `auth_blocked`.",
+            "- Missing: a valid provider API key is required before chat generation, token throughput and VRAM plots become meaningful.",
+        ]
+    interpretation = "\n".join(interpretation_rows)
+    topology_caption = (
+        "3D boundary view separating the operator host, the live provider port, the chat authentication gate and the refused port."
+        if negative_ports
+        else "3D boundary view separating the operator host, the live provider port and the chat authentication gate."
+    )
     endpoint_rows = [
         [
             f'`{e["host"]}:{e["port"]}`',
@@ -746,6 +814,17 @@ def write_index_md(path, normalized):
         [f'`{run["id"]}`', f'`{run.get("kind", "")}`', f'`{run.get("status", "")}`', f'`{run.get("path", "")}`']
         for run in runs
     ]
+    prompt_rows = [
+        [
+            f'`{prompt.get("prompt_id", "")}`',
+            f'`{prompt.get("run_id", "")}`',
+            f'`{prompt.get("role", "")}`',
+            esc(prompt.get("content", "")),
+            prompt.get("max_tokens", ""),
+            prompt.get("temperature", ""),
+        ]
+        for prompt in prompts
+    ]
     claims = "\n".join(f"- `{claim}`" for claim in curation.get("headline_claims", []))
     md = f"""# {curation.get("title", "Benchmark Report")}
 
@@ -753,7 +832,7 @@ Status: generated local lab report.
 
 ## Executive Summary
 
-The curated LAN provider evidence shows that `172.20.10.3:{live_port}` is the live provider port for model discovery, while `{", ".join(negative_ports)}` is negative evidence. The provider returns `reachable` for `/v1/models` and `auth_blocked` for `/v1/chat/completions`; the current blocker is provider authentication, not LAN reachability.
+The curated LAN provider evidence shows that `172.20.10.3:{live_port}` is the live provider port for model discovery{negative_summary}. The provider returns `reachable` for `/v1/models` and `auth_blocked` for `/v1/chat/completions`; the current blocker is provider authentication, not LAN reachability.
 
 Headline evidence:
 
@@ -777,6 +856,10 @@ Observed through the reachable `/v1/models` endpoint.
 
 {md_table(["Field", "Value"], model_rows)}
 
+## Prompt Inventory
+
+{md_table(["Prompt ID", "Run", "Role", "Content", "Max tokens", "Temperature"], prompt_rows)}
+
 ## Benchmark Panels
 
 {md_table(["Run", "Method", "Vectors", "Dimensions", "Queries", "k", "Query ms/query"], hnsw_table_rows)}
@@ -789,14 +872,11 @@ Caption: vector-search smoke benchmark. This run used the standard-library fallb
 
 [Open provider topology 3D](assets/provider-topology-3d.html)
 
-Caption: 3D boundary view separating the operator host, the live provider port, the chat authentication gate and the refused port.
+Caption: {topology_caption}
 
 ## Interpretation
 
-- Proven: the provider host responds on `43117` for `/v1/models`.
-- Blocked: `/v1/chat/completions` reaches the server but returns `401 Invalid API Key`, classified as `auth_blocked`.
-- Negative evidence: `44317` is retained as `connection_refused` evidence and is not treated as the live provider port.
-- Missing: a valid provider API key is required before chat generation, token throughput and VRAM plots become meaningful.
+{interpretation}
 
 ## Reproducibility Appendix
 

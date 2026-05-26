@@ -12,9 +12,10 @@ Use these files instead:
 
 ```text
 docs/labs/filesystem-loop/runbook.md
-docs/labs/filesystem-loop/tests.md
-docs/labs/filesystem-loop/outputs.md
-docs/labs/filesystem-loop/policy-packs/
+docs/labs/filesystem-loop/notebook.ipynb
+docs/labs/filesystem-loop/run.sh
+docs/labs/filesystem-loop/pack-fixture/
+docs/labs/filesystem-loop/runs/
 ```
 
 This file is intentionally kept because repository documentation guards still

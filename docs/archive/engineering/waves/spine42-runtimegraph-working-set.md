@@ -1,6 +1,6 @@
-# SPINE.42 RuntimeGraph Working Set
-
 Historical/superseded engineering record. Not an active source of truth.
+
+# SPINE.42 RuntimeGraph Working Set
 
 SPINE.42 adds an active-minimal RuntimeGraph in-memory working set:
 

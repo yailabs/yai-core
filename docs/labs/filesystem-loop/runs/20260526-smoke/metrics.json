@@ -1,0 +1,28 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "run_slug": "20260526-smoke",
+  "lab": "filesystem-loop",
+  "status": "completed",
+  "date": "2026-05-26",
+  "new_execution": true,
+  "metrics": {
+    "commands_executed": 3,
+    "commands_passed": 3,
+    "commands_failed": 0,
+    "prompted_calls": 0,
+    "latency_ms": null,
+    "tokens_per_second": null,
+    "vram_peak_mb": null
+  },
+  "prompts": [],
+  "artifacts": [
+    "assets/make-check-docs.log",
+    "assets/make-smoke-spine24a.log",
+    "assets/make-smoke-spine27.log",
+    "assets/filesystem-loop-flow.md"
+  ],
+  "limitations": [
+    "Smoke validation only.",
+    "No quantitative model benchmark is claimed."
+  ]
+}

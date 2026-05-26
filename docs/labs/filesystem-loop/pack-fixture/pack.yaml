@@ -1,0 +1,33 @@
+fixture_id: filesystem-loop.pack-fixture.v0
+name: Filesystem Loop Pack Fixture
+status: lab_fixture
+role: lab_fixture
+source: filesystem-loop
+case_ref: case:new12-filesystem
+
+represents:
+  policies:
+    - policies/filesystem-sandbox-policy.json
+  projections:
+    - policies/model-case-projection-policy.json
+  authority_posture:
+    - policies/linenoise-terminal-interface-policy.json
+    - policies/model-case-projection-policy.json
+  fixtures:
+    - policies/filesystem-sandbox-policy.json
+    - policies/linenoise-terminal-interface-policy.json
+    - policies/model-case-projection-policy.json
+
+materialization_posture:
+  current: represented_by_filesystem_loop_lab
+  runtime_command: not implemented
+  installer: not implemented
+  registry_backend: not implemented
+
+limitations:
+  - not runtime pack
+  - not installer
+  - not registry
+  - not production source root
+  - partial fixture only
+  - policy material is represented but not mandatory for every pack

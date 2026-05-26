@@ -49,9 +49,7 @@ for file in \
   "docs/engineering/current-status.md" \
   "docs/engineering/four-repo-roadmap.md" \
   "docs/engineering/data-plane-roadmap.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "yai.graph_relation.v1"
   require_phrase "$file" "graph materialize"
   require_phrase "$file" "graph relations"
@@ -62,7 +60,7 @@ done
 for file in \
   "docs/engineering/command-surface.md" \
   "docs/engineering/data-plane-roadmap.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "decision_controls_attempt"
   require_phrase "$file" "receipt_records_effect"
   require_phrase "$file" "relation_id"

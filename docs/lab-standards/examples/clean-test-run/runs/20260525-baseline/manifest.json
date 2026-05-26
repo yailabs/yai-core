@@ -1,0 +1,18 @@
+{
+  "schema": "yai.compact-run.v0",
+  "run_slug": "20260525-baseline",
+  "title": "Example Baseline Run",
+  "status": "draft",
+  "lab": "example",
+  "date": "2026-05-25",
+  "run_path": "docs/lab-standards/examples/clean-test-run/runs/20260525-baseline",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets": [],
+  "new_execution": false,
+  "limitations": [
+    "Structural example only."
+  ]
+}

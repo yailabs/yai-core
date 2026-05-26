@@ -1,0 +1,17 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "run_slug": "20260525-baseline",
+  "status": "draft",
+  "lab": "example",
+  "date": "2026-05-25",
+  "new_execution": false,
+  "measurements": {
+    "latency_ms": null,
+    "tokens_per_second": null,
+    "vram_peak_mb": null
+  },
+  "limitations": [
+    "Structural example only.",
+    "No metrics were measured."
+  ]
+}

@@ -1,0 +1,16 @@
+report_id: 20260526-lan-provider-43117-only
+title: External Runtime LAN Provider Report - 2026-05-26 43117 Only
+status: local_lab
+operator_host: MacBook operator
+provider_host: 172.20.10.3
+live_provider_port: "43117"
+headline_claims:
+  - "172.20.10.3:43117 /v1/models -> reachable"
+  - "172.20.10.3:43117 /v1/chat/completions -> auth_blocked"
+curated_runs:
+  - id: hnsw-smoke-20260526-run1
+    role: vector_search_smoke
+    label: HNSW smoke baseline 2026-05-26
+  - id: lan-provider-20260526-43117-run3-escalated
+    role: live_provider_probe
+    label: Provider port 43117 live probe 2026-05-26 R002

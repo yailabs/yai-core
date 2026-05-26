@@ -13,7 +13,7 @@ to exist.
 | `manual-filesystem-loop-validation.md` | `docs/labs/filesystem-loop/runbook.md` |
 | `manual-filesystem-loop-validation.ipynb` | `docs/labs/filesystem-loop/runbook.md` and lab reports |
 | `manual-filesystem-loop-validation.it.ipynb` | `docs/labs/filesystem-loop/runbook.md` and lab reports |
-| `examples/filesystem-loop/policy-packs/` | `docs/labs/filesystem-loop/policy-packs/` |
+| `examples/filesystem-loop/pack-fixture/` | `docs/labs/filesystem-loop/pack-fixture/` |
 
 ## Rule
 

@@ -1,0 +1,49 @@
+{
+  "schema": "yai.compact-run.v0",
+  "run_slug": "20260525-lan-provider",
+  "title": "LAN Provider Run 2026-05-25",
+  "status": "completed",
+  "lab": "external-runtime",
+  "date": "2026-05-25",
+  "run_path": "docs/labs/external-runtime/runs/20260525-lan-provider",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets": [
+    {
+      "path": "assets/normalized-runs.json",
+      "kind": "normalized_data"
+    },
+    {
+      "path": "assets/endpoint-latency.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/endpoint-status-matrix.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/hnsw-query-latency.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/provider-topology-3d.html",
+      "kind": "interactive_diagram"
+    }
+  ],
+  "source_raw_runs": [
+    "benchmarks/nvidia/macbook-baseline-20260525-44317",
+    "benchmarks/nvidia/hnsw-smoke-20260525-44317",
+    "benchmarks/nvidia/lan-provider-20260525-44317-escalated",
+    "benchmarks/nvidia/lan-provider-20260525-43117-auth2"
+  ],
+  "new_execution": false,
+  "converted_from_existing_report": true,
+  "limitations": [
+    "Converted from an existing generated report.",
+    "No provider probe or benchmark was executed during this compacting wave.",
+    "Chat generation was auth_blocked.",
+    "GPU throughput and VRAM were not measured."
+  ]
+}

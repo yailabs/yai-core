@@ -1,0 +1,18 @@
+{
+  "schema": "yai.compact-run.v0",
+  "run_slug": "",
+  "title": "",
+  "status": "draft",
+  "lab": "",
+  "date": "",
+  "run_path": "",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets": [],
+  "commands": [],
+  "new_execution": false,
+  "known_nondeterminism": [],
+  "limitations": []
+}

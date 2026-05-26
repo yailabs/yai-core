@@ -36,8 +36,6 @@ require_file "docs/adr/0034-journal-replay-to-lmdb.md"
 require_file "docs/archive/engineering/waves/spine36-journal-replay-to-lmdb.md"
 require_file "tests/smoke/journal-replay-to-lmdb/test_journal_replay_to_lmdb.sh"
 require_file "docs/labs/filesystem-loop/runbook.md"
-require_file "docs/labs/filesystem-loop/tests.md"
-require_file "docs/labs/filesystem-loop/outputs.md"
 
 for file in \
   "docs/architecture/34-journal-replay-to-lmdb.md" \
@@ -60,8 +58,6 @@ require_phrase "docs/engineering/four-repo-roadmap.md" "SPINE.36  Journal Replay
 require_phrase "docs/engineering/data-plane-roadmap.md" "SPINE.36  Journal Replay to LMDB                                    done"
 require_phrase "docs/engineering/current-status.md" "SPINE.36 Journal Replay to LMDB completed"
 require_phrase "docs/labs/filesystem-loop/runbook.md" "Journal Replay to LMDB"
-require_phrase "docs/labs/filesystem-loop/tests.md" "journal replay to LMDB"
-require_phrase "docs/labs/filesystem-loop/outputs.md" "journal replay to LMDB"
 require_phrase "Makefile" "check-journal-replay-to-lmdb"
 require_phrase "Makefile" "smoke-spine36"
 

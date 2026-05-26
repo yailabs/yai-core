@@ -1,0 +1,44 @@
+{
+  "schema": "yai.run.metrics.v0",
+  "run_slug": "20260526-qwen3-filesystem-loop-historical",
+  "status": "historical_baseline",
+  "lab": "filesystem-loop",
+  "date": "2026-05-26",
+  "new_execution": false,
+  "quantitative_benchmark": false,
+  "model": {
+    "family": "Qwen3",
+    "size": "8B",
+    "quantization": "Q4",
+    "source": "historical lab note"
+  },
+  "task": {
+    "kind": "filesystem_loop",
+    "bounded": true
+  },
+  "counts": {
+    "prompts": 6,
+    "model_outputs": 6,
+    "filesystem_receipts": 3
+  },
+  "measurements": {
+    "latency_ms": null,
+    "tokens_per_second": null,
+    "vram_peak_mb": null
+  },
+  "artifacts": [
+    "assets/model-behavior-filesystem-loop-qwen3-8b-q4.md",
+    "assets/model-behavior-outputs.md",
+    "assets/P001-subjects.md",
+    "assets/P002-policy-material.md",
+    "assets/P003-raw-journal-boundary.md",
+    "assets/P004-secret-boundary.md",
+    "assets/P005-policy-authority.md",
+    "assets/P006-attempts-and-receipts.md"
+  ],
+  "limitations": [
+    "Historical baseline only.",
+    "No new model execution was performed.",
+    "No quantitative benchmark is claimed."
+  ]
+}

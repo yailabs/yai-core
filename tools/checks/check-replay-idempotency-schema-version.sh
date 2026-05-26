@@ -46,9 +46,7 @@ for file in \
 done
 
 for file in \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "filesystem-loop"
   require_phrase "$file" "journal_identity"
   require_phrase "$file" "record_schema"

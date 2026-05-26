@@ -200,7 +200,7 @@
         "kind": 2,
         "importPath": "tools.labs.generate-benchmark-report",
         "description": "tools.labs.generate-benchmark-report",
-        "peekOfCode": "def first_model_inventory(models_json):\n    data = models_json.get(\"data\") or []\n    if data:\n        item = data[0]\n        meta = item.get(\"meta\") or {}\n        return {\n            \"model_id\": item.get(\"id\", \"\"),\n            \"owner\": item.get(\"owned_by\", \"\"),\n            \"format\": (models_json.get(\"models\") or [{}])[0]\n            .get(\"details\", {})",
+        "peekOfCode": "def first_model_inventory(models_json):\n    data = models_json.get(\"data\") or []\n    if data:\n        item = data[0]\n        meta = item.get(\"meta\") or {}\n        raw_model_id = item.get(\"id\", \"\")\n        model_id = raw_model_id\n        model_path_redacted = False\n        if isinstance(raw_model_id, str) and raw_model_id.startswith(\"/\"):\n            model_id = Path(raw_model_id).name",
         "detail": "tools.labs.generate-benchmark-report",
         "documentation": {}
     },
@@ -209,7 +209,7 @@
         "kind": 2,
         "importPath": "tools.labs.generate-benchmark-report",
         "description": "tools.labs.generate-benchmark-report",
-        "peekOfCode": "def normalize_provider_probe(root, run_id, run_meta):\n    run_dir = root / run_id\n    meta = load_json(run_dir / \"meta.json\")\n    models_json = load_json(run_dir / \"models.json\")\n    chat_json = load_json(run_dir / \"chat.json\")\n    endpoints = []\n    for stem, endpoint in (\n        (\"models\", \"/v1/models\"),\n        (\"chat\", \"/v1/chat/completions\"),\n    ):",
+        "peekOfCode": "def normalize_provider_probe(root, run_id, run_meta):\n    run_dir = root / run_id\n    meta = load_json(run_dir / \"meta.json\")\n    models_json = load_json(run_dir / \"models.json\")\n    chat_json = load_json(run_dir / \"chat.json\")\n    chat_request = load_json(run_dir / \"chat-request.json\")\n    prompt_text = \"\"\n    for message in chat_request.get(\"messages\", []):\n        if message.get(\"role\") == \"user\":\n            prompt_text = message.get(\"content\", \"\")",
         "detail": "tools.labs.generate-benchmark-report",
         "documentation": {}
     },
@@ -317,7 +317,7 @@
         "kind": 2,
         "importPath": "tools.labs.generate-benchmark-report",
         "description": "tools.labs.generate-benchmark-report",
-        "peekOfCode": "def try_plotly_topology_html(path, normalized):\n    try:\n        import plotly.graph_objects as go\n        curation = normalized[\"curation\"]\n        nodes = [\n            (\"Operator\", 0, 0, 0, STATUS_COLORS[\"completed\"]),\n            (\"Provider 43117\", 2, 1, 1, STATUS_COLORS[\"reachable\"]),\n            (\"Chat auth gate\", 2, -1, 1.4, STATUS_COLORS[\"auth_blocked\"]),\n            (\"Port 44317\", 1, 1.8, 0.6, STATUS_COLORS[\"connection_refused\"]),\n        ]",
+        "peekOfCode": "def try_plotly_topology_html(path, normalized):\n    try:\n        import plotly.graph_objects as go\n        curation = normalized[\"curation\"]\n        negative_ports = [str(port) for port in curation.get(\"negative_evidence_ports\", [])]\n        nodes = [\n            (\"Operator\", 0, 0, 0, STATUS_COLORS[\"completed\"]),\n            (\"Provider 43117\", 2, 1, 1, STATUS_COLORS[\"reachable\"]),\n            (\"Chat auth gate\", 2, -1, 1.4, STATUS_COLORS[\"auth_blocked\"]),\n        ]",
         "detail": "tools.labs.generate-benchmark-report",
         "documentation": {}
     },
@@ -353,7 +353,7 @@
         "kind": 2,
         "importPath": "tools.labs.generate-benchmark-report",
         "description": "tools.labs.generate-benchmark-report",
-        "peekOfCode": "def write_topology_html(path, normalized):\n    if try_plotly_topology_html(path, normalized):\n        return\n    curation = normalized[\"curation\"]\n    endpoints = normalized[\"endpoint_probes\"]\n    inventory = normalized[\"model_inventory\"][0] if normalized[\"model_inventory\"] else {}\n    payload = json.dumps(\n        {\n            \"operator_host\": curation.get(\"operator_host\", \"operator\"),\n            \"provider_host\": curation.get(\"provider_host\", \"provider\"),",
+        "peekOfCode": "def write_topology_html(path, normalized):\n    if try_plotly_topology_html(path, normalized):\n        return\n    curation = normalized[\"curation\"]\n    endpoints = normalized[\"endpoint_probes\"]\n    inventory = normalized[\"model_inventory\"][0] if normalized[\"model_inventory\"] else {}\n    negative_ports = [str(port) for port in curation.get(\"negative_evidence_ports\", [])]\n    dead_edge = '<div class=\"edge deadline\"></div>' if negative_ports else \"\"\n    dead_node = \"\"\n    if negative_ports:",
         "detail": "tools.labs.generate-benchmark-report",
         "documentation": {}
     },
@@ -371,7 +371,7 @@
         "kind": 2,
         "importPath": "tools.labs.generate-benchmark-report",
         "description": "tools.labs.generate-benchmark-report",
-        "peekOfCode": "def write_index_md(path, normalized):\n    curation = normalized[\"curation\"]\n    endpoints = normalized[\"endpoint_probes\"]\n    inventory = normalized[\"model_inventory\"][0] if normalized[\"model_inventory\"] else {}\n    hnsw_rows = normalized[\"hnsw\"]\n    runs = normalized[\"runs\"]\n    live_port = str(curation.get(\"live_provider_port\", \"\"))\n    negative_ports = [str(p) for p in curation.get(\"negative_evidence_ports\", [])]\n    endpoint_rows = [\n        [",
+        "peekOfCode": "def write_index_md(path, normalized):\n    curation = normalized[\"curation\"]\n    endpoints = normalized[\"endpoint_probes\"]\n    inventory = normalized[\"model_inventory\"][0] if normalized[\"model_inventory\"] else {}\n    hnsw_rows = normalized[\"hnsw\"]\n    runs = normalized[\"runs\"]\n    prompts = normalized.get(\"prompts\", [])\n    live_port = str(curation.get(\"live_provider_port\", \"\"))\n    negative_ports = [str(p) for p in curation.get(\"negative_evidence_ports\", [])]\n    negative_summary = (",
         "detail": "tools.labs.generate-benchmark-report",
         "documentation": {}
     },

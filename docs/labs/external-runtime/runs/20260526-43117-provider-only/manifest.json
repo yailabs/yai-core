@@ -1,0 +1,51 @@
+{
+  "schema": "yai.compact-run.v0",
+  "run_slug": "20260526-43117-provider-only",
+  "title": "LAN Provider Run 2026-05-26 43117 Only",
+  "status": "completed",
+  "lab": "external-runtime",
+  "date": "2026-05-26",
+  "run_path": "docs/labs/external-runtime/runs/20260526-43117-provider-only",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "assets": [
+    {
+      "path": "assets/normalized-runs.json",
+      "kind": "normalized_data"
+    },
+    {
+      "path": "assets/P001-provider-readiness.md",
+      "kind": "prompt"
+    },
+    {
+      "path": "assets/endpoint-latency.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/endpoint-status-matrix.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/hnsw-query-latency.svg",
+      "kind": "chart"
+    },
+    {
+      "path": "assets/provider-topology-3d.html",
+      "kind": "interactive_diagram"
+    }
+  ],
+  "source_raw_runs": [
+    "benchmarks/nvidia/hnsw-smoke-20260526-run1",
+    "benchmarks/nvidia/lan-provider-20260526-43117-run3-escalated"
+  ],
+  "new_execution": false,
+  "converted_from_existing_report": true,
+  "limitations": [
+    "Converted from an existing generated report.",
+    "No provider probe or benchmark was executed during this compacting wave.",
+    "Chat generation was auth_blocked.",
+    "GPU throughput and VRAM were not measured."
+  ]
+}

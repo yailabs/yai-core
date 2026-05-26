@@ -1,0 +1,57 @@
+{
+  "schema": "yai.compact-run.v0",
+  "run_slug": "20260526-smoke",
+  "title": "Filesystem Loop Smoke Run - 2026-05-26",
+  "status": "completed",
+  "lab": "filesystem-loop",
+  "date": "2026-05-26",
+  "run_path": "docs/labs/filesystem-loop/runs/20260526-smoke",
+  "protocol": "../../README.md",
+  "transcript": "transcript.md",
+  "report": "report.md",
+  "metrics": "metrics.json",
+  "commands": [
+    {
+      "command": "make check-docs",
+      "status": "passed",
+      "asset": "assets/make-check-docs.log"
+    },
+    {
+      "command": "make smoke-spine24a",
+      "status": "passed",
+      "asset": "assets/make-smoke-spine24a.log"
+    },
+    {
+      "command": "make smoke-spine27",
+      "status": "passed",
+      "asset": "assets/make-smoke-spine27.log"
+    }
+  ],
+  "new_execution": true,
+  "prompts": [],
+  "assets": [
+    "assets/make-check-docs.log",
+    "assets/make-smoke-spine24a.log",
+    "assets/make-smoke-spine27.log",
+    "assets/filesystem-loop-flow.md"
+  ],
+  "limitations": [
+    "No model benchmark was executed.",
+    "No LAN provider probe was executed in this filesystem-loop run."
+  ],
+  "pack_fixture": {
+    "path": "../../pack-fixture",
+    "status": "available_lab_input",
+    "used_by": [
+      "make smoke-spine24a",
+      "make smoke-spine27"
+    ],
+    "files": [
+      "../../pack-fixture/pack.yaml",
+      "../../pack-fixture/policies/filesystem-sandbox-policy.json",
+      "../../pack-fixture/policies/linenoise-terminal-interface-policy.json",
+      "../../pack-fixture/policies/model-case-projection-policy.json"
+    ],
+    "materialization_posture": "represented by smoke command output; no generic pack runtime was executed"
+  }
+}

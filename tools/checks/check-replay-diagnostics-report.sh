@@ -37,9 +37,7 @@ for file in \
   "docs/adr/0034-replay-diagnostics-rebuild-report.md" \
   "docs/engineering/command-surface.md" \
   "docs/engineering/testing.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "yai.replay_report.v1"
   require_phrase "$file" "replay-report"
   require_phrase "$file" "journal_identity"

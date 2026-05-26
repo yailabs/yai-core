@@ -63,13 +63,15 @@ for file in \
   docs/engineering/testing.md \
   docs/engineering/wave-template.md \
   docs/labs/README.md \
+  docs/labs/registry.md \
   docs/labs/filesystem-loop/README.md \
   docs/labs/filesystem-loop/runbook.md \
-  docs/labs/filesystem-loop/tests.md \
-  docs/labs/filesystem-loop/outputs.md \
-  docs/labs/nvidia/README.md \
-  docs/labs/nvidia/benchmark-runbook.md \
-  docs/labs/nvidia/benchmark-visual-language.md \
+  docs/labs/filesystem-loop/notebook.ipynb \
+  docs/labs/filesystem-loop/run.sh \
+  docs/labs/external-runtime/README.md \
+  docs/labs/external-runtime/runbook.md \
+  docs/labs/external-runtime/notebook.ipynb \
+  docs/labs/external-runtime/run.sh \
   docs/manuals/README.md \
   docs/manuals/manual-filesystem-loop-validation.md \
   docs/manuals/manual-filesystem-loop-validation.ipynb \

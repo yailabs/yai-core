@@ -40,9 +40,8 @@ for file in \
   "docs/engineering/data-plane-roadmap.md" \
   "docs/architecture/39-runtimegraph-working-set.md" \
   "docs/engineering/runtimegraph-working-set.md" \
-  "docs/labs/filesystem-loop/runbook.md" \
-  "docs/labs/filesystem-loop/tests.md" \
-  "docs/labs/filesystem-loop/outputs.md"; do
+  "docs/labs/filesystem-loop/README.md" \
+  "docs/labs/filesystem-loop/runbook.md"; do
   require_phrase "$file" "RuntimeGraph rebuild"
   require_phrase "$file" "yai.runtime_graph_rebuild_report.v1"
   require_phrase "$file" "journal"

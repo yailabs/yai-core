@@ -173,7 +173,7 @@ tests/cases/
 | `docs/manuals/manual-filesystem-loop-validation.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.ipynb` | move | Preserve as legacy validation notebook. |
 | `docs/manuals/manual-filesystem-loop-validation.it.ipynb` | `notebooks/legacy/manual-filesystem-loop-validation.it.ipynb` | move | Preserve as legacy/localized validation notebook. |
 | `docs/manuals/requirements-notebook.txt` | `notebooks/legacy/requirements.txt` | move | Keep with notebooks. |
-| `docs/manuals/examples/filesystem-loop/policy-packs/` | `examples/cases/filesystem-loop/policy-packs/` | move | These are better as case examples if kept public. |
+| `docs/manuals/examples/filesystem-loop/pack-fixture/` | `examples/cases/filesystem-loop/pack-fixture/` | move | These are better as case examples if kept public. |
 | `docs/manuals/examples/filesystem-loop/` | `tests/cases/filesystem-loop/fixtures/` | alternative move | If they are primarily validation fixtures, prefer test location instead of examples. Choose one owner. |
 | `docs/product/` | `docs/internal/product/` | move | Keep product notes out of public technical facade. |
 | `docs/status/` | `docs/internal/status/` | move | Keep implementation history available but not first-contact public. |

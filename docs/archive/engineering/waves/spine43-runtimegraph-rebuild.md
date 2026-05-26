@@ -1,6 +1,6 @@
-# SPINE.43 RuntimeGraph Rebuild
-
 Historical/superseded engineering record. Not an active source of truth.
+
+# SPINE.43 RuntimeGraph Rebuild
 
 SPINE.43 adds RuntimeGraph rebuild:
 

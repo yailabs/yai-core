@@ -2,10 +2,10 @@
 
 Status: legacy compatibility copy.
 
-The canonical policy-pack fixtures now live under:
+The canonical pack fixture now lives under:
 
 ```text
-docs/labs/filesystem-loop/policy-packs/
+docs/labs/filesystem-loop/pack-fixture/
 ```
 
 Keep this directory only for older links. Do not update it as the source of
