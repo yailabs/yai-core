@@ -1,0 +1,8 @@
+#ifndef YAI_NET_VERSION_H
+#define YAI_NET_VERSION_H
+
+#define YAI_NET_COMPONENT_NAME "net"
+#define YAI_NET_COMPONENT_STATUS "scaffold"
+#define YAI_NET_COMPONENT_VERSION "NET.SPINE.0.2"
+
+#endif

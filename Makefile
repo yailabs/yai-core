@@ -12,6 +12,8 @@
 #
 .PHONY: info check-layout check-docs check-labs check-lab-runs check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-journal-replay-freeze check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap check-graph-runtimegraph-doctrine check-graph-relation-write-path check-runtimegraph-working-set check-runtimegraph-rebuild build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke-spine42 smoke-spine43 smoke check clean
 
+.PHONY: net-info check-net-boundary
+
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -std=c11 -Wall -Wextra -Werror -Iinclude
@@ -181,6 +183,13 @@ info:
 	@printf "crates: removed\n"
 	@printf "ctl: removed\n"
 	@printf "install-local: active PREFIX=%s YAI_HOME=%s\n" "$(PREFIX)" "$(YAI_HOME)"
+
+net-info:
+	@$(MAKE) -C net info
+
+check-net-boundary:
+	@$(MAKE) -C net check
+	@./tools/checks/check-net-boundary.sh
 
 check-layout:
 	@./tools/checks/check-no-old-roots.sh

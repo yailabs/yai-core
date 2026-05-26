@@ -1,53 +1,36 @@
 # NET Root Substrate
 
-Status: Boundary foundation
+Status: NET.SPINE.0 root component scaffold
 Authority: YAI repository
 
-NET is the root-level communication substrate inside YAI. It exists to discover
-nodes, describe their capabilities, move invocation streams and carry transport
-metrics and receipts without taking ownership of YAI authority.
+NET is the root-level runtime communication substrate inside YAI.
 
 YAI controls authority.
 NET moves streams.
 External nodes execute capabilities.
 
-## Root Boundary
+The concrete component lives at `net/`. Detailed component docs live in
+`net/docs/`.
 
-NET is planned as a root component parallel to existing YAI authority and data
-planes. Its role is transport and node coordination, not policy, memory, graph,
-fact, journal or execution truth.
+## Boundary
 
-`interfaces/transports/` remains the contract vocabulary and schema surface.
-NET is the runtime substrate inside YAI: discovery, node identity, streams,
-health, routing inputs, transport metrics and capability advertisement.
+NET owns node identity, endpoint registry, stream envelopes, transport adapter
+boundaries, health/readiness/liveness vocabulary, capability advertisement,
+routing boundaries, invocation transport, trace/receipt transport and transport
+metrics.
 
-NET-owned substrate responsibilities:
+NET does not own case authority, policy resolution, facts truth, graph truth,
+memory truth, journal truth, neural execution, model loading, model decoding,
+operator approval or action eligibility.
 
-- local node identity
-- local endpoint registry
-- LAN discovery
-- remote endpoint registry
-- node health probes
-- capability advertisements
-- stream envelopes
-- transport adapters
-- invocation transport
-- trace and receipt transport
-- transport metrics
+## interfaces/transports
 
-## Non-Goals
+`interfaces/transports` remains contract, vocabulary, readiness and handoff.
+NET is the YAI runtime substrate that may later consume or align with those
+contracts.
 
-This delivery does not implement NET transport, LAN discovery, IPC, routing or
-CLI commands. It only establishes the spine, doctrine and boundary documents
-for later delivery.
+## Current State
 
-NET must not turn `system/` into a network supervisor. NET may expose lifecycle
-contracts and node readiness, but authority and approval remain in YAI.
-
-## Compatibility Posture
-
-External repositories may become NET-compatible nodes. CLORI is the first named
-compatibility target, but NET does not depend on CLORI and does not encode CLORI
-as a special authority source.
-
-The authoritative NET roadmap is `docs/spines/net-spine.md`.
+NET.SPINE.0 mounts the component scaffold, public vocabulary headers, docs,
+Makefile targets and boundary guard. It does not implement discovery,
+transport, routing, server behavior or external node execution.

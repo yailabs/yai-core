@@ -44,6 +44,7 @@ control-carrier-rebase.md
 current-status.md
 data-context-runtime-runtimegraph.md
 data-plane-roadmap.md
+external-clori-boundary.md
 extraction-plan.md
 file-header-standard.md
 filesystem-target.md
@@ -57,6 +58,7 @@ journal-replay-to-lmdb.md
 journal-replay-freeze.md
 lmdb-record-plane.md
 lmdb-record-plane-freeze.md
+net-yai-boundary.md
 non-process-carrier-skeletons.md
 operation-dispatch-multiplex.md
 operational-extraction-contract.md
