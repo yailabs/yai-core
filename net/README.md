@@ -21,6 +21,7 @@ area README discipline. NET.SPINE.2 starts stream envelope contract material.
 NET.SPINE.3 starts node identity contract material. Discovery, transport,
 routing, server behavior, CLI behavior and CLORI code are not implemented.
 NET.SPINE.4 starts capability advertisement contract material.
+NET.SPINE.5 starts endpoint descriptor contract material.
 NET protocol vocabulary and fixtures live under `proto/`.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
@@ -56,7 +57,7 @@ make check-net-boundary
 
 ## Non-Goals
 
-NET.SPINE.4 does not implement LAN discovery, remote transport, local socket
+NET.SPINE.5 does not implement LAN discovery, remote transport, local socket
 transport, HTTP behavior, routing behavior, server behavior, CLI behavior or
 CLORI support. It keeps NET as an integrated module, not a standalone
 repository.

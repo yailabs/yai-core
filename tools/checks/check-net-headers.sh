@@ -180,4 +180,44 @@ if strip_comments "$capability_header" | grep -n -E '\b(registry|register|discov
   exit 1
 fi
 
+endpoint_header="include/yai/net/endpoint.h"
+
+for required_endpoint_symbol in \
+  yai_net_endpoint_kind_t \
+  yai_net_endpoint_scope_t \
+  yai_net_endpoint_state_t \
+  yai_net_endpoint_security_t \
+  YAI_NET_ENDPOINT_KIND_LOCAL_PROCESS \
+  YAI_NET_ENDPOINT_KIND_LOCALHOST_HTTP \
+  YAI_NET_ENDPOINT_KIND_LOCAL_IPC \
+  YAI_NET_ENDPOINT_KIND_LAN_HTTP \
+  YAI_NET_ENDPOINT_KIND_REMOTE_HTTP \
+  YAI_NET_ENDPOINT_KIND_FUTURE_TRANSPORT \
+  YAI_NET_ENDPOINT_SCOPE_PROCESS \
+  YAI_NET_ENDPOINT_SCOPE_MACHINE \
+  YAI_NET_ENDPOINT_SCOPE_LAN \
+  YAI_NET_ENDPOINT_SCOPE_REMOTE \
+  YAI_NET_ENDPOINT_SCOPE_EXTERNAL \
+  YAI_NET_ENDPOINT_STATE_UNKNOWN \
+  YAI_NET_ENDPOINT_STATE_DECLARED \
+  YAI_NET_ENDPOINT_STATE_AVAILABLE \
+  YAI_NET_ENDPOINT_STATE_DEGRADED \
+  YAI_NET_ENDPOINT_STATE_UNAVAILABLE \
+  YAI_NET_ENDPOINT_STATE_RETIRED \
+  YAI_NET_ENDPOINT_SECURITY_UNKNOWN \
+  YAI_NET_ENDPOINT_SECURITY_LOCAL_ONLY \
+  YAI_NET_ENDPOINT_SECURITY_TRUSTED_LOCAL \
+  YAI_NET_ENDPOINT_SECURITY_DECLARED_REMOTE \
+  YAI_NET_ENDPOINT_SECURITY_EXTERNAL_UNTRUSTED; do
+  if ! grep -q "$required_endpoint_symbol" "$endpoint_header"; then
+    printf 'NET endpoint header missing required symbol: %s\n' "$required_endpoint_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$endpoint_header" | grep -n -E '\b(registry|register|mutation|mutate|discovery|discover|route|authorize|connect|listen|accept|bind|socket|probe)[[:space:]]*\(' >&2; then
+  printf 'NET endpoint header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

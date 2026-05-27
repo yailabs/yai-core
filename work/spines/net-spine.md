@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.4.0
+Reference version: NET.SPINE.5.0
 Authority: YAI repository
-Status: Capability advertisement contract started
+Status: Endpoint descriptor contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -81,9 +81,10 @@ implement live registry, routing or discovery.
 
 ### NET.SPINE.5 - Local Endpoint Registry Skeleton
 
-Implement the local endpoint registry skeleton and fixture-backed tests for
-registered, missing and unavailable local endpoints. Keep endpoint truth inside
-NET and policy decisions inside YAI.
+Add endpoint descriptor types, endpoint fixtures and schema under `proto/`, and
+a static endpoint fixture validator. Link endpoint fixtures to node and
+capability fixture ids. Create registry seed material only; do not implement
+discovery, probing, routing or transport.
 
 ### NET.SPINE.6 - Health / Readiness / Liveness Probe Skeleton
 
@@ -242,7 +243,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.4.0
+Reference version: NET.SPINE.5.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

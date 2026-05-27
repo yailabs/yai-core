@@ -8,6 +8,8 @@ under `proto/fixtures/net/node/`.
 Node fixture `capability_refs` now point to capability advertisement fixtures
 under `proto/fixtures/net/capability/`.
 
+Node fixture ids may be referenced by endpoint descriptors.
+
 This area does not implement discovery yet and does not probe the local machine
 yet.
 

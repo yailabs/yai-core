@@ -73,15 +73,19 @@ for path in \
   proto/fixtures/net/node/external-node.json \
   proto/fixtures/net/capability/neural-llm-decode.json \
   proto/fixtures/net/capability/generic-external.json \
+  proto/fixtures/net/endpoint/local-process.json \
+  proto/fixtures/net/endpoint/localhost-http.json \
+  proto/fixtures/net/endpoint/future-transport.json \
   proto/schemas/net-stream-envelope.v1.schema.json \
   proto/schemas/net-node-identity.v1.schema.json \
   proto/schemas/net-capability-advertisement.v1.schema.json \
+  proto/schemas/net-endpoint-descriptor.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.4.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.4.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.5.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.5.0\n' >&2
   exit 1
 fi
 
@@ -92,6 +96,11 @@ fi
 
 if ! grep -F '## Capability Advertisement' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Capability Advertisement\n' >&2
+  exit 1
+fi
+
+if ! grep -F '## Endpoint Descriptor' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Endpoint Descriptor\n' >&2
   exit 1
 fi
 

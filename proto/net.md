@@ -133,3 +133,39 @@ process, node, service, external.
 
 Required capability states:
 unknown, declared, available, degraded, unavailable, retired.
+
+## Endpoint Descriptor
+
+An endpoint is a communication address surface, not an authority. An endpoint
+descriptor may be declared before it is observed. NET may later route through
+endpoints, but this wave does not route. NET may later probe endpoints, but
+this wave does not probe. Endpoint availability does not approve any YAI
+operation. Endpoint metadata must not expose secrets or real private machine
+identity in canonical fixtures.
+
+- endpoint: Communication address surface associated with a node. It does not approve operations.
+- endpoint id: Stable NET-facing identifier for an endpoint descriptor. It is not proof of reachability.
+- endpoint kind: One of local_process, localhost_http, local_ipc, lan_http, remote_http or future_transport.
+- endpoint scope: One of process, machine, lan, remote or external. It does not imply discovery.
+- endpoint state: One of unknown, declared, available, degraded, unavailable or retired. It is not policy approval.
+- endpoint security: One of unknown, local_only, trusted_local, declared_remote or external_untrusted. It is not trust authority.
+- address reference: Abstract address surface such as local-process://demo. It must not expose real host, port, path or private machine data.
+- local endpoint: Process-local endpoint declaration. It is not service lifecycle ownership.
+- localhost endpoint: Machine-local loopback posture declaration. It does not implement HTTP in this wave.
+- LAN endpoint: LAN posture declaration. It is not discovered in this wave.
+- remote endpoint: Remote posture declaration. It is not trusted by placement alone.
+- external endpoint: External node endpoint declaration. It does not become part of YAI authority.
+- declared endpoint: Endpoint material recorded as a static seed before observation or probing.
+- endpoint registry seed: Static fixture material for future registry work. It is not a live runtime registry.
+
+Required endpoint kinds:
+local_process, localhost_http, local_ipc, lan_http, remote_http, future_transport.
+
+Required endpoint scopes:
+process, machine, lan, remote, external.
+
+Required endpoint states:
+unknown, declared, available, degraded, unavailable, retired.
+
+Required endpoint security values:
+unknown, local_only, trusted_local, declared_remote, external_untrusted.
