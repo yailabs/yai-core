@@ -1485,9 +1485,39 @@ target/debug/yai doctor
 target/debug/yai help 2>&1 || true
 ```
 
-## Journal / Store / Projection / Query Command Sweep
+## Journal Replay to LMDB / Store / Projection / Query Command Sweep
 
-Esegui questa dopo `run-filesystem-loop`. Usa il journal creato dal daemon e passa da journal a LMDB, poi ispeziona store, projection, query, receipt, decision, memory, reconcile ed engine. Questa e la prova manuale della command surface dati prima dei graph/facts.
+Esegui questa dopo `run-filesystem-loop`. Usa il journal creato dal daemon e passa da journal a LMDB, poi ispeziona store, projection, query, receipt, decision, memory, reconcile ed engine. Questa e la prova manuale della command surface dati prima dei graph/facts. `replay-status` deve esporre `journal_identity`, `record_schema`, `compatibility` e `cursor_line`; `replay-report` produce `yai.replay_report.v1` con `records_written`, `records_duplicate`, `invalid_entries` e failed report diagnostics sotto `labs/filesystem-loop`.
+
+Journal Replay Freeze: `journal inspect`, `journal replay`, `replay-status` e
+`replay-report` restano un percorso idempotent. Errori come `schema_mismatch` e
+`invalid_json` devono restare diagnosticabili.
+
+Graph relation write path: `graph materialize` deriva `yai.graph_relation.v1`
+da LMDB e `graph relations` espone relazioni come `decision_controls_attempt` e
+`receipt_records_effect` con `relation_id` e `source_record_id`. RuntimeGraph remains planned. Ladybug integration remains future.
+
+RuntimeGraph: `runtime-load`, `runtime-status` e `runtime-summary` costruiscono
+un in-memory working set per-command ephemeral da graph relations. `resident_service: planned`,
+`durable_truth: graph_persistence`, `hnsw: future_candidate_index` e
+`context_compiler: future_consumer` restano confini espliciti.
+
+RuntimeGraph rebuild: `runtime_graph_rebuild` produce
+`yai.runtime_graph_rebuild_report.v1` da `journal`, LMDB e graph relations.
+RuntimeGraph rebuild resta diagnostico; resident service planned. RuntimeGraph is not durable truth. I report sono parte del percorso `labs/filesystem-loop`.
+
+RuntimeGraph query: `fanout`, `fanin`, `neighborhood` e causal path sono
+bounded traversal con `max-depth` ed edge-kind filter. RuntimeGraph is not a generic graph database; color-aware graph inspection puo esistere, ma plain output remains parseable.
+
+Operator review: `require_review` crea `pending_operator`; `control pending`,
+`control show`, `control review --interactive`, `control watch` e
+`control wait` espongono `next_commands`. Azioni supportate: approve, deny,
+defer, quarantine. Le ricevute bloccate mantengono `carrier_attempted: false`
+ed `execution_performed: false`. `subject:linenoise-terminal is prompt surface`;
+`subject:operator-reviewer is review authority`; operator reviewer authority
+resta esplicita. `not_a_tty`, wait timeout e watch sono parte della matrice
+`labs/filesystem-loop`. model proposal observed; model cannot approve;
+automatic proposed-op gate import is future work.
 
 ```bash
 set -eu
