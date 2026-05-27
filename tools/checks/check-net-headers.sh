@@ -220,4 +220,37 @@ if strip_comments "$endpoint_header" | grep -n -E '\b(registry|register|mutation
   exit 1
 fi
 
+health_header="include/yai/net/health.h"
+
+for required_health_symbol in \
+  yai_net_health_state_t \
+  yai_net_health_check_kind_t \
+  yai_net_health_subject_kind_t \
+  YAI_NET_HEALTH_STATE_UNKNOWN \
+  YAI_NET_HEALTH_STATE_ALIVE \
+  YAI_NET_HEALTH_STATE_READY \
+  YAI_NET_HEALTH_STATE_DEGRADED \
+  YAI_NET_HEALTH_STATE_UNAVAILABLE \
+  YAI_NET_HEALTH_STATE_FAILED \
+  YAI_NET_HEALTH_CHECK_KIND_HEALTH \
+  YAI_NET_HEALTH_CHECK_KIND_LIVENESS \
+  YAI_NET_HEALTH_CHECK_KIND_READINESS \
+  YAI_NET_HEALTH_CHECK_KIND_CAPABILITY_READINESS \
+  YAI_NET_HEALTH_CHECK_KIND_ENDPOINT_REACHABILITY \
+  YAI_NET_HEALTH_SUBJECT_KIND_NODE \
+  YAI_NET_HEALTH_SUBJECT_KIND_ENDPOINT \
+  YAI_NET_HEALTH_SUBJECT_KIND_CAPABILITY \
+  YAI_NET_HEALTH_SUBJECT_KIND_TRANSPORT \
+  YAI_NET_HEALTH_SUBJECT_KIND_EXTERNAL; do
+  if ! grep -q "$required_health_symbol" "$health_header"; then
+    printf 'NET health header missing required symbol: %s\n' "$required_health_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$health_header" | grep -n -E '\b(probe|health_check_run|connect|listen|accept|bind|socket|http|route|authorize|discover)[[:space:]]*\(' >&2; then
+  printf 'NET health header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

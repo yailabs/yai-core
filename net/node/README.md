@@ -10,6 +10,8 @@ under `proto/fixtures/net/capability/`.
 
 Node fixture ids may be referenced by endpoint descriptors.
 
+Node fixture ids may be referenced by health reports.
+
 This area does not implement discovery yet and does not probe the local machine
 yet.
 

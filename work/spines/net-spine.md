@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.5.0
+Reference version: NET.SPINE.6.0
 Authority: YAI repository
-Status: Endpoint descriptor contract started
+Status: Health/readiness/liveness contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -88,9 +88,10 @@ discovery, probing, routing or transport.
 
 ### NET.SPINE.6 - Health / Readiness / Liveness Probe Skeleton
 
-Add probe result types, fixture examples and a no-network probe skeleton for
-unknown, alive, ready, degraded and unavailable states. Do not start or
-supervise services.
+Add health report types, health fixtures and schema under `proto/`, and a
+static health fixture validator. Link health reports to node, endpoint and
+capability fixture ids. Create probe result vocabulary only; do not perform
+live probing, discovery, routing or transport.
 
 ### NET.SPINE.7 - Local Service Lifecycle Contract
 
@@ -243,7 +244,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.5.0
+Reference version: NET.SPINE.6.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

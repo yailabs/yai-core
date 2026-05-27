@@ -7,6 +7,8 @@ Fixtures live under `proto/fixtures/net/endpoint/`.
 
 Endpoint descriptors can refer to node fixture ids and capability fixture ids.
 
+Endpoint fixture ids may be referenced by health reports.
+
 An endpoint is not authority.
 
 This area does not implement discovery, probing, routing or transport.

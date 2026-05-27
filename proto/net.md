@@ -169,3 +169,34 @@ unknown, declared, available, degraded, unavailable, retired.
 
 Required endpoint security values:
 unknown, local_only, trusted_local, declared_remote, external_untrusted.
+
+## Health, Readiness and Liveness
+
+A health report is an observation or declaration, not authority. Liveness means
+a subject appears alive. Readiness means a subject appears ready for a future
+operation. Capability readiness is about declared capability availability, not
+permission. Endpoint reachability is about communication surface status, not
+operation approval. NET may transport or represent health material. YAI remains
+responsible for authority and policy. This wave does not perform live probes.
+Fixture health reports are canonical examples, not real observations.
+
+- health report: Versioned health material about a subject. It is not an authorization decision.
+- health state: One of unknown, alive, ready, degraded, unavailable or failed.
+- liveness: Observation or declaration that a subject appears alive. It is not readiness.
+- readiness: Observation or declaration that a subject appears ready for future work. It is not permission.
+- capability readiness: Availability posture for a declared capability. It does not approve use.
+- endpoint reachability: Status of a communication surface. It does not approve an operation.
+- health subject: Node, endpoint, capability, transport or external material referenced by a health report.
+- observed health: Health material reported by an observing node. It is not proof of trust.
+- declared health: Health material declared as seed or fixture material before live observation.
+- degraded state: Subject may have limited availability. Recovery policy is outside this contract.
+- unavailable state: Subject is represented as unavailable. This does not decide fallback policy.
+
+Required health states:
+unknown, alive, ready, degraded, unavailable, failed.
+
+Required health check kinds:
+health, liveness, readiness, capability_readiness, endpoint_reachability.
+
+Required health subject kinds:
+node, endpoint, capability, transport, external.

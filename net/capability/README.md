@@ -7,6 +7,8 @@ Fixtures live under `proto/fixtures/net/capability/`.
 
 Capability fixture ids may be referenced by endpoint descriptors.
 
+Capability fixture ids may be referenced by health reports.
+
 A capability says what a node can do. It does not approve an operation.
 
 This area does not implement routing or policy.

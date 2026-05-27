@@ -76,16 +76,20 @@ for path in \
   proto/fixtures/net/endpoint/local-process.json \
   proto/fixtures/net/endpoint/localhost-http.json \
   proto/fixtures/net/endpoint/future-transport.json \
+  proto/fixtures/net/health/node-health.json \
+  proto/fixtures/net/health/endpoint-liveness.json \
+  proto/fixtures/net/health/capability-readiness.json \
   proto/schemas/net-stream-envelope.v1.schema.json \
   proto/schemas/net-node-identity.v1.schema.json \
   proto/schemas/net-capability-advertisement.v1.schema.json \
   proto/schemas/net-endpoint-descriptor.v1.schema.json \
+  proto/schemas/net-health-report.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.5.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.5.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.6.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.6.0\n' >&2
   exit 1
 fi
 
@@ -101,6 +105,11 @@ fi
 
 if ! grep -F '## Endpoint Descriptor' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Endpoint Descriptor\n' >&2
+  exit 1
+fi
+
+if ! grep -F '## Health, Readiness and Liveness' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Health, Readiness and Liveness\n' >&2
   exit 1
 fi
 
