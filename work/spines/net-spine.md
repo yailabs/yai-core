@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.1.0
+Reference version: NET.SPINE.2.0
 Authority: YAI repository
-Status: Canonical terms and header discipline started
+Status: Stream envelope contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -53,9 +53,9 @@ runtime behavior.
 
 ### NET.SPINE.2 - Stream Envelope Types + Fixtures
 
-Create stream envelope structs/types, JSON fixture examples and schema notes.
-Add tests that validate request, response, chunk, metric, receipt, error and
-complete event fixtures. It does not implement live streaming yet.
+Add canonical stream envelope types, stream event kind discipline, JSON
+fixtures under `work/protocols/fixtures/net/stream/` and static stream envelope
+checks. This wave does not implement live streaming or transport.
 
 ### NET.SPINE.3 - Node Identity Types + Local Machine Projection
 
@@ -233,7 +233,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.1.0
+Reference version: NET.SPINE.2.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

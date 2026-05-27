@@ -17,8 +17,9 @@ CLORI executes neural computation.
 Current status: scaffold.
 
 NET.SPINE.1 establishes canonical terms, public header discipline and module
-area README discipline. Discovery, transport, routing, server behavior, CLI
-behavior and CLORI code are not implemented.
+area README discipline. NET.SPINE.2 starts stream envelope contract material.
+Discovery, transport, routing, server behavior, CLI behavior and CLORI code are
+not implemented.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
 tree, fixture tree, benchmark tree or examples tree. Public headers live under
@@ -45,12 +46,13 @@ compat/      future external node compatibility
 ```sh
 make net-info
 make check-net-headers
+make check-net-stream-fixtures
 make check-net-boundary
 ```
 
 ## Non-Goals
 
-NET.SPINE.1 does not implement LAN discovery, remote transport, local socket
+NET.SPINE.2 does not implement LAN discovery, remote transport, local socket
 transport, HTTP behavior, routing behavior, server behavior, CLI behavior or
 CLORI support. It keeps NET as an integrated module, not a standalone
 repository.

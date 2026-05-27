@@ -1,6 +1,6 @@
 # NET Protocol Vocabulary
 
-Canonical internal vocabulary for NET.SPINE.1.
+Canonical internal vocabulary for NET.
 
 YAI controls authority.
 NET moves streams.
@@ -35,3 +35,30 @@ CLORI executes neural computation.
 - transport adapter: Future adapter shape for a communication path. It does not implement sockets, servers or discovery in this wave.
 - NET-compatible node: External node target that can speak the NET contract surface. Compatibility does not grant trust.
 - CLORI-compatible node target: External neural computation target aligned with CLORI compatibility. CLORI remains external and is not vendored into YAI.
+
+## Stream Envelope
+
+A stream envelope carries event material through NET stream surfaces. A stream
+envelope does not approve an operation. A receipt event carried by NET is not
+made authoritative by NET. Ordering is represented by sequence number, not by
+filesystem order. Transport adapters may carry stream envelopes later, but this
+wave does not implement adapters.
+
+- stream envelope: Versioned event container for stream movement. It is not a policy decision.
+- stream id: Stable stream correlation id. It does not imply storage ownership.
+- invocation id: Correlation id for an invocation lifecycle. It is not authorization.
+- trace id: Correlation id for trace propagation. It is not a tracing backend.
+- sequence number: Integer event ordering value within a stream. Filesystem order is not ordering truth.
+- stream event kind: One of request, response, chunk, metric, receipt, error or complete. It names event shape, not permission.
+- payload kind: One of none, bytes, text, json, metric, receipt or error. It does not define serialization law beyond this scaffold.
+- timestamp: Millisecond Unix timestamp supplied as envelope metadata. It is not trust proof.
+- origin node: Node id that emitted the envelope. It does not grant authority.
+- target node: Node id intended to receive the envelope. It does not prove reachability.
+- completion state: Stream lifecycle state such as completed or cancelled. It does not make receipts authoritative.
+- error state: Stream lifecycle state or event describing failure. It does not decide recovery policy.
+
+Required event kinds:
+request, response, chunk, metric, receipt, error, complete.
+
+Required stream lifecycle:
+created, open, half_closed, completed, failed, cancelled.

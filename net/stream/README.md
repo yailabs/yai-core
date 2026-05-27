@@ -1,9 +1,13 @@
 # stream
 
-Owns stream event vocabulary and future stream runtime surfaces.
+Owns stream event/envelope vocabulary and future stream runtime surfaces.
 
-Must not approve invocations, decide policy or make receipts authoritative.
+Stream envelope v1 is represented in `include/yai/net/stream.h`. Fixtures live
+under `work/protocols/fixtures/net/stream/`.
+
+Must not implement live transport, approve invocations, decide policy or make
+receipts authoritative.
 
 Current status: scaffold.
 
-Next expected wave: NET.SPINE.2 stream envelope types and fixtures.
+Next expected wave: NET.SPINE.13 streaming runtime skeleton.

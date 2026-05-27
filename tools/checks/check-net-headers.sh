@@ -85,4 +85,28 @@ for header in "${required_headers[@]}"; do
   fi
 done
 
+stream_header="include/yai/net/stream.h"
+
+for required_stream_symbol in \
+  yai_net_stream_event_kind_t \
+  yai_net_stream_state_t \
+  yai_net_stream_payload_kind_t \
+  YAI_NET_STREAM_EVENT_REQUEST \
+  YAI_NET_STREAM_EVENT_RESPONSE \
+  YAI_NET_STREAM_EVENT_CHUNK \
+  YAI_NET_STREAM_EVENT_METRIC \
+  YAI_NET_STREAM_EVENT_RECEIPT \
+  YAI_NET_STREAM_EVENT_ERROR \
+  YAI_NET_STREAM_EVENT_COMPLETE; do
+  if ! grep -q "$required_stream_symbol" "$stream_header"; then
+    printf 'NET stream header missing required symbol: %s\n' "$required_stream_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$stream_header" | grep -n -E '\b(send|receive|connect|listen|accept|bind|socket)[[:space:]]*\(' >&2; then
+  printf 'NET stream header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

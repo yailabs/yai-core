@@ -67,12 +67,15 @@ for path in \
   include/yai/net/trace.h \
   include/yai/net/receipt.h \
   include/yai/net/metrics.h \
+  work/protocols/fixtures/net/stream/request.json \
+  work/protocols/fixtures/net/stream/complete.json \
+  work/protocols/schemas/net-stream-envelope.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.1.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.1.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.2.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.2.0\n' >&2
   exit 1
 fi
 
