@@ -1,10 +1,15 @@
 # node
 
-Owns future node projection and identity vocabulary.
+Owns NET node identity vocabulary and future node projection material.
 
-Must not discover LAN nodes until the discovery wave or grant trust to external
-nodes.
+Node identity v1 is represented in `include/yai/net/node.h`. Node fixtures live
+under `work/protocols/fixtures/net/node/`.
+
+This area does not implement discovery yet and does not probe the local machine
+yet.
+
+A node advertises communication identity; it does not grant authority.
 
 Current status: scaffold.
 
-Next expected wave: NET.SPINE.3 node identity types.
+Next expected wave: NET.SPINE.5 local endpoint registry skeleton.

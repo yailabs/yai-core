@@ -109,4 +109,38 @@ if strip_comments "$stream_header" | grep -n -E '\b(send|receive|connect|listen|
   exit 1
 fi
 
+node_header="include/yai/net/node.h"
+
+for required_node_symbol in \
+  yai_net_node_kind_t \
+  yai_net_node_scope_t \
+  yai_net_node_state_t \
+  YAI_NET_NODE_KIND_LOCAL \
+  YAI_NET_NODE_KIND_LOCALHOST_SERVICE \
+  YAI_NET_NODE_KIND_LAN \
+  YAI_NET_NODE_KIND_REMOTE \
+  YAI_NET_NODE_KIND_EXTERNAL \
+  YAI_NET_NODE_SCOPE_PROCESS \
+  YAI_NET_NODE_SCOPE_MACHINE \
+  YAI_NET_NODE_SCOPE_LAN \
+  YAI_NET_NODE_SCOPE_REMOTE \
+  YAI_NET_NODE_SCOPE_EXTERNAL \
+  YAI_NET_NODE_STATE_UNKNOWN \
+  YAI_NET_NODE_STATE_DECLARED \
+  YAI_NET_NODE_STATE_OBSERVED \
+  YAI_NET_NODE_STATE_HEALTHY \
+  YAI_NET_NODE_STATE_DEGRADED \
+  YAI_NET_NODE_STATE_UNAVAILABLE \
+  YAI_NET_NODE_STATE_RETIRED; do
+  if ! grep -q "$required_node_symbol" "$node_header"; then
+    printf 'NET node header missing required symbol: %s\n' "$required_node_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$node_header" | grep -n -E '\b(discover|scan|probe|connect|listen|accept|bind|socket)[[:space:]]*\(' >&2; then
+  printf 'NET node header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

@@ -62,3 +62,41 @@ request, response, chunk, metric, receipt, error, complete.
 
 Required stream lifecycle:
 created, open, half_closed, completed, failed, cancelled.
+
+Stream envelopes use origin_node_id and target_node_id as references to NET
+node identities. NET.SPINE.3 does not require a live registry; it only makes
+the reference vocabulary explicit.
+
+## Node Identity
+
+A node is a communication participant, not an authority. A node can advertise
+capabilities, but capability does not grant permission. A node id is a stable
+NET-facing identifier, not necessarily a hostname. A local machine projection is
+a safe view, not raw host inventory. NET may represent node health later, but
+NET does not approve operations. system/ must not perform LAN discovery
+directly. engine/ must not store live endpoint truth as authority. Real
+hostnames, IPs, usernames, MAC addresses and hardware serials must not appear in
+canonical fixtures.
+
+- node: Communication participant represented by NET. It does not own authority.
+- node id: Stable NET-facing identifier for a node. It is not necessarily a hostname.
+- node label: Human-readable label for display or fixture clarity. It is not identity proof.
+- node kind: One of local, localhost_service, lan, remote or external. It does not imply trust.
+- node scope: One of process, machine, lan, remote or external. It does not imply discovery.
+- node status: One of unknown, declared, observed, healthy, degraded, unavailable or retired. It does not approve operations.
+- node projection: Safe NET-facing view of node identity material. It is not raw machine inventory.
+- local machine projection: Safe local machine view with fake or scrubbed metadata. It must not expose hostname, username, IP, MAC or hardware serial data.
+- endpoint reference: Identifier reference to future endpoint material. It is not live endpoint truth.
+- capability reference: Identifier reference to advertised capability material. It does not grant permission.
+- identity source: Description of where the node identity was declared or observed. It is not proof of trust.
+- safe metadata: Small generic metadata safe for canonical fixtures. It must not include private machine metadata.
+- private machine metadata: Hostnames, IPs, usernames, MAC addresses, hardware serials, real filesystem paths or secrets. It must not appear in canonical NET fixtures.
+
+Required node kinds:
+local, localhost_service, lan, remote, external.
+
+Required node scopes:
+process, machine, lan, remote, external.
+
+Required node states:
+unknown, declared, observed, healthy, degraded, unavailable, retired.

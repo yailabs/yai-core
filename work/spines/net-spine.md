@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.2.0
+Reference version: NET.SPINE.3.0
 Authority: YAI repository
-Status: Stream envelope contract started
+Status: Node identity contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -59,9 +59,10 @@ checks. This wave does not implement live streaming or transport.
 
 ### NET.SPINE.3 - Node Identity Types + Local Machine Projection
 
-Add stable node identity types, local machine projection notes and fixtures for
-local, localhost, LAN, remote and external node ids. Guard against leaking
-machine internals into `system/` authority material.
+Add canonical NET node identity types, safe local machine projection
+vocabulary, node fixtures and schema/contract, and a node fixture validator.
+Link node identity with stream origin/target fields. Do not implement discovery
+or machine probing.
 
 ### NET.SPINE.4 - Capability Advertisement Types + Registry Seed
 
@@ -233,7 +234,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.2.0
+Reference version: NET.SPINE.3.0
 Authority: YAI repository
 Mode: copied compatibility reference
 
