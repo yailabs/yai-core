@@ -232,3 +232,38 @@ unknown, declared, preparing, starting, running, stopping, stopped, failed, reti
 
 Required lifecycle subject kinds:
 node, endpoint, capability, service, external.
+
+## Transport Adapter
+
+A transport adapter describes how NET may later move stream envelopes. A
+transport adapter does not approve an invocation, perform policy or make
+receipts authoritative. Localhost transport is a declared local-machine
+communication surface. This wave does not open sockets, make HTTP calls, probe
+endpoints or move data. Endpoint descriptors and transport adapter descriptors
+are linked but distinct.
+
+- transport adapter: Descriptor for a future stream movement surface. It is not live IO.
+- localhost transport: Local-machine transport posture for a localhost endpoint. It does not perform HTTP here.
+- local IPC transport: Local IPC posture for future platform-native channels. It does not open sockets here.
+- LAN HTTP transport: LAN transport posture. It is not LAN discovery and not live HTTP.
+- remote HTTP transport: Remote transport posture. It is not trusted by placement alone.
+- future transport: Reserved adapter posture for later transport forms.
+- transport scope: One of process, machine, lan, remote or external. It does not imply reachability.
+- transport state: One of unknown, declared, available, degraded, unavailable or retired.
+- transport security: One of unknown, local_only, trusted_local, declared_remote or external_untrusted.
+- stream profile: Declared stream envelope profile a future adapter may carry.
+- adapter descriptor: Versioned transport adapter declaration linked to an endpoint id.
+- declared transport: Static transport material represented before live implementation exists.
+- transport boundary: NET may later move streams through adapters; YAI still controls authority.
+
+Required transport kinds:
+localhost_http, local_ipc, lan_http, remote_http, future.
+
+Required transport scopes:
+process, machine, lan, remote, external.
+
+Required transport states:
+unknown, declared, available, degraded, unavailable, retired.
+
+Required transport security values:
+unknown, local_only, trusted_local, declared_remote, external_untrusted.

@@ -19,6 +19,7 @@ required_headers=(
   include/yai/net/error.h
   include/yai/net/ids.h
   include/yai/net/stream.h
+  include/yai/net/transport.h
   include/yai/net/node.h
   include/yai/net/capability.h
   include/yai/net/endpoint.h
@@ -294,6 +295,51 @@ done
 
 if strip_comments "$lifecycle_header" | grep -n -E '\b(start_service|stop_service|restart_service|spawn|exec|fork|kill|system|popen|connect|listen|accept|bind|socket|probe|route)[[:space:]]*\(' >&2; then
   printf 'NET lifecycle header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
+if ! grep -F '#include "yai/net/transport.h"' include/yai/net/net.h >/dev/null; then
+  printf 'NET umbrella header must include transport.h\n' >&2
+  exit 1
+fi
+
+transport_header="include/yai/net/transport.h"
+
+for required_transport_symbol in \
+  yai_net_transport_kind_t \
+  yai_net_transport_scope_t \
+  yai_net_transport_state_t \
+  yai_net_transport_security_t \
+  yai_net_transport_adapter_descriptor_v1_t \
+  YAI_NET_TRANSPORT_KIND_LOCALHOST_HTTP \
+  YAI_NET_TRANSPORT_KIND_LOCAL_IPC \
+  YAI_NET_TRANSPORT_KIND_LAN_HTTP \
+  YAI_NET_TRANSPORT_KIND_REMOTE_HTTP \
+  YAI_NET_TRANSPORT_KIND_FUTURE \
+  YAI_NET_TRANSPORT_SCOPE_PROCESS \
+  YAI_NET_TRANSPORT_SCOPE_MACHINE \
+  YAI_NET_TRANSPORT_SCOPE_LAN \
+  YAI_NET_TRANSPORT_SCOPE_REMOTE \
+  YAI_NET_TRANSPORT_SCOPE_EXTERNAL \
+  YAI_NET_TRANSPORT_STATE_UNKNOWN \
+  YAI_NET_TRANSPORT_STATE_DECLARED \
+  YAI_NET_TRANSPORT_STATE_AVAILABLE \
+  YAI_NET_TRANSPORT_STATE_DEGRADED \
+  YAI_NET_TRANSPORT_STATE_UNAVAILABLE \
+  YAI_NET_TRANSPORT_STATE_RETIRED \
+  YAI_NET_TRANSPORT_SECURITY_UNKNOWN \
+  YAI_NET_TRANSPORT_SECURITY_LOCAL_ONLY \
+  YAI_NET_TRANSPORT_SECURITY_TRUSTED_LOCAL \
+  YAI_NET_TRANSPORT_SECURITY_DECLARED_REMOTE \
+  YAI_NET_TRANSPORT_SECURITY_EXTERNAL_UNTRUSTED; do
+  if ! grep -q "$required_transport_symbol" "$transport_header"; then
+    printf 'NET transport header missing required symbol: %s\n' "$required_transport_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$transport_header" | grep -n -E '\b(connect|listen|accept|bind|socket|recv|send|http|request|probe|route|authorize)[[:space:]]*\(' >&2; then
+  printf 'NET transport header declares forbidden runtime function\n' >&2
   exit 1
 fi
 

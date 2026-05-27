@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.7.0
+Reference version: NET.SPINE.8.0
 Authority: YAI repository
-Status: Local service lifecycle contract started
+Status: Localhost transport adapter contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -103,9 +103,11 @@ services.
 
 ### NET.SPINE.8 - Localhost Transport Adapter Skeleton
 
-Implement a localhost transport adapter skeleton with no live HTTP behavior.
-Add fixtures and tests for adapter configuration, unsupported endpoints and
-boundary errors.
+Add transport adapter descriptor types, transport fixtures and schema under
+`proto/`, and a static transport fixture validator. Link transport adapter
+descriptors to endpoint fixture ids. Create localhost, local IPC, LAN, remote
+and future transport vocabulary only; do not implement network IO, HTTP,
+probing, routing or live streaming.
 
 ### NET.SPINE.9 - Local IPC / Unix Socket Adapter Skeleton
 
@@ -247,7 +249,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.7.0
+Reference version: NET.SPINE.8.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

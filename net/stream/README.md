@@ -5,6 +5,9 @@ Owns stream event/envelope vocabulary and future stream runtime surfaces.
 Stream envelope v1 is represented in `include/yai/net/stream.h`. Fixtures live
 under `proto/fixtures/net/stream/`.
 
+Stream envelopes may later be moved through transport adapters, but NET.SPINE.8
+does not implement live streaming.
+
 Must not implement live transport, approve invocations, decide policy or make
 receipts authoritative.
 

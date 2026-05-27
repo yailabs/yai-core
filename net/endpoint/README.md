@@ -12,6 +12,8 @@ Endpoint fixture ids may be referenced by health reports.
 Endpoint descriptors may be lifecycle subjects, but endpoint lifecycle is not
 probed here.
 
+Endpoint fixture ids may be referenced by transport adapter descriptors.
+
 An endpoint is not authority.
 
 This area does not implement discovery, probing, routing or transport.

@@ -30,6 +30,7 @@
 #include "yai/net/receipt.h"
 #include "yai/net/stream.h"
 #include "yai/net/trace.h"
+#include "yai/net/transport.h"
 #include "yai/net/version.h"
 
 #endif
