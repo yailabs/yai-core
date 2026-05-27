@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.3.0
+Reference version: NET.SPINE.3R.0
 Authority: YAI repository
-Status: Node identity contract started
+Status: Proto topology realigned
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -46,16 +46,18 @@ CLORI as an external repository.
 
 ### NET.SPINE.1 - Canonical Terms + File/Header Discipline
 
-Add `work/protocols/net.md`, normalize public NET header naming and include
-discipline, add module area README discipline and update guard coverage. Keep
-NET as an integrated YAI module and do not implement transport, discovery or
-runtime behavior.
+Add canonical NET protocol vocabulary, normalize public NET header naming and
+include discipline, add module area README discipline and update guard coverage.
+NET.SPINE.3R moves the protocol vocabulary to `proto/net.md`. Keep NET as an
+integrated YAI module and do not implement transport, discovery or runtime
+behavior.
 
 ### NET.SPINE.2 - Stream Envelope Types + Fixtures
 
 Add canonical stream envelope types, stream event kind discipline, JSON
-fixtures under `work/protocols/fixtures/net/stream/` and static stream envelope
-checks. This wave does not implement live streaming or transport.
+fixtures and static stream envelope checks. NET.SPINE.3R moves the fixtures to
+`proto/fixtures/net/stream/`. This wave does not implement live streaming or
+transport.
 
 ### NET.SPINE.3 - Node Identity Types + Local Machine Projection
 
@@ -63,6 +65,12 @@ Add canonical NET node identity types, safe local machine projection
 vocabulary, node fixtures and schema/contract, and a node fixture validator.
 Link node identity with stream origin/target fields. Do not implement discovery
 or machine probing.
+
+### NET.SPINE.3R - Proto Topology Realignment
+
+Move NET protocol vocabulary, fixtures and schemas from `work/protocols` to
+`proto`. Remove `work/protocols` as an invalid protocol surface. Update guards
+and validators so future NET protocol material lands under `proto`.
 
 ### NET.SPINE.4 - Capability Advertisement Types + Registry Seed
 
@@ -234,7 +242,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.3.0
+Reference version: NET.SPINE.3R.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

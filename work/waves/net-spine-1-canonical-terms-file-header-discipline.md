@@ -11,7 +11,7 @@ Establish canonical NET terminology, public header naming discipline, module are
 - `net/*/README.md`
 - `tools/checks/check-net-headers.sh`
 - `tools/checks/check-net-boundary.sh`
-- `work/protocols/net.md`
+- `proto/net.md`
 - `work/spines/net-spine.md`
 - `Makefile`
 
@@ -21,7 +21,10 @@ Public NET headers use stable `YAI_NET_*_H` include guards, YAI-style header blo
 
 ## Terminology Source
 
-Canonical NET vocabulary lives at `work/protocols/net.md`.
+Canonical NET vocabulary lives at `proto/net.md`.
+
+Corrective note: NET.SPINE.3R moved protocol material from `work/protocols` to
+`proto`.
 
 ## Guard Additions
 

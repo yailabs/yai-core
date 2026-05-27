@@ -9,9 +9,9 @@ validation.
 ## Files Changed
 
 - `include/yai/net/stream.h`
-- `work/protocols/net.md`
-- `work/protocols/fixtures/net/stream/*.json`
-- `work/protocols/schemas/net-stream-envelope.v1.schema.json`
+- `proto/net.md`
+- `proto/fixtures/net/stream/*.json`
+- `proto/schemas/net-stream-envelope.v1.schema.json`
 - `tools/checks/check-net-stream-fixtures.py`
 - `tools/checks/check-net-boundary.sh`
 - `tools/checks/check-net-headers.sh`
@@ -33,7 +33,10 @@ validation.
 
 ## Schema Location
 
-`work/protocols/schemas/net-stream-envelope.v1.schema.json`
+`proto/schemas/net-stream-envelope.v1.schema.json`
+
+Corrective note: NET.SPINE.3R moved protocol material from `work/protocols` to
+`proto`.
 
 ## Guard Additions
 

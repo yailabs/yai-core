@@ -1,3 +1,5 @@
 # fixtures
 
-Fixture placeholders for future protocol and conformance cases.
+Canonical protocol fixture examples.
+
+- `net/` contains canonical NET fixture examples.

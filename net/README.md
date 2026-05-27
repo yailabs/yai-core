@@ -20,6 +20,7 @@ NET.SPINE.1 establishes canonical terms, public header discipline and module
 area README discipline. NET.SPINE.2 starts stream envelope contract material.
 NET.SPINE.3 starts node identity contract material. Discovery, transport,
 routing, server behavior, CLI behavior and CLORI code are not implemented.
+NET protocol vocabulary and fixtures live under `proto/`.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
 tree, fixture tree, benchmark tree or examples tree. Public headers live under

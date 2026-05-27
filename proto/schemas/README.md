@@ -1,3 +1,6 @@
 # schemas
 
-Schema placeholders for future protocol records.
+Canonical protocol schemas.
+
+- `net-stream-envelope.v1.schema.json`
+- `net-node-identity.v1.schema.json`

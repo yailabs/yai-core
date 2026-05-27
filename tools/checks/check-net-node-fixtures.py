@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-FIXTURE_DIR = ROOT / "work/protocols/fixtures/net/node"
+FIXTURE_DIR = ROOT / "proto/fixtures/net/node"
 
 EXPECTED_FILES = {
     "local-process.json",

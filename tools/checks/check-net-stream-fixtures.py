@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-FIXTURE_DIR = ROOT / "work/protocols/fixtures/net/stream"
+FIXTURE_DIR = ROOT / "proto/fixtures/net/stream"
 
 EXPECTED_EVENTS = {
     "request",

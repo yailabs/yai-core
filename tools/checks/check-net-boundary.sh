@@ -46,7 +46,7 @@ require_phrase() {
 
 require_dir "net"
 require_file "net/README.md"
-require_file "work/protocols/net.md"
+require_file "proto/net.md"
 
 for area in core registry stream node capability endpoint health transport route observe compat; do
   require_dir "net/$area"
@@ -67,23 +67,23 @@ for path in \
   include/yai/net/trace.h \
   include/yai/net/receipt.h \
   include/yai/net/metrics.h \
-  work/protocols/fixtures/net/stream/request.json \
-  work/protocols/fixtures/net/stream/complete.json \
-  work/protocols/fixtures/net/node/local-process.json \
-  work/protocols/fixtures/net/node/external-node.json \
-  work/protocols/schemas/net-stream-envelope.v1.schema.json \
-  work/protocols/schemas/net-node-identity.v1.schema.json \
+  proto/fixtures/net/stream/request.json \
+  proto/fixtures/net/stream/complete.json \
+  proto/fixtures/net/node/local-process.json \
+  proto/fixtures/net/node/external-node.json \
+  proto/schemas/net-stream-envelope.v1.schema.json \
+  proto/schemas/net-node-identity.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.3.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.3.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.3R.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.3R.0\n' >&2
   exit 1
 fi
 
-if ! grep -F '## Node Identity' work/protocols/net.md >/dev/null; then
-  printf 'work/protocols/net.md must define Node Identity\n' >&2
+if ! grep -F '## Node Identity' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Node Identity\n' >&2
   exit 1
 fi
 
@@ -95,6 +95,10 @@ for path in \
   net/benches \
   net/examples \
   net/Makefile \
+  work/protocols \
+  work/protocols/net.md \
+  work/protocols/fixtures \
+  work/protocols/schemas \
   clori \
   third_party/clori \
   vendor/clori \
@@ -108,7 +112,7 @@ done
 
 corpus="$(cat \
   net/README.md \
-  work/protocols/net.md \
+  proto/net.md \
   work/spines/net-spine.md \
   work/archive/architecture-snapshots/net-root-substrate.md \
   work/archive/engineering-snapshots/net-yai-boundary.md \
@@ -122,6 +126,24 @@ for phrase in \
   "CLORI executes neural computation."; do
   require_phrase "$corpus" "$phrase"
 done
+
+while IFS= read -r active_net_file; do
+  if [[ "$active_net_file" == tools/checks/check-net-boundary.sh ]]; then
+    continue
+  fi
+  if grep -n -E 'work/protocols/(net\.md|fixtures|schemas)' "$active_net_file" >/tmp/yai-net-old-protocol-refs.$$ 2>/dev/null; then
+    if [[ "$active_net_file" == work/waves/* ]] &&
+       grep -F 'Corrective note: NET.SPINE.3R moved protocol material' "$active_net_file" >/dev/null; then
+      rm -f /tmp/yai-net-old-protocol-refs.$$
+      continue
+    fi
+    cat /tmp/yai-net-old-protocol-refs.$$ >&2
+    rm -f /tmp/yai-net-old-protocol-refs.$$
+    printf 'NET protocol material must reference proto/, not work/protocols\n' >&2
+    exit 1
+  fi
+  rm -f /tmp/yai-net-old-protocol-refs.$$
+done < <(find net include/yai/net tools/checks proto work/spines work/waves -type f 2>/dev/null)
 
 for forbidden in \
   "NET owns case authority" \

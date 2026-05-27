@@ -9,9 +9,9 @@ discovery.
 ## Files Changed
 
 - `include/yai/net/node.h`
-- `work/protocols/net.md`
-- `work/protocols/fixtures/net/node/*.json`
-- `work/protocols/schemas/net-node-identity.v1.schema.json`
+- `proto/net.md`
+- `proto/fixtures/net/node/*.json`
+- `proto/schemas/net-node-identity.v1.schema.json`
 - `tools/checks/check-net-node-fixtures.py`
 - `tools/checks/check-net-boundary.sh`
 - `tools/checks/check-net-headers.sh`
@@ -33,7 +33,10 @@ discovery.
 
 ## Schema Location
 
-`work/protocols/schemas/net-node-identity.v1.schema.json`
+`proto/schemas/net-node-identity.v1.schema.json`
+
+Corrective note: NET.SPINE.3R moved protocol material from `work/protocols` to
+`proto`.
 
 ## Guard Additions
 
