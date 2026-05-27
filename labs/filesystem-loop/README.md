@@ -6,9 +6,10 @@ Purpose: validate that YAI can run a bounded filesystem case through
 command-surface checks, daemon smoke paths, pack fixture material, case
 residue, prompt evidence and provider-boundary posture.
 
-This lab is the source of truth for filesystem-loop validation. `runbook.md`
-owns the complete CLI procedure. `notebook.ipynb` is a short guided human demo
-that calls official commands instead of embedding automation scripts.
+This lab is the source of truth for filesystem-loop validation. `notebook.ipynb`
+is the complete manual operator notebook: build, install, daemon, case
+materialization, command-surface sweeps and hand-written prompt cells.
+`runbook.md` is the static terminal copy of the same flow.
 
 ## Canonical Files
 
@@ -30,7 +31,8 @@ that calls official commands instead of embedding automation scripts.
 - Case boundary and provider-boundary posture.
 - Prompt labs that preserve exact prompt text used against the case view.
 - Prompt/query catalog execution through `run.sh --prompt-id <id>`.
-- Notebook-guided inspection over available compact runs.
+- Notebook-guided manual execution over the full command surface.
+- Hand-written prompt cells that produce model output when a provider is bound.
 
 ## Protocol
 
@@ -53,7 +55,7 @@ runs/YYYYMMDD-<slug>/
   assets/
 ```
 
-Prompt text authority:
+Prompt catalog authority for scripted compact runs:
 
 ```text
 labs/filesystem-loop/prompts.json
@@ -62,7 +64,8 @@ labs/filesystem-loop/prompts.json
 `run.sh --list-prompts` lists catalog entries. `run.sh --prompt-id <id>`
 executes one prompt/query at a time, stores the resolved `assets/prompt.json`
 and `assets/prompt.txt`, then captures stdout, stderr and exit status in the
-run package.
+run package. The notebook keeps the important prompt text written directly in
+cells so an operator can run and inspect model output without opening the JSON.
 
 ## Inputs / Pack Fixture
 
@@ -107,8 +110,8 @@ Non-goals:
 | Prompted calls | 1 |
 | Model outputs | 0 |
 
-The root notebook demonstrates the current path with short, official commands.
-Use `runbook.md` for the full filesystem-loop terminal procedure.
+The root notebook is the full manual path with official commands and prompt
+cells. Use `runbook.md` when the same flow is needed as terminal text.
 
 ## RuntimeGraph Compatibility Notes
 
