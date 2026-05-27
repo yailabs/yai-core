@@ -1853,3 +1853,19 @@ The guard fails if active `docs/internal`, `docs/engineering`, `docs/spines`,
 `docs/labs` or `docs/lab-standards` roots return. It also verifies the compact
 architecture docs, `labs/`, `labs/standards`, `work/`, `work/spines` and
 `work/inventories/extraction-inventory.tsv`.
+
+## SPINE.45B Case Runtime Semantics Roadmap Rebase
+
+`tools/checks/check-case-runtime-semantics-roadmap.sh` validates the SPINE.45B
+roadmap/doctrine rebase:
+
+```bash
+make check-case-runtime-semantics-roadmap
+make check-docs
+```
+
+The guard checks bitemporal fact fields, ContextDelta, CaseModelSession, KV
+cache is not YAI memory, Native vs Attached Retrieval, Retrieval Provider
+Contract, Retrieval Receipt, Federated Candidate Normalization, External
+Candidate -> Case Import, Temporal Graph Revision, Graph Patch Operation,
+Dependency Closure, Counterfactual, SPINE.58H-R and SPINE.65A-G.

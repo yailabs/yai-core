@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze and SPINE.45A Documentation Root Canon Collapse. | SPINE.46 DuckDB Fact Plane Doctrine + Schema. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse and SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase. | SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -153,8 +153,565 @@ outputs and reports, and `work/` owns spines, waves, inventories, agent notes
 and archives. CLORI did not execute in this slot and remains out of scope for
 this delivery.
 
+SPINE.45B rebases the roadmap before DuckDB facts so facts, retrieval,
+compiled context, model-session state, graph revision and counterfactual
+semantics are first-class doctrine. No runtime behavior is implemented in this
+wave. SPINE.46 now starts as a bitemporal fact plane.
+
 Do not schedule future work with the old NEW numbering. The next active
 delivery is SPINE.46.
+
+## Case Runtime Semantics Doctrine
+
+YAI is not a RAG and not a chat memory system.
+
+YAI is a local case runtime that maintains:
+
+```text
+append-only history
+bitemporal facts
+typed graph dependencies
+RuntimeGraph working sets
+governed native and external retrieval
+compiled context
+model-session bindings
+validated model participation
+```
+
+Events are append-only. Facts are temporally scoped, provenance-bearing
+assertions. Graph corrections are append-only patches. RuntimeGraph computes
+over active case state. Retrieval candidates are not evidence until resolved.
+ContextFrame is not truth. ContextDelta is not memory. CaseModelSession is not
+authority. KV/cache state is runner-local optimization, not YAI memory.
+
+Canonical object taxonomy:
+
+```text
+Event:
+  Something that happened in the system: attempt, decision, receipt, review,
+  model output, replay, graph materialization, context compilation.
+
+Record:
+  Durable indexed residue in LMDB.
+
+Fact:
+  Temporally scoped, provenance-bearing assertion stored in DuckDB.
+
+Interpretation:
+  Semantic reconstruction by model, system or operator; not automatically truth.
+
+Graph relation:
+  Typed dependency, support, contradiction, provenance, branch or causal relation.
+
+RuntimeGraph node/edge:
+  In-memory computational shape loaded from graph relations.
+
+Retrieval candidate:
+  Candidate material found by native or external retrieval; not evidence yet.
+
+Projection:
+  Controlled consumer view.
+
+ContextFrame:
+  Temporary compiled model/operator/audit/debug context.
+
+ContextDelta:
+  Incremental patch against a prior valid context frame.
+
+CaseModelSession:
+  Binding among case, actor, model, runner, context state and policy scope.
+
+KV/cache state:
+  Runner-local optimization; never YAI truth, memory or provenance.
+```
+
+Updated operational chain:
+
+```text
+User Prompt
+→ HOT request/session/thread state
+→ Task / Intention Structure
+→ Case Scope / Actor Scope / Policy Scope
+→ Retrieval Plan
+→ Native Retrieval + External Retrieval candidates
+→ Retrieval Receipts
+→ Candidate Normalization / Dedupe
+→ RuntimeGraph Expansion
+→ DuckDB Fact Filtering
+→ LMDB Record Resolution
+→ Filesystem / Evidence Payload Fetch
+→ EvidenceFrame / RetrievalSourceFrame
+→ ContextFrame Base + Delta + Task Frame
+→ Model Runner
+→ Model Output / Patch Proposal / Retrieval Refinement Request
+→ Runtime Validation
+→ Records / Facts / Graph Relations / Receipts / Review Items
+```
+
+Compact version:
+
+```text
+Vector search proposes candidates.
+RuntimeGraph restores case meaning.
+DuckDB filters and scores structured facts.
+LMDB resolves durable records.
+Filesystem resolves payload evidence.
+Policy gates visibility and action.
+Context Compiler renders model-consumable context.
+The model proposes.
+The runtime validates.
+The case appends residue.
+```
+
+Text / Vector / Symbolic / Graph / Fact / Payload taxonomy:
+
+```text
+Text:
+  prompt, excerpt, rendered context, model response.
+
+Vector:
+  embedding, HNSW node, similarity candidate.
+
+Symbolic ID:
+  case_ref, event_ref, record_ref, fact_ref, node_ref, doc_ref, evidence_ref,
+  receipt_ref.
+
+Graph:
+  typed relation, dependency, support, contradiction, provenance, branch.
+
+Fact:
+  structured temporal assertion.
+
+Record:
+  durable indexed residue.
+
+Payload:
+  actual material such as PDF, email, contract, invoice, image, log or file.
+```
+
+Rule:
+
+```text
+Text is not truth.
+Vector is not evidence.
+Symbolic refs bind materials.
+Graph gives meaning.
+Facts make assertions queryable.
+Records preserve residue.
+Payloads preserve source material.
+```
+
+## Native / Attached / Federated Retrieval Doctrine
+
+Definitions:
+
+```text
+YAI native retrieval:
+  Retrieval built by YAI over case material already materialized inside the case.
+
+User attached retrieval:
+  User-provided RAG, vector DB, file index or knowledge base participating as
+  a candidate source.
+
+Organization attached retrieval:
+  Team/company retriever with stronger permissions, audit and redaction needs.
+
+External retrieval provider:
+  API, DMS, database search, email search, filesystem index or external search
+  service.
+
+Federated retrieval:
+  Controlled orchestration across YAI native HNSW, user RAG, org RAG,
+  filesystem index, database retriever or external provider.
+
+Managed import from retrieval:
+  Explicit promotion of external result into durable case material.
+```
+
+Canonical rule:
+
+```text
+A user RAG can participate in a case.
+It cannot become the case.
+```
+
+Native retrieval finds YAI-owned candidates. External retrieval finds
+user/provider-owned candidates. Neither is truth. Neither is policy authority.
+Neither may directly justify a YAI decision. All retrieval output must be
+resolved through case scope, graph, facts, policy, provenance and evidence
+before it can enter a model context or a case decision.
+
+External retrieval output may be candidate context. It becomes durable case
+material only through explicit import, receipt, fact assertion and graph
+binding.
+
+Correct chain:
+
+```text
+User RAG
+→ Retrieval Receipt
+→ Normalization
+→ Policy / Scope Gate
+→ Graph / Fact Resolution
+→ Evidence Candidate Pack
+→ Context Compiler
+→ Model Context
+```
+
+Forbidden chain:
+
+```text
+User RAG → prompt model
+```
+
+Planned RetrievalProvider contract fields:
+
+```text
+provider_ref
+provider_kind
+owner_ref
+case_scope
+subject_scope
+trust_level
+read_policy
+redaction_policy
+result_contract
+supports_filters
+supports_document_fetch
+supports_snippet_fetch
+supports_metadata
+supports_scores
+supports_embeddings
+supports_provenance
+supports_receipts
+supports_incremental_sync
+```
+
+Trust levels:
+
+```text
+untrusted
+attached_low_trust
+case_scoped
+organization_trusted
+system_native
+```
+
+Planned RetrievalResult normalized schema fields:
+
+```text
+result_ref
+provider_ref
+provider_kind
+query_ref
+score
+source_uri
+external_doc_ref
+snippet
+metadata
+returned_at
+provider_claimed_provenance
+yai_resolution_status
+```
+
+Resolution statuses:
+
+```text
+resolved
+unresolved
+rejected_by_policy
+outside_case_scope
+needs_import
+needs_human_review
+evidence_candidate
+claim_candidate
+duplicate_of_existing
+stale
+redacted
+unsafe
+```
+
+Planned Retrieval Receipt fields:
+
+```text
+query_ref
+provider_ref
+case_ref
+actor_ref
+timestamp
+query_text
+query_embedding_ref
+filters_applied
+results_returned
+results_selected
+results_rejected
+rejection_reasons
+policy_scope
+redaction_scope
+cost
+latency
+provenance_quality
+selected_for_context
+promoted_to_case_material
+```
+
+Behavior facts to track later:
+
+```text
+retriever_latency
+retriever_recall_estimate
+retriever_noise_rate
+retriever_scope_violation
+retriever_duplicate_rate
+retriever_selected_result_rate
+retriever_evidence_quality
+retriever_policy_rejection_rate
+retriever_context_usefulness
+retriever_cost
+retriever_staleness_rate
+```
+
+## Context Residency Doctrine
+
+A model must not reconstruct the active case from scratch for every request.
+
+YAI maintains case-resident runtime state, compiled context frames and
+incremental context deltas. A model runner may reuse prefix, session or KV state
+only when the context residency contract proves that case, actor, policy,
+model, runner and freshness boundaries still match.
+
+KV/cache state is an optimization, not memory, truth, authority or provenance.
+
+Hierarchy:
+
+```text
+Durable Case Truth:
+  Journal
+  LMDB
+  Ladybug
+  DuckDB
+  filesystem payloads
+
+Runtime Case State:
+  Hot State
+  RuntimeGraph
+  active facts
+  policy scope
+  active actor/task/thread
+
+Context State:
+  ContextFrame base
+  ContextFrame delta
+  task frame
+  evidence frame
+  retrieval source frame
+  patch frame
+  freshness metadata
+
+Model Session State:
+  prompt prefix
+  active instruction frame
+  case summary frame
+  tool/result frame
+  runner session id
+  KV cache if supported
+
+Model Tokens:
+  actual input tokens consumed by transformer
+```
+
+Planned ContextFrame fields:
+
+```text
+context_frame_id
+case_ref
+actor_ref
+consumer_kind
+policy_scope
+source_record_refs
+source_fact_refs
+source_graph_refs
+retrieval_source_refs
+token_budget
+rendered_sections
+freshness
+```
+
+Planned ContextDelta fields:
+
+```text
+delta_id
+base_frame_id
+changed_records
+changed_facts
+changed_graph_nodes
+changed_retrieval_sources
+invalidated_sections
+new_sections
+```
+
+Planned CaseModelSession fields:
+
+```text
+session_id
+case_ref
+actor_ref
+model_ref
+runner_ref
+provider_ref
+base_frame_id
+latest_frame_id
+policy_scope
+retrieval_provider_refs
+cache_policy
+session_status
+```
+
+Runner KV / cache fields:
+
+```text
+runner_cache_id
+model_ref
+runner_ref
+context_hash
+prefix_hash
+tokenizer_profile
+valid_for_frame_id
+stale
+```
+
+Invalidation triggers:
+
+```text
+case_ref mismatch
+actor_ref mismatch
+policy_scope changed
+redaction changed
+fact revision
+graph patch
+retrieval provider trust changed
+model_ref changed
+runner_ref changed
+tokenizer/template changed
+context hash mismatch
+```
+
+## Temporal Graph Revision / Counterfactual Doctrine
+
+Canonical history is not destructively modified. Facts are revised. Graph is
+patched through append-only operations. Branches are derived worlds of the
+case. Counterfactuals are governed simulations, not historical corrections. The
+model proposes; the runtime and case validate.
+
+Patch operations:
+
+```text
+assert
+retract
+supersede
+annotate
+invalidate
+branch
+merge_request
+correction
+counterfactual_intervention
+```
+
+Revision statuses:
+
+```text
+current
+superseded
+retracted
+stale
+contested
+historical_only
+branch_only
+counterfactual
+needs_review
+```
+
+Dependency closure:
+
+```text
+changed fact/relation/patch
+→ affected facts
+→ affected graph relations
+→ affected projections
+→ affected ContextFrames
+→ affected memory units
+→ affected retrieval units
+→ affected decisions/model outputs
+```
+
+Computation rule:
+
+```text
+Safety-critical invalidation is synchronous.
+Analytics, retrieval, memory and report recomputation may be asynchronous but
+must be stale-aware.
+```
+
+## Computational Cost Doctrine
+
+Retrieval:
+
+```text
+Native HNSW is sublinear approximate candidate retrieval but has build/update
+cost and memory overhead. External retrieval has provider latency, cost and
+trust overhead. Federated retrieval should prefer parallel provider calls later
+but may be deterministic/sequential in v0.
+```
+
+RuntimeGraph:
+
+```text
+Traversal cost is O(nodes_visited + edges_scanned). It must be bounded by
+max_depth, max_edges, case scope, subject scope and edge-kind filters.
+```
+
+DuckDB:
+
+```text
+Excellent for analytical facts, reports, scoring and batch filtering. It should
+not become the per-token hot path.
+```
+
+Context Compiler:
+
+```text
+Main costs are candidate count, payload fetch, token estimation, dedupe,
+ranking and packing. Hard filters must run before expensive payload fetch and
+rendering.
+```
+
+Model runner:
+
+```text
+Main costs are prefill tokens, decode tokens, KV cache memory and backend
+speed. Reduce input tokens first; then optimize generation.
+```
+
+## Case Runtime Invariants
+
+```text
+Events are append-only.
+Facts are bitemporal, revisionable assertions.
+Graph corrections are patches, not destructive edits.
+RuntimeGraph is computation, not durable truth.
+Retrieval candidates are not evidence until resolved.
+External retrieval cannot enter model context without receipt/scope/provenance gating.
+External retrieval cannot become case material without explicit import.
+ContextFrame is not truth.
+ContextDelta is not memory.
+CaseModelSession is not authority.
+KV cache is not YAI memory.
+A model cannot approve its own operation.
+A model proposal is not execution.
+Vector proximity cannot justify a decision.
+Policy gates before context inclusion and before action.
+Revision invalidates dependent projections/context/memory/retrieval where needed.
+```
 
 ## Canonical Macro Labels
 
@@ -323,8 +880,9 @@ SPINE.44B CLI Review Interaction Surface                             done
 SPINE.44C Review Loop Test Matrix + Lab Alignment                    done
 SPINE.45  Graph + RuntimeGraph Freeze                                done
 SPINE.45A Documentation Root Canon Collapse                           done
+SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase done
 
-SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
+SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              planned
 SPINE.47  Receipt / Decision / Projection Facts                     planned
 SPINE.48  Model Behavior / Policy Outcome Facts                     planned
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
@@ -346,6 +904,17 @@ SPINE.58D HNSW Candidate -> RuntimeGraph Expansion                  planned
 SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
 SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
 SPINE.58G Context Compiler / Retrieval Freeze                       planned
+SPINE.58H Native vs Attached Retrieval Doctrine                      planned
+SPINE.58I Retrieval Provider Contract                                planned
+SPINE.58J Retrieval Receipt Schema                                   planned
+SPINE.58K Federated Candidate Normalization / Dedupe                 planned
+SPINE.58L Retrieval Policy / Scope Gate                              planned
+SPINE.58M External Candidate -> Case Import Boundary                 planned
+SPINE.58N Context Residency Doctrine                                 planned
+SPINE.58O ContextFrame Base / Delta Lifecycle                        planned
+SPINE.58P CaseModelSession Binding                                   planned
+SPINE.58Q Context State Invalidation                                 planned
+SPINE.58R Incremental + Federated Model-Visible Context Smoke        planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned
@@ -354,6 +923,13 @@ SPINE.62  Policy / Subject Scoped Memory                            planned
 SPINE.63  Memory Freshness / Confidence / Contradiction             planned
 SPINE.64  Memory Projection Rules + Quality Facts                   planned
 SPINE.65  Memory Consolidation Freeze                               planned
+SPINE.65A Temporal Graph Revision Doctrine                           planned
+SPINE.65B Graph Patch Operation Schema                               planned
+SPINE.65C Retraction / Supersession Fact Binding                     planned
+SPINE.65D Dependency Closure / Projection Invalidation               planned
+SPINE.65E Branch / Fork / Merge Case Graph Semantics                 planned
+SPINE.65F Counterfactual Case World Harness                          planned
+SPINE.65G Graph Revision / Counterfactual Freeze                     planned
 
 SPINE.66  Cross-Plane Reconcile Doctrine                            planned
 SPINE.67  Hot vs Record Consistency                                 planned
@@ -422,6 +998,58 @@ SPINE.117 Core Conformance Harness                                  planned
 SPINE.118 Console Projection Handoff Prep                           planned
 SPINE.119 YAI-dev Harness Prep                                      planned
 SPINE.120 Local Core Milestone Freeze                               planned
+```
+
+SPINE.45B roadmap rebase notes:
+
+```text
+SPINE.46 starts DuckDB as a bitemporal fact plane.
+SPINE.58A-G define native Context Compiler / Retrieval.
+SPINE.58H-R extend retrieval to external/federated sources and define context
+residency so models do not reconstruct the active case from scratch every turn.
+SPINE.65A-G must land before Cross-Plane Reconcile because reconcile must know
+revision, branch and counterfactual posture.
+```
+
+SPINE.46 common fact columns:
+
+```text
+fact_id
+case_ref
+subject_ref
+asserted_by_event_ref
+source_record_refs
+source_graph_refs
+evidence_refs
+transaction_time
+valid_time_start
+valid_time_end
+known_at
+status
+revision_of
+superseded_by
+retracted_by
+confidence
+authority_scope
+```
+
+Rule:
+
+```text
+A fact is not just a row.
+A fact is a temporally scoped, provenance-bearing assertion.
+```
+
+SPINE.66-72 reconcile now includes:
+
+```text
+record/fact revision consistency
+graph patch consistency
+projection invalidation consistency
+memory basis after retraction
+retrieval candidate provenance consistency
+context session invalidation consistency
+counterfactual branch isolation
 ```
 
 ## Context Compiler / Retrieval Doctrine

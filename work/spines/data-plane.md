@@ -123,8 +123,9 @@ SPINE.44B CLI Review Interaction Surface                             done
 SPINE.44C Review Loop Test Matrix + Lab Alignment                    done
 SPINE.45  Graph + RuntimeGraph Freeze                                done
 SPINE.45A Documentation Root Canon Collapse                           done
+SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase done
 
-SPINE.46  DuckDB Fact Plane Doctrine + Schema                       planned
+SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              planned
 SPINE.47  Receipt / Decision / Projection Facts                     planned
 SPINE.48  Model Behavior / Policy Outcome Facts                     planned
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
@@ -146,6 +147,17 @@ SPINE.58D HNSW Candidate -> RuntimeGraph Expansion                  planned
 SPINE.58E Context Assembly / Rerank / Token Budget Packing          planned
 SPINE.58F Retrieval Residue + Cost / Recall Facts                   planned
 SPINE.58G Context Compiler / Retrieval Freeze                       planned
+SPINE.58H Native vs Attached Retrieval Doctrine                      planned
+SPINE.58I Retrieval Provider Contract                                planned
+SPINE.58J Retrieval Receipt Schema                                   planned
+SPINE.58K Federated Candidate Normalization / Dedupe                 planned
+SPINE.58L Retrieval Policy / Scope Gate                              planned
+SPINE.58M External Candidate -> Case Import Boundary                 planned
+SPINE.58N Context Residency Doctrine                                 planned
+SPINE.58O ContextFrame Base / Delta Lifecycle                        planned
+SPINE.58P CaseModelSession Binding                                   planned
+SPINE.58Q Context State Invalidation                                 planned
+SPINE.58R Incremental + Federated Model-Visible Context Smoke        planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned
@@ -154,6 +166,13 @@ SPINE.62  Policy / Subject Scoped Memory                            planned
 SPINE.63  Memory Freshness / Confidence / Contradiction             planned
 SPINE.64  Memory Projection Rules + Quality Facts                   planned
 SPINE.65  Memory Consolidation Freeze                               planned
+SPINE.65A Temporal Graph Revision Doctrine                           planned
+SPINE.65B Graph Patch Operation Schema                               planned
+SPINE.65C Retraction / Supersession Fact Binding                     planned
+SPINE.65D Dependency Closure / Projection Invalidation               planned
+SPINE.65E Branch / Fork / Merge Case Graph Semantics                 planned
+SPINE.65F Counterfactual Case World Harness                          planned
+SPINE.65G Graph Revision / Counterfactual Freeze                     planned
 
 SPINE.66  Cross-Plane Reconcile Doctrine                            planned
 SPINE.67  Hot vs Record Consistency                                 planned
@@ -202,6 +221,51 @@ future and Ladybug future persistence integration remain out of scope.
 `review_request`, `review_decision` and `control_pending` are graph-visible
 when actual refs exist; approve is graph/query visible and deny, defer and
 quarantine preserve no-execution posture.
+
+SPINE.45B rebases the next data-plane blocks before SPINE.46:
+
+```text
+SPINE.46 starts DuckDB as a bitemporal fact plane.
+SPINE.58A-G define native Context Compiler / Retrieval.
+SPINE.58H-R extend retrieval to external/federated sources and define context
+residency so models do not reconstruct the active case from scratch every turn.
+SPINE.65A-G must land before Cross-Plane Reconcile because reconcile must know
+revision, branch and counterfactual posture.
+```
+
+SPINE.46 common fact columns:
+
+```text
+fact_id
+case_ref
+subject_ref
+asserted_by_event_ref
+source_record_refs
+source_graph_refs
+evidence_refs
+transaction_time
+valid_time_start
+valid_time_end
+known_at
+status
+revision_of
+superseded_by
+retracted_by
+confidence
+authority_scope
+```
+
+Rule:
+
+```text
+A fact is not just a row.
+A fact is a temporally scoped, provenance-bearing assertion.
+```
+
+SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
+consistency, projection invalidation consistency, memory basis after
+retraction, retrieval candidate provenance consistency, context session
+invalidation consistency and counterfactual branch isolation.
 
 ## Hot Plane v0
 

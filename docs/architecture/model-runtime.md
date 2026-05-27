@@ -25,3 +25,15 @@ future runtime work. CLORI is a possible future or parallel native neural
 execution component; no CLORI implementation is claimed in this repository
 state.
 
+## Context Residency
+
+A model must not reconstruct the active case from scratch for every request.
+YAI plans ContextFrame base/delta state, ContextDelta invalidation,
+CaseModelSession binding and runner KV/cache boundaries.
+
+CaseModelSession binds case, actor, model, runner, provider, context frame,
+policy scope, retrieval providers and cache policy. It is not authority.
+
+Runner KV/cache state is an optimization scoped by model, runner, tokenizer,
+context hash, prefix hash and valid frame id. KV cache is not YAI memory,
+truth, authority or provenance.

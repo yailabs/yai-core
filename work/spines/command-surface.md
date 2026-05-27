@@ -1230,3 +1230,17 @@ make check-doc-root-canon
 `make check-docs` includes `check-doc-root-canon`. The target verifies that
 `docs/` is curated architecture documentation only, `labs/` is the lab root and
 `work/` owns spines, waves, inventories and archives.
+
+## SPINE.45B Case Runtime Semantics Roadmap Commands
+
+SPINE.45B adds no `yai` commands. It adds one roadmap/doctrine validation
+target:
+
+```bash
+make check-case-runtime-semantics-roadmap
+```
+
+`make check-docs` includes `check-case-runtime-semantics-roadmap`. The target
+verifies bitemporal fact doctrine, native/attached/federated retrieval,
+ContextDelta, CaseModelSession, KV/cache boundary and temporal graph revision
+roadmap terms.

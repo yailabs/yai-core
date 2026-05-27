@@ -24,8 +24,24 @@ relations that can be rebuilt from durable planes.
 
 ## Planned Planes
 
-DuckDB facts are planned for analytical facts, not record truth. HNSW and
-retrieval are planned candidate-selection surfaces, not graph truth. Context
-Compiler is planned as a controlled rendering surface over case material, not a
-replacement for projection, policy or memory.
+DuckDB facts are planned for analytical facts, not record truth. SPINE.46 now
+starts as DuckDB Fact Plane Doctrine + Bitemporal Schema: a fact is not just a
+row, it is a temporally scoped, provenance-bearing assertion with
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
+`revision_of`, `superseded_by` and `retracted_by` posture.
 
+HNSW and retrieval are planned candidate-selection surfaces, not graph truth.
+Native retrieval, attached retrieval and federated retrieval produce retrieval
+candidates. Retrieval candidates are not evidence until resolved. External
+retrieval cannot enter model context without receipt/scope/provenance gating,
+and external retrieval cannot become case material without explicit import.
+
+Context Compiler is planned as a controlled rendering surface over case
+material, not a replacement for projection, policy or memory. ContextFrame is
+not truth. ContextDelta is not memory. CaseModelSession is not authority. KV
+cache is not YAI memory.
+
+Graph corrections are planned as append-only patches, not destructive edits.
+Temporal Graph Revision, Graph Patch Operation, Dependency Closure and
+Counterfactual case branches must remain stale-aware so projections, context,
+memory, retrieval and reconcile can invalidate dependent material correctly.

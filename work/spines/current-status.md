@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.45A Documentation Root Canon Collapse.
+Status: SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase.
 
 ## Completed Foundation
 
@@ -187,6 +187,7 @@ SPINE.44B CLI Review Interaction Surface completed.
 SPINE.44C Review Loop Test Matrix + Lab Alignment completed.
 SPINE.45 Graph + RuntimeGraph Freeze completed.
 SPINE.45A Documentation Root Canon Collapse completed.
+SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -194,12 +195,15 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.45A Documentation Root Canon Collapse completed. `docs/` is curated
-architecture documentation only. `labs/` owns experiments, runbooks, outputs
-and reports. `work/` owns spines, waves, inventories, repo-readiness notes,
-agent notes and archives. SPINE.45 remains the graph/runtimegraph freeze.
+SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency
+Roadmap Rebase completed. SPINE.46 is now DuckDB Fact Plane Doctrine +
+Bitemporal Schema. The roadmap now treats facts as temporally scoped,
+provenance-bearing assertions, retrieval as native/attached/federated
+candidate sourcing, ContextFrame/ContextDelta/CaseModelSession as planned
+context residency boundaries, KV cache as not YAI memory, and temporal graph
+revision/counterfactuals as append-only future graph semantics.
 
-SPINE.46 DuckDB Fact Plane Doctrine + Schema.
+SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,
