@@ -46,6 +46,7 @@ require_phrase() {
 
 require_dir "net"
 require_file "net/README.md"
+require_file "work/protocols/net.md"
 
 for area in core registry stream node capability endpoint health transport route observe compat; do
   require_dir "net/$area"
@@ -70,6 +71,11 @@ for path in \
   require_file "$path"
 done
 
+if ! grep -Fx 'Reference version: NET.SPINE.1.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.1.0\n' >&2
+  exit 1
+fi
+
 for path in \
   net/docs \
   net/src \
@@ -78,6 +84,10 @@ for path in \
   net/benches \
   net/examples \
   net/Makefile \
+  clori \
+  third_party/clori \
+  vendor/clori \
+  external/clori \
   docs/""spines/net-spine.md \
   docs/archive/engineering/waves/net-spine-0-root-component-scaffold-boundary-guard.md \
   docs/""engineering/net-yai-boundary.md \
@@ -87,6 +97,7 @@ done
 
 corpus="$(cat \
   net/README.md \
+  work/protocols/net.md \
   work/spines/net-spine.md \
   work/archive/architecture-snapshots/net-root-substrate.md \
   work/archive/engineering-snapshots/net-yai-boundary.md \

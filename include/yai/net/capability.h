@@ -1,3 +1,20 @@
+/*
+ * YAI - NET capability vocabulary
+ *
+ * Purpose:
+ *   Names advertised external-node capability kinds.
+ *
+ * Ownership:
+ *   Public NET capability kind enum.
+ *
+ * Boundary:
+ *   Capability names describe what a node can do; they do not approve use,
+ *   register providers or vendor external projects.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_CAPABILITY_H
 #define YAI_NET_CAPABILITY_H
 

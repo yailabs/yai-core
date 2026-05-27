@@ -1,3 +1,20 @@
+/*
+ * YAI - NET umbrella header
+ *
+ * Purpose:
+ *   Provides the public NET scaffold include surface.
+ *
+ * Ownership:
+ *   Umbrella include for public NET vocabulary headers.
+ *
+ * Boundary:
+ *   This header contains no runtime behavior, global state, transport,
+ *   discovery or authority implementation.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_NET_H
 #define YAI_NET_NET_H
 

@@ -1,3 +1,20 @@
+/*
+ * YAI - NET metric vocabulary
+ *
+ * Purpose:
+ *   Names seed metrics for future NET observation.
+ *
+ * Ownership:
+ *   Public NET metric name enum.
+ *
+ * Boundary:
+ *   Metric names do not implement collection and do not decide control
+ *   outcomes.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_METRICS_H
 #define YAI_NET_METRICS_H
 

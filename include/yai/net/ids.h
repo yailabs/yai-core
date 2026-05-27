@@ -1,3 +1,20 @@
+/*
+ * YAI - NET id vocabulary
+ *
+ * Purpose:
+ *   Provides minimal typed wrappers for NET public identifiers.
+ *
+ * Ownership:
+ *   Public NET id wrapper vocabulary.
+ *
+ * Boundary:
+ *   These wrappers do not generate ids, validate authority or expose
+ *   implementation storage.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_IDS_H
 #define YAI_NET_IDS_H
 

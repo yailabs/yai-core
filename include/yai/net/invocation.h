@@ -1,3 +1,20 @@
+/*
+ * YAI - NET invocation vocabulary
+ *
+ * Purpose:
+ *   Names future invocation lifecycle states through NET surfaces.
+ *
+ * Ownership:
+ *   Public NET invocation state enum.
+ *
+ * Boundary:
+ *   Invocation state does not implement routing and is not a YAI authority
+ *   decision.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_INVOCATION_H
 #define YAI_NET_INVOCATION_H
 

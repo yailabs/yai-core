@@ -1,3 +1,20 @@
+/*
+ * YAI - NET endpoint vocabulary
+ *
+ * Purpose:
+ *   Names endpoint kinds for future NET communication paths.
+ *
+ * Ownership:
+ *   Public NET endpoint kind enum.
+ *
+ * Boundary:
+ *   Endpoint vocabulary does not connect, listen, bind, discover or approve
+ *   operations.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_ENDPOINT_H
 #define YAI_NET_ENDPOINT_H
 

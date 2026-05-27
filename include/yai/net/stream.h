@@ -1,3 +1,20 @@
+/*
+ * YAI - NET stream vocabulary
+ *
+ * Purpose:
+ *   Names stream event kinds moved through future NET runtime surfaces.
+ *
+ * Ownership:
+ *   Public NET stream event kind enum.
+ *
+ * Boundary:
+ *   Stream events move data; they do not approve invocations or implement live
+ *   streaming.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_STREAM_H
 #define YAI_NET_STREAM_H
 

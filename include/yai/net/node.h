@@ -1,3 +1,20 @@
+/*
+ * YAI - NET node vocabulary
+ *
+ * Purpose:
+ *   Names node postures for local and external capability participants.
+ *
+ * Ownership:
+ *   Public NET node kind enum.
+ *
+ * Boundary:
+ *   Node vocabulary does not discover LAN nodes, grant trust or assign YAI
+ *   authority.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_NODE_H
 #define YAI_NET_NODE_H
 

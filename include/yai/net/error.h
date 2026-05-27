@@ -1,3 +1,19 @@
+/*
+ * YAI - NET error vocabulary
+ *
+ * Purpose:
+ *   Names canonical NET scaffold status and boundary errors.
+ *
+ * Ownership:
+ *   Public NET status enum.
+ *
+ * Boundary:
+ *   NET errors do not encode YAI policy decisions or runtime authority.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_ERROR_H
 #define YAI_NET_ERROR_H
 

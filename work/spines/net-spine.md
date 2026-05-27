@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.0.3
+Reference version: NET.SPINE.1.0
 Authority: YAI repository
-Status: Integrated module topology realigned
+Status: Canonical terms and header discipline started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -46,9 +46,10 @@ CLORI as an external repository.
 
 ### NET.SPINE.1 - Canonical Terms + File/Header Discipline
 
-Add canonical term mapping across docs and headers, then wire guard coverage for
-file placement, include guards and public/private header posture. Connect NET
-terms to `interfaces/transports` vocabulary without moving interface contracts.
+Add `work/protocols/net.md`, normalize public NET header naming and include
+discipline, add module area README discipline and update guard coverage. Keep
+NET as an integrated YAI module and do not implement transport, discovery or
+runtime behavior.
 
 ### NET.SPINE.2 - Stream Envelope Types + Fixtures
 
@@ -232,7 +233,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.0.3
+Reference version: NET.SPINE.1.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

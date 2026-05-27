@@ -7,10 +7,18 @@ YAI controls authority.
 NET moves streams.
 External nodes execute capabilities.
 
+CLORI extension:
+YAI controls authority.
+NET moves streams.
+CLORI executes neural computation.
+
 ## Status
 
-NET is an integrated scaffold. Discovery is not implemented. Transport is not
-implemented. Routing is not implemented. External nodes are planned.
+Current status: scaffold.
+
+NET.SPINE.1 establishes canonical terms, public header discipline and module
+area README discipline. Discovery, transport, routing, server behavior, CLI
+behavior and CLORI code are not implemented.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
 tree, fixture tree, benchmark tree or examples tree. Public headers live under
@@ -36,11 +44,13 @@ compat/      future external node compatibility
 
 ```sh
 make net-info
+make check-net-headers
 make check-net-boundary
 ```
 
 ## Non-Goals
 
-NET.SPINE.0R does not implement LAN discovery, remote transport, local socket
+NET.SPINE.1 does not implement LAN discovery, remote transport, local socket
 transport, HTTP behavior, routing behavior, server behavior, CLI behavior or
-CLORI support. It realigns the scaffold to YAI's integrated module topology.
+CLORI support. It keeps NET as an integrated module, not a standalone
+repository.

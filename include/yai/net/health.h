@@ -1,3 +1,19 @@
+/*
+ * YAI - NET health vocabulary
+ *
+ * Purpose:
+ *   Names future health, readiness and liveness states.
+ *
+ * Ownership:
+ *   Public NET health state enum.
+ *
+ * Boundary:
+ *   Health vocabulary does not implement probes and does not authorize use.
+ *
+ * Status:
+ *   scaffold
+ */
+
 #ifndef YAI_NET_HEALTH_H
 #define YAI_NET_HEALTH_H
 
