@@ -24,6 +24,7 @@ required_headers=(
   include/yai/net/endpoint.h
   include/yai/net/health.h
   include/yai/net/invocation.h
+  include/yai/net/lifecycle.h
   include/yai/net/trace.h
   include/yai/net/receipt.h
   include/yai/net/metrics.h
@@ -250,6 +251,49 @@ done
 
 if strip_comments "$health_header" | grep -n -E '\b(probe|health_check_run|connect|listen|accept|bind|socket|http|route|authorize|discover)[[:space:]]*\(' >&2; then
   printf 'NET health header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
+if ! grep -F '#include "yai/net/lifecycle.h"' include/yai/net/net.h >/dev/null; then
+  printf 'NET umbrella header must include lifecycle.h\n' >&2
+  exit 1
+fi
+
+lifecycle_header="include/yai/net/lifecycle.h"
+
+for required_lifecycle_symbol in \
+  yai_net_lifecycle_action_t \
+  yai_net_lifecycle_state_t \
+  yai_net_lifecycle_subject_kind_t \
+  YAI_NET_LIFECYCLE_ACTION_DECLARE \
+  YAI_NET_LIFECYCLE_ACTION_PREPARE \
+  YAI_NET_LIFECYCLE_ACTION_START \
+  YAI_NET_LIFECYCLE_ACTION_STOP \
+  YAI_NET_LIFECYCLE_ACTION_RESTART \
+  YAI_NET_LIFECYCLE_ACTION_STATUS \
+  YAI_NET_LIFECYCLE_ACTION_RETIRE \
+  YAI_NET_LIFECYCLE_STATE_UNKNOWN \
+  YAI_NET_LIFECYCLE_STATE_DECLARED \
+  YAI_NET_LIFECYCLE_STATE_PREPARING \
+  YAI_NET_LIFECYCLE_STATE_STARTING \
+  YAI_NET_LIFECYCLE_STATE_RUNNING \
+  YAI_NET_LIFECYCLE_STATE_STOPPING \
+  YAI_NET_LIFECYCLE_STATE_STOPPED \
+  YAI_NET_LIFECYCLE_STATE_FAILED \
+  YAI_NET_LIFECYCLE_STATE_RETIRED \
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_NODE \
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_ENDPOINT \
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_CAPABILITY \
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_SERVICE \
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_EXTERNAL; do
+  if ! grep -q "$required_lifecycle_symbol" "$lifecycle_header"; then
+    printf 'NET lifecycle header missing required symbol: %s\n' "$required_lifecycle_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$lifecycle_header" | grep -n -E '\b(start_service|stop_service|restart_service|spawn|exec|fork|kill|system|popen|connect|listen|accept|bind|socket|probe|route)[[:space:]]*\(' >&2; then
+  printf 'NET lifecycle header declares forbidden runtime function\n' >&2
   exit 1
 fi
 

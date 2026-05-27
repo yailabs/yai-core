@@ -9,6 +9,9 @@ Endpoint descriptors can refer to node fixture ids and capability fixture ids.
 
 Endpoint fixture ids may be referenced by health reports.
 
+Endpoint descriptors may be lifecycle subjects, but endpoint lifecycle is not
+probed here.
+
 An endpoint is not authority.
 
 This area does not implement discovery, probing, routing or transport.

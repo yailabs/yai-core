@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.6.0
+Reference version: NET.SPINE.7.0
 Authority: YAI repository
-Status: Health/readiness/liveness contract started
+Status: Local service lifecycle contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -95,8 +95,11 @@ live probing, discovery, routing or transport.
 
 ### NET.SPINE.7 - Local Service Lifecycle Contract
 
-Create lifecycle contract docs and types for service status handoff. Add guards
-that prevent `system/` from becoming a generic process supervisor through NET.
+Add lifecycle request/report types, lifecycle fixtures and schemas under
+`proto/`, and a static lifecycle fixture validator. Link lifecycle material to
+node, endpoint and capability fixture ids where applicable. Create lifecycle
+vocabulary only; do not start, stop, supervise, probe, route or transport
+services.
 
 ### NET.SPINE.8 - Localhost Transport Adapter Skeleton
 
@@ -244,7 +247,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.6.0
+Reference version: NET.SPINE.7.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

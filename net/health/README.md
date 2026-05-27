@@ -9,6 +9,9 @@ Health reports can refer to node, endpoint and capability fixture ids.
 
 Health is observation/declaration, not authority.
 
+Health reports and lifecycle reports are separate; health describes
+readiness/liveness, lifecycle describes service state.
+
 This area does not implement live probing, routing, discovery or transport.
 
 Current status: scaffold.

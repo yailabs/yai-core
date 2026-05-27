@@ -200,3 +200,35 @@ health, liveness, readiness, capability_readiness, endpoint_reachability.
 
 Required health subject kinds:
 node, endpoint, capability, transport, external.
+
+## Local Service Lifecycle
+
+A lifecycle request describes intent; it does not execute anything by itself. A
+lifecycle report describes declared or observed state; it is not authority. NET
+may represent lifecycle material for local services later. YAI remains
+responsible for deciding whether a lifecycle action is allowed. This wave does
+not start, stop, restart, supervise, probe or route services. CLORI may later
+be controlled through lifecycle-compatible surfaces, but no CLORI behavior is
+implemented here.
+
+- lifecycle request: Versioned intent material for a lifecycle action. It does not execute work.
+- lifecycle report: Versioned state material for a lifecycle subject. It is not authority.
+- lifecycle action: One of declare, prepare, start, stop, restart, status or retire.
+- lifecycle state: One of unknown, declared, preparing, starting, running, stopping, stopped, failed or retired.
+- lifecycle subject: Node, endpoint, capability, service or external material referenced by lifecycle material.
+- declared service: Service represented as known seed material. It is not running proof.
+- prepared service: Service represented as prepared for a future operation. It is not permission to start.
+- running service: Service represented as running by declared or observed state. It is not authority.
+- stopped service: Service represented as stopped. It does not decide recovery policy.
+- failed service: Service represented as failed. It does not decide fallback policy.
+- retired service: Service represented as no longer active. It is not deletion.
+- service lifecycle boundary: NET may represent local lifecycle state later, but YAI decides whether action is allowed.
+
+Required lifecycle actions:
+declare, prepare, start, stop, restart, status, retire.
+
+Required lifecycle states:
+unknown, declared, preparing, starting, running, stopping, stopped, failed, retired.
+
+Required lifecycle subject kinds:
+node, endpoint, capability, service, external.

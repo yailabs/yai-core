@@ -217,6 +217,9 @@ check-net-endpoint-fixtures:
 check-net-health-fixtures:
 	@python3 tools/checks/check-net-health-fixtures.py
 
+check-net-lifecycle-fixtures:
+	@python3 tools/checks/check-net-lifecycle-fixtures.py
+
 check-layout:
 	@./tools/checks/check-no-old-roots.sh
 	@./tools/checks/check-required-layout.sh

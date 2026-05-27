@@ -48,7 +48,7 @@ require_dir "net"
 require_file "net/README.md"
 require_file "proto/net.md"
 
-for area in core registry stream node capability endpoint health transport route observe compat; do
+for area in core registry stream node capability endpoint health lifecycle transport route observe compat; do
   require_dir "net/$area"
   require_file "net/$area/README.md"
 done
@@ -64,6 +64,7 @@ for path in \
   include/yai/net/endpoint.h \
   include/yai/net/health.h \
   include/yai/net/invocation.h \
+  include/yai/net/lifecycle.h \
   include/yai/net/trace.h \
   include/yai/net/receipt.h \
   include/yai/net/metrics.h \
@@ -79,17 +80,22 @@ for path in \
   proto/fixtures/net/health/node-health.json \
   proto/fixtures/net/health/endpoint-liveness.json \
   proto/fixtures/net/health/capability-readiness.json \
+  proto/fixtures/net/lifecycle/request-start.json \
+  proto/fixtures/net/lifecycle/report-running.json \
+  proto/fixtures/net/lifecycle/report-failed.json \
   proto/schemas/net-stream-envelope.v1.schema.json \
   proto/schemas/net-node-identity.v1.schema.json \
   proto/schemas/net-capability-advertisement.v1.schema.json \
   proto/schemas/net-endpoint-descriptor.v1.schema.json \
   proto/schemas/net-health-report.v1.schema.json \
+  proto/schemas/net-lifecycle-request.v1.schema.json \
+  proto/schemas/net-lifecycle-report.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.6.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.6.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.7.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.7.0\n' >&2
   exit 1
 fi
 
@@ -110,6 +116,11 @@ fi
 
 if ! grep -F '## Health, Readiness and Liveness' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Health, Readiness and Liveness\n' >&2
+  exit 1
+fi
+
+if ! grep -F '## Local Service Lifecycle' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Local Service Lifecycle\n' >&2
   exit 1
 fi
 
@@ -212,5 +223,21 @@ if grep -R -n -i 'HTTP server implementation' net include/yai/net >/tmp/yai-net-
   exit 1
 fi
 rm -f /tmp/yai-net-boundary-http.$$
+
+if grep -R -n -E '\b(fork|exec|system|popen|kill|waitpid)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-process.$$ 2>/dev/null; then
+  cat /tmp/yai-net-boundary-process.$$ >&2
+  rm -f /tmp/yai-net-boundary-process.$$
+  printf 'NET.SPINE.7 must not contain process management implementation symbols\n' >&2
+  exit 1
+fi
+rm -f /tmp/yai-net-boundary-process.$$
+
+if grep -R -n -E '\b(launchctl|systemctl|service start|service stop)\b' net include/yai/net >/tmp/yai-net-boundary-service.$$ 2>/dev/null; then
+  cat /tmp/yai-net-boundary-service.$$ >&2
+  rm -f /tmp/yai-net-boundary-service.$$
+  printf 'NET.SPINE.7 must not contain service manager implementation symbols\n' >&2
+  exit 1
+fi
+rm -f /tmp/yai-net-boundary-service.$$
 
 printf 'check-net-boundary: ok\n'
