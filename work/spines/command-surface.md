@@ -1244,3 +1244,47 @@ make check-case-runtime-semantics-roadmap
 verifies bitemporal fact doctrine, native/attached/federated retrieval,
 ContextDelta, CaseModelSession, KV/cache boundary and temporal graph revision
 roadmap terms.
+
+## SPINE.46 DuckDB Fact Plane Commands
+
+SPINE.46 adds the initial analytical fact-plane surface:
+
+```bash
+yai facts status
+yai facts schema
+yai facts init
+make check-duckdb-fact-plane
+make smoke-spine46
+```
+
+`yai facts status` reports the DuckDB backend, the
+`YAI_HOME/store/facts/yai-facts.duckdb` path, schema `yai.fact.v1`,
+`bitemporal: yes`, `facts_are_truth: false` and `operational_truth: false`.
+Before initialization it reports `status: not_initialized`; after
+initialization it reports `status: ready`, `tables: 12` and
+`facts_extracted: 0`.
+
+`yai facts schema` lists the planned fact tables:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+fact_carrier_outcome
+fact_divergence
+fact_replay
+fact_runtime_graph
+fact_model_behavior
+fact_policy_outcome
+fact_memory_quality
+fact_retrieval_quality
+fact_provider_runtime
+```
+
+It also lists common bitemporal/revision columns:
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
+`status`, `revision_of`, `superseded_by` and `retracted_by`.
+
+`yai facts init` creates the DuckDB file and schema tables only. Facts are not
+truth. SPINE.46 has No fact extraction; `facts_extracted: 0` is the required
+posture until SPINE.47.

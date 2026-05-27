@@ -217,3 +217,68 @@ RuntimeGraph is not a generic graph database.
 Graph freeze vocabulary: graph schema, RuntimeGraph, runtime graph rebuild,
 HNSW future, Context Compiler future, Ladybug future persistence integration,
 `review_request`, `review_decision` and `control_pending`.
+
+## Fact Plane Status
+
+SPINE.46 defines and initializes the bitemporal DuckDB fact plane. It does not
+extract facts from records yet.
+
+```bash
+yai facts status
+yai facts schema
+yai facts init
+yai facts status
+```
+
+Expected status before initialization:
+
+```text
+fact_plane:
+backend: duckdb
+status: not_initialized
+schema: yai.fact.v1
+bitemporal: yes
+facts_are_truth: false
+operational_truth: false
+```
+
+Expected schema anchors:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+fact_carrier_outcome
+fact_divergence
+fact_replay
+fact_runtime_graph
+fact_model_behavior
+fact_policy_outcome
+fact_memory_quality
+fact_retrieval_quality
+fact_provider_runtime
+transaction_time
+valid_time_start
+valid_time_end
+known_at
+revision_of
+superseded_by
+retracted_by
+```
+
+Expected initialization anchors:
+
+```text
+facts_init:
+backend: duckdb
+status: ready
+schema: yai.fact.v1
+bitemporal: yes
+tables_created: 12
+facts_extracted: 0
+```
+
+Facts are not truth. Fact rows are analytical, temporal,
+provenance-bearing assertions. They cannot authorize, execute, approve, deny,
+mutate operational truth or replace evidence. No fact extraction occurs in
+SPINE.46; SPINE.47 starts receipt, decision and projection facts.

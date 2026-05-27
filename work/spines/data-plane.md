@@ -125,7 +125,7 @@ SPINE.45  Graph + RuntimeGraph Freeze                                done
 SPINE.45A Documentation Root Canon Collapse                           done
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase done
 
-SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              planned
+SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     planned
 SPINE.48  Model Behavior / Policy Outcome Facts                     planned
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
@@ -253,6 +253,11 @@ superseded_by
 retracted_by
 confidence
 authority_scope
+source_record_id
+source_record_kind
+source_schema
+fact_schema
+created_at_unix_ms
 ```
 
 Rule:
@@ -260,7 +265,30 @@ Rule:
 ```text
 A fact is not just a row.
 A fact is a temporally scoped, provenance-bearing assertion.
+Facts are not truth.
 ```
+
+SPINE.46 initializes schema `yai.fact.v1` at
+`YAI_HOME/store/facts/yai-facts.duckdb` with `yai facts status`,
+`yai facts schema` and `yai facts init`. The initial DuckDB tables are:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+fact_carrier_outcome
+fact_divergence
+fact_replay
+fact_runtime_graph
+fact_model_behavior
+fact_policy_outcome
+fact_memory_quality
+fact_retrieval_quality
+fact_provider_runtime
+```
+
+SPINE.46 has No fact extraction. `facts_extracted: 0` remains visible until
+SPINE.47 starts receipt, decision and projection extraction.
 
 SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
 consistency, projection invalidation consistency, memory basis after

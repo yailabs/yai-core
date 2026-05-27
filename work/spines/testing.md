@@ -1869,3 +1869,34 @@ cache is not YAI memory, Native vs Attached Retrieval, Retrieval Provider
 Contract, Retrieval Receipt, Federated Candidate Normalization, External
 Candidate -> Case Import, Temporal Graph Revision, Graph Patch Operation,
 Dependency Closure, Counterfactual, SPINE.58H-R and SPINE.65A-G.
+
+## SPINE.46 DuckDB Fact Plane
+
+`tests/smoke/duckdb-fact-plane/test_duckdb_fact_plane.sh` validates the
+initial DuckDB fact-plane surface:
+
+```bash
+make check-duckdb-fact-plane
+make smoke-spine46
+```
+
+Expected labels:
+
+```text
+fact_plane:status ok
+fact_plane:schema ok
+fact_plane:bitemporal ok
+fact_plane:not_truth ok
+fact_plane:init ok
+fact_plane:tables ok
+fact_plane:no_extraction confirmed
+```
+
+The smoke verifies `yai facts status`, `yai facts schema`, `yai facts init`,
+schema `yai.fact.v1`, `transaction_time`, `valid_time_start`,
+`valid_time_end`, `known_at`, `revision_of`, `superseded_by`,
+`retracted_by`, `facts_are_truth: false`, twelve DuckDB tables and
+`facts_extracted: 0`.
+
+Facts are not truth. SPINE.46 has No fact extraction; extraction begins in
+SPINE.47.

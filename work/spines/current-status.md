@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase.
+Status: SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema.
 
 ## Completed Foundation
 
@@ -135,6 +135,14 @@ rebuild, `yai.runtime_graph_rebuild_report.v1`, fanout, fanin, neighborhood,
 causal path, bounded traversal, edge-kind filter, path found, path not_found
 and empty case. RuntimeGraph is not durable truth. Review/control records are
 graph-visible when actual refs exist.
+SPINE.46 defines DuckDB as the analytical fact plane with `yai.fact.v1`,
+`yai facts status`, `yai facts schema` and `yai facts init`. A fact is not just
+a row. A fact is a temporally scoped, provenance-bearing assertion with
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
+`revision_of`, `superseded_by` and `retracted_by` posture. Facts are not truth:
+they cannot authorize, execute, approve, deny, mutate operational truth or
+replace evidence. SPINE.46 initializes the twelve planned fact tables and keeps
+`facts_extracted: 0`; No fact extraction occurs until SPINE.47.
 
 Current:
 
@@ -188,6 +196,7 @@ SPINE.44C Review Loop Test Matrix + Lab Alignment completed.
 SPINE.45 Graph + RuntimeGraph Freeze completed.
 SPINE.45A Documentation Root Canon Collapse completed.
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase completed.
+SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -195,15 +204,12 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency
-Roadmap Rebase completed. SPINE.46 is now DuckDB Fact Plane Doctrine +
-Bitemporal Schema. The roadmap now treats facts as temporally scoped,
-provenance-bearing assertions, retrieval as native/attached/federated
-candidate sourcing, ContextFrame/ContextDelta/CaseModelSession as planned
-context residency boundaries, KV cache as not YAI memory, and temporal graph
-revision/counterfactuals as append-only future graph semantics.
+SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema completed. The fact
+plane is bitemporal, provenance-bearing and analytical only; facts are not
+truth. SPINE.47 starts the first real extraction into fact_receipt,
+fact_decision and fact_projection.
 
-SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema.
+SPINE.47 Receipt / Decision / Projection Facts.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,

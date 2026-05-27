@@ -5,7 +5,8 @@ YAI separates durable truth from runtime computation.
 ```text
 durable truth: journal, LMDB records, graph relations
 runtime computation: hot state, RuntimeGraph, projections
-planned analytics: DuckDB facts, HNSW/retrieval, memory, Context Compiler
+analytics: DuckDB facts
+planned retrieval/context: HNSW/retrieval, memory, Context Compiler
 ```
 
 ## Planes
@@ -18,17 +19,63 @@ planned analytics: DuckDB facts, HNSW/retrieval, memory, Context Compiler
   working set.
 - RuntimeGraph rebuild can replay journal material into LMDB, materialize graph
   relations and load a runtime graph report.
+- DuckDB stores analytical, temporal, provenance-bearing facts as
+  `yai.fact.v1`.
 
 RuntimeGraph is not durable truth. It is bounded active-case computation over
 relations that can be rebuilt from durable planes.
 
-## Planned Planes
+## Fact Plane
 
-DuckDB facts are planned for analytical facts, not record truth. SPINE.46 now
-starts as DuckDB Fact Plane Doctrine + Bitemporal Schema: a fact is not just a
-row, it is a temporally scoped, provenance-bearing assertion with
+Journal records chronology. LMDB stores record truth. Graph persistence stores
+relation truth. RuntimeGraph computes over active case relations. DuckDB stores
+analytical, temporal, provenance-bearing facts derived from records, graph
+relations, receipts, decisions, projections, carriers, model behavior, replay
+reports, runtime graph diagnostics, retrieval and memory.
+
+A fact is not just a row. A fact is a temporally scoped,
+provenance-bearing assertion with
 `transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
 `revision_of`, `superseded_by` and `retracted_by` posture.
+
+Facts are not truth. Facts can explain, score, measure, compare, filter and
+report. Facts cannot authorize, execute, approve, deny, mutate operational
+truth or replace evidence.
+
+The SPINE.46 fact schema is `yai.fact.v1` and initializes these DuckDB tables:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+fact_carrier_outcome
+fact_divergence
+fact_replay
+fact_runtime_graph
+fact_model_behavior
+fact_policy_outcome
+fact_memory_quality
+fact_retrieval_quality
+fact_provider_runtime
+```
+
+No fact extraction happens in SPINE.46. Fact extraction begins in SPINE.47.
+
+Hard distinction:
+
+```text
+fact != record
+fact != receipt
+fact != decision
+fact != policy
+fact != memory
+fact != graph relation
+fact != projection
+fact != retrieval candidate
+fact != ContextFrame
+```
+
+## Planned Planes
 
 HNSW and retrieval are planned candidate-selection surfaces, not graph truth.
 Native retrieval, attached retrieval and federated retrieval produce retrieval

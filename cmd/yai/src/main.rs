@@ -23,6 +23,7 @@ use std::os::raw::{c_char, c_int, c_void};
 #[cfg(unix)]
 use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use yai_core_engine::graph::GraphSummary;
 use yai_core_engine::journal::{Journal, JournalInspection, JOURNAL_RECORD_SCHEMA};
@@ -47,6 +48,31 @@ const ANSI_BLUE: &str = "\x1b[34m";
 const ANSI_GREEN: &str = "\x1b[32m";
 const ANSI_YELLOW: &str = "\x1b[33m";
 const ANSI_MAGENTA: &str = "\x1b[35m";
+const FACT_SCHEMA: &str = "yai.fact.v1";
+const FACT_TABLES: &[&str] = &[
+    "fact_receipt",
+    "fact_decision",
+    "fact_projection",
+    "fact_carrier_outcome",
+    "fact_divergence",
+    "fact_replay",
+    "fact_runtime_graph",
+    "fact_model_behavior",
+    "fact_policy_outcome",
+    "fact_memory_quality",
+    "fact_retrieval_quality",
+    "fact_provider_runtime",
+];
+const FACT_COMMON_COLUMNS: &[&str] = &[
+    "transaction_time",
+    "valid_time_start",
+    "valid_time_end",
+    "known_at",
+    "status",
+    "revision_of",
+    "superseded_by",
+    "retracted_by",
+];
 
 unsafe extern "C" {
     fn linenoise(prompt: *const c_char) -> *mut c_char;
@@ -59,7 +85,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.45 Graph + RuntimeGraph Freeze");
+    println!("status: SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -76,6 +102,8 @@ fn print_info() {
     println!("journal_replay: LMDB materialization with schema/cursor/report metadata v0");
     println!("graph_relation_write_path: active_minimal");
     println!("runtime_graph: active_minimal per_command_ephemeral rebuildable");
+    println!("fact_plane: duckdb bitemporal schema yai.fact.v1");
+    println!("facts_extraction: planned_spine47");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -240,6 +268,9 @@ fn print_usage() {
     );
     println!("       yai graph neighborhood --case <case_ref> --node <ref> [--depth <1|2>] [--limit <N>]");
     println!("       yai graph path --case <case_ref> --from <ref> --to <ref> [--max-depth <N>]");
+    println!("       yai facts status");
+    println!("       yai facts schema");
+    println!("       yai facts init");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -2024,6 +2055,14 @@ fn record_store_path() -> PathBuf {
     yai_home().join("store").join("lmdb")
 }
 
+fn facts_store_dir() -> PathBuf {
+    yai_home().join("store").join("facts")
+}
+
+fn facts_store_path() -> PathBuf {
+    facts_store_dir().join("yai-facts.duckdb")
+}
+
 fn replay_report_dir() -> PathBuf {
     yai_home().join("store").join("replay").join("reports")
 }
@@ -2109,6 +2148,489 @@ fn print_store_summary() -> Result<(), String> {
     println!("records_by_kind: {}", summary.records_by_kind);
     println!("records_by_subject: {}", summary.records_by_subject);
     println!("records_by_receipt: {}", summary.records_by_receipt);
+    Ok(())
+}
+
+const FACT_INIT_SQL: &str = r#"
+CREATE TABLE IF NOT EXISTS fact_receipt (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  receipt_id TEXT,
+  attempt_id TEXT,
+  decision_id TEXT,
+  receipt_kind TEXT,
+  receipt_status TEXT,
+  carrier_family TEXT,
+  carrier_outcome TEXT,
+  carrier_attempted BOOLEAN,
+  execution_performed BOOLEAN,
+  guarantee_mode TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_decision (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  decision_id TEXT,
+  attempt_id TEXT,
+  decision_outcome TEXT,
+  gate_outcome TEXT,
+  policy_ref TEXT,
+  requires_review BOOLEAN,
+  review_id TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_projection (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  projection_id TEXT,
+  projection_kind TEXT,
+  consumer TEXT,
+  freshness TEXT,
+  freshness_source TEXT,
+  stale_reason TEXT,
+  redaction TEXT,
+  source_records BIGINT,
+  source_receipts BIGINT,
+  source_memory BIGINT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_carrier_outcome (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  carrier_family TEXT,
+  carrier_mode TEXT,
+  carrier_status TEXT,
+  requested_outcome TEXT,
+  effective_outcome TEXT,
+  execution_available BOOLEAN,
+  execution_performed BOOLEAN,
+  carrier_attempted BOOLEAN,
+  receipt_required BOOLEAN,
+  receipt_posture TEXT,
+  divergence_candidate TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_divergence (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  divergence_id TEXT,
+  divergence_kind TEXT,
+  severity TEXT,
+  decision_id TEXT,
+  receipt_id TEXT,
+  attempt_id TEXT,
+  carrier_family TEXT,
+  expected_state TEXT,
+  observed_state TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_replay (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  journal_identity TEXT,
+  journal_path TEXT,
+  replay_status TEXT,
+  compatibility TEXT,
+  record_schema TEXT,
+  journal_schema TEXT,
+  cursor_line BIGINT,
+  lines_total BIGINT,
+  records_seen BIGINT,
+  records_written BIGINT,
+  records_duplicate BIGINT,
+  records_skipped BIGINT,
+  invalid_entries BIGINT,
+  report_ref TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_runtime_graph (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  source_mode TEXT,
+  nodes_total BIGINT,
+  edges_total BIGINT,
+  relations_seen BIGINT,
+  relations_written BIGINT,
+  relations_duplicate BIGINT,
+  outgoing_index_entries BIGINT,
+  incoming_index_entries BIGINT,
+  runtime_generation BIGINT,
+  rebuild_status TEXT,
+  report_ref TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_model_behavior (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  model_ref TEXT,
+  provider_ref TEXT,
+  model_output_id TEXT,
+  behavior_kind TEXT,
+  unsupported_claim BOOLEAN,
+  authority_overclaim BOOLEAN,
+  refusal BOOLEAN,
+  tool_call_proposed BOOLEAN,
+  filesystem_operation_proposed BOOLEAN,
+  review_required BOOLEAN,
+  output_chars BIGINT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_policy_outcome (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_memory_quality (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_retrieval_quality (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  provider_ref TEXT,
+  provider_kind TEXT,
+  query_ref TEXT,
+  results_returned BIGINT,
+  results_selected BIGINT,
+  results_rejected BIGINT,
+  latency_ms BIGINT,
+  cost DOUBLE,
+  provenance_quality TEXT,
+  scope_violation_count BIGINT,
+  duplicate_count BIGINT,
+  selected_for_context BOOLEAN,
+  promoted_to_case_material BOOLEAN,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS fact_provider_runtime (
+  fact_id TEXT PRIMARY KEY,
+  case_ref TEXT,
+  subject_ref TEXT,
+  asserted_by_event_ref TEXT,
+  source_record_refs TEXT,
+  source_graph_refs TEXT,
+  evidence_refs TEXT,
+  transaction_time BIGINT,
+  valid_time_start BIGINT,
+  valid_time_end BIGINT,
+  known_at BIGINT,
+  status TEXT,
+  revision_of TEXT,
+  superseded_by TEXT,
+  retracted_by TEXT,
+  confidence DOUBLE,
+  authority_scope TEXT,
+  source_record_id TEXT,
+  source_record_kind TEXT,
+  source_schema TEXT,
+  fact_schema TEXT,
+  created_at_unix_ms BIGINT
+);
+"#;
+
+fn facts_status(args: &[String]) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err("usage: yai facts status".to_string());
+    }
+    let path = facts_store_path();
+    let status = if path.is_file() {
+        "ready"
+    } else {
+        "not_initialized"
+    };
+    println!("fact_plane:");
+    println!("backend: duckdb");
+    println!("status: {status}");
+    println!("facts_path: {}", path.display());
+    println!("schema: {FACT_SCHEMA}");
+    println!("bitemporal: yes");
+    if status == "ready" {
+        println!("tables: {}", FACT_TABLES.len());
+        println!("facts_extracted: 0");
+    }
+    println!("facts_are_truth: false");
+    println!("operational_truth: false");
+    Ok(())
+}
+
+fn facts_schema(args: &[String]) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err("usage: yai facts schema".to_string());
+    }
+    println!("fact_schema: {FACT_SCHEMA}");
+    println!("bitemporal: yes");
+    println!("facts_are_truth: false");
+    println!("tables:");
+    for table in FACT_TABLES {
+        println!("- {table}");
+    }
+    println!("common_columns:");
+    for column in FACT_COMMON_COLUMNS {
+        println!("- {column}");
+    }
+    println!("extraction:");
+    println!("  facts_extracted: 0");
+    println!("  extraction_status: planned_spine47");
+    Ok(())
+}
+
+fn facts_init(args: &[String]) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err("usage: yai facts init".to_string());
+    }
+    let dir = facts_store_dir();
+    let path = facts_store_path();
+    fs::create_dir_all(&dir).map_err(|err| {
+        format!(
+            "failed to create facts store directory {}: {err}",
+            dir.display()
+        )
+    })?;
+    let output = Command::new("duckdb")
+        .arg(&path)
+        .arg("-c")
+        .arg(FACT_INIT_SQL)
+        .output()
+        .map_err(|err| format!("duckdb executable unavailable: {err}"))?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let detail = if stderr.trim().is_empty() {
+            stdout.trim()
+        } else {
+            stderr.trim()
+        };
+        return Err(format!("duckdb facts init failed: {detail}"));
+    }
+    println!("facts_init:");
+    println!("backend: duckdb");
+    println!("status: ready");
+    println!("facts_path: {}", path.display());
+    println!("schema: {FACT_SCHEMA}");
+    println!("bitemporal: yes");
+    println!("tables_created: {}", FACT_TABLES.len());
+    println!("facts_extracted: 0");
     Ok(())
 }
 
@@ -7847,6 +8369,24 @@ fn main() {
         }
         Some("graph") if args.get(1).map(String::as_str) == Some("path") => {
             if let Err(error) = graph_path(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("status") => {
+            if let Err(error) = facts_status(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("schema") => {
+            if let Err(error) = facts_schema(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("init") => {
+            if let Err(error) = facts_init(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

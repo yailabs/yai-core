@@ -122,7 +122,7 @@ require_line "$model_runtime" "fallback: normal_decoding"
 printf 'model_runtime:status ok\n'
 
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.45 Graph + RuntimeGraph Freeze"
+require_line "$info" "status: SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema"
 require_line "$info" "provider-runtime: planned surface active"
 require_line "$info" "device-registry: active"
 
