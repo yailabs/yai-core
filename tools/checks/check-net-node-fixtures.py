@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = ROOT / "proto/fixtures/net/node"
+CAPABILITY_FIXTURE_DIR = ROOT / "proto/fixtures/net/capability"
 
 EXPECTED_FILES = {
     "local-process.json",
@@ -90,9 +91,28 @@ def require_list(value: object, field: str, path: Path) -> None:
         fail(f"{path}: {field} must be a list of strings")
 
 
+def load_capability_ids() -> set[str]:
+    if not CAPABILITY_FIXTURE_DIR.is_dir():
+        return set()
+
+    capability_ids: set[str] = set()
+    for path in sorted(CAPABILITY_FIXTURE_DIR.glob("*.json")):
+        try:
+            fixture = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            fail(f"{path.relative_to(ROOT)} is invalid JSON: {exc}")
+
+        capability_id = fixture.get("capability_id")
+        if isinstance(capability_id, str):
+            capability_ids.add(capability_id)
+    return capability_ids
+
+
 def main() -> None:
     if not FIXTURE_DIR.is_dir():
         fail(f"missing fixture directory: {FIXTURE_DIR.relative_to(ROOT)}")
+
+    capability_ids = load_capability_ids()
 
     paths = sorted(FIXTURE_DIR.glob("*.json"))
     found = {path.name for path in paths}
@@ -148,6 +168,11 @@ def main() -> None:
 
         require_list(fixture["endpoint_refs"], "endpoint_refs", rel)
         require_list(fixture["capability_refs"], "capability_refs", rel)
+
+        if capability_ids:
+            for capability_ref in fixture["capability_refs"]:
+                if capability_ref not in capability_ids:
+                    fail(f"{rel}: unresolved capability_ref: {capability_ref}")
 
     print("check-net-node-fixtures: ok")
 

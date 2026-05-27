@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.3R.0
+Reference version: NET.SPINE.4.0
 Authority: YAI repository
-Status: Proto topology realigned
+Status: Capability advertisement contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -74,10 +74,10 @@ and validators so future NET protocol material lands under `proto`.
 
 ### NET.SPINE.4 - Capability Advertisement Types + Registry Seed
 
-Create capability advertisement types and seed registry fixtures for
-`neural.llm.decode`, `neural.embedding.encode`, `metrics.stream`,
-`receipt.emit` and generic external capabilities. Add validation that
-capabilities are descriptive, not authority.
+Add canonical NET capability advertisement types, capability fixtures and
+schema under `proto/`, and a static capability fixture validator. Seed registry
+vocabulary only, link capabilities to node fixture references and do not
+implement live registry, routing or discovery.
 
 ### NET.SPINE.5 - Local Endpoint Registry Skeleton
 
@@ -242,7 +242,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.3R.0
+Reference version: NET.SPINE.4.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

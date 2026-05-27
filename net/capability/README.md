@@ -1,10 +1,14 @@
 # capability
 
-Owns future capability advertisement vocabulary and registry inputs.
+Owns advertised capability vocabulary and future registry seed material.
 
-Must not approve invocations, grant authority, load models or vendor external
-providers.
+Capability advertisement v1 is represented in `include/yai/net/capability.h`.
+Fixtures live under `proto/fixtures/net/capability/`.
+
+A capability says what a node can do. It does not approve an operation.
+
+This area does not implement routing or policy.
 
 Current status: scaffold.
 
-Next expected wave: NET.SPINE.4 capability advertisement types.
+Next expected wave: NET.SPINE.5 local endpoint registry skeleton.

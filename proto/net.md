@@ -100,3 +100,36 @@ process, machine, lan, remote, external.
 
 Required node states:
 unknown, declared, observed, healthy, degraded, unavailable, retired.
+
+## Capability Advertisement
+
+A capability says what a node can do. A capability does not approve an
+operation, grant case authority or resolve policy. Routing may later use
+capabilities as input, but routing is not implemented here. YAI remains
+responsible for authority and policy decisions. NET may move invocation material
+to a capable node later; this wave only creates the advertised vocabulary.
+
+- capability: Describes a node's advertised work surface. It does not approve an operation.
+- capability id: Stable NET-facing identifier for a capability advertisement. It is not authority.
+- capability kind: One of neural_llm_decode, neural_embedding_encode, metrics_stream, receipt_emit or generic_external.
+- capability family: Broad grouping such as neural, metrics, receipt or generic. It does not imply routing.
+- capability scope: Where the advertised capability applies: process, node, service or external.
+- capability state: One of unknown, declared, available, degraded, unavailable or retired. It is not policy approval.
+- advertised capability: Capability material associated with a node id. It does not grant permission.
+- capability constraints: Safe limits or requirements advertised with the capability. They do not replace YAI policy.
+- capability metadata: Safe descriptive metadata for compatibility and notes. It must not claim production implementation.
+- node capability reference: Node fixture reference to a capability id. It is not live registry resolution.
+- registry seed: Static protocol fixture material for future registry work. It is not a runtime registry.
+- compatibility tag: Descriptive tag for compatibility posture. It does not vendor or certify an external implementation.
+
+Required capability kinds:
+neural_llm_decode, neural_embedding_encode, metrics_stream, receipt_emit, generic_external.
+
+Required capability families:
+neural, metrics, receipt, generic.
+
+Required capability scopes:
+process, node, service, external.
+
+Required capability states:
+unknown, declared, available, degraded, unavailable, retired.

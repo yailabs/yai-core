@@ -143,4 +143,41 @@ if strip_comments "$node_header" | grep -n -E '\b(discover|scan|probe|connect|li
   exit 1
 fi
 
+capability_header="include/yai/net/capability.h"
+
+for required_capability_symbol in \
+  yai_net_capability_kind_t \
+  yai_net_capability_family_t \
+  yai_net_capability_scope_t \
+  yai_net_capability_state_t \
+  YAI_NET_CAPABILITY_KIND_NEURAL_LLM_DECODE \
+  YAI_NET_CAPABILITY_KIND_NEURAL_EMBEDDING_ENCODE \
+  YAI_NET_CAPABILITY_KIND_METRICS_STREAM \
+  YAI_NET_CAPABILITY_KIND_RECEIPT_EMIT \
+  YAI_NET_CAPABILITY_KIND_GENERIC_EXTERNAL \
+  YAI_NET_CAPABILITY_FAMILY_NEURAL \
+  YAI_NET_CAPABILITY_FAMILY_METRICS \
+  YAI_NET_CAPABILITY_FAMILY_RECEIPT \
+  YAI_NET_CAPABILITY_FAMILY_GENERIC \
+  YAI_NET_CAPABILITY_SCOPE_PROCESS \
+  YAI_NET_CAPABILITY_SCOPE_NODE \
+  YAI_NET_CAPABILITY_SCOPE_SERVICE \
+  YAI_NET_CAPABILITY_SCOPE_EXTERNAL \
+  YAI_NET_CAPABILITY_STATE_UNKNOWN \
+  YAI_NET_CAPABILITY_STATE_DECLARED \
+  YAI_NET_CAPABILITY_STATE_AVAILABLE \
+  YAI_NET_CAPABILITY_STATE_DEGRADED \
+  YAI_NET_CAPABILITY_STATE_UNAVAILABLE \
+  YAI_NET_CAPABILITY_STATE_RETIRED; do
+  if ! grep -q "$required_capability_symbol" "$capability_header"; then
+    printf 'NET capability header missing required symbol: %s\n' "$required_capability_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$capability_header" | grep -n -E '\b(registry|register|discover|route|policy|authorize|connect|listen|accept|bind|socket)[[:space:]]*\(' >&2; then
+  printf 'NET capability header declares forbidden runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

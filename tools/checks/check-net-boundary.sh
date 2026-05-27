@@ -71,19 +71,27 @@ for path in \
   proto/fixtures/net/stream/complete.json \
   proto/fixtures/net/node/local-process.json \
   proto/fixtures/net/node/external-node.json \
+  proto/fixtures/net/capability/neural-llm-decode.json \
+  proto/fixtures/net/capability/generic-external.json \
   proto/schemas/net-stream-envelope.v1.schema.json \
   proto/schemas/net-node-identity.v1.schema.json \
+  proto/schemas/net-capability-advertisement.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.3R.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.3R.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.4.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.4.0\n' >&2
   exit 1
 fi
 
 if ! grep -F '## Node Identity' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Node Identity\n' >&2
+  exit 1
+fi
+
+if ! grep -F '## Capability Advertisement' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Capability Advertisement\n' >&2
   exit 1
 fi
 
