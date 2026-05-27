@@ -1303,8 +1303,8 @@ make check-receipt-decision-projection-facts
 make smoke-spine47
 ```
 
-`core` means receipt + decision + projection. `all` is reserved and reports
-that it is equivalent to future core/all behavior without expanding the wave.
+`core` means receipt + decision + projection. SPINE.48 expands `all` to core +
+behavior.
 
 Fact extraction is derivation, not migration. Records remain truth in LMDB.
 Facts are not truth. Deterministic fact IDs use:
@@ -1317,3 +1317,29 @@ Extraction is idempotent extraction; a second run reports duplicates. The row
 shape populates `transaction_time`, `valid_time_start`, `valid_time_end`,
 `known_at` and revision fields. valid_time_end sentinel: 0 means open-ended.
 No fact revision or supersession is implemented yet.
+
+## SPINE.48 Model Behavior / Policy Outcome Fact Commands
+
+SPINE.48 extends `yai facts extract` with behavior extraction:
+
+```bash
+yai facts extract --case <case_ref> --kind model_behavior
+yai facts extract --case <case_ref> --kind policy_outcome
+yai facts extract --case <case_ref> --kind behavior
+yai facts extract --case <case_ref> --kind all
+yai facts summary --case <case_ref>
+make check-model-behavior-policy-facts
+make smoke-spine48
+```
+
+`core` remains receipt + decision + projection. `behavior` means
+model_behavior + policy_outcome. `all` means core + behavior. Guard
+vocabulary: kind model_behavior, kind policy_outcome, kind behavior.
+
+`facts summary` includes `fact_model_behavior` and `fact_policy_outcome`.
+Model behavior facts measure model output posture; policy outcome facts measure
+policy/control posture. Facts are not truth. model proposal is not execution.
+model cannot approve. automatic proposed-op gate import is future work.
+`authority_overclaim`, `unsupported_claim`, `review_required` and
+`policy_outcome` are analytical fields only. No LLM-based classification is
+used.

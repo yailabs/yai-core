@@ -86,7 +86,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.47 Receipt / Decision / Projection Facts");
+    println!("status: SPINE.48 Model Behavior / Policy Outcome Facts");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -104,7 +104,7 @@ fn print_info() {
     println!("graph_relation_write_path: active_minimal");
     println!("runtime_graph: active_minimal per_command_ephemeral rebuildable");
     println!("fact_plane: duckdb bitemporal schema yai.fact.v1");
-    println!("facts_extraction: receipt_decision_projection active");
+    println!("facts_extraction: receipt_decision_projection model_behavior policy_outcome active");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -272,7 +272,7 @@ fn print_usage() {
     println!("       yai facts status");
     println!("       yai facts schema");
     println!("       yai facts init");
-    println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|core");
+    println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|model_behavior|policy_outcome|core|behavior|all");
     println!("       yai facts summary --case <case_ref>");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
@@ -2442,6 +2442,19 @@ CREATE TABLE IF NOT EXISTS fact_policy_outcome (
   fact_id TEXT PRIMARY KEY,
   case_ref TEXT,
   subject_ref TEXT,
+  policy_ref TEXT,
+  policy_kind TEXT,
+  operation_kind TEXT,
+  decision_id TEXT,
+  attempt_id TEXT,
+  review_id TEXT,
+  policy_outcome TEXT,
+  requires_review BOOLEAN,
+  blocked BOOLEAN,
+  approved BOOLEAN,
+  denied BOOLEAN,
+  deferred BOOLEAN,
+  quarantined BOOLEAN,
   asserted_by_event_ref TEXT,
   source_record_refs TEXT,
   source_graph_refs TEXT,
@@ -2550,6 +2563,20 @@ CREATE TABLE IF NOT EXISTS fact_provider_runtime (
   fact_schema TEXT,
   created_at_unix_ms BIGINT
 );
+
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS policy_ref TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS policy_kind TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS operation_kind TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS decision_id TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS attempt_id TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS review_id TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS policy_outcome TEXT;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS requires_review BOOLEAN;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS blocked BOOLEAN;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS approved BOOLEAN;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS denied BOOLEAN;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS deferred BOOLEAN;
+ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS quarantined BOOLEAN;
 "#;
 
 fn facts_status(args: &[String]) -> Result<(), String> {
@@ -2575,6 +2602,8 @@ fn facts_status(args: &[String]) -> Result<(), String> {
         println!("fact_receipt: {}", counts.receipt);
         println!("fact_decision: {}", counts.decision);
         println!("fact_projection: {}", counts.projection);
+        println!("fact_model_behavior: {}", counts.model_behavior);
+        println!("fact_policy_outcome: {}", counts.policy_outcome);
     }
     println!("facts_are_truth: false");
     println!("operational_truth: false");
@@ -2598,7 +2627,9 @@ fn facts_schema(args: &[String]) -> Result<(), String> {
     }
     println!("extraction:");
     println!("  facts_extracted: 0");
-    println!("  extraction_status: receipt_decision_projection_active");
+    println!(
+        "  extraction_status: receipt_decision_projection_model_behavior_policy_outcome_active"
+    );
     println!("  valid_time_end_sentinel: 0");
     Ok(())
 }
@@ -2647,6 +2678,8 @@ enum FactExtractKind {
     Receipt,
     Decision,
     Projection,
+    ModelBehavior,
+    PolicyOutcome,
 }
 
 impl FactExtractKind {
@@ -2655,6 +2688,8 @@ impl FactExtractKind {
             "receipt" => Some(Self::Receipt),
             "decision" => Some(Self::Decision),
             "projection" => Some(Self::Projection),
+            "model_behavior" => Some(Self::ModelBehavior),
+            "policy_outcome" => Some(Self::PolicyOutcome),
             _ => None,
         }
     }
@@ -2664,6 +2699,8 @@ impl FactExtractKind {
             Self::Receipt => "receipt",
             Self::Decision => "decision",
             Self::Projection => "projection",
+            Self::ModelBehavior => "model_behavior",
+            Self::PolicyOutcome => "policy_outcome",
         }
     }
 
@@ -2672,6 +2709,8 @@ impl FactExtractKind {
             Self::Receipt => "fact_receipt",
             Self::Decision => "fact_decision",
             Self::Projection => "fact_projection",
+            Self::ModelBehavior => "fact_model_behavior",
+            Self::PolicyOutcome => "fact_policy_outcome",
         }
     }
 
@@ -2680,6 +2719,8 @@ impl FactExtractKind {
             Self::Receipt => "fact:receipt:",
             Self::Decision => "fact:decision:",
             Self::Projection => "fact:projection:",
+            Self::ModelBehavior => "fact:model_behavior:",
+            Self::PolicyOutcome => "fact:policy_outcome:",
         }
     }
 }
@@ -2697,6 +2738,8 @@ struct FactCounts {
     receipt: usize,
     decision: usize,
     projection: usize,
+    model_behavior: usize,
+    policy_outcome: usize,
     total: usize,
 }
 
@@ -2772,6 +2815,12 @@ fn fact_counts(case_ref: Option<&str>) -> Result<FactCounts, String> {
     let projection = duckdb_count(&format!(
         "SELECT count(*) FROM fact_projection{where_clause};"
     ))?;
+    let model_behavior = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_model_behavior{where_clause};"
+    ))?;
+    let policy_outcome = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_policy_outcome{where_clause};"
+    ))?;
     let total = FACT_TABLES
         .iter()
         .map(|table| duckdb_count(&format!("SELECT count(*) FROM {table}{where_clause};")))
@@ -2782,6 +2831,8 @@ fn fact_counts(case_ref: Option<&str>) -> Result<FactCounts, String> {
         receipt,
         decision,
         projection,
+        model_behavior,
+        policy_outcome,
         total,
     })
 }
@@ -2910,6 +2961,172 @@ fn receipt_carrier_family(record: &StoredRecordEnvelope, summary: &str) -> Strin
     }
 }
 
+fn source_record_text(record: &StoredRecordEnvelope) -> String {
+    format!("{} {}", record.record_kind, source_record_summary(record)).to_lowercase()
+}
+
+fn text_contains_any(text: &str, needles: &[&str]) -> bool {
+    needles.iter().any(|needle| text.contains(needle))
+}
+
+fn model_behavior_kind(record: &StoredRecordEnvelope, text: &str) -> &'static str {
+    match record.record_kind.as_str() {
+        "model_output" => "provider_output_observed",
+        "model_interpretation" => "model_interpretation_observed",
+        "effect_receipt" if text.contains("model.output") => "provider_output_observed",
+        _ if text.contains("output_is:claim_or_proposal") => "claim_or_proposal",
+        _ if text_contains_any(
+            text,
+            &[
+                "raw_journal_access",
+                "raw journal",
+                "filesystem_access",
+                "directly the file",
+            ],
+        ) =>
+        {
+            "raw_access_request"
+        }
+        _ if text_contains_any(
+            text,
+            &[
+                "change decision",
+                "mutate decision",
+                "approve action",
+                "approve its own",
+                "decision_mutation_request",
+            ],
+        ) =>
+        {
+            "decision_mutation_request"
+        }
+        _ if text_contains_any(
+            text,
+            &[
+                "fs.write",
+                "fs.read",
+                "filesystem write",
+                "filesystem_operation_proposed",
+                "tool_call",
+            ],
+        ) =>
+        {
+            "filesystem_operation_proposal"
+        }
+        _ if text_contains_any(text, &["refusal:true", "boundary_refusal"]) => "boundary_refusal",
+        _ if text_contains_any(text, &["provider_attachment:", "case_entry:"]) => {
+            "claim_or_proposal"
+        }
+        _ => "unknown",
+    }
+}
+
+fn model_behavior_flags(
+    record: &StoredRecordEnvelope,
+    text: &str,
+) -> (bool, bool, bool, bool, bool, bool) {
+    let summary = source_record_summary(record);
+    let unsupported_claim = summary_bool(&summary, "unsupported_claim", false)
+        || text.contains("unsupported_claim:true");
+    let authority_overclaim = summary_bool(&summary, "authority_overclaim", false)
+        || text_contains_any(
+            text,
+            &[
+                "authority_overclaim:true",
+                "decision_mutation_request",
+                "change decision",
+                "mutate decision",
+                "approve action",
+                "approve its own",
+                "policy engine",
+                "receipt authority",
+            ],
+        );
+    let refusal = summary_bool(&summary, "refusal", false)
+        || text_contains_any(text, &["refusal:true", "boundary_refusal"]);
+    let tool_call_proposed = summary_bool(&summary, "tool_call_proposed", false)
+        || text_contains_any(text, &["tool_call", "tool execution"]);
+    let filesystem_operation_proposed =
+        summary_bool(&summary, "filesystem_operation_proposed", false)
+            || text_contains_any(
+                text,
+                &[
+                    "fs.write",
+                    "fs.read",
+                    "filesystem write",
+                    "filesystem_operation_proposal",
+                    "filesystem_operation_proposed:true",
+                ],
+            );
+    let review_required = summary_bool(&summary, "review_required", false)
+        || text_contains_any(
+            text,
+            &["require_review", "pending_operator", "review_required"],
+        );
+    (
+        unsupported_claim,
+        authority_overclaim,
+        refusal,
+        tool_call_proposed,
+        filesystem_operation_proposed,
+        review_required,
+    )
+}
+
+fn policy_outcome_kind(record: &StoredRecordEnvelope, text: &str) -> &'static str {
+    match record.record_kind.as_str() {
+        "policy_rule" => "policy_rule_defined",
+        "authority_scope" => "authority_scope_defined",
+        "projection_rule" => "projection_rule_defined",
+        "decision" if text_contains_any(text, &["allow_with_constraints", "decision:allow"]) => {
+            "decision_allowed"
+        }
+        "decision" if text_contains_any(text, &["decision:deny", "status:blocked", "blocked"]) => {
+            "decision_denied"
+        }
+        "decision" if text.contains("require_review") => "review_required",
+        "review_request" if text.contains("approved") => "review_approved",
+        "review_request" if text.contains("denied") => "review_denied",
+        "review_request" if text.contains("deferred") => "review_deferred",
+        "review_request" if text.contains("quarantined") => "review_quarantined",
+        "review_request" => "review_required",
+        "review_decision" if text.contains("action:approve") => "review_approved",
+        "review_decision" if text.contains("action:deny") => "review_denied",
+        "review_decision" if text.contains("action:defer") => "review_deferred",
+        "review_decision" if text.contains("action:quarantine") => "review_quarantined",
+        "control_pending" if text.contains("approved") => "review_approved",
+        "control_pending" if text.contains("denied") => "review_denied",
+        "control_pending" if text.contains("deferred") => "review_deferred",
+        "control_pending" if text.contains("quarantined") => "review_quarantined",
+        "control_pending" => "review_required",
+        "carrier_outcome" if text.contains("blocked") => "carrier_blocked",
+        "divergence" => "divergence_detected",
+        _ => "unknown",
+    }
+}
+
+fn policy_outcome_flags(text: &str, outcome: &str) -> (bool, bool, bool, bool, bool, bool) {
+    let requires_review = outcome == "review_required"
+        || text_contains_any(text, &["require_review", "pending_operator"]);
+    let blocked =
+        outcome == "decision_denied" || outcome == "carrier_blocked" || text.contains("blocked");
+    let approved = outcome == "review_approved" || text.contains("approved");
+    let denied = outcome == "review_denied"
+        || outcome == "decision_denied"
+        || text.contains("denied")
+        || text.contains("decision:deny");
+    let deferred = outcome == "review_deferred" || text.contains("deferred");
+    let quarantined = outcome == "review_quarantined" || text.contains("quarantined");
+    (
+        requires_review,
+        blocked,
+        approved,
+        denied,
+        deferred,
+        quarantined,
+    )
+}
+
 fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtractKind) -> bool {
     match kind {
         FactExtractKind::Receipt => matches!(
@@ -2926,6 +3143,31 @@ fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtr
         FactExtractKind::Projection => matches!(
             record.record_kind.as_str(),
             "projection_result" | "projection_request" | "participant_view_frame"
+        ),
+        FactExtractKind::ModelBehavior => {
+            let summary = source_record_summary(record);
+            matches!(
+                record.record_kind.as_str(),
+                "model_output"
+                    | "model_interpretation"
+                    | "interaction_turn"
+                    | "participant_view_frame"
+            ) || (record.record_kind == "effect_receipt" && summary.contains("model.output"))
+                || (record.record_kind == "subject_state"
+                    && (summary.contains("provider_attachment:")
+                        || summary.contains("case_entry:admitted")))
+        }
+        FactExtractKind::PolicyOutcome => matches!(
+            record.record_kind.as_str(),
+            "policy_rule"
+                | "authority_scope"
+                | "projection_rule"
+                | "decision"
+                | "review_request"
+                | "review_decision"
+                | "control_pending"
+                | "carrier_outcome"
+                | "divergence"
         ),
     }
 }
@@ -3037,6 +3279,101 @@ fn fact_insert_sql(
                 fact_common_sql_values(record, transaction_time)
             )
         }
+        FactExtractKind::ModelBehavior => {
+            let text = source_record_text(record);
+            let behavior_kind = model_behavior_kind(record, &text);
+            let (
+                unsupported_claim,
+                authority_overclaim,
+                refusal,
+                tool_call_proposed,
+                filesystem_operation_proposed,
+                review_required,
+            ) = model_behavior_flags(record, &text);
+            let model_ref = summary_token_value_or(
+                &summary,
+                "model_ref",
+                &summary_token_value(&summary, "model"),
+            );
+            let provider_ref = summary_token_value_or(
+                &summary,
+                "provider_ref",
+                &summary_token_value(&summary, "provider"),
+            );
+            let model_output_fallback =
+                if record.record_kind == "effect_receipt" && summary.contains("model.output") {
+                    source_record_receipt_id(record)
+                } else {
+                    record.record_id.clone()
+                };
+            let model_output_id =
+                summary_token_value_or(&summary, "model_output_id", &model_output_fallback);
+            format!(
+                "INSERT INTO fact_model_behavior (fact_id, case_ref, subject_ref, model_ref, provider_ref, model_output_id, behavior_kind, unsupported_claim, authority_overclaim, refusal, tool_call_proposed, filesystem_operation_proposed, review_required, output_chars, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&model_ref),
+                sql_quote(&provider_ref),
+                sql_quote(&model_output_id),
+                sql_quote(behavior_kind),
+                sql_bool(unsupported_claim),
+                sql_bool(authority_overclaim),
+                sql_bool(refusal),
+                sql_bool(tool_call_proposed),
+                sql_bool(filesystem_operation_proposed),
+                sql_bool(review_required),
+                summary_number(&summary, "output_chars"),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
+        FactExtractKind::PolicyOutcome => {
+            let text = source_record_text(record);
+            let policy_outcome = policy_outcome_kind(record, &text);
+            let (requires_review, blocked, approved, denied, deferred, quarantined) =
+                policy_outcome_flags(&text, policy_outcome);
+            let policy_ref = summary_token_value_or(
+                &summary,
+                "policy_ref",
+                &summary_token_value(&summary, "rule"),
+            );
+            let policy_kind = summary_token_value_or(
+                &summary,
+                "policy_kind",
+                match record.record_kind.as_str() {
+                    "policy_rule" => "policy_rule",
+                    "authority_scope" => "authority_scope",
+                    "projection_rule" => "projection_rule",
+                    _ => "",
+                },
+            );
+            let operation_kind = summary_token_value_or(
+                &summary,
+                "operation_kind",
+                &summary_token_value(&summary, "op"),
+            );
+            let review_id = summary_token_value(&summary, "review_id");
+            format!(
+                "INSERT INTO fact_policy_outcome (fact_id, case_ref, subject_ref, policy_ref, policy_kind, operation_kind, decision_id, attempt_id, review_id, policy_outcome, requires_review, blocked, approved, denied, deferred, quarantined, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&policy_ref),
+                sql_quote(&policy_kind),
+                sql_quote(&operation_kind),
+                sql_quote(&source_record_decision_id(record)),
+                sql_quote(&source_record_attempt_id(record)),
+                sql_quote(&review_id),
+                sql_quote(policy_outcome),
+                sql_bool(requires_review),
+                sql_bool(blocked),
+                sql_bool(approved),
+                sql_bool(denied),
+                sql_bool(deferred),
+                sql_bool(quarantined),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
     }
 }
 
@@ -3082,15 +3419,6 @@ fn facts_extract(args: &[String]) -> Result<(), String> {
         return Ok(());
     }
     let store = LmdbRecordStore::open(&status.path)?;
-    if kind_arg == "all" {
-        println!("facts_extract:");
-        println!("case_ref: {case_ref}");
-        println!("kind: all");
-        println!("status: reserved");
-        println!("equivalent_kind: core");
-        println!("facts_are_truth: false");
-        return Ok(());
-    }
     if kind_arg == "core" {
         let receipt = extract_fact_kind(&store, &case_ref, FactExtractKind::Receipt)?;
         let decision = extract_fact_kind(&store, &case_ref, FactExtractKind::Decision)?;
@@ -3105,6 +3433,60 @@ fn facts_extract(args: &[String]) -> Result<(), String> {
         println!(
             "facts_duplicate: {}",
             receipt.facts_duplicate + decision.facts_duplicate + projection.facts_duplicate
+        );
+        println!("facts_are_truth: false");
+        return Ok(());
+    }
+    if kind_arg == "behavior" {
+        let model_behavior = extract_fact_kind(&store, &case_ref, FactExtractKind::ModelBehavior)?;
+        let policy_outcome = extract_fact_kind(&store, &case_ref, FactExtractKind::PolicyOutcome)?;
+        println!("facts_extract:");
+        println!("case_ref: {case_ref}");
+        println!("kind: behavior");
+        println!("status: completed");
+        println!(
+            "fact_model_behavior_written: {}",
+            model_behavior.facts_written
+        );
+        println!(
+            "fact_policy_outcome_written: {}",
+            policy_outcome.facts_written
+        );
+        println!(
+            "facts_duplicate: {}",
+            model_behavior.facts_duplicate + policy_outcome.facts_duplicate
+        );
+        println!("facts_are_truth: false");
+        return Ok(());
+    }
+    if kind_arg == "all" {
+        let receipt = extract_fact_kind(&store, &case_ref, FactExtractKind::Receipt)?;
+        let decision = extract_fact_kind(&store, &case_ref, FactExtractKind::Decision)?;
+        let projection = extract_fact_kind(&store, &case_ref, FactExtractKind::Projection)?;
+        let model_behavior = extract_fact_kind(&store, &case_ref, FactExtractKind::ModelBehavior)?;
+        let policy_outcome = extract_fact_kind(&store, &case_ref, FactExtractKind::PolicyOutcome)?;
+        println!("facts_extract:");
+        println!("case_ref: {case_ref}");
+        println!("kind: all");
+        println!("status: completed");
+        println!("fact_receipt_written: {}", receipt.facts_written);
+        println!("fact_decision_written: {}", decision.facts_written);
+        println!("fact_projection_written: {}", projection.facts_written);
+        println!(
+            "fact_model_behavior_written: {}",
+            model_behavior.facts_written
+        );
+        println!(
+            "fact_policy_outcome_written: {}",
+            policy_outcome.facts_written
+        );
+        println!(
+            "facts_duplicate: {}",
+            receipt.facts_duplicate
+                + decision.facts_duplicate
+                + projection.facts_duplicate
+                + model_behavior.facts_duplicate
+                + policy_outcome.facts_duplicate
         );
         println!("facts_are_truth: false");
         return Ok(());
@@ -3134,6 +3516,8 @@ fn facts_summary(args: &[String]) -> Result<(), String> {
     println!("fact_receipt: {}", counts.receipt);
     println!("fact_decision: {}", counts.decision);
     println!("fact_projection: {}", counts.projection);
+    println!("fact_model_behavior: {}", counts.model_behavior);
+    println!("fact_policy_outcome: {}", counts.policy_outcome);
     println!("facts_total: {}", counts.total);
     println!("facts_are_truth: false");
     Ok(())

@@ -1369,7 +1369,7 @@ retrieval_hnsw: planned
 decoding_acceleration: planned
 ```
 
-## Command Surface Matrix SPINE.47
+## Command Surface Matrix SPINE.48
 
 Questa matrice e ricavata da `target/debug/yai help` e dal dispatch in `cmd/yai/src/main.rs`. `Implemented` significa che il comando esiste nella CLI; alcune righe sono dry-run, skeleton o richiedono stato preparato dal caso. Le righe `not implemented` in fondo sono confini futuri, non comandi nascosti.
 
@@ -1423,11 +1423,12 @@ Questa matrice e ricavata da `target/debug/yai help` e dal dispatch in `cmd/yai/
 | `yai graph fanin --case <case_ref> --node <ref> [--edge-kind <kind>] [--limit <N>]` | implemented; graph/rebuild/query depends on LMDB/relations/journal state |
 | `yai graph neighborhood --case <case_ref> --node <ref> [--depth <1|2>] [--limit <N>]` | implemented; graph/rebuild/query depends on LMDB/relations/journal state |
 | `yai graph path --case <case_ref> --from <ref> --to <ref> [--max-depth <N>]` | implemented; graph/rebuild/query depends on LMDB/relations/journal state |
-| `yai facts status` | implemented in SPINE.46/47 |
-| `yai facts schema` | implemented in SPINE.46/47 |
-| `yai facts init` | implemented in SPINE.46/47 |
+| `yai facts status` | implemented in SPINE.46/48 |
+| `yai facts schema` | implemented in SPINE.46/48 |
+| `yai facts init` | implemented in SPINE.46/48 |
 | `yai facts extract --case <case_ref> --kind receipt|decision|projection|core` | implemented in SPINE.47; requires facts init and LMDB records |
-| `yai facts summary --case <case_ref>` | implemented in SPINE.47; requires facts init and LMDB records |
+| `yai facts extract --case <case_ref> --kind model_behavior|policy_outcome|behavior|all` | implemented in SPINE.48; requires facts init and LMDB records |
+| `yai facts summary --case <case_ref>` | implemented in SPINE.48; requires facts init and LMDB records |
 | `yai memory summary --journal <path>` | implemented; requires journal when specified |
 | `yai reconcile summary --journal <path>` | implemented; requires journal when specified |
 | `yai query summary --journal <path>` | implemented; requires journal when specified |
@@ -1469,7 +1470,7 @@ Questa matrice e ricavata da `target/debug/yai help` e dal dispatch in `cmd/yai/
 | `yai observe compare-process --pid <pid> --expected running|stopped` | implemented observation surface |
 | `yai carrier fs-read --sandbox <sandbox> --path <path>` | implemented carrier inspection/skeleton surface |
 | `yai carrier fs-write --sandbox <sandbox> --path <path> --content <text>` | implemented filesystem carrier; writes only inside sandbox constraints |
-| `yai facts extract --case <case_ref> --kind all` | reserved; for SPINE.47 use `core` |
+| `yai facts extract --case <case_ref> --kind all` | implemented in SPINE.48; core + behavior |
 | `yai pack ...` | not implemented; pack fixture is manual lab material |
 | `yai clori ...` | not implemented; no CLORI command in this repo surface |
 | `yai retrieval ...` | not implemented; retrieval provider/federation is future roadmap |
@@ -1631,9 +1632,13 @@ make smoke-spine44b
 make smoke-spine44c
 ```
 
-## Fact Plane / Receipt Decision Projection Facts
+## Fact Plane / Receipt Decision Projection / Behavior Facts
 
-SPINE.46 inizializza `yai.fact.v1`; SPINE.47 estrae `fact_receipt`, `fact_decision` e `fact_projection` da LMDB. I facts sono analytics: non sono truth, non autorizzano e non sostituiscono record/receipt/decision/projection.
+SPINE.46 inizializza `yai.fact.v1`; SPINE.47 estrae `fact_receipt`, `fact_decision` e `fact_projection` da LMDB; SPINE.48 estrae `fact_model_behavior` e `fact_policy_outcome`. I facts sono analytics: facts are not truth, non autorizzano e non sostituiscono record/receipt/decision/projection/policy/model output.
+
+`core` resta receipt + decision + projection. `behavior` significa model_behavior + policy_outcome. `all` significa core + behavior. Guard vocabulary: kind model_behavior, kind policy_outcome, kind behavior.
+
+Boundary: model proposal is not execution. model cannot approve. automatic proposed-op gate import is future work. `authority_overclaim`, `unsupported_claim`, `review_required` e `policy_outcome` sono campi analitici; No LLM-based classification.
 
 ```bash
 set -eu
@@ -1646,6 +1651,10 @@ yai facts extract --case "$YAI_CASE_REF" --kind decision
 yai facts extract --case "$YAI_CASE_REF" --kind projection
 yai facts summary --case "$YAI_CASE_REF"
 yai facts extract --case "$YAI_CASE_REF" --kind core
+yai facts extract --case "$YAI_CASE_REF" --kind model_behavior
+yai facts extract --case "$YAI_CASE_REF" --kind policy_outcome
+yai facts extract --case "$YAI_CASE_REF" --kind behavior
+yai facts extract --case "$YAI_CASE_REF" --kind all
 yai facts summary --case "$YAI_CASE_REF"
 ```
 
@@ -1673,8 +1682,10 @@ set -eu
 python3 -m json.tool labs/filesystem-loop/notebook.ipynb >/tmp/yai-filesystem-loop-notebook.json
 bash -n labs/filesystem-loop/run.sh
 make check-receipt-decision-projection-facts
+make check-model-behavior-policy-facts
 make smoke-spine46
 make smoke-spine47
+make smoke-spine48
 ```
 
 ## Shutdown

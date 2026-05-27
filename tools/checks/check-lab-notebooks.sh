@@ -51,7 +51,7 @@ for notebook in notebooks:
         )
         required = [
             "Notebook Di Validazione Del Filesystem Loop",
-            "Command Surface Matrix SPINE.47",
+            "Command Surface Matrix SPINE.48",
             "yai prompt <<'EOF'",
             "Lab A: Orientamento",
             "Lab K: Controllo Fuori Caso",

@@ -127,7 +127,7 @@ SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Road
 
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
-SPINE.48  Model Behavior / Policy Outcome Facts                     planned
+SPINE.48  Model Behavior / Policy Outcome Facts                     done
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
 SPINE.51  Fact Plane Freeze                                         planned
@@ -312,6 +312,33 @@ Second extraction reports duplicates. `transaction_time`, `valid_time_start`,
 `valid_time_end`, `known_at` and revision fields remain populated in the row
 shape. valid_time_end sentinel: 0 means open-ended. No fact revision or
 supersession is implemented yet.
+
+SPINE.48 starts extraction for:
+
+```text
+fact_model_behavior
+fact_policy_outcome
+```
+
+`core` remains receipt + decision + projection. `behavior` means
+model_behavior + policy_outcome. `all` means core + behavior:
+
+```text
+yai facts extract --case <case_ref> --kind model_behavior
+yai facts extract --case <case_ref> --kind policy_outcome
+yai facts extract --case <case_ref> --kind behavior
+yai facts extract --case <case_ref> --kind all
+```
+
+Guard vocabulary: kind model_behavior, kind policy_outcome, kind behavior.
+
+Model behavior facts measure model output posture and use conservative
+structured markers for `authority_overclaim`, `unsupported_claim`,
+`review_required` and filesystem proposal posture. Policy outcome facts measure
+policy/control posture through `policy_outcome`, review/control and decision
+records. Facts are not truth. model proposal is not execution. model cannot
+approve. automatic proposed-op gate import is future work. No LLM-based
+classification is used.
 
 SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
 consistency, projection invalidation consistency, memory basis after

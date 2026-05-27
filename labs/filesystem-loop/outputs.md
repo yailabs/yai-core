@@ -67,3 +67,58 @@ Deterministic fact IDs use `fact:<kind>:<source_record_id>`.
 `transaction_time`, `valid_time_start`, `valid_time_end`, `known_at` and
 revision fields remain part of the row shape. valid_time_end sentinel: 0 means
 open-ended. Facts are not truth. No fact revision is implemented in SPINE.47.
+
+## Model Behavior / Policy Outcome Facts
+
+Model behavior extraction:
+
+```text
+facts_extract:
+kind: model_behavior
+status: completed
+table: fact_model_behavior
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Policy outcome extraction:
+
+```text
+facts_extract:
+kind: policy_outcome
+status: completed
+table: fact_policy_outcome
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Behavior extraction:
+
+```text
+facts_extract:
+kind: behavior
+status: completed
+fact_model_behavior_written: N
+fact_policy_outcome_written: N
+facts_duplicate: N
+facts_are_truth: false
+```
+
+Summary:
+
+```text
+facts_summary:
+case_ref: case:new12-filesystem
+fact_receipt: N
+fact_decision: N
+fact_projection: N
+fact_model_behavior: N
+fact_policy_outcome: N
+facts_total: N
+facts_are_truth: false
+```
+
+facts are not truth. model proposal is not execution. model cannot approve.
+automatic proposed-op gate import is future work. `authority_overclaim`,
+`unsupported_claim`, `review_required` and `policy_outcome` are analytical
+fields. No LLM-based classification is used.

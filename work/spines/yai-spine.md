@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema and SPINE.47 Receipt / Decision / Projection Facts. | SPINE.48 Model Behavior / Policy Outcome Facts. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts and SPINE.48 Model Behavior / Policy Outcome Facts. | SPINE.49 Memory / Divergence / Carrier Facts. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -984,7 +984,7 @@ SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Road
 
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
-SPINE.48  Model Behavior / Policy Outcome Facts                     planned
+SPINE.48  Model Behavior / Policy Outcome Facts                     done
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
 SPINE.51  Fact Plane Freeze                                         planned
@@ -1172,6 +1172,27 @@ idempotent extraction, Facts are not truth, deterministic fact IDs use
 `fact:<kind>:<source_record_id>`, bitemporal columns are populated, revision
 fields stay empty and valid_time_end sentinel: 0 means open-ended. No fact
 revision is implemented in this wave.
+
+SPINE.48 derives `fact_model_behavior` and `fact_policy_outcome` from LMDB
+records. `core` remains receipt + decision + projection. `behavior` means
+model_behavior + policy_outcome. `all` means core + behavior.
+
+```text
+yai facts extract --case <case_ref> --kind model_behavior
+yai facts extract --case <case_ref> --kind policy_outcome
+yai facts extract --case <case_ref> --kind behavior
+yai facts extract --case <case_ref> --kind all
+```
+
+Guard vocabulary: kind model_behavior, kind policy_outcome, kind behavior.
+
+Model behavior facts measure model output posture, not authority. Policy
+outcome facts measure policy/control posture, not policy authority. Facts are
+not truth. model proposal is not execution. model cannot approve. automatic
+proposed-op gate import is future work. `authority_overclaim`,
+`unsupported_claim`, `review_required` and `policy_outcome` are analytical
+fields only. The classifier is conservative and uses structured record fields
+or stable markers only; No LLM-based classification is used.
 
 SPINE.66-72 reconcile now includes:
 

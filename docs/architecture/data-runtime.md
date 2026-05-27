@@ -80,6 +80,16 @@ valid_time_end sentinel: 0 means open-ended. Revision fields
 `revision_of`, `superseded_by` and `retracted_by` remain empty because there is
 No fact revision or supersession implementation yet.
 
+SPINE.48 extends derived facts to `fact_model_behavior` and
+`fact_policy_outcome`. Model behavior facts measure model output posture;
+policy outcome facts measure policy/control posture. Facts are not truth.
+model proposal is not execution. model cannot approve. automatic proposed-op
+gate import is future work. `authority_overclaim`, `unsupported_claim`,
+`review_required` and `policy_outcome` remain analytical fields. The extractor
+uses structured fields and stable markers only; No LLM-based classification is
+used. `core` remains receipt + decision + projection. `behavior` is
+model_behavior + policy_outcome. `all` is core + behavior.
+
 Hard distinction:
 
 ```text

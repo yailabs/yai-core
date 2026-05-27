@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.47 Receipt / Decision / Projection Facts.
+Status: SPINE.48 Model Behavior / Policy Outcome Facts.
 
 ## Completed Foundation
 
@@ -151,6 +151,17 @@ derivation, not migration. Facts are not truth. `yai facts extract --case
 `fact:<kind>:<source_record_id>`. Bitemporal fields are populated, revision
 fields remain empty and valid_time_end sentinel: 0 means open-ended. No fact
 revision is implemented yet.
+SPINE.48 implements derived analytical extraction for `fact_model_behavior`
+and `fact_policy_outcome`. Model behavior facts measure model output posture,
+including conservative `authority_overclaim`, `unsupported_claim`,
+`review_required` and filesystem proposal markers from structured records or
+stable text markers. Policy outcome facts measure policy/control posture from
+decision, review/control and policy records. `yai facts extract --case
+<case_ref> --kind model_behavior|policy_outcome|behavior|all` is active.
+`core` remains receipt + decision + projection; `behavior` is model_behavior +
+policy_outcome; `all` is core + behavior. Facts are not truth. model proposal
+is not execution, model cannot approve, and automatic proposed-op gate import
+is future work. No LLM-based classification is used.
 
 Current:
 
@@ -206,6 +217,7 @@ SPINE.45A Documentation Root Canon Collapse completed.
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase completed.
 SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema completed.
 SPINE.47 Receipt / Decision / Projection Facts completed.
+SPINE.48 Model Behavior / Policy Outcome Facts completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -218,7 +230,13 @@ path derives fact_receipt, fact_decision and fact_projection from LMDB records
 with deterministic IDs and duplicate-aware idempotency. Facts remain
 non-authoritative analytical assertions.
 
-SPINE.48 Model Behavior / Policy Outcome Facts.
+SPINE.48 Model Behavior / Policy Outcome Facts completed. Behavior extraction
+derives fact_model_behavior and fact_policy_outcome with duplicate-aware
+idempotency. Facts remain non-authoritative analytical assertions: model
+proposal is not execution, model cannot approve and automatic proposed-op gate
+import is future work.
+
+SPINE.49 Memory / Divergence / Carrier Facts.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,

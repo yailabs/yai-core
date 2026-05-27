@@ -18,6 +18,13 @@ Model output can become a claim, proposal, observation or result envelope. YAI
 must still decide whether it can affect the case, create memory, invoke a
 carrier or enter review.
 
+SPINE.48 derives `fact_model_behavior` from explicit model records and stable
+markers only. It records posture such as `authority_overclaim`,
+`unsupported_claim`, `review_required`, refusal and filesystem operation
+proposal markers. The fact is analytical: facts are not truth. model proposal
+is not execution. model cannot approve. automatic proposed-op gate import is
+future work. No LLM-based classification is used.
+
 ## Planned Runtime Work
 
 MTP/speculative decoding, native model runners and richer provider backends are

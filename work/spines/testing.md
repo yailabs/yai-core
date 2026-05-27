@@ -1930,3 +1930,33 @@ not truth. Deterministic fact IDs use `fact:<kind>:<source_record_id>`.
 `transaction_time`, `valid_time_start`, `valid_time_end`, `known_at` and
 revision fields are part of the schema. valid_time_end sentinel: 0 means
 open-ended. No fact revision is implemented in SPINE.47.
+
+## SPINE.48 Model Behavior / Policy Outcome Facts
+
+`tests/smoke/model-behavior-policy-facts/test_model_behavior_policy_facts.sh`
+validates the behavior extraction path:
+
+```bash
+make check-model-behavior-policy-facts
+make smoke-spine48
+```
+
+Expected labels:
+
+```text
+facts_extract:model_behavior ok
+facts_extract:policy_outcome ok
+facts_extract:behavior ok
+facts_extract:idempotent ok
+facts_summary:behavior_counts ok
+facts:not_truth ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, initializes
+DuckDB, extracts `core`, extracts `fact_model_behavior` and
+`fact_policy_outcome`, then verifies duplicate-aware `behavior` extraction.
+`fact_policy_outcome` must be greater than zero on the filesystem loop.
+`fact_model_behavior` is honest and may be zero if no model records exist.
+Facts are not truth. model proposal is not execution. model cannot approve.
+automatic proposed-op gate import is future work. The extraction is
+bitemporal, duplicate-aware and uses no LLM-based classification.
