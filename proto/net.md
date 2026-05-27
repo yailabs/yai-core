@@ -267,3 +267,38 @@ unknown, declared, available, degraded, unavailable, retired.
 
 Required transport security values:
 unknown, local_only, trusted_local, declared_remote, external_untrusted.
+
+## Local IPC Channel
+
+A local IPC channel descriptor describes a possible local communication
+channel. It does not create a channel, open a socket, expose a filesystem path,
+approve an invocation, perform policy or move stream envelopes in this wave.
+IPC channel descriptors may reference transport adapter descriptors and
+endpoint descriptors. Canonical fixtures must use abstract channel references,
+not real filesystem paths.
+
+- local IPC channel: Declared local communication channel surface. It is not live IPC.
+- IPC channel descriptor: Versioned local IPC channel declaration linked to transport and endpoint ids.
+- abstract local channel: Abstract local channel posture that avoids platform and path details.
+- Unix socket future channel: Reserved future Unix socket posture. It does not expose a socket path.
+- named pipe future channel: Reserved future named pipe posture. It does not create a pipe.
+- platform IPC future channel: Reserved future platform IPC posture. It does not call platform APIs.
+- memory channel future: Reserved future memory channel posture. It does not allocate shared memory.
+- channel reference: Abstract channel identifier such as ipc-abstract://demo. It is not a filesystem path.
+- channel scope: One of process, machine, session or future.
+- channel state: One of unknown, declared, available, degraded, unavailable or retired.
+- channel security: One of unknown, local_only, same_user_future, declared_local or untrusted.
+- transport adapter relation: IPC descriptors reference a transport adapter id. The relation is declarative.
+- endpoint relation: IPC descriptors reference an endpoint id. The relation is declarative.
+
+Required IPC channel kinds:
+abstract_local, unix_socket_future, named_pipe_future, platform_ipc_future, memory_channel_future.
+
+Required IPC channel scopes:
+process, machine, session, future.
+
+Required IPC channel states:
+unknown, declared, available, degraded, unavailable, retired.
+
+Required IPC channel security values:
+unknown, local_only, same_user_future, declared_local, untrusted.

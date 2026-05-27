@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.8.0
+Reference version: NET.SPINE.9.0
 Authority: YAI repository
-Status: Localhost transport adapter contract started
+Status: Local IPC channel contract started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -111,9 +111,12 @@ probing, routing or live streaming.
 
 ### NET.SPINE.9 - Local IPC / Unix Socket Adapter Skeleton
 
-Add local IPC adapter skeleton files and fixtures for future Unix socket or
-platform-native channels. Keep socket operations unimplemented until a later
-transport wave.
+Add local IPC channel descriptor types, IPC fixtures and schema under `proto/`,
+and a static IPC fixture validator. Link IPC channel descriptors to transport
+adapter and endpoint fixture ids. Create abstract local IPC, Unix socket future,
+named pipe future and platform IPC future vocabulary only; do not implement
+IPC, Unix sockets, named pipes, filesystem socket paths, network IO, probing,
+routing or live streaming.
 
 ### NET.SPINE.10 - LAN Discovery Adapter Skeleton
 
@@ -249,7 +252,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.8.0
+Reference version: NET.SPINE.9.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

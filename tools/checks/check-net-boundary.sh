@@ -87,6 +87,9 @@ for path in \
   proto/fixtures/net/transport/localhost-http.json \
   proto/fixtures/net/transport/local-ipc.json \
   proto/fixtures/net/transport/future-transport.json \
+  proto/fixtures/net/ipc/abstract-local.json \
+  proto/fixtures/net/ipc/unix-socket-future.json \
+  proto/fixtures/net/ipc/memory-channel-future.json \
   proto/schemas/net-stream-envelope.v1.schema.json \
   proto/schemas/net-node-identity.v1.schema.json \
   proto/schemas/net-capability-advertisement.v1.schema.json \
@@ -95,12 +98,13 @@ for path in \
   proto/schemas/net-lifecycle-request.v1.schema.json \
   proto/schemas/net-lifecycle-report.v1.schema.json \
   proto/schemas/net-transport-adapter.v1.schema.json \
+  proto/schemas/net-local-ipc-channel.v1.schema.json \
   work/spines/net-spine.md; do
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.8.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.8.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.9.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.9.0\n' >&2
   exit 1
 fi
 
@@ -131,6 +135,11 @@ fi
 
 if ! grep -F '## Transport Adapter' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Transport Adapter\n' >&2
+  exit 1
+fi
+
+if ! grep -F '## Local IPC Channel' proto/net.md >/dev/null; then
+  printf 'proto/net.md must define Local IPC Channel\n' >&2
   exit 1
 fi
 
@@ -218,7 +227,7 @@ if grep -R -n -E '#[[:space:]]*include[[:space:]]+[<"]((system|engine)/|yai/(sys
 fi
 rm -f /tmp/yai-net-boundary-includes.$$
 
-if grep -R -n -E '\b(socket|connect|listen|accept|bind|getaddrinfo|recv|send)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
+if grep -R -n -E '\b(socket|connect|listen|accept|bind|getaddrinfo|recv|send|read|write|close|mkfifo|pipe)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
   cat /tmp/yai-net-boundary-network.$$ >&2
   rm -f /tmp/yai-net-boundary-network.$$
   printf 'NET.SPINE.0R must not contain network implementation symbols\n' >&2

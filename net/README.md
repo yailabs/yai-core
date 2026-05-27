@@ -25,6 +25,7 @@ NET.SPINE.5 starts endpoint descriptor contract material.
 NET.SPINE.6 starts health/readiness/liveness contract material.
 NET.SPINE.7 starts local service lifecycle contract material.
 NET.SPINE.8 starts localhost transport adapter contract material.
+NET.SPINE.9 starts local IPC channel contract material.
 NET protocol vocabulary and fixtures live under `proto/`.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
@@ -60,12 +61,13 @@ make check-net-endpoint-fixtures
 make check-net-health-fixtures
 make check-net-lifecycle-fixtures
 make check-net-transport-fixtures
+make check-net-ipc-fixtures
 make check-net-boundary
 ```
 
 ## Non-Goals
 
-NET.SPINE.8 does not implement LAN discovery, remote transport, local socket
-transport, HTTP behavior, routing behavior, server behavior, CLI behavior or
-CLORI support. It keeps NET as an integrated module, not a standalone
-repository.
+NET.SPINE.9 does not implement LAN discovery, remote transport, local socket
+transport, HTTP behavior, routing behavior, live IPC, server behavior, CLI
+behavior or CLORI support. It keeps NET as an integrated module, not a
+standalone repository.

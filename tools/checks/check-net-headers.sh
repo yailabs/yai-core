@@ -343,4 +343,41 @@ if strip_comments "$transport_header" | grep -n -E '\b(connect|listen|accept|bin
   exit 1
 fi
 
+for required_ipc_symbol in \
+  yai_net_ipc_channel_kind_t \
+  yai_net_ipc_channel_scope_t \
+  yai_net_ipc_channel_state_t \
+  yai_net_ipc_channel_security_t \
+  yai_net_ipc_channel_descriptor_v1_t \
+  YAI_NET_IPC_CHANNEL_KIND_ABSTRACT_LOCAL \
+  YAI_NET_IPC_CHANNEL_KIND_UNIX_SOCKET_FUTURE \
+  YAI_NET_IPC_CHANNEL_KIND_NAMED_PIPE_FUTURE \
+  YAI_NET_IPC_CHANNEL_KIND_PLATFORM_IPC_FUTURE \
+  YAI_NET_IPC_CHANNEL_KIND_MEMORY_CHANNEL_FUTURE \
+  YAI_NET_IPC_CHANNEL_SCOPE_PROCESS \
+  YAI_NET_IPC_CHANNEL_SCOPE_MACHINE \
+  YAI_NET_IPC_CHANNEL_SCOPE_SESSION \
+  YAI_NET_IPC_CHANNEL_SCOPE_FUTURE \
+  YAI_NET_IPC_CHANNEL_STATE_UNKNOWN \
+  YAI_NET_IPC_CHANNEL_STATE_DECLARED \
+  YAI_NET_IPC_CHANNEL_STATE_AVAILABLE \
+  YAI_NET_IPC_CHANNEL_STATE_DEGRADED \
+  YAI_NET_IPC_CHANNEL_STATE_UNAVAILABLE \
+  YAI_NET_IPC_CHANNEL_STATE_RETIRED \
+  YAI_NET_IPC_CHANNEL_SECURITY_UNKNOWN \
+  YAI_NET_IPC_CHANNEL_SECURITY_LOCAL_ONLY \
+  YAI_NET_IPC_CHANNEL_SECURITY_SAME_USER_FUTURE \
+  YAI_NET_IPC_CHANNEL_SECURITY_DECLARED_LOCAL \
+  YAI_NET_IPC_CHANNEL_SECURITY_UNTRUSTED; do
+  if ! grep -q "$required_ipc_symbol" "$transport_header"; then
+    printf 'NET transport header missing required IPC symbol: %s\n' "$required_ipc_symbol" >&2
+    exit 1
+  fi
+done
+
+if strip_comments "$transport_header" | grep -n -E '\b(connect|listen|accept|bind|socket|recv|send|read|write|close|open|mkfifo|pipe|http|request|probe|route|authorize)[[:space:]]*\(' >&2; then
+  printf 'NET transport header declares forbidden IPC/runtime function\n' >&2
+  exit 1
+fi
+
 printf 'check-net-headers: ok\n'

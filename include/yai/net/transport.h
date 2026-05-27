@@ -67,4 +67,50 @@ typedef struct yai_net_transport_adapter_descriptor_v1 {
     uint64_t declared_at_unix_ms;
 } yai_net_transport_adapter_descriptor_v1_t;
 
+typedef enum yai_net_ipc_channel_kind {
+    YAI_NET_IPC_CHANNEL_KIND_ABSTRACT_LOCAL = 0,
+    YAI_NET_IPC_CHANNEL_KIND_UNIX_SOCKET_FUTURE = 1,
+    YAI_NET_IPC_CHANNEL_KIND_NAMED_PIPE_FUTURE = 2,
+    YAI_NET_IPC_CHANNEL_KIND_PLATFORM_IPC_FUTURE = 3,
+    YAI_NET_IPC_CHANNEL_KIND_MEMORY_CHANNEL_FUTURE = 4
+} yai_net_ipc_channel_kind_t;
+
+typedef enum yai_net_ipc_channel_scope {
+    YAI_NET_IPC_CHANNEL_SCOPE_PROCESS = 0,
+    YAI_NET_IPC_CHANNEL_SCOPE_MACHINE = 1,
+    YAI_NET_IPC_CHANNEL_SCOPE_SESSION = 2,
+    YAI_NET_IPC_CHANNEL_SCOPE_FUTURE = 3
+} yai_net_ipc_channel_scope_t;
+
+typedef enum yai_net_ipc_channel_state {
+    YAI_NET_IPC_CHANNEL_STATE_UNKNOWN = 0,
+    YAI_NET_IPC_CHANNEL_STATE_DECLARED = 1,
+    YAI_NET_IPC_CHANNEL_STATE_AVAILABLE = 2,
+    YAI_NET_IPC_CHANNEL_STATE_DEGRADED = 3,
+    YAI_NET_IPC_CHANNEL_STATE_UNAVAILABLE = 4,
+    YAI_NET_IPC_CHANNEL_STATE_RETIRED = 5
+} yai_net_ipc_channel_state_t;
+
+typedef enum yai_net_ipc_channel_security {
+    YAI_NET_IPC_CHANNEL_SECURITY_UNKNOWN = 0,
+    YAI_NET_IPC_CHANNEL_SECURITY_LOCAL_ONLY = 1,
+    YAI_NET_IPC_CHANNEL_SECURITY_SAME_USER_FUTURE = 2,
+    YAI_NET_IPC_CHANNEL_SECURITY_DECLARED_LOCAL = 3,
+    YAI_NET_IPC_CHANNEL_SECURITY_UNTRUSTED = 4
+} yai_net_ipc_channel_security_t;
+
+typedef struct yai_net_ipc_channel_descriptor_v1 {
+    const char *ipc_channel_id;
+    const char *transport_adapter_id;
+    const char *endpoint_id;
+    const char *channel_label;
+    yai_net_ipc_channel_kind_t channel_kind;
+    yai_net_ipc_channel_scope_t channel_scope;
+    yai_net_ipc_channel_state_t channel_state;
+    yai_net_ipc_channel_security_t channel_security;
+    const char *channel_ref;
+    const char *metadata_json;
+    uint64_t declared_at_unix_ms;
+} yai_net_ipc_channel_descriptor_v1_t;
+
 #endif

@@ -14,6 +14,8 @@ probed here.
 
 Endpoint fixture ids may be referenced by transport adapter descriptors.
 
+Local IPC endpoint descriptors may be referenced by IPC channel descriptors.
+
 An endpoint is not authority.
 
 This area does not implement discovery, probing, routing or transport.

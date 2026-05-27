@@ -9,6 +9,11 @@ Transport descriptors refer to endpoint descriptors.
 
 Transport adapters may later move stream envelopes.
 
+Local IPC channel descriptors are represented in `include/yai/net/transport.h`.
+IPC fixtures live under `proto/fixtures/net/ipc/`.
+IPC descriptors are abstract in this phase and do not expose real filesystem
+paths.
+
 This area does not implement network IO, HTTP, probing, routing or lifecycle
 behavior.
 
