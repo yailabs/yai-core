@@ -1900,3 +1900,33 @@ schema `yai.fact.v1`, `transaction_time`, `valid_time_start`,
 
 Facts are not truth. SPINE.46 has No fact extraction; extraction begins in
 SPINE.47.
+
+## SPINE.47 Receipt / Decision / Projection Facts
+
+`tests/smoke/receipt-decision-projection-facts/test_receipt_decision_projection_facts.sh`
+validates the first extraction path:
+
+```bash
+make check-receipt-decision-projection-facts
+make smoke-spine47
+```
+
+Expected labels:
+
+```text
+facts_extract:receipt ok
+facts_extract:decision ok
+facts_extract:projection ok
+facts_extract:core ok
+facts_extract:idempotent ok
+facts_summary:counts ok
+facts:not_truth ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, initializes
+DuckDB, extracts `fact_receipt`, `fact_decision` and `fact_projection`, checks
+`facts summary`, then verifies duplicate-aware idempotent extraction. Facts are
+not truth. Deterministic fact IDs use `fact:<kind>:<source_record_id>`.
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at` and
+revision fields are part of the schema. valid_time_end sentinel: 0 means
+open-ended. No fact revision is implemented in SPINE.47.

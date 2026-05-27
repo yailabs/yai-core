@@ -1288,3 +1288,32 @@ It also lists common bitemporal/revision columns:
 `yai facts init` creates the DuckDB file and schema tables only. Facts are not
 truth. SPINE.46 has No fact extraction; `facts_extracted: 0` is the required
 posture until SPINE.47.
+
+## SPINE.47 Receipt / Decision / Projection Fact Commands
+
+SPINE.47 adds the first fact extraction commands:
+
+```bash
+yai facts extract --case <case_ref> --kind receipt
+yai facts extract --case <case_ref> --kind decision
+yai facts extract --case <case_ref> --kind projection
+yai facts extract --case <case_ref> --kind core
+yai facts summary --case <case_ref>
+make check-receipt-decision-projection-facts
+make smoke-spine47
+```
+
+`core` means receipt + decision + projection. `all` is reserved and reports
+that it is equivalent to future core/all behavior without expanding the wave.
+
+Fact extraction is derivation, not migration. Records remain truth in LMDB.
+Facts are not truth. Deterministic fact IDs use:
+
+```text
+fact:<kind>:<source_record_id>
+```
+
+Extraction is idempotent extraction; a second run reports duplicates. The row
+shape populates `transaction_time`, `valid_time_start`, `valid_time_end`,
+`known_at` and revision fields. valid_time_end sentinel: 0 means open-ended.
+No fact revision or supersession is implemented yet.

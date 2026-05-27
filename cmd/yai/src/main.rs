@@ -34,8 +34,8 @@ use yai_core_engine::reconcile::ReconcileSummary;
 use yai_core_engine::record::{Record, RecordKind};
 use yai_core_engine::store::lmdb::{
     GraphMaterializeReport, LmdbRecordStore, RecordStoreStatusKind, ReplayMetadata,
-    RuntimeGraphEdge, RuntimeGraphLoadResult, GRAPH_RELATION_SCHEMA, GRAPH_RELATION_STORE_NAME,
-    RECORD_SCHEMA,
+    RuntimeGraphEdge, RuntimeGraphLoadResult, StoredRecordEnvelope, GRAPH_RELATION_SCHEMA,
+    GRAPH_RELATION_STORE_NAME, RECORD_SCHEMA,
 };
 use yai_core_engine::store::Store;
 
@@ -73,6 +73,7 @@ const FACT_COMMON_COLUMNS: &[&str] = &[
     "superseded_by",
     "retracted_by",
 ];
+const FACT_VALID_TIME_END_SENTINEL: u128 = 0;
 
 unsafe extern "C" {
     fn linenoise(prompt: *const c_char) -> *mut c_char;
@@ -85,7 +86,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema");
+    println!("status: SPINE.47 Receipt / Decision / Projection Facts");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -103,7 +104,7 @@ fn print_info() {
     println!("graph_relation_write_path: active_minimal");
     println!("runtime_graph: active_minimal per_command_ephemeral rebuildable");
     println!("fact_plane: duckdb bitemporal schema yai.fact.v1");
-    println!("facts_extraction: planned_spine47");
+    println!("facts_extraction: receipt_decision_projection active");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -271,6 +272,8 @@ fn print_usage() {
     println!("       yai facts status");
     println!("       yai facts schema");
     println!("       yai facts init");
+    println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|core");
+    println!("       yai facts summary --case <case_ref>");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -2566,8 +2569,12 @@ fn facts_status(args: &[String]) -> Result<(), String> {
     println!("schema: {FACT_SCHEMA}");
     println!("bitemporal: yes");
     if status == "ready" {
+        let counts = fact_counts(None)?;
         println!("tables: {}", FACT_TABLES.len());
-        println!("facts_extracted: 0");
+        println!("facts_extracted: {}", counts.total);
+        println!("fact_receipt: {}", counts.receipt);
+        println!("fact_decision: {}", counts.decision);
+        println!("fact_projection: {}", counts.projection);
     }
     println!("facts_are_truth: false");
     println!("operational_truth: false");
@@ -2591,7 +2598,8 @@ fn facts_schema(args: &[String]) -> Result<(), String> {
     }
     println!("extraction:");
     println!("  facts_extracted: 0");
-    println!("  extraction_status: planned_spine47");
+    println!("  extraction_status: receipt_decision_projection_active");
+    println!("  valid_time_end_sentinel: 0");
     Ok(())
 }
 
@@ -2631,6 +2639,503 @@ fn facts_init(args: &[String]) -> Result<(), String> {
     println!("bitemporal: yes");
     println!("tables_created: {}", FACT_TABLES.len());
     println!("facts_extracted: 0");
+    Ok(())
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum FactExtractKind {
+    Receipt,
+    Decision,
+    Projection,
+}
+
+impl FactExtractKind {
+    fn from_arg(value: &str) -> Option<Self> {
+        match value {
+            "receipt" => Some(Self::Receipt),
+            "decision" => Some(Self::Decision),
+            "projection" => Some(Self::Projection),
+            _ => None,
+        }
+    }
+
+    fn output_kind(self) -> &'static str {
+        match self {
+            Self::Receipt => "receipt",
+            Self::Decision => "decision",
+            Self::Projection => "projection",
+        }
+    }
+
+    fn table(self) -> &'static str {
+        match self {
+            Self::Receipt => "fact_receipt",
+            Self::Decision => "fact_decision",
+            Self::Projection => "fact_projection",
+        }
+    }
+
+    fn fact_id_prefix(self) -> &'static str {
+        match self {
+            Self::Receipt => "fact:receipt:",
+            Self::Decision => "fact:decision:",
+            Self::Projection => "fact:projection:",
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default)]
+struct FactExtractionStats {
+    records_scanned: usize,
+    facts_written: usize,
+    facts_duplicate: usize,
+    facts_skipped: usize,
+}
+
+#[derive(Clone, Debug, Default)]
+struct FactCounts {
+    receipt: usize,
+    decision: usize,
+    projection: usize,
+    total: usize,
+}
+
+fn ensure_facts_ready() -> Result<(), String> {
+    let path = facts_store_path();
+    if path.is_file() {
+        return Ok(());
+    }
+    Err(format!(
+        "fact plane is not initialized: run yai facts init; facts_path: {}",
+        path.display()
+    ))
+}
+
+fn duckdb_run(args: &[&str]) -> Result<String, String> {
+    let output = Command::new("duckdb")
+        .args(args)
+        .output()
+        .map_err(|err| format!("duckdb executable unavailable: {err}"))?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let detail = if stderr.trim().is_empty() {
+            stdout.trim()
+        } else {
+            stderr.trim()
+        };
+        return Err(format!("duckdb command failed: {detail}"));
+    }
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+fn duckdb_query_csv(sql: &str) -> Result<String, String> {
+    let path = facts_store_path();
+    let path_string = path.display().to_string();
+    duckdb_run(&[&path_string, "-csv", "-noheader", "-c", sql])
+}
+
+fn duckdb_exec_sql(sql: &str) -> Result<(), String> {
+    let path = facts_store_path();
+    let path_string = path.display().to_string();
+    duckdb_run(&[&path_string, "-c", sql]).map(|_| ())
+}
+
+fn duckdb_count(sql: &str) -> Result<usize, String> {
+    duckdb_query_csv(sql)?
+        .trim()
+        .parse::<usize>()
+        .map_err(|err| format!("invalid duckdb count output for `{sql}`: {err}"))
+}
+
+fn sql_quote(value: &str) -> String {
+    format!("'{}'", value.replace('\'', "''"))
+}
+
+fn sql_bool(value: bool) -> &'static str {
+    if value {
+        "TRUE"
+    } else {
+        "FALSE"
+    }
+}
+
+fn fact_counts(case_ref: Option<&str>) -> Result<FactCounts, String> {
+    ensure_facts_ready()?;
+    let where_clause = case_ref
+        .map(|case_ref| format!(" WHERE case_ref = {}", sql_quote(case_ref)))
+        .unwrap_or_default();
+    let receipt = duckdb_count(&format!("SELECT count(*) FROM fact_receipt{where_clause};"))?;
+    let decision = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_decision{where_clause};"
+    ))?;
+    let projection = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_projection{where_clause};"
+    ))?;
+    let total = FACT_TABLES
+        .iter()
+        .map(|table| duckdb_count(&format!("SELECT count(*) FROM {table}{where_clause};")))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .sum();
+    Ok(FactCounts {
+        receipt,
+        decision,
+        projection,
+        total,
+    })
+}
+
+fn existing_fact_ids(table: &str, case_ref: &str) -> Result<HashSet<String>, String> {
+    let query = format!(
+        "SELECT fact_id FROM {table} WHERE case_ref = {};",
+        sql_quote(case_ref)
+    );
+    Ok(duckdb_query_csv(&query)?
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .map(ToString::to_string)
+        .collect())
+}
+
+fn summary_token_value(summary: &str, key: &str) -> String {
+    let prefix = format!("{key}:");
+    summary
+        .split_whitespace()
+        .find_map(|part| part.strip_prefix(&prefix))
+        .unwrap_or("")
+        .to_string()
+}
+
+fn summary_token_value_or(summary: &str, key: &str, fallback: &str) -> String {
+    let value = summary_token_value(summary, key);
+    if value.is_empty() {
+        fallback.to_string()
+    } else {
+        value
+    }
+}
+
+fn summary_bool(summary: &str, key: &str, fallback: bool) -> bool {
+    match summary_token_value(summary, key).as_str() {
+        "true" | "yes" => true,
+        "false" | "no" => false,
+        _ => fallback,
+    }
+}
+
+fn summary_number(summary: &str, key: &str) -> usize {
+    summary_token_value(summary, key).parse().unwrap_or(0)
+}
+
+fn source_record_summary(record: &StoredRecordEnvelope) -> String {
+    json_string_or(&record.raw_json, "summary", "")
+}
+
+fn source_record_subject_ref(record: &StoredRecordEnvelope) -> String {
+    json_string_or(&record.raw_json, "subject_ref", "")
+}
+
+fn source_record_attempt_id(record: &StoredRecordEnvelope) -> String {
+    json_string_or(&record.raw_json, "attempt_id", "")
+}
+
+fn source_record_decision_id(record: &StoredRecordEnvelope) -> String {
+    json_string_or(&record.raw_json, "decision_id", "")
+}
+
+fn source_record_receipt_id(record: &StoredRecordEnvelope) -> String {
+    json_string_or(&record.raw_json, "receipt_id", "")
+}
+
+fn source_valid_time_start(record: &StoredRecordEnvelope, transaction_time: u128) -> u128 {
+    json_number_field(&record.raw_json, "created_at_unix_ms")
+        .and_then(|value| value.parse::<u128>().ok())
+        .filter(|value| *value > 0)
+        .unwrap_or(transaction_time)
+}
+
+fn fact_common_sql_values(record: &StoredRecordEnvelope, transaction_time: u128) -> String {
+    let valid_time_start = source_valid_time_start(record, transaction_time);
+    [
+        sql_quote(""),
+        sql_quote(&record.record_id),
+        sql_quote(""),
+        sql_quote(""),
+        transaction_time.to_string(),
+        valid_time_start.to_string(),
+        FACT_VALID_TIME_END_SENTINEL.to_string(),
+        transaction_time.to_string(),
+        sql_quote("current"),
+        sql_quote(""),
+        sql_quote(""),
+        sql_quote(""),
+        "1.0".to_string(),
+        sql_quote(&summary_token_value(
+            &source_record_summary(record),
+            "authority_scope",
+        )),
+        sql_quote(&record.record_id),
+        sql_quote(&record.record_kind),
+        sql_quote(&record.schema),
+        sql_quote(FACT_SCHEMA),
+        transaction_time.to_string(),
+    ]
+    .join(", ")
+}
+
+fn receipt_status_from_summary(summary: &str) -> String {
+    let explicit = summary_token_value(summary, "receipt_status");
+    if !explicit.is_empty() {
+        return explicit;
+    }
+    let status = summary_token_value(summary, "status");
+    if !status.is_empty() {
+        return status;
+    }
+    summary_token_value(summary, "receipt")
+}
+
+fn receipt_carrier_family(record: &StoredRecordEnvelope, summary: &str) -> String {
+    let explicit = summary_token_value(summary, "carrier_family");
+    if !explicit.is_empty() {
+        return explicit;
+    }
+    match record.record_kind.as_str() {
+        "filesystem_receipt" => "filesystem".to_string(),
+        "process_receipt" => "process".to_string(),
+        "carrier_receipt" => "unknown".to_string(),
+        _ => String::new(),
+    }
+}
+
+fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtractKind) -> bool {
+    match kind {
+        FactExtractKind::Receipt => matches!(
+            record.record_kind.as_str(),
+            "receipt"
+                | "filesystem_receipt"
+                | "effect_receipt"
+                | "carrier_receipt"
+                | "process_receipt"
+        ),
+        FactExtractKind::Decision => {
+            matches!(record.record_kind.as_str(), "decision" | "review_decision")
+        }
+        FactExtractKind::Projection => matches!(
+            record.record_kind.as_str(),
+            "projection_result" | "projection_request" | "participant_view_frame"
+        ),
+    }
+}
+
+fn fact_insert_sql(
+    kind: FactExtractKind,
+    record: &StoredRecordEnvelope,
+    transaction_time: u128,
+) -> String {
+    let summary = source_record_summary(record);
+    let fact_id = format!("{}{}", kind.fact_id_prefix(), record.record_id);
+    let subject_ref = source_record_subject_ref(record);
+    match kind {
+        FactExtractKind::Receipt => {
+            let receipt_status = receipt_status_from_summary(&summary);
+            let carrier_family = receipt_carrier_family(record, &summary);
+            let carrier_outcome =
+                summary_token_value_or(&summary, "carrier_outcome", &receipt_status);
+            let carrier_attempted = summary_bool(&summary, "carrier_attempted", false);
+            let execution_performed = summary_bool(&summary, "execution_performed", false);
+            format!(
+                "INSERT INTO fact_receipt (fact_id, case_ref, subject_ref, receipt_id, attempt_id, decision_id, receipt_kind, receipt_status, carrier_family, carrier_outcome, carrier_attempted, execution_performed, guarantee_mode, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&source_record_receipt_id(record)),
+                sql_quote(&source_record_attempt_id(record)),
+                sql_quote(&source_record_decision_id(record)),
+                sql_quote(&record.record_kind),
+                sql_quote(&receipt_status),
+                sql_quote(&carrier_family),
+                sql_quote(&carrier_outcome),
+                sql_bool(carrier_attempted),
+                sql_bool(execution_performed),
+                sql_quote(&summary_token_value(&summary, "guarantee_mode")),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
+        FactExtractKind::Decision => {
+            let decision_outcome = summary_token_value_or(
+                &summary,
+                "decision_outcome",
+                &summary_token_value(&summary, "decision"),
+            );
+            let gate_outcome = summary_token_value_or(
+                &summary,
+                "gate_outcome",
+                if decision_outcome == "require_review" {
+                    "require_review"
+                } else {
+                    ""
+                },
+            );
+            let review_id = summary_token_value(&summary, "review_id");
+            let requires_review = summary.contains("require_review") || !review_id.is_empty();
+            let policy_ref = summary_token_value_or(
+                &summary,
+                "policy_ref",
+                &summary_token_value(&summary, "rule"),
+            );
+            format!(
+                "INSERT INTO fact_decision (fact_id, case_ref, subject_ref, decision_id, attempt_id, decision_outcome, gate_outcome, policy_ref, requires_review, review_id, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&source_record_decision_id(record)),
+                sql_quote(&source_record_attempt_id(record)),
+                sql_quote(&decision_outcome),
+                sql_quote(&gate_outcome),
+                sql_quote(&policy_ref),
+                sql_bool(requires_review),
+                sql_quote(&review_id),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
+        FactExtractKind::Projection => {
+            let projection_id =
+                summary_token_value_or(&summary, "projection_id", &record.record_id);
+            let projection_kind = summary_token_value_or(
+                &summary,
+                "projection_kind",
+                match record.record_kind.as_str() {
+                    "projection_request" => "request",
+                    "projection_result" => "result",
+                    "participant_view_frame" => "participant_view_frame",
+                    _ => "",
+                },
+            );
+            let freshness = summary_token_value_or(
+                &summary,
+                "freshness",
+                &summary_token_value(&summary, "projection_freshness"),
+            );
+            format!(
+                "INSERT INTO fact_projection (fact_id, case_ref, subject_ref, projection_id, projection_kind, consumer, freshness, freshness_source, stale_reason, redaction, source_records, source_receipts, source_memory, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&projection_id),
+                sql_quote(&projection_kind),
+                sql_quote(&summary_token_value(&summary, "consumer")),
+                sql_quote(&freshness),
+                sql_quote(&summary_token_value(&summary, "freshness_source")),
+                sql_quote(&summary_token_value(&summary, "stale_reason")),
+                sql_quote(&summary_token_value(&summary, "redaction")),
+                summary_number(&summary, "source_records"),
+                summary_number(&summary, "source_receipts"),
+                summary_number(&summary, "source_memory"),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
+    }
+}
+
+fn extract_fact_kind(
+    store: &LmdbRecordStore,
+    case_ref: &str,
+    kind: FactExtractKind,
+) -> Result<FactExtractionStats, String> {
+    ensure_facts_ready()?;
+    let records = store.list_records_by_case(case_ref, usize::MAX)?;
+    let existing = existing_fact_ids(kind.table(), case_ref)?;
+    let transaction_time = unix_time_ms_now();
+    let mut stats = FactExtractionStats {
+        records_scanned: records.records_total,
+        ..Default::default()
+    };
+    let mut inserts = Vec::new();
+    for record in records.records {
+        if !source_record_matches_fact_kind(&record, kind) {
+            stats.facts_skipped += 1;
+            continue;
+        }
+        let fact_id = format!("{}{}", kind.fact_id_prefix(), record.record_id);
+        if existing.contains(&fact_id) {
+            stats.facts_duplicate += 1;
+            continue;
+        }
+        inserts.push(fact_insert_sql(kind, &record, transaction_time));
+        stats.facts_written += 1;
+    }
+    if !inserts.is_empty() {
+        duckdb_exec_sql(&inserts.join("\n"))?;
+    }
+    Ok(stats)
+}
+
+fn facts_extract(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let kind_arg = named_arg(args, "--kind")?;
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        print_non_ready_record_store(&status);
+        return Ok(());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    if kind_arg == "all" {
+        println!("facts_extract:");
+        println!("case_ref: {case_ref}");
+        println!("kind: all");
+        println!("status: reserved");
+        println!("equivalent_kind: core");
+        println!("facts_are_truth: false");
+        return Ok(());
+    }
+    if kind_arg == "core" {
+        let receipt = extract_fact_kind(&store, &case_ref, FactExtractKind::Receipt)?;
+        let decision = extract_fact_kind(&store, &case_ref, FactExtractKind::Decision)?;
+        let projection = extract_fact_kind(&store, &case_ref, FactExtractKind::Projection)?;
+        println!("facts_extract:");
+        println!("case_ref: {case_ref}");
+        println!("kind: core");
+        println!("status: completed");
+        println!("fact_receipt_written: {}", receipt.facts_written);
+        println!("fact_decision_written: {}", decision.facts_written);
+        println!("fact_projection_written: {}", projection.facts_written);
+        println!(
+            "facts_duplicate: {}",
+            receipt.facts_duplicate + decision.facts_duplicate + projection.facts_duplicate
+        );
+        println!("facts_are_truth: false");
+        return Ok(());
+    }
+    let kind = FactExtractKind::from_arg(&kind_arg)
+        .ok_or_else(|| format!("unsupported facts extract kind: {kind_arg}"))?;
+    let stats = extract_fact_kind(&store, &case_ref, kind)?;
+    println!("facts_extract:");
+    println!("case_ref: {case_ref}");
+    println!("kind: {}", kind.output_kind());
+    println!("status: completed");
+    println!("records_scanned: {}", stats.records_scanned);
+    println!("facts_written: {}", stats.facts_written);
+    println!("facts_duplicate: {}", stats.facts_duplicate);
+    println!("facts_skipped: {}", stats.facts_skipped);
+    println!("table: {}", kind.table());
+    println!("schema: {FACT_SCHEMA}");
+    println!("facts_are_truth: false");
+    Ok(())
+}
+
+fn facts_summary(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let counts = fact_counts(Some(&case_ref))?;
+    println!("facts_summary:");
+    println!("case_ref: {case_ref}");
+    println!("fact_receipt: {}", counts.receipt);
+    println!("fact_decision: {}", counts.decision);
+    println!("fact_projection: {}", counts.projection);
+    println!("facts_total: {}", counts.total);
+    println!("facts_are_truth: false");
     Ok(())
 }
 
@@ -4140,6 +4645,13 @@ fn unix_timestamp_string() -> String {
         .duration_since(std::time::UNIX_EPOCH)
         .map(|duration| duration.as_secs().to_string())
         .unwrap_or_else(|_| "0".to_string())
+}
+
+fn unix_time_ms_now() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|duration| duration.as_millis())
+        .unwrap_or(0)
 }
 
 fn import_journal_to_record_store(journal_path: &std::path::Path) -> Result<(), String> {
@@ -8387,6 +8899,18 @@ fn main() {
         }
         Some("facts") if args.get(1).map(String::as_str) == Some("init") => {
             if let Err(error) = facts_init(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("extract") => {
+            if let Err(error) = facts_extract(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("summary") => {
+            if let Err(error) = facts_summary(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

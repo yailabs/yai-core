@@ -1,0 +1,69 @@
+# Filesystem Loop Outputs
+
+Status: canonical output anchors.
+
+## Receipt / Decision / Projection Facts
+
+Receipt extraction:
+
+```text
+facts_extract:
+kind: receipt
+status: completed
+table: fact_receipt
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Decision extraction:
+
+```text
+facts_extract:
+kind: decision
+status: completed
+table: fact_decision
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Projection extraction:
+
+```text
+facts_extract:
+kind: projection
+status: completed
+table: fact_projection
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Core extraction:
+
+```text
+facts_extract:
+kind: core
+status: completed
+fact_receipt_written: N
+fact_decision_written: N
+fact_projection_written: N
+facts_duplicate: N
+facts_are_truth: false
+```
+
+Summary:
+
+```text
+facts_summary:
+case_ref: case:new12-filesystem
+fact_receipt: N
+fact_decision: N
+fact_projection: N
+facts_total: N
+facts_are_truth: false
+```
+
+Second extraction is idempotent extraction and should report duplicates.
+Deterministic fact IDs use `fact:<kind>:<source_record_id>`.
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at` and
+revision fields remain part of the row shape. valid_time_end sentinel: 0 means
+open-ended. Facts are not truth. No fact revision is implemented in SPINE.47.

@@ -282,3 +282,45 @@ Facts are not truth. Fact rows are analytical, temporal,
 provenance-bearing assertions. They cannot authorize, execute, approve, deny,
 mutate operational truth or replace evidence. No fact extraction occurs in
 SPINE.46; SPINE.47 starts receipt, decision and projection facts.
+
+## Receipt / Decision / Projection Facts
+
+SPINE.47 derives analytics from LMDB records into DuckDB:
+
+```bash
+yai facts extract --case case:new12-filesystem --kind receipt
+yai facts extract --case case:new12-filesystem --kind decision
+yai facts extract --case case:new12-filesystem --kind projection
+yai facts extract --case case:new12-filesystem --kind core
+yai facts summary --case case:new12-filesystem
+```
+
+Expected extraction anchors:
+
+```text
+facts_extract:
+status: completed
+facts_are_truth: false
+fact_receipt
+fact_decision
+fact_projection
+facts_duplicate
+```
+
+Expected summary anchors:
+
+```text
+facts_summary:
+fact_receipt: N
+fact_decision: N
+fact_projection: N
+facts_total: N
+facts_are_truth: false
+```
+
+Extraction is derivation, not migration. Records remain truth in LMDB. Facts
+are not truth. Deterministic fact IDs use `fact:<kind>:<source_record_id>`.
+Second extraction is idempotent extraction and reports duplicates. The row
+shape keeps `transaction_time`, `valid_time_start`, `valid_time_end`,
+`known_at` and revision fields. valid_time_end sentinel: 0 means open-ended.
+No fact revision or supersession is implemented in SPINE.47.

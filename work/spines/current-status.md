@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema.
+Status: SPINE.47 Receipt / Decision / Projection Facts.
 
 ## Completed Foundation
 
@@ -143,6 +143,14 @@ a row. A fact is a temporally scoped, provenance-bearing assertion with
 they cannot authorize, execute, approve, deny, mutate operational truth or
 replace evidence. SPINE.46 initializes the twelve planned fact tables and keeps
 `facts_extracted: 0`; No fact extraction occurs until SPINE.47.
+SPINE.47 implements idempotent extraction for `fact_receipt`, `fact_decision`
+and `fact_projection` from LMDB records into DuckDB. Fact extraction is
+derivation, not migration. Facts are not truth. `yai facts extract --case
+<case_ref> --kind receipt|decision|projection|core` and `yai facts summary
+--case <case_ref>` are active. Fact IDs are deterministic fact IDs using
+`fact:<kind>:<source_record_id>`. Bitemporal fields are populated, revision
+fields remain empty and valid_time_end sentinel: 0 means open-ended. No fact
+revision is implemented yet.
 
 Current:
 
@@ -197,6 +205,7 @@ SPINE.45 Graph + RuntimeGraph Freeze completed.
 SPINE.45A Documentation Root Canon Collapse completed.
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase completed.
 SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema completed.
+SPINE.47 Receipt / Decision / Projection Facts completed.
 REPO.HYGIENE.0 Header / Ownership Standard + Agent Operating Appendix completed.
 REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 ```
@@ -204,12 +213,12 @@ REPO.HYGIENE.1 Apply Headers + Source/Docs Surface Cleanup completed.
 Next:
 
 ```text
-SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema completed. The fact
-plane is bitemporal, provenance-bearing and analytical only; facts are not
-truth. SPINE.47 starts the first real extraction into fact_receipt,
-fact_decision and fact_projection.
+SPINE.47 Receipt / Decision / Projection Facts completed. The first extraction
+path derives fact_receipt, fact_decision and fact_projection from LMDB records
+with deterministic IDs and duplicate-aware idempotency. Facts remain
+non-authoritative analytical assertions.
 
-SPINE.47 Receipt / Decision / Projection Facts.
+SPINE.48 Model Behavior / Policy Outcome Facts.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,

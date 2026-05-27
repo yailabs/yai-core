@@ -61,6 +61,25 @@ fact_provider_runtime
 
 No fact extraction happens in SPINE.46. Fact extraction begins in SPINE.47.
 
+SPINE.47 starts real fact extraction from LMDB records into DuckDB for
+`fact_receipt`, `fact_decision` and `fact_projection`. Fact extraction derives
+analytics from LMDB records; it is derivation, not migration. Records remain
+truth in LMDB and facts remain non-authoritative.
+
+Extracted fact rows use deterministic fact IDs:
+
+```text
+fact:<kind>:<source_record_id>
+```
+
+Extraction is idempotent: a second extraction reports duplicates instead of
+inserting duplicate rows. For SPINE.47, `status` is `current`,
+`transaction_time` and `known_at` are extraction time, `valid_time_start` is
+the source record time when available and extraction time otherwise, and the
+valid_time_end sentinel: 0 means open-ended. Revision fields
+`revision_of`, `superseded_by` and `retracted_by` remain empty because there is
+No fact revision or supersession implementation yet.
+
 Hard distinction:
 
 ```text

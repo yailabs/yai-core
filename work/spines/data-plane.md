@@ -126,7 +126,7 @@ SPINE.45A Documentation Root Canon Collapse                           done
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase done
 
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
-SPINE.47  Receipt / Decision / Projection Facts                     planned
+SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     planned
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
@@ -289,6 +289,29 @@ fact_provider_runtime
 
 SPINE.46 has No fact extraction. `facts_extracted: 0` remains visible until
 SPINE.47 starts receipt, decision and projection extraction.
+
+SPINE.47 starts extraction for:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+```
+
+Fact extraction derives analytics from LMDB records; it is derivation, not
+migration. Records remain truth. Facts are not truth. Fact IDs are
+deterministic fact IDs:
+
+```text
+fact:<kind>:<source_record_id>
+```
+
+`yai facts extract --case <case_ref> --kind receipt|decision|projection|core`
+and `yai facts summary --case <case_ref>` are idempotent extraction surfaces.
+Second extraction reports duplicates. `transaction_time`, `valid_time_start`,
+`valid_time_end`, `known_at` and revision fields remain populated in the row
+shape. valid_time_end sentinel: 0 means open-ended. No fact revision or
+supersession is implemented yet.
 
 SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
 consistency, projection invalidation consistency, memory basis after

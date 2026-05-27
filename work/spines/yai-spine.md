@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase and SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema. | SPINE.47 Receipt / Decision / Projection Facts. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema and SPINE.47 Receipt / Decision / Projection Facts. | SPINE.48 Model Behavior / Policy Outcome Facts. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -169,8 +169,20 @@ initializes `fact_receipt`, `fact_decision`, `fact_projection`,
 `fact_memory_quality`, `fact_retrieval_quality` and `fact_provider_runtime`.
 No fact extraction occurs; `facts_extracted: 0` remains visible until SPINE.47.
 
+SPINE.47 implements the first real extraction from LMDB records into DuckDB:
+`fact_receipt`, `fact_decision` and `fact_projection`. Extraction is
+derivation, not migration. Records remain truth in LMDB. Facts are not truth.
+The new surface is `yai facts extract --case <case_ref> --kind
+receipt|decision|projection|core` and `yai facts summary --case <case_ref>`.
+Fact IDs are deterministic as `fact:<kind>:<source_record_id>`, extraction is
+idempotent extraction, and the second run reports duplicates. Bitemporal
+columns keep `transaction_time`, `valid_time_start`, `valid_time_end` and
+`known_at`; revision fields `revision_of`, `superseded_by` and `retracted_by`
+remain empty because there is No fact revision yet. The valid_time_end
+sentinel: 0 means open-ended.
+
 Do not schedule future work with the old NEW numbering. The next active
-delivery is SPINE.47.
+delivery is SPINE.48.
 
 ## DuckDB Fact Plane Doctrine
 
@@ -232,6 +244,22 @@ yai facts init
 
 SPINE.46 has No fact extraction. `facts_extracted: 0` is the required visible
 posture; SPINE.47 starts extraction.
+
+SPINE.47 extraction:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+facts extract
+facts summary
+idempotent extraction
+deterministic fact IDs
+fact:<kind>:<source_record_id>
+valid_time_end sentinel: 0
+revision fields
+No fact revision
+```
 
 ## Case Runtime Semantics Doctrine
 
@@ -955,7 +983,7 @@ SPINE.45A Documentation Root Canon Collapse                           done
 SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase done
 
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
-SPINE.47  Receipt / Decision / Projection Facts                     planned
+SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     planned
 SPINE.49  Memory / Divergence / Carrier Facts                       planned
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
@@ -1137,6 +1165,13 @@ fact_provider_runtime
 ```
 
 SPINE.46 has No fact extraction and reports `facts_extracted: 0`.
+
+SPINE.47 derives `fact_receipt`, `fact_decision` and `fact_projection` from
+LMDB records through `facts extract` and `facts summary`. Extraction is
+idempotent extraction, Facts are not truth, deterministic fact IDs use
+`fact:<kind>:<source_record_id>`, bitemporal columns are populated, revision
+fields stay empty and valid_time_end sentinel: 0 means open-ended. No fact
+revision is implemented in this wave.
 
 SPINE.66-72 reconcile now includes:
 
