@@ -2,6 +2,15 @@
 
 Status: canonical lab test matrix.
 
+Related benchmark:
+
+```text
+Test 2 - labs/context-residency
+```
+
+Test 2 is the case-native benchmark matrix: naked no-context, naked raw-context,
+naked mini-RAG, YAI case-bound and logical YAI residency.
+
 ## Fact Plane Extraction
 
 SPINE.47 tests the first real fact extraction from LMDB records into DuckDB:
@@ -136,3 +145,83 @@ facts reports are not truth, not audit packets, not reconcile actions and not
 memory consolidation. `none_observed` is valid for zero divergence facts.
 `no_model_records` is valid for zero model facts. Memory report output keeps
 `memory_is_truth: false`.
+
+## Fact Plane Freeze
+
+SPINE.51 freezes DuckDB `yai.fact.v1` for the installed filesystem-loop matrix.
+No new fact classes are added.
+
+```bash
+yai facts status
+yai facts schema
+yai facts init
+yai facts extract --case case:new12-filesystem --kind core
+yai facts extract --case case:new12-filesystem --kind behavior
+yai facts extract --case case:new12-filesystem --kind operational
+yai facts extract --case case:new12-filesystem --kind all
+yai facts summary --case case:new12-filesystem
+yai facts report --case case:new12-filesystem
+yai facts report --case case:new12-filesystem --section receipts
+yai facts report --case case:new12-filesystem --section decisions
+yai facts report --case case:new12-filesystem --section projections
+yai facts report --case case:new12-filesystem --section policy
+yai facts report --case case:new12-filesystem --section carriers
+yai facts report --case case:new12-filesystem --section divergence
+yai facts report --case case:new12-filesystem --section memory
+yai facts report --case case:new12-filesystem --section model
+```
+
+Expected frozen fixture counts:
+
+```text
+fact_receipt: 3
+fact_decision: 2
+fact_projection: 3
+fact_carrier_outcome: 3
+fact_divergence: 0
+fact_model_behavior: 0
+fact_policy_outcome: 7
+fact_memory_quality: 1
+facts_total: 19
+facts_are_truth: false
+memory_is_truth: false
+```
+
+The schema posture includes `transaction_time`, `valid_time_start`,
+`valid_time_end`, `known_at`, `revision_of`, `superseded_by` and
+`retracted_by`. Status posture includes current, superseded, retracted, stale,
+contested, historical_only, branch_only, counterfactual, needs_review and
+unknown. `none_observed` and `no_model_records` are valid when divergence/model
+records are absent. Extraction is idempotent extraction.
+
+## CaseHandle / CapabilityLease Boundary
+
+SPINE.51B validates runtime-resolved case boundary posture:
+
+```bash
+make check-casehandle-capability-boundary
+make smoke-spine51b
+```
+
+The smoke uses `case resolve`, `case scope` and `capability derive` against
+`case:new12-filesystem`. It verifies CaseHandle, SubjectHandle,
+AuthorityScope, VisibilityScope, ResourceScope and CapabilityLease output.
+
+Expected labels:
+
+```text
+case_handle:resolve llm-provider ok
+case_handle:resolve filesystem-sandbox ok
+case_scope:model no_execute ok
+case_scope:reviewer approve ok
+capability:model_write denied ok
+capability:filesystem_write requires_review ok
+capability:filesystem_read minted ok
+capability:outside_sandbox denied ok
+refs:not_authority ok
+```
+
+refs are identifiers, not authority. bindings are relations, not capabilities.
+carrier dispatch allowed is derived from the lease. Model writes fail with
+`subject_lacks_execute_authority`; outside-sandbox writes fail with
+`resource_outside_scope`.

@@ -1,0 +1,32 @@
+{
+  "chunk_overlap_chars": 120,
+  "chunk_size_chars": 800,
+  "chunks_total": 79,
+  "raw_case_corpus_bytes": 46807,
+  "schema": "yai.context_residency.corpus.index.v1",
+  "sources": [
+    "case-attach-provider.txt",
+    "case-enter.txt",
+    "daemon-status.txt",
+    "facts-extract-all.txt",
+    "facts-init.txt",
+    "facts-report.txt",
+    "facts-summary.txt",
+    "filesystem-loop.txt",
+    "graph-materialize.txt",
+    "graph-rebuild.txt",
+    "graph-relations.txt",
+    "graph-runtime-summary.txt",
+    "install-local.txt",
+    "journal-replay.txt",
+    "provider-runtime-status.txt",
+    "provider-start-external.txt",
+    "provider-targets.txt",
+    "pack-fixture/README.md",
+    "pack-fixture/pack-doctrine-mapping.md",
+    "pack-fixture/pack.yaml",
+    "pack-fixture/policies/filesystem-sandbox-policy.json",
+    "pack-fixture/policies/linenoise-terminal-interface-policy.json",
+    "pack-fixture/policies/model-case-projection-policy.json"
+  ]
+}

@@ -1,0 +1,70 @@
+facts_report:
+case_ref: case:new12-filesystem
+schema: yai.fact.v1
+facts_are_truth: false
+
+sections:
+  receipts:
+    total: 3
+    blocked: 1
+    executed: 1
+    observed: 1
+    filesystem: 3
+    execution_performed: 0
+    carrier_attempted: 0
+  decisions:
+    total: 2
+    allow_with_constraints: 1
+    require_review: 1
+    requires_review: 1
+    review_id: 0
+  projections:
+    total: 3
+    model: 1
+    operator: 1
+    unknown: 1
+    request: 1
+    result: 2
+    fresh: 2
+    unknown: 1
+    none: 1
+    summary_only: 2
+    model_visible: 1
+    operator_visible: 1
+  policy:
+    total: 7
+    authority_scope_defined: 3
+    decision_allowed: 1
+    policy_rule_defined: 1
+    projection_rule_defined: 1
+    review_required: 1
+    review_required: 1
+    approved: 0
+    denied: 0
+    deferred: 0
+    quarantined: 0
+  carriers:
+    total: 3
+    filesystem: 3
+    blocked: 1
+    executed: 1
+    observed: 1
+    carrier_attempted: 2
+    execution_performed: 2
+    receipt_required: 3
+  divergence:
+    total: 0
+    status: none_observed
+  memory:
+    total: 1
+    memory_is_truth: false
+    candidates: 1
+    operational: 1
+    case: 1
+    basis_record_count: 22
+    basis_receipt_count: 3
+    basis_edge_count: 1
+    requires_review: 0
+  model:
+    total: 0
+    status: no_model_records

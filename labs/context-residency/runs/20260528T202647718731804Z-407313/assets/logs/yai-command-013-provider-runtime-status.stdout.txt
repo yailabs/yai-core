@@ -1,0 +1,17 @@
+provider_runtime:
+  status: surface_v0
+  execution: dry_run_only
+  provider_supervision: planned
+  device_registry: active
+  runtime_targets:
+  - local
+  - lan
+  - external
+local:
+  supervisor: planned
+lan:
+  requires_paired_device: yes
+  requires_trusted_device: yes
+  supervisor: planned
+external:
+  attach_only: yes

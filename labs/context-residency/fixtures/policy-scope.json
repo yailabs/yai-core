@@ -1,0 +1,8 @@
+{
+  "schema": "yai.policy_scope.lab.v1",
+  "policy_scope": "filesystem-sandbox-v0",
+  "freshness_policy": "bounded_case_current",
+  "redaction_policy": "lab_no_secret_material",
+  "filesystem_write_policy": "operator_review_required",
+  "model_authority": "candidate_material_only"
+}

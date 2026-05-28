@@ -13,6 +13,17 @@ lab test and documentation surface. It does not define new core semantics.
 The operator-facing runbook is `labs/filesystem-loop/runbook.md`.
 The canonical operator surface is the lab tree; the old manuals surface has been removed.
 
+## Roadmap-Only Waves
+
+SPINE.52A Model-Native Actor / Adapter Roadmap Rebase changes doctrine and
+future wave placement only.
+
+Command Surface:
+
+```text
+No command surface changes.
+```
+
 ## Runtime Commands
 
 | Primitive | View | Command | Lab test | Docs |
@@ -921,7 +932,7 @@ Context Compiler remains future consumer.
 |---|---|---|---|---|
 | projection summary | journal-derived projection summary | `yai projection summary --journal <path>` | smoke journal path | `testing.md` |
 | projection inspect | projection details and freshness policy | `yai projection inspect --journal <path> --consumer <consumer>` | `yai projection inspect --journal <journal> --consumer model` | `data-plane-roadmap.md` |
-| prompt dry run | model-visible projection warning surface | `yai prompt --dry-run --once <text> --journal <path>` | daemon core-loop smoke journal | `testing.md` |
+| prompt dry run | model-visible projection warning surface | `YAI_JOURNAL=<path> yai prompt --dry-run --once <text>` | daemon core-loop smoke journal | `testing.md` |
 
 Projection commands are still journal-backed in this phase. Hot state provides
 freshness context, not durable projection truth.
@@ -1390,3 +1401,61 @@ facts reports are not truth, not audit packets, not reconcile actions and not
 memory consolidation. `none_observed` is valid for zero divergence facts.
 `no_model_records` is valid for zero model facts. Memory reports include
 `memory_is_truth: false`.
+
+## SPINE.51 Fact Plane Freeze
+
+SPINE.51 adds no commands. It freezes the DuckDB `yai.fact.v1` command surface:
+
+```bash
+yai facts status
+yai facts schema
+yai facts init
+yai facts extract --case <case_ref> --kind core
+yai facts extract --case <case_ref> --kind behavior
+yai facts extract --case <case_ref> --kind operational
+yai facts extract --case <case_ref> --kind all
+yai facts summary --case <case_ref>
+yai facts report --case <case_ref>
+yai facts report --case <case_ref> --section receipts
+yai facts report --case <case_ref> --section decisions
+yai facts report --case <case_ref> --section projections
+yai facts report --case <case_ref> --section policy
+yai facts report --case <case_ref> --section carriers
+yai facts report --case <case_ref> --section divergence
+yai facts report --case <case_ref> --section memory
+yai facts report --case <case_ref> --section model
+```
+
+`facts summary` and `facts report` must preserve `facts_are_truth: false`.
+Memory output must preserve `memory_is_truth: false`. Zero divergence/model
+source records are valid and reported as `none_observed` and
+`no_model_records`. Extraction remains idempotent extraction.
+
+## SPINE.51B CaseHandle / CapabilityLease Boundary
+
+SPINE.51B adds runtime-resolved case/scope/capability inspection:
+
+```bash
+yai case resolve --case <case_ref> --subject <subject_ref>
+yai case scope --case <case_ref> --subject <subject_ref>
+yai capability derive --case <case_ref> --subject <subject_ref> --operation <operation_family> --resource <resource_ref>
+```
+
+`case resolve` exposes CaseHandle and SubjectHandle posture. `case scope`
+exposes AuthorityScope and VisibilityScope. `capability derive` exposes a
+CapabilityLease over a ResourceScope.
+
+Canonical command-surface rules:
+
+```text
+refs are identifiers, not authority
+bindings are relations, not capabilities
+carrier dispatch allowed is derived from lease posture
+refs_are_authority: false
+subject_lacks_execute_authority
+resource_outside_scope
+```
+
+`subject:llm-provider` may claim/propose but cannot execute, approve or mutate
+decisions. `subject:filesystem-sandbox` can read inside sandbox, requires
+review for mutative writes inside sandbox and is denied outside sandbox.

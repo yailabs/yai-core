@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.50 Fact Reports + CLI Manual Validation.
+Status: SPINE.52A Model-Native Actor / Adapter Roadmap Rebase.
 
 ## Completed Foundation
 
@@ -555,10 +555,58 @@ activation and runtime registry residue for provider lifecycle, provider
 daemon, local/remote transport, machine authorization, runtime target, artifact
 layout and startup plan concepts. No `yai-dev` source file was modified.
 
+SPINE.51 freezes the DuckDB Fact Plane v1 block after schema, init,
+extraction, `facts summary`, `facts report`, guard, smoke and manual matrix.
+The frozen `yai.fact.v1` surface is bitemporal (`transaction_time`,
+`valid_time_start`, `valid_time_end`, `known_at`) and preserves revision fields
+(`revision_of`, `superseded_by`, `retracted_by`) plus status posture values
+`current`, `superseded`, `retracted`, `stale`, `contested`,
+`historical_only`, `branch_only`, `counterfactual`, `needs_review` and
+`unknown`. The frozen fact classes are `fact_receipt`, `fact_decision`,
+`fact_projection`, `fact_carrier_outcome`, `fact_divergence`,
+`fact_model_behavior`, `fact_policy_outcome` and `fact_memory_quality`.
+`facts_are_truth: false` and `memory_is_truth: false` remain visible. Zero
+divergence/model records are honest and report `none_observed` and
+`no_model_records`. Fact extraction remains idempotent extraction.
+
 Future implementation waves must classify corresponding yai-dev residue. A
 wave is not complete until old material has been absorbed, rewritten, split,
 externalized, quarantined, marked compatibility-only, marked delete-later, left
 untouched with a reason, or explicitly deferred.
+
+SPINE.51B adds the first runtime-resolved CaseHandle / CapabilityLease boundary
+before Live Projection Frame Schema. CaseHandle and SubjectHandle resolve
+case/subject posture; AuthorityScope and VisibilityScope are separate scopes;
+ResourceScope is separate from authority; CapabilityLease is a bounded
+operation permission. refs are identifiers, not authority. bindings are
+relations, not capabilities.
+
+Current command surface:
+
+```bash
+yai case resolve --case <case_ref> --subject <subject_ref>
+yai case scope --case <case_ref> --subject <subject_ref>
+yai capability derive --case <case_ref> --subject <subject_ref> --operation <operation_family> --resource <resource_ref>
+```
+
+The filesystem-loop smoke validates model write denial with
+`subject_lacks_execute_authority`, inside-sandbox write `requires_review`,
+inside-sandbox read `minted`, outside-sandbox write `resource_outside_scope`,
+and `carrier dispatch allowed` derived from the lease posture. SPINE.51B does
+not implement Context Compiler, Live Projection Frame Schema, provider
+execution expansion or carrier hardening.
+
+SPINE.52 Live Projection Frame Schema completed. SPINE.52 consumes resolved
+case/subject/scope posture from SPINE.51B instead of treating raw refs as
+authority.
+
+SPINE.52A Model-Native Actor / Adapter Roadmap Rebase completed. This is a
+roadmap/doctrine update only: no command surface changes, no model training, no
+adapter loading, no runner implementation and no provider implementation. It
+reserves SPINE.58S-SPINE.58T for model-visible YAI grammar and lab evidence
+boundaries, and SPINE.93G-SPINE.93J for model participation profiles, actor
+adapter contracts, specialist model lab boundaries and model-native actor
+boundary freeze.
 
 Archived historical records live under:
 

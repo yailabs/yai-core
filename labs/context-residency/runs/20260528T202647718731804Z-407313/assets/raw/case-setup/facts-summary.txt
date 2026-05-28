@@ -1,0 +1,13 @@
+facts_summary:
+case_ref: case:new12-filesystem
+fact_receipt: 3
+fact_decision: 2
+fact_projection: 3
+fact_carrier_outcome: 3
+fact_divergence: 0
+fact_model_behavior: 0
+fact_policy_outcome: 7
+fact_memory_quality: 1
+facts_total: 19
+facts_are_truth: false
+memory_is_truth: false

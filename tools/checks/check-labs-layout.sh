@@ -61,7 +61,7 @@ for lab_dir in labs/*; do
   [ "$lab_dir" != "labs/shared" ] || continue
   [ "$lab_dir" != "labs/standards" ] || continue
   case "$lab_dir" in
-    labs/filesystem-loop|labs/external-runtime) ;;
+    labs/filesystem-loop|labs/external-runtime|labs/context-residency) ;;
     *) fail "unexpected lab directory: $lab_dir" ;;
   esac
   found_lab=1

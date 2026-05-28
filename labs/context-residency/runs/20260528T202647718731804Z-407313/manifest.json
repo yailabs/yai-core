@@ -1,0 +1,26 @@
+{
+  "artifacts": [
+    "metrics.json",
+    "report.md",
+    "transcript.md",
+    "assets/commands.log",
+    "assets/corpus/raw-case-corpus.md",
+    "assets/corpus/chunks.jsonl",
+    "assets/corpus/index.json",
+    "assets/corpus/selected-chunks.jsonl",
+    "assets/raw/naked/provider-requests.jsonl",
+    "assets/raw/naked/provider-responses.jsonl",
+    "assets/raw/yai-case/answers.md",
+    "assets/raw/comparisons/comparisons.json",
+    "assets/derived/comparison.md",
+    "assets/derived/scorecard.json",
+    "assets/derived/condition-summary.md",
+    "assets/derived/answers.md"
+  ],
+  "created_at": "2026-05-28T20:26:47Z",
+  "lab": "context-residency",
+  "mode": "all",
+  "schema": "yai.lab.run_manifest.v1",
+  "test": "LAB.TEST.2",
+  "title": "Case-Native Benchmark Matrix"
+}

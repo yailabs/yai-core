@@ -40,3 +40,29 @@ For deny, defer and quarantine, `carrier_attempted: false` and
 `execution_performed: false` remain visible. `subject:linenoise-terminal` is
 the prompt surface only. `subject:operator-reviewer` is the local-dev review
 authority.
+
+## CaseHandle / CapabilityLease Boundary
+
+SPINE.51B adds runtime-resolved inspection before future carrier hardening.
+refs are identifiers, not authority. bindings are relations, not capabilities.
+
+AuthorityScope and VisibilityScope are separate scopes. ResourceScope is
+separate from authority. A CapabilityLease is a bounded operation permission,
+not a decision receipt and not proof of execution.
+
+The control path for capability derivation is:
+
+```text
+CaseHandle + SubjectHandle
+-> AuthorityScope + VisibilityScope + ResourceScope
+-> CapabilityLease
+-> carrier dispatch allowed posture
+```
+
+For the filesystem loop, `subject:llm-provider` receives
+`subject_lacks_execute_authority` for `filesystem.write`. The filesystem
+sandbox subject receives `requires_review` for inside-sandbox writes, `minted`
+for inside-sandbox reads and `resource_outside_scope` for outside-sandbox
+writes.
+
+The CLI surfaces are `case resolve`, `case scope` and `capability derive`.

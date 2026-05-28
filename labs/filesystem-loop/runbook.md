@@ -6,6 +6,17 @@ Status: static terminal copy of `notebook.ipynb`. The notebook is the executable
 
 Status: canonical long-form manual notebook for filesystem-loop validation.
 
+Related benchmark:
+
+```text
+Test 2 - labs/context-residency
+```
+
+Test 2 is the case-native benchmark matrix. It compares naked no-context, naked
+raw-context, naked mini-RAG, YAI case-bound and logical YAI residency paths.
+The YAI path opens/materializes the filesystem-loop case and asks the model
+through YAI CLI; direct provider calls are allowed only for naked baselines.
+
 Usa questo notebook come manuale operativo completo: compila, installa, avvia il daemon, apre il caso, ispeziona record/graph/facts e lancia prompt scritti a mano contro la participant view. Per il percorso con modello, provider su un host LAN e `yai` sulla macchina operatore. Il notebook legge `.yai/env` una volta, poi i lab usano `yai prompt` con heredoc su stdin.
 
 ## Mappa Di Esecuzione
@@ -1704,10 +1715,72 @@ python3 -m json.tool labs/filesystem-loop/notebook.ipynb >/tmp/yai-filesystem-lo
 bash -n labs/filesystem-loop/run.sh
 make check-receipt-decision-projection-facts
 make check-model-behavior-policy-facts
+make check-memory-divergence-carrier-facts
+make check-fact-reports-cli
+make check-fact-plane-freeze
 make smoke-spine46
 make smoke-spine47
 make smoke-spine48
+make smoke-spine49
+make smoke-spine50
+make smoke-spine51
 ```
+
+## Fact Plane Freeze Matrix
+
+SPINE.51 freezes the filesystem-loop fact matrix for DuckDB `yai.fact.v1`.
+After replay to LMDB and `yai facts init`, run `core`, `behavior`,
+`operational` and `all`, then run `facts summary`, `facts report` and every
+report section.
+
+Expected frozen summary for `case:new12-filesystem`:
+
+```text
+fact_receipt: 3
+fact_decision: 2
+fact_projection: 3
+fact_carrier_outcome: 3
+fact_divergence: 0
+fact_model_behavior: 0
+fact_policy_outcome: 7
+fact_memory_quality: 1
+facts_total: 19
+facts_are_truth: false
+memory_is_truth: false
+```
+
+Fact Plane Freeze keeps bitemporal fields `transaction_time`,
+`valid_time_start`, `valid_time_end`, `known_at`, revision fields
+`revision_of`, `superseded_by`, `retracted_by`, and status posture values
+`current`, `superseded`, `retracted`, `stale`, `contested`,
+`historical_only`, `branch_only`, `counterfactual`, `needs_review` and
+`unknown`. Zero divergence/model source records are valid: reports show
+`none_observed` and `no_model_records`. Extraction is idempotent extraction.
+Facts are not record truth, graph truth, memory, policy authority, reconcile
+action or model authority.
+
+## CaseHandle / CapabilityLease Boundary Matrix
+
+SPINE.51B adds the resolved boundary checks that projections and future
+carriers should consume:
+
+```bash
+make check-casehandle-capability-boundary
+make smoke-spine51b
+
+yai case resolve --case case:new12-filesystem --subject subject:llm-provider
+yai case scope --case case:new12-filesystem --subject subject:llm-provider
+yai capability derive --case case:new12-filesystem --subject subject:llm-provider --operation filesystem.write --resource sandbox/output.txt
+yai capability derive --case case:new12-filesystem --subject subject:filesystem-sandbox --operation filesystem.write --resource sandbox/output.txt
+yai capability derive --case case:new12-filesystem --subject subject:filesystem-sandbox --operation filesystem.read --resource sandbox/input.txt
+yai capability derive --case case:new12-filesystem --subject subject:filesystem-sandbox --operation filesystem.write --resource ../outside.txt
+```
+
+The expected posture includes CaseHandle, SubjectHandle, AuthorityScope,
+VisibilityScope, ResourceScope and CapabilityLease. refs are identifiers, not
+authority. bindings are relations, not capabilities. carrier dispatch allowed
+is derived from the lease, with `subject_lacks_execute_authority` for model
+writes and `resource_outside_scope` for outside-sandbox writes.
 
 ## Shutdown
 

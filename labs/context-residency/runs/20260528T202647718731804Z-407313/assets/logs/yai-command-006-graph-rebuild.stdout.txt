@@ -1,0 +1,27 @@
+runtime_graph_rebuild:
+case_ref: case:new12-filesystem
+source_mode: journal
+journal_path: build/tmp/new12/daemon-407535/filesystem/journal.jsonl
+journal_identity: journal:0e453c4c29675ddf
+lmdb_path: /tmp/yai-cr-h-1780000007-407327/store/lmdb
+graph_relation_source: lmdb_graph_relations_v0
+journal_replay_status: completed
+graph_materialize_status: completed
+runtime_graph_status: completed
+records_seen: 28
+records_written: 0
+records_duplicate: 28
+relations_seen: 68
+relations_written: 0
+relations_duplicate: 68
+relations_skipped: 0
+nodes_total: 44
+edges_total: 68
+outgoing_index_entries: 40
+incoming_index_entries: 31
+runtime_generation: 1
+dirty: no
+stale: no
+rebuild_status: completed
+report_schema: yai.runtime_graph_rebuild_report.v1
+rebuild_report: /tmp/yai-cr-h-1780000007-407327/store/graph/rebuild-reports/case_new12-filesystem.runtime-graph-rebuild-report.json

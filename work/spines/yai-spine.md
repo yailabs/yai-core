@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts, SPINE.48 Model Behavior / Policy Outcome Facts, SPINE.49 Memory / Divergence / Carrier Facts and SPINE.50 Fact Reports + CLI Manual Validation. | SPINE.51 Fact Plane Freeze. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.52A Model-Native Actor / Adapter Roadmap Rebase. | SPINE.53 Projection Delta Schema. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -987,9 +987,11 @@ SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     done
 SPINE.49  Memory / Divergence / Carrier Facts                       done
 SPINE.50  Fact Reports + CLI Manual Validation                      done
-SPINE.51  Fact Plane Freeze                                         planned
+SPINE.51  Fact Plane Freeze                                         done
+SPINE.51B CaseHandle / CapabilityLease Boundary                     done
 
-SPINE.52  Live Projection Frame Schema                              planned
+SPINE.52  Live Projection Frame Schema                              done
+SPINE.52A Model-Native Actor / Adapter Roadmap Rebase               done
 SPINE.53  Projection Delta Schema                                   planned
 SPINE.54  Projection Freshness / Staleness Engine                   planned
 SPINE.55  Projection Authority / Redaction Alignment                planned
@@ -1015,6 +1017,8 @@ SPINE.58O ContextFrame Base / Delta Lifecycle                        planned
 SPINE.58P CaseModelSession Binding                                   planned
 SPINE.58Q Context State Invalidation                                 planned
 SPINE.58R Incremental + Federated Model-Visible Context Smoke        planned
+SPINE.58S Model-Visible YAI Grammar / Actor Participation Contract   planned
+SPINE.58T Model-Native Training Corpus / Lab Evidence Boundary       planned
 
 SPINE.59  Memory Consolidation Doctrine + Basis Model               planned
 SPINE.60  Receipt-Backed Memory Consolidation                       planned
@@ -1068,6 +1072,10 @@ SPINE.93C Runner Adapter Contract + Invocation Envelope             planned
 SPINE.93D MTP / Speculative Decoding Policy + Metrics               planned
 SPINE.93E Runner Receipt + KV / Context State Boundary              planned
 SPINE.93F Model Runtime Boundary Freeze                             planned
+SPINE.93G Model Participation Profile + Behavior Manifest            planned
+SPINE.93H Actor Adapter Contract + Evaluation Boundary               planned
+SPINE.93I Specialist Model / Architecture Lab Boundary               planned
+SPINE.93J Model-Native Actor Boundary Freeze                         planned
 SPINE.94  Model / Provider Freeze                                   planned
 
 SPINE.95  Policy Pack Skeleton                                      planned
@@ -1220,6 +1228,27 @@ reconcile actions and not memory consolidation. Zero divergence/model facts are
 valid when source records are absent: `none_observed` and `no_model_records`.
 Memory reports include `memory_is_truth: false`.
 
+SPINE.51 freezes the first DuckDB Fact Plane block as Fact Plane Freeze. The
+frozen `yai.fact.v1` surface covers schema, init, extraction, `facts summary`,
+`facts report`, guard, smoke and manual matrix for `fact_receipt`,
+`fact_decision`, `fact_projection`, `fact_carrier_outcome`, `fact_divergence`,
+`fact_model_behavior`, `fact_policy_outcome` and `fact_memory_quality`.
+
+Facts remain analytical, temporal, provenance-bearing assertions over existing
+records, relations, projections, receipts, decisions, carriers, memory
+candidates and runtime diagnostics. Facts are not record truth, graph truth,
+memory, policy authority, reconcile action or model authority.
+
+The freeze keeps bitemporal fields `transaction_time`, `valid_time_start`,
+`valid_time_end` and `known_at`; revision fields `revision_of`,
+`superseded_by` and `retracted_by`; status posture values `current`,
+`superseded`, `retracted`, `stale`, `contested`, `historical_only`,
+`branch_only`, `counterfactual`, `needs_review` and `unknown`; and explicit
+`facts_are_truth: false` plus `memory_is_truth: false`. Missing source records
+are honest: zero divergence facts report `none_observed`, and zero model
+behavior facts report `no_model_records`. Extraction remains idempotent
+extraction.
+
 SPINE.66-72 reconcile now includes:
 
 ```text
@@ -1360,6 +1389,99 @@ backend_support, acceptance_rate, fallback_mode, structured_output_risk,
 latency_delta and tokens_per_second_delta. MTP may accelerate generation; it
 must not change output authority.
 
+## Model-Native Actor / Adapter Doctrine
+
+YAI should not move system authority, durable truth, policy enforcement,
+memory truth or carrier execution into model weights.
+
+YAI may train, adapt, prompt or profile models to become better YAI
+participants.
+
+A YAI-native model is not YAI. A YAI-native model is a model, adapter,
+specialist model or runner profile trained or configured to better follow YAI
+case, actor, context, policy, evidence, decision and receipt contracts.
+
+Runtime-owned:
+
+```text
+authority
+policy enforcement
+case truth
+record truth
+graph truth
+fact derivation
+memory basis
+carrier dispatch
+audit residue
+approval/review authority
+```
+
+Model-adaptable:
+
+```text
+actor discipline
+case interpretation
+context consumption
+structured output
+tool intent formatting
+evidence-aware reasoning
+policy-reading behavior
+boundary self-reporting
+critic/judge posture
+routing recommendations
+```
+
+Model-native YAI work starts at Level 3 and above:
+
+```text
+Level 3:
+  Actor adapters, LoRA, specialization profiles and behavior manifests.
+
+Level 4:
+  YAI protocol grammar, schema-aware output, structured model contracts and
+  optional future protocol-token research.
+
+Level 5:
+  Small specialist models for context compilation, critic/judge, router,
+  tool-intent classification and user/case simulation.
+
+Level 6:
+  Experimental model architecture research only. This belongs first in
+  yai-dev/DGX labs and is not a foundation-model commitment.
+```
+
+Rules:
+
+```text
+A model may learn YAI grammar.
+A model may learn YAI actor behavior.
+A model may propose YAI-shaped decisions.
+A model may produce structured tool intent.
+A model may evaluate boundary compliance.
+
+A model cannot become authority.
+A model cannot approve its own operation.
+A model cannot mutate durable truth directly.
+A model cannot replace records, graph, facts, policy, memory or audit.
+A model output is still a proposal until runtime validation.
+```
+
+Context residency note:
+
+```text
+Logical context residency may reduce model-visible tokens before KV/cache
+residency exists.
+
+KV/cache residency is runner-local optimization, not YAI memory, truth,
+authority or provenance.
+
+Token reduction can be accepted as early evidence.
+Latency reduction must not be claimed until measured at runner/provider level.
+```
+
+SPINE.52A is a roadmap/doctrine update only. Command Surface: no command
+surface changes.
+
 ## Provider Runtime / LAN Target Surface Doctrine
 
 The normal future workflow should not require manual provider launch as normal
@@ -1450,3 +1572,33 @@ RuntimeGraph Freeze. A filesystem write can enter `require_review`, become
 `subject:linenoise-terminal is prompt surface`; operator reviewer authority is
 separate. Deny, defer and quarantine keep `carrier_attempted: false` and
 `execution_performed: false` under `labs/filesystem-loop`.
+
+## SPINE.51B CaseHandle / CapabilityLease Boundary
+
+SPINE.51B introduces runtime-resolved CaseHandle, SubjectHandle,
+AuthorityScope, VisibilityScope, ResourceScope and CapabilityLease posture.
+
+```text
+refs are identifiers, not authority
+bindings are relations, not capabilities
+handles are runtime-resolved posture
+capability leases are bounded operation permissions
+```
+
+Command surface:
+
+```bash
+yai case resolve --case <case_ref> --subject <subject_ref>
+yai case scope --case <case_ref> --subject <subject_ref>
+yai capability derive --case <case_ref> --subject <subject_ref> --operation <operation_family> --resource <resource_ref>
+```
+
+`case resolve` produces handle posture. `case scope` separates AuthorityScope
+from VisibilityScope. `capability derive` intersects subject role, authority,
+ResourceScope, policy basis and current generation posture. It reports
+`subject_lacks_execute_authority`, `resource_outside_scope` and carrier
+dispatch allowed posture instead of treating refs or bindings as permission.
+
+SPINE.52 Live Projection Frame Schema should consume resolved visibility and
+authority scopes. Future carriers should consume CapabilityLease/ResourceScope
+before dispatch.

@@ -1,0 +1,8 @@
+facts_init:
+backend: duckdb
+status: ready
+facts_path: /tmp/yai-cr-h-1780000007-407327/store/facts/yai-facts.duckdb
+schema: yai.fact.v1
+bitemporal: yes
+tables_created: 12
+facts_extracted: 0

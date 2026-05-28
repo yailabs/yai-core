@@ -1,0 +1,14 @@
+{
+  "schema": "yai.case_model_session.lab.v1",
+  "case_ref": "case:new12-filesystem",
+  "actor_ref": "subject:operator-reviewer",
+  "model_ref": "local-model",
+  "runner_ref": "local-provider",
+  "provider_ref": "openai-compatible-local",
+  "base_frame_id": "frame:base-context-residency",
+  "latest_frame_id": "frame:delta-context-residency",
+  "policy_scope": "filesystem-sandbox-v0",
+  "retrieval_provider_refs": [],
+  "cache_policy": "prefix_reuse_if_valid",
+  "session_status": "lab"
+}

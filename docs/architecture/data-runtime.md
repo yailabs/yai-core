@@ -107,6 +107,25 @@ reconcile actions and not memory consolidation. Zero divergence/model facts are
 valid when source records are absent: `none_observed` and `no_model_records`.
 Memory reports include `memory_is_truth: false`.
 
+SPINE.51 freezes Fact Plane v1. DuckDB `yai.fact.v1` remains a derived
+analytical layer over existing records, graph relations, projections, receipts,
+decisions, carriers, memory candidates and runtime diagnostics. The freeze
+does not add fact tables or extraction classes.
+
+The frozen first block includes `fact_receipt`, `fact_decision`,
+`fact_projection`, `fact_carrier_outcome`, `fact_divergence`,
+`fact_model_behavior`, `fact_policy_outcome` and `fact_memory_quality`.
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
+`revision_of`, `superseded_by` and `retracted_by` remain part of the
+bitemporal/revision posture. Status posture includes current, superseded,
+retracted, stale, contested, historical_only, branch_only, counterfactual,
+needs_review and unknown.
+
+`facts summary` and `facts report` preserve `facts_are_truth: false`; memory
+sections preserve `memory_is_truth: false`. Zero divergence/model facts are
+valid when source records are absent and report `none_observed` and
+`no_model_records`. Fact extraction remains idempotent extraction.
+
 Hard distinction:
 
 ```text
@@ -138,3 +157,21 @@ Graph corrections are planned as append-only patches, not destructive edits.
 Temporal Graph Revision, Graph Patch Operation, Dependency Closure and
 Counterfactual case branches must remain stale-aware so projections, context,
 memory, retrieval and reconcile can invalidate dependent material correctly.
+
+## Runtime-Resolved Case Boundary
+
+SPINE.51B introduces runtime-resolved CaseHandle, SubjectHandle,
+AuthorityScope, VisibilityScope, ResourceScope and CapabilityLease posture over
+existing records, journal replay material, graph/fact posture and filesystem
+sandbox conventions.
+
+This does not make facts, projections or graph relations authority. refs are
+identifiers, not authority. bindings are relations, not capabilities. The data
+runtime supplies material for `case resolve`, `case scope` and `capability
+derive`; the lease is the bounded operation permission.
+
+Future Live Projection Frame Schema should consume resolved VisibilityScope and
+AuthorityScope instead of reverse-engineering access from summaries. Future
+carrier hardening should consume CapabilityLease and ResourceScope before
+dispatch and preserve explicit outcomes such as `subject_lacks_execute_authority`,
+`resource_outside_scope` and carrier dispatch allowed.

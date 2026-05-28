@@ -1,0 +1,14 @@
+facts_extract:
+case_ref: case:new12-filesystem
+kind: all
+status: completed
+fact_receipt_written: 3
+fact_decision_written: 2
+fact_projection_written: 3
+fact_model_behavior_written: 0
+fact_policy_outcome_written: 7
+fact_carrier_outcome_written: 3
+fact_divergence_written: 0
+fact_memory_quality_written: 1
+facts_duplicate: 0
+facts_are_truth: false

@@ -10,8 +10,9 @@
 # Boundary:
 #   This file does not own runtime semantics, legal policy or data-plane truth.
 #
-.PHONY: info check-layout check-docs check-doc-root-canon check-case-runtime-semantics-roadmap check-duckdb-fact-plane check-receipt-decision-projection-facts check-model-behavior-policy-facts check-memory-divergence-carrier-facts check-fact-reports-cli check-labs check-lab-runs check-lab-notebooks check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-journal-replay-freeze check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap check-graph-runtimegraph-doctrine check-graph-relation-write-path check-runtimegraph-working-set check-runtimegraph-rebuild check-runtimegraph-query-causal-path check-operator-review-loop check-cli-review-interaction-surface check-review-loop-test-matrix check-graph-runtimegraph-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke-spine42 smoke-spine43 smoke-spine44 smoke-spine44a smoke-spine44b smoke-spine44c smoke-spine45 smoke-spine46 smoke-spine47 smoke-spine48 smoke-spine49 smoke-spine50 smoke check clean
-.PHONY: net-info check-net-headers check-net-stream-fixtures check-net-node-fixtures check-net-capability-fixtures check-net-endpoint-fixtures check-net-health-fixtures check-net-lifecycle-fixtures check-net-transport-fixtures check-net-ipc-fixtures check-net-boundary
+.PHONY: info check-layout check-docs check-doc-root-canon check-case-runtime-semantics-roadmap check-duckdb-fact-plane check-receipt-decision-projection-facts check-model-behavior-policy-facts check-memory-divergence-carrier-facts check-fact-reports-cli check-fact-plane-freeze check-case-runtime-discovery check-casehandle-capability-boundary check-model-native-actor-roadmap check-labs check-lab-runs check-lab-notebooks check-repository-identity check-archive-historical-records check-source-surface-clean check-file-header-standard check-pack-doctrine check-foundation-freeze check-hot-state-doctrine check-hot-state-freeze check-lmdb-record-plane-doctrine check-lmdb-record-plane-freeze check-journal-replay-boundary check-journal-replay-to-lmdb check-replay-idempotency-schema-version check-replay-diagnostics-report check-journal-replay-freeze check-control-carrier-substrate check-operation-dispatch-multiplex check-carrier-contract-v1 check-process-carrier-signal-control check-host-observation-probe check-carrier-coverage-matrix check-non-process-carrier-skeletons check-carrier-outcome-harness check-carrier-receipt-divergence check-retrieval-runner-roadmap check-context-compiler-retrieval-mtp-roadmap check-provider-runtime-lan-target-surface check-data-context-runtime-roadmap check-graph-runtimegraph-doctrine check-graph-relation-write-path check-runtimegraph-working-set check-runtimegraph-rebuild check-runtimegraph-query-causal-path check-operator-review-loop check-cli-review-interaction-surface check-review-loop-test-matrix check-graph-runtimegraph-freeze build-c build-rust build-rust-ffi build install-local uninstall-local doctor-local print-install-paths smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke-spine42 smoke-spine43 smoke-spine44 smoke-spine44a smoke-spine44b smoke-spine44c smoke-spine45 smoke-spine46 smoke-spine47 smoke-spine48 smoke-spine49 smoke-spine50 smoke-spine51 smoke-spine51b smoke check clean
+.PHONY: net-info build-net-c check-net-c-sources check-net-headers check-net-stream-fixtures check-net-node-fixtures check-net-capability-fixtures check-net-endpoint-fixtures check-net-health-fixtures check-net-lifecycle-fixtures check-net-transport-fixtures check-net-ipc-fixtures check-net-boundary
+.PHONY: check-context-residency-lab lab-context-residency smoke-lab-context-residency smoke-lab-context-residency-case-native smoke-lab-context-residency-matrix
 
 CC ?= cc
 AR ?= ar
@@ -42,6 +43,7 @@ C_SOURCES := \
 	system/hot/hot_snapshot.c \
 	system/hot/hot_state.c \
 	system/case/case_context.c \
+	system/case/case_handle.c \
 	system/case/interaction_thread.c \
 	system/case/participant_view.c \
 	system/case/case_ref.c \
@@ -49,9 +51,11 @@ C_SOURCES := \
 	system/case/case_world.c \
 	system/subject/subject_ref.c \
 	system/subject/subject_binding.c \
+	system/subject/subject_handle.c \
 	system/subject/subject_state.c \
 	system/op/attempt.c \
 	system/control/failure_mode.c \
+	system/control/authority_scope.c \
 	system/control/policy_rule.c \
 	system/control/gate.c \
 	system/control/gate_outcome.c \
@@ -59,6 +63,7 @@ C_SOURCES := \
 	system/control/decision.c \
 	system/control/obligation.c \
 	system/control/receipt_requirement.c \
+	system/control/capability_lease.c \
 	system/daemon/daemon_status.c \
 	system/effect/carrier.c \
 	system/effect/carrier_contract.c \
@@ -76,6 +81,7 @@ C_SOURCES := \
 	system/effect/effect_hash.c \
 	system/effect/receipt.c \
 	system/effect/receipt_guarantee.c \
+	system/effect/resource_scope.c \
 	system/effect/carriers/filesystem_carrier.c \
 	system/effect/carriers/process_carrier.c \
 	system/effect/process_signal.c \
@@ -119,7 +125,8 @@ C_SOURCES := \
 	system/projection/redaction.c \
 	system/projection/freshness.c \
 	system/projection/projection_request.c \
-	system/projection/projection_result.c
+	system/projection/projection_result.c \
+	system/projection/visibility_scope.c
 
 C_OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
 C_LIBRARY := $(BUILD_DIR)/libyai_core_new13.a
@@ -176,6 +183,8 @@ SMOKE_RECEIPT_DECISION_PROJECTION_FACTS := tests/smoke/receipt-decision-projecti
 SMOKE_MODEL_BEHAVIOR_POLICY_FACTS := tests/smoke/model-behavior-policy-facts/test_model_behavior_policy_facts.sh
 SMOKE_MEMORY_DIVERGENCE_CARRIER_FACTS := tests/smoke/memory-divergence-carrier-facts/test_memory_divergence_carrier_facts.sh
 SMOKE_FACT_REPORTS_CLI := tests/smoke/fact-reports-cli/test_fact_reports_cli.sh
+SMOKE_FACT_PLANE_FREEZE := tests/smoke/fact-plane-freeze/test_fact_plane_freeze.sh
+SMOKE_CASEHANDLE_CAPABILITY_BOUNDARY := tests/smoke/casehandle-capability-boundary/test_casehandle_capability_boundary.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh
@@ -183,9 +192,9 @@ NET_ENUM_NAMES_TEST := $(BUILD_DIR)/test_net_enum_names
 
 info:
 	@printf "yai: local AI operational control core\n"
-	@printf "status: SPINE.50 Fact Reports + CLI Manual Validation\n"
-	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.50 Fact Reports + CLI Manual Validation\n"
-	@printf "next: SPINE.51 Fact Plane Freeze\n"
+	@printf "status: SPINE.51 Fact Plane Freeze\n"
+	@printf "completed: SPINE.20 Local Runtime Layout through SPINE.51 Fact Plane Freeze\n"
+	@printf "next: SPINE.52 Live Projection Frame Schema\n"
 	@printf "target-layout: include/ system/ engine/ cmd/\n"
 	@printf "runtime-home: YAI_HOME=%s socket=%s\n" "$(YAI_HOME)" "$(YAI_DAEMON_SOCKET)"
 	@printf "hot-state: %s/hot-state.json\n" "$(YAI_RUN_DIR)"
@@ -302,7 +311,13 @@ check-docs:
 	@./tools/checks/check-model-behavior-policy-facts.sh
 	@./tools/checks/check-memory-divergence-carrier-facts.sh
 	@./tools/checks/check-fact-reports-cli.sh
+	@./tools/checks/check-fact-plane-freeze.sh
+	@./tools/checks/check-case-runtime-discovery.sh
+	@./tools/checks/check-casehandle-capability-boundary.sh
+	@./tools/checks/check-model-native-actor-roadmap.sh
+	@./tools/checks/check-net-c-sources.sh
 	@./tools/checks/check-net-boundary.sh
+	@./tools/checks/check-context-residency-lab.sh
 
 check-doc-root-canon:
 	@./tools/checks/check-doc-root-canon.sh
@@ -325,6 +340,18 @@ check-memory-divergence-carrier-facts:
 check-fact-reports-cli:
 	@./tools/checks/check-fact-reports-cli.sh
 
+check-fact-plane-freeze:
+	@./tools/checks/check-fact-plane-freeze.sh
+
+check-case-runtime-discovery:
+	@./tools/checks/check-case-runtime-discovery.sh
+
+check-casehandle-capability-boundary:
+	@./tools/checks/check-casehandle-capability-boundary.sh
+
+check-model-native-actor-roadmap:
+	@./tools/checks/check-model-native-actor-roadmap.sh
+
 check-labs:
 	@./tools/checks/check-labs-layout.sh
 	@./tools/checks/check-lab-notebooks.sh
@@ -334,6 +361,20 @@ check-lab-runs:
 
 check-lab-notebooks:
 	@./tools/checks/check-lab-notebooks.sh
+
+check-context-residency-lab:
+	@./tools/checks/check-context-residency-lab.sh
+
+lab-context-residency:
+	@labs/context-residency/run.sh --mode no-ai
+
+smoke-lab-context-residency: smoke-lab-context-residency-matrix
+
+smoke-lab-context-residency-case-native:
+	@labs/context-residency/run.sh --mode case-native
+
+smoke-lab-context-residency-matrix:
+	@labs/context-residency/run.sh --mode no-ai
 
 check-repository-identity:
 	@./tools/checks/check-repository-identity.sh
@@ -774,6 +815,12 @@ smoke-spine49: $(YAID) build-rust
 smoke-spine50: $(YAID) build-rust
 	@$(SMOKE_FACT_REPORTS_CLI)
 
+smoke-spine51: $(YAID) build-rust
+	@$(SMOKE_FACT_PLANE_FREEZE)
+
+smoke-spine51b: $(YAID) build-rust
+	@$(SMOKE_CASEHANDLE_CAPABILITY_BOUNDARY)
+
 smoke-spine33a: $(SMOKE_CONTROL_CARRIER_SUBSTRATE) build-rust
 	@$(SMOKE_CONTROL_CARRIER_SUBSTRATE)
 	@$(YAI_BIN) carrier families | grep -F -- "carrier_families:" >/dev/null
@@ -904,7 +951,7 @@ smoke-spine33i: $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) build-rust
 smoke-spine33l: build-rust
 	@$(SMOKE_PROVIDER_RUNTIME_SURFACE)
 
-smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke-spine42 smoke-spine43 smoke-spine44 smoke-spine44a smoke-spine44b smoke-spine44c smoke-spine45 smoke-spine46 smoke-spine47 smoke-spine48 smoke-spine49 smoke-spine50
+smoke: smoke-new1 smoke-new2 smoke-new3 smoke-new4 smoke-new5 smoke-new6 smoke-new7 smoke-new8 smoke-new9 smoke-new10 smoke-new11 smoke-new12 smoke-new18b smoke-new18c smoke-spine23 smoke-spine24 smoke-spine24a smoke-spine25 smoke-spine26 smoke-spine27 smoke-spine29 smoke-spine30 smoke-spine31 smoke-spine32 smoke-spine33 smoke-spine33a smoke-spine33b smoke-spine33c smoke-spine33d smoke-spine33e smoke-spine33f smoke-spine33g smoke-spine33h smoke-spine33i smoke-spine33l smoke-spine34 smoke-spine35 smoke-spine36 smoke-spine37 smoke-spine38 smoke-spine39 smoke-spine40 smoke-spine41 smoke-spine42 smoke-spine43 smoke-spine44 smoke-spine44a smoke-spine44b smoke-spine44c smoke-spine45 smoke-spine46 smoke-spine47 smoke-spine48 smoke-spine49 smoke-spine50 smoke-spine51 smoke-spine51b
 
 check: check-layout check-docs build smoke
 

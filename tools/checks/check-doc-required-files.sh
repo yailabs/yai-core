@@ -71,6 +71,12 @@ for file in \
   labs/filesystem-loop/notebook.ipynb \
   labs/filesystem-loop/run.sh \
   labs/filesystem-loop/prompts.json \
+  labs/context-residency/README.md \
+  labs/context-residency/runbook.md \
+  labs/context-residency/tests.md \
+  labs/context-residency/outputs.md \
+  labs/context-residency/run.sh \
+  labs/context-residency/prompts.json \
   labs/external-runtime/README.md \
   labs/external-runtime/runbook.md \
   labs/external-runtime/notebook.ipynb \

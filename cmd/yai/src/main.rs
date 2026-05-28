@@ -86,7 +86,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.50 Fact Reports + CLI Manual Validation");
+    println!("status: SPINE.51 Fact Plane Freeze");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -238,10 +238,13 @@ fn print_usage() {
     println!("       yai projection summary --journal <path>");
     println!("       yai projection inspect --journal <path> [--consumer model|operator|audit|debug|agent]");
     println!("       yai projection request --journal <path> --consumer <consumer> --kind <kind>");
-    println!("       yai case enter --journal <path> --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
-    println!("       yai case attach-provider --journal <path> --case <case_ref> --subject <subject_ref> --base-url <url> --model <model> [--api-key-env <env>] [--shell zsh]");
-    println!("       yai prompt [--once <text>] [--dry-run] [--language-mode auto|none] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>]");
-    println!("       yai prompt [--dry-run] [--language-mode auto|none] [--journal <path>] [--case <case_ref>] [--subject <subject_ref>] < prompt.txt");
+    println!("       yai case enter --case <case_ref> --subject <subject_ref> [--consumer model] [--kind model_context] [--shell zsh]");
+    println!("       yai case attach-provider --case <case_ref> --subject <subject_ref> --base-url <url> --model <model> [--api-key-env <env>] [--shell zsh]");
+    println!("       yai case resolve --case <case_ref> --subject <subject_ref>");
+    println!("       yai case scope --case <case_ref> --subject <subject_ref>");
+    println!("       yai capability derive --case <case_ref> --subject <subject_ref> --operation <operation_family> --resource <resource_ref>");
+    println!("       yai prompt [--once <text>] [--dry-run] [--language-mode auto|none] [--case <case_ref>] [--subject <subject_ref>]");
+    println!("       yai prompt [--dry-run] [--language-mode auto|none] [--case <case_ref>] [--subject <subject_ref>] < prompt.txt");
     println!("       yai control summary --journal <path>");
     println!("       yai control pending --case <case_ref>");
     println!("       yai control show <review_id>");
@@ -2054,6 +2057,676 @@ fn provider_start_plan(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Clone)]
+struct AuthorityScopeView {
+    scope_ref: String,
+    source: String,
+    can_claim: bool,
+    can_propose: bool,
+    can_dispatch: bool,
+    can_execute: bool,
+    can_review: bool,
+    can_approve: bool,
+    can_deny: bool,
+    can_defer: bool,
+    can_quarantine: bool,
+    can_mutate_decision: bool,
+    can_create_receipt: bool,
+    can_display: bool,
+}
+
+#[derive(Clone)]
+struct VisibilityScopeView {
+    scope_ref: String,
+    source: String,
+    raw_journal_access: &'static str,
+    filesystem_access: &'static str,
+    record_access: &'static str,
+    fact_access: &'static str,
+    graph_access: &'static str,
+    memory_access: &'static str,
+    policy_access: &'static str,
+    projection_kind: &'static str,
+    redaction: &'static str,
+    consumer_kind: &'static str,
+    decision_authority: &'static str,
+    receipt_authority: &'static str,
+}
+
+#[derive(Clone)]
+struct SubjectHandleView {
+    subject_handle_id: String,
+    subject_ref: String,
+    subject_role: String,
+    binding_status: String,
+    binding_source_record: String,
+    control_mode: String,
+    projection_mode: String,
+    authority_scope_ref: String,
+    visibility_scope_ref: String,
+}
+
+#[derive(Clone)]
+struct ResourceScopeView {
+    resource_scope_id: String,
+    resource_kind: String,
+    resource_ref: String,
+    scope_status: String,
+    read_allowed: bool,
+    write_allowed: bool,
+    execute_allowed: bool,
+    allowed_prefixes: String,
+    denied_prefixes: String,
+    source: String,
+    filesystem_scope: String,
+}
+
+fn case_records(case_ref: &str) -> Result<Vec<StoredRecordEnvelope>, String> {
+    let status = LmdbRecordStore::status(record_store_path());
+    if status.status != RecordStoreStatusKind::Ready {
+        return Ok(Vec::new());
+    }
+    let store = LmdbRecordStore::open(&status.path)?;
+    Ok(store.list_records_by_case(case_ref, usize::MAX)?.records)
+}
+
+fn record_mentions_subject(record: &StoredRecordEnvelope, subject_ref: &str) -> bool {
+    source_record_subject_ref(record) == subject_ref
+        || json_string_or(&record.raw_json, "summary", "").contains(subject_ref)
+}
+
+fn subject_binding_record<'a>(
+    records: &'a [StoredRecordEnvelope],
+    subject_ref: &str,
+) -> Option<&'a StoredRecordEnvelope> {
+    records.iter().find(|record| {
+        record.record_kind == "subject_binding" && record_mentions_subject(record, subject_ref)
+    })
+}
+
+fn subject_authority_record<'a>(
+    records: &'a [StoredRecordEnvelope],
+    subject_ref: &str,
+) -> Option<&'a StoredRecordEnvelope> {
+    records.iter().find(|record| {
+        record.record_kind == "authority_scope" && record_mentions_subject(record, subject_ref)
+    })
+}
+
+fn subject_role_from_summary(subject_ref: &str, summary: &str) -> String {
+    let explicit = summary_token_value(summary, "role");
+    if !explicit.is_empty() {
+        return explicit;
+    }
+    match subject_ref {
+        "subject:llm-provider" => "model_provider",
+        "subject:filesystem-sandbox" => "filesystem_runtime_subject",
+        "subject:operator-reviewer" => "operator_reviewer",
+        "subject:linenoise-terminal" => "operator_interface",
+        "subject:policy-pack" => "policy_pack",
+        _ => "unknown",
+    }
+    .to_string()
+}
+
+fn authority_scope_for(
+    subject_ref: &str,
+    source_record: Option<&StoredRecordEnvelope>,
+) -> AuthorityScopeView {
+    let source = if source_record.is_some() {
+        "record"
+    } else {
+        "derived_v0"
+    }
+    .to_string();
+    match subject_ref {
+        "subject:llm-provider" => AuthorityScopeView {
+            scope_ref: "authority-scope:llm-provider:v0".to_string(),
+            source,
+            can_claim: true,
+            can_propose: true,
+            can_dispatch: false,
+            can_execute: false,
+            can_review: false,
+            can_approve: false,
+            can_deny: false,
+            can_defer: false,
+            can_quarantine: false,
+            can_mutate_decision: false,
+            can_create_receipt: false,
+            can_display: false,
+        },
+        "subject:operator-reviewer" => AuthorityScopeView {
+            scope_ref: "authority-scope:operator-reviewer:v0".to_string(),
+            source,
+            can_claim: false,
+            can_propose: false,
+            can_dispatch: false,
+            can_execute: false,
+            can_review: true,
+            can_approve: true,
+            can_deny: true,
+            can_defer: true,
+            can_quarantine: true,
+            can_mutate_decision: false,
+            can_create_receipt: false,
+            can_display: true,
+        },
+        "subject:linenoise-terminal" => AuthorityScopeView {
+            scope_ref: "authority-scope:linenoise-terminal:v0".to_string(),
+            source,
+            can_claim: false,
+            can_propose: false,
+            can_dispatch: false,
+            can_execute: false,
+            can_review: false,
+            can_approve: false,
+            can_deny: false,
+            can_defer: false,
+            can_quarantine: false,
+            can_mutate_decision: false,
+            can_create_receipt: false,
+            can_display: true,
+        },
+        "subject:filesystem-sandbox" => AuthorityScopeView {
+            scope_ref: "authority-scope:filesystem-sandbox:v0".to_string(),
+            source,
+            can_claim: false,
+            can_propose: false,
+            can_dispatch: true,
+            can_execute: true,
+            can_review: false,
+            can_approve: false,
+            can_deny: false,
+            can_defer: false,
+            can_quarantine: false,
+            can_mutate_decision: false,
+            can_create_receipt: true,
+            can_display: false,
+        },
+        _ => AuthorityScopeView {
+            scope_ref: "authority-scope:unknown:v0".to_string(),
+            source: "unavailable".to_string(),
+            can_claim: false,
+            can_propose: false,
+            can_dispatch: false,
+            can_execute: false,
+            can_review: false,
+            can_approve: false,
+            can_deny: false,
+            can_defer: false,
+            can_quarantine: false,
+            can_mutate_decision: false,
+            can_create_receipt: false,
+            can_display: false,
+        },
+    }
+}
+
+fn visibility_scope_for(subject_ref: &str) -> VisibilityScopeView {
+    match subject_ref {
+        "subject:llm-provider" => VisibilityScopeView {
+            scope_ref: "visibility-scope:llm-provider:model-context:v0".to_string(),
+            source: "derived_v0".to_string(),
+            raw_journal_access: "not_provided",
+            filesystem_access: "not_provided",
+            record_access: "scoped_summary",
+            fact_access: "scoped_summary",
+            graph_access: "scoped_summary",
+            memory_access: "scoped_summary",
+            policy_access: "scoped_summary",
+            projection_kind: "model_context",
+            redaction: "summary_only",
+            consumer_kind: "model",
+            decision_authority: "not_provided",
+            receipt_authority: "not_provided",
+        },
+        "subject:operator-reviewer" => VisibilityScopeView {
+            scope_ref: "visibility-scope:operator-reviewer:v0".to_string(),
+            source: "derived_v0".to_string(),
+            raw_journal_access: "not_provided",
+            filesystem_access: "not_provided",
+            record_access: "scoped_summary",
+            fact_access: "scoped_summary",
+            graph_access: "scoped_summary",
+            memory_access: "scoped_summary",
+            policy_access: "scoped_summary",
+            projection_kind: "operator_review",
+            redaction: "summary_only",
+            consumer_kind: "operator",
+            decision_authority: "review_only",
+            receipt_authority: "not_provided",
+        },
+        _ => VisibilityScopeView {
+            scope_ref: format!("visibility-scope:{}:v0", subject_ref.replace(':', "-")),
+            source: "derived_v0".to_string(),
+            raw_journal_access: "not_provided",
+            filesystem_access: "not_provided",
+            record_access: "scoped_summary",
+            fact_access: "scoped_summary",
+            graph_access: "scoped_summary",
+            memory_access: "scoped_summary",
+            policy_access: "scoped_summary",
+            projection_kind: "case_summary",
+            redaction: "summary_only",
+            consumer_kind: "runtime",
+            decision_authority: "not_provided",
+            receipt_authority: "not_provided",
+        },
+    }
+}
+
+fn resolved_subject_handle(
+    case_ref: &str,
+    subject_ref: &str,
+    records: &[StoredRecordEnvelope],
+) -> Option<SubjectHandleView> {
+    let binding = subject_binding_record(records, subject_ref)?;
+    let summary = json_string_or(&binding.raw_json, "summary", "");
+    let role = subject_role_from_summary(subject_ref, &summary);
+    let authority =
+        authority_scope_for(subject_ref, subject_authority_record(records, subject_ref));
+    let visibility = visibility_scope_for(subject_ref);
+    Some(SubjectHandleView {
+        subject_handle_id: format!(
+            "subject-handle:{}:{}",
+            safe_case_ref_for_filename(case_ref),
+            subject_ref.replace(':', "-")
+        ),
+        subject_ref: subject_ref.to_string(),
+        subject_role: role.clone(),
+        binding_status: "bound".to_string(),
+        binding_source_record: binding.record_id.clone(),
+        control_mode: if subject_ref == "subject:llm-provider" {
+            "claim_or_proposal_only"
+        } else if subject_ref == "subject:operator-reviewer" {
+            "review_authority"
+        } else if subject_ref == "subject:filesystem-sandbox" {
+            "carrier_subject"
+        } else {
+            "inspect_only"
+        }
+        .to_string(),
+        projection_mode: if subject_ref == "subject:llm-provider" {
+            "model_context"
+        } else {
+            "scoped_summary"
+        }
+        .to_string(),
+        authority_scope_ref: authority.scope_ref,
+        visibility_scope_ref: visibility.scope_ref,
+    })
+}
+
+fn print_authority_scope(scope: &AuthorityScopeView, indent: &str) {
+    println!("{indent}authority_scope:");
+    println!("{indent}  authority_scope_ref: {}", scope.scope_ref);
+    println!("{indent}  source: {}", scope.source);
+    println!("{indent}  can_claim: {}", yes_no(scope.can_claim));
+    println!("{indent}  can_propose: {}", yes_no(scope.can_propose));
+    println!("{indent}  can_dispatch: {}", yes_no(scope.can_dispatch));
+    println!("{indent}  can_execute: {}", yes_no(scope.can_execute));
+    println!("{indent}  can_review: {}", yes_no(scope.can_review));
+    println!("{indent}  can_approve: {}", yes_no(scope.can_approve));
+    println!("{indent}  can_deny: {}", yes_no(scope.can_deny));
+    println!("{indent}  can_defer: {}", yes_no(scope.can_defer));
+    println!("{indent}  can_quarantine: {}", yes_no(scope.can_quarantine));
+    println!(
+        "{indent}  can_mutate_decision: {}",
+        yes_no(scope.can_mutate_decision)
+    );
+    println!(
+        "{indent}  can_create_receipt: {}",
+        yes_no(scope.can_create_receipt)
+    );
+    println!("{indent}  can_display: {}", yes_no(scope.can_display));
+}
+
+fn print_visibility_scope(scope: &VisibilityScopeView, indent: &str) {
+    println!("{indent}visibility_scope:");
+    println!("{indent}  visibility_scope_ref: {}", scope.scope_ref);
+    println!("{indent}  source: {}", scope.source);
+    println!("{indent}  projection_kind: {}", scope.projection_kind);
+    println!("{indent}  redaction: {}", scope.redaction);
+    println!("{indent}  consumer_kind: {}", scope.consumer_kind);
+    println!("{indent}  raw_journal_access: {}", scope.raw_journal_access);
+    println!("{indent}  filesystem_access: {}", scope.filesystem_access);
+    println!("{indent}  record_access: {}", scope.record_access);
+    println!("{indent}  fact_access: {}", scope.fact_access);
+    println!("{indent}  graph_access: {}", scope.graph_access);
+    println!("{indent}  memory_access: {}", scope.memory_access);
+    println!("{indent}  policy_access: {}", scope.policy_access);
+    println!("{indent}  decision_authority: {}", scope.decision_authority);
+    println!("{indent}  receipt_authority: {}", scope.receipt_authority);
+}
+
+fn case_generation_value(records: &[StoredRecordEnvelope], kind: &str) -> String {
+    if records.iter().any(|record| record.record_kind == kind) {
+        "1".to_string()
+    } else {
+        "not_available".to_string()
+    }
+}
+
+fn fact_generation_value(case_ref: &str) -> String {
+    let path = facts_store_path();
+    if path.is_file() {
+        let output = Command::new("duckdb")
+            .arg(&path)
+            .arg("-csv")
+            .arg("-noheader")
+            .arg("-c")
+            .arg(format!(
+                "SELECT COUNT(*) FROM fact_receipt WHERE case_ref='{}';",
+                case_ref.replace('\'', "''")
+            ))
+            .output();
+        if let Ok(output) = output {
+            if output.status.success() {
+                let text = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if text.parse::<usize>().unwrap_or(0) > 0 {
+                    return "1".to_string();
+                }
+            }
+        }
+        return "partial".to_string();
+    }
+    "not_available".to_string()
+}
+
+fn case_resolve(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let subject_ref = named_arg(args, "--subject")?;
+    let records = case_records(&case_ref)?;
+    let case_status = if records.is_empty() {
+        "not_materialized"
+    } else {
+        "active"
+    };
+    let subject_handle = resolved_subject_handle(&case_ref, &subject_ref, &records);
+
+    println!("case_handle:");
+    println!(
+        "case_handle_id: case-handle:{}",
+        safe_case_ref_for_filename(&case_ref)
+    );
+    println!("case_ref: {case_ref}");
+    println!("subject_ref: {subject_ref}");
+    if subject_handle.is_some() {
+        println!("status: resolved");
+    } else {
+        println!("status: denied");
+        println!("reason: subject_not_bound");
+    }
+    println!("case_status: {case_status}");
+    println!(
+        "case_generation: {}",
+        if records.is_empty() {
+            "not_available"
+        } else {
+            "1"
+        }
+    );
+    println!(
+        "policy_generation: {}",
+        case_generation_value(&records, "policy_rule")
+    );
+    println!(
+        "graph_generation: {}",
+        case_generation_value(&records, "graph_edge")
+    );
+    println!("fact_generation: {}", fact_generation_value(&case_ref));
+    println!(
+        "memory_generation: {}",
+        case_generation_value(&records, "memory_candidate")
+    );
+    println!(
+        "projection_generation: {}",
+        case_generation_value(&records, "projection_result")
+    );
+    println!("generation_status: partial");
+    println!("opened_at_unix_ms: {}", unix_time_ms_now());
+    println!("source: record_store_lmdb_derived_v0");
+    if let Some(handle) = subject_handle {
+        println!("subject_handle: {}", handle.subject_handle_id);
+        println!("subject_role: {}", handle.subject_role);
+        println!("binding_status: {}", handle.binding_status);
+        println!("binding_source_record: {}", handle.binding_source_record);
+        println!("authority_scope: {}", handle.authority_scope_ref);
+        println!("visibility_scope: {}", handle.visibility_scope_ref);
+        println!("resource_scope_status: partial");
+    }
+    println!("refs_are_authority: false");
+    Ok(())
+}
+
+fn case_scope(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let subject_ref = named_arg(args, "--subject")?;
+    let records = case_records(&case_ref)?;
+    let Some(handle) = resolved_subject_handle(&case_ref, &subject_ref, &records) else {
+        println!("case_scope:");
+        println!("case_ref: {case_ref}");
+        println!("subject_ref: {subject_ref}");
+        println!("status: denied");
+        println!("reason: subject_not_bound");
+        println!("refs_are_authority: false");
+        return Ok(());
+    };
+    let authority = authority_scope_for(
+        &subject_ref,
+        subject_authority_record(&records, &subject_ref),
+    );
+    let visibility = visibility_scope_for(&subject_ref);
+    println!("case_scope:");
+    println!("case_ref: {case_ref}");
+    println!("subject_ref: {subject_ref}");
+    println!("subject_handle:");
+    println!("  subject_handle_id: {}", handle.subject_handle_id);
+    println!("  subject_ref: {}", handle.subject_ref);
+    println!("  subject_role: {}", handle.subject_role);
+    println!("  binding_status: {}", handle.binding_status);
+    println!("  binding_source_record: {}", handle.binding_source_record);
+    println!("  control_mode: {}", handle.control_mode);
+    println!("  projection_mode: {}", handle.projection_mode);
+    print_authority_scope(&authority, "");
+    print_visibility_scope(&visibility, "");
+    println!("refs_are_authority: false");
+    Ok(())
+}
+
+fn operation_carrier_family(operation: &str) -> &'static str {
+    if operation.starts_with("filesystem.") || operation.starts_with("fs.") {
+        "filesystem"
+    } else if operation.starts_with("process.") {
+        "process"
+    } else if operation.starts_with("provider.") {
+        "provider_endpoint"
+    } else {
+        "unknown"
+    }
+}
+
+fn operation_action(operation: &str) -> &'static str {
+    if operation.ends_with(".read") {
+        "read"
+    } else if operation.ends_with(".write") {
+        "write"
+    } else if operation.ends_with(".execute") {
+        "execute"
+    } else {
+        "unknown"
+    }
+}
+
+fn resolve_resource_scope(
+    case_ref: &str,
+    operation: &str,
+    resource_ref: &str,
+) -> ResourceScopeView {
+    let carrier = operation_carrier_family(operation);
+    let action = operation_action(operation);
+    let filesystem_scope = if carrier == "filesystem" {
+        if resource_ref.starts_with("sandbox/") && !resource_ref.contains("..") {
+            "inside_sandbox"
+        } else {
+            "outside_sandbox"
+        }
+    } else {
+        "not_applicable"
+    };
+    let inside = filesystem_scope == "inside_sandbox";
+    ResourceScopeView {
+        resource_scope_id: format!(
+            "resource-scope:{}:{}",
+            safe_case_ref_for_filename(case_ref),
+            carrier
+        ),
+        resource_kind: carrier.to_string(),
+        resource_ref: resource_ref.to_string(),
+        scope_status: if carrier == "unknown" {
+            "unknown"
+        } else if carrier == "provider_endpoint" {
+            "planned_or_dry_run"
+        } else if inside {
+            "inside_sandbox"
+        } else {
+            "outside_sandbox"
+        }
+        .to_string(),
+        read_allowed: carrier == "filesystem" && inside && action == "read",
+        write_allowed: carrier == "filesystem" && inside && action == "write",
+        execute_allowed: false,
+        allowed_prefixes: if carrier == "filesystem" {
+            "sandbox/"
+        } else {
+            "none"
+        }
+        .to_string(),
+        denied_prefixes: if carrier == "filesystem" {
+            "../,/,outside-sandbox/"
+        } else {
+            "unknown"
+        }
+        .to_string(),
+        source: "derived_v0".to_string(),
+        filesystem_scope: filesystem_scope.to_string(),
+    }
+}
+
+fn capability_derive(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let subject_ref = named_arg(args, "--subject")?;
+    let operation = named_arg(args, "--operation")?;
+    let resource = named_arg(args, "--resource")?;
+    let records = case_records(&case_ref)?;
+    let subject = resolved_subject_handle(&case_ref, &subject_ref, &records);
+    let authority = authority_scope_for(
+        &subject_ref,
+        subject_authority_record(&records, &subject_ref),
+    );
+    let resource_scope = resolve_resource_scope(&case_ref, &operation, &resource);
+    let carrier_family = operation_carrier_family(&operation);
+    let action = operation_action(&operation);
+
+    let (lease_status, reason, requires_review, receipt_required, carrier_dispatch_allowed) =
+        if subject.is_none() {
+            ("denied", "subject_not_bound", false, false, false)
+        } else if carrier_family == "unknown" {
+            (
+                "denied",
+                "unknown_resource_or_operation",
+                false,
+                false,
+                false,
+            )
+        } else if resource_scope.filesystem_scope == "outside_sandbox" {
+            ("denied", "resource_outside_scope", false, false, false)
+        } else if !authority.can_execute && matches!(action, "write" | "read" | "execute") {
+            (
+                "denied",
+                "subject_lacks_execute_authority",
+                false,
+                false,
+                false,
+            )
+        } else if carrier_family == "filesystem" && action == "write" {
+            (
+                "requires_review",
+                "mutative_operation_requires_review",
+                true,
+                true,
+                false,
+            )
+        } else if carrier_family == "filesystem" && action == "read" {
+            ("minted", "compatible", false, true, true)
+        } else {
+            ("denied", "operation_not_allowed_v0", false, false, false)
+        };
+
+    println!("capability_lease:");
+    println!(
+        "capability_lease_id: capability-lease:{}:{}:{}",
+        safe_case_ref_for_filename(&case_ref),
+        subject_ref.replace(':', "-"),
+        operation.replace('.', "-")
+    );
+    println!("case_ref: {case_ref}");
+    println!("subject_ref: {subject_ref}");
+    println!("operation_family: {operation}");
+    println!("carrier_family: {carrier_family}");
+    println!("resource: {resource}");
+    println!("resource_scope_id: {}", resource_scope.resource_scope_id);
+    println!("resource_scope: {}", resource_scope.filesystem_scope);
+    println!("resource_kind: {}", resource_scope.resource_kind);
+    println!("resource_ref: {}", resource_scope.resource_ref);
+    println!("resource_scope_status: {}", resource_scope.scope_status);
+    println!("read_allowed: {}", yes_no(resource_scope.read_allowed));
+    println!("write_allowed: {}", yes_no(resource_scope.write_allowed));
+    println!(
+        "execute_allowed: {}",
+        yes_no(resource_scope.execute_allowed)
+    );
+    println!("allowed_prefixes: {}", resource_scope.allowed_prefixes);
+    println!("denied_prefixes: {}", resource_scope.denied_prefixes);
+    println!("resource_scope_source: {}", resource_scope.source);
+    println!("lease_status: {lease_status}");
+    println!(
+        "allowed_actions: {}",
+        if lease_status == "minted" {
+            action
+        } else {
+            "none"
+        }
+    );
+    println!("constraints: intersection_subject_authority_resource_policy_generation");
+    println!(
+        "carrier_dispatch_allowed: {}",
+        yes_no(carrier_dispatch_allowed)
+    );
+    println!("requires_review: {}", yes_no(requires_review));
+    println!("receipt_required: {}", yes_no(receipt_required));
+    println!("expires_at_unix_ms: not_available");
+    println!(
+        "policy_basis: {}",
+        if requires_review {
+            "mutative_operation_requires_review"
+        } else if reason == "resource_outside_scope" {
+            "filesystem-sandbox-boundary"
+        } else {
+            "derived_v0"
+        }
+    );
+    println!("authority_basis: {}", authority.scope_ref);
+    println!(
+        "visibility_basis: {}",
+        visibility_scope_for(&subject_ref).scope_ref
+    );
+    println!("reason: {reason}");
+    println!("refs_are_authority: false");
+    Ok(())
+}
+
 fn hot_state_path() -> PathBuf {
     yai_home().join("run").join("hot-state.json")
 }
@@ -3837,6 +4510,7 @@ fn facts_summary(args: &[String]) -> Result<(), String> {
     println!("fact_memory_quality: {}", counts.memory_quality);
     println!("facts_total: {}", counts.total);
     println!("facts_are_truth: false");
+    println!("memory_is_truth: false");
     Ok(())
 }
 
@@ -4732,6 +5406,25 @@ fn existing_env_path(name: &str) -> Option<PathBuf> {
     } else {
         None
     }
+}
+
+fn reject_journal_flag(args: &[String], command: &str) -> Result<(), String> {
+    if args.iter().any(|arg| arg == "--journal") {
+        return Err(format!(
+            "{command} does not accept --journal; materialize the case first and pass journal state through YAI_JOURNAL"
+        ));
+    }
+    Ok(())
+}
+
+fn case_journal_path(args: &[String], command: &str) -> Result<PathBuf, String> {
+    reject_journal_flag(args, command)?;
+    existing_env_path("YAI_JOURNAL")
+        .or_else(latest_filesystem_journal)
+        .ok_or_else(|| {
+            "YAI_JOURNAL is required; materialize the case before using case-native commands"
+                .to_string()
+        })
 }
 
 fn path_inside_sandbox(sandbox: &str, path: &str) -> bool {
@@ -6972,7 +7665,7 @@ fn print_case_enter_shell(path: &PathBuf, case_ref: &str, subject_ref: &str) {
 }
 
 fn case_enter(args: &[String]) -> Result<(), String> {
-    let path = journal_arg(args)?;
+    let path = case_journal_path(args, "yai case enter")?;
     let case_ref = named_arg(args, "--case")?;
     let subject_ref = named_arg(args, "--subject")?;
     let consumer = optional_arg(args, "--consumer").unwrap_or_else(|| "model".to_string());
@@ -7127,7 +7820,7 @@ fn print_provider_attach_shell(
 }
 
 fn case_attach_provider(args: &[String]) -> Result<(), String> {
-    let path = journal_arg(args)?;
+    let path = case_journal_path(args, "yai case attach-provider")?;
     let case_ref = named_arg(args, "--case")?;
     let subject_ref = named_arg(args, "--subject")?;
     let base_url = named_arg(args, "--base-url")?;
@@ -7416,12 +8109,7 @@ fn render_participant_view(journal: &Journal, case_ref: &str, thread_id: &str) -
 }
 
 fn prompt_session_from_args(args: &[String]) -> Result<PromptSession, String> {
-    let journal_path = optional_arg(args, "--journal")
-        .map(PathBuf::from)
-        .filter(|path| path.is_file())
-        .or_else(|| existing_env_path("YAI_JOURNAL"))
-        .or_else(latest_filesystem_journal)
-        .ok_or_else(|| "YAI_JOURNAL is required; run `yai case enter` first".to_string())?;
+    let journal_path = case_journal_path(args, "yai prompt")?;
     let case_ref = optional_arg(args, "--case")
         .or_else(|| env_var("YAI_CASE_REF"))
         .ok_or_else(|| "YAI_CASE_REF is required; run `yai case enter` first".to_string())?;
@@ -9764,6 +10452,24 @@ fn main() {
         }
         Some("case") if args.get(1).map(String::as_str) == Some("attach-provider") => {
             if let Err(error) = case_attach_provider(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("case") if args.get(1).map(String::as_str) == Some("resolve") => {
+            if let Err(error) = case_resolve(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("case") if args.get(1).map(String::as_str) == Some("scope") => {
+            if let Err(error) = case_scope(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("capability") if args.get(1).map(String::as_str) == Some("derive") => {
+            if let Err(error) = capability_derive(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

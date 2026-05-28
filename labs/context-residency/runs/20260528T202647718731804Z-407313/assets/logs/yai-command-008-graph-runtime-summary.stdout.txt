@@ -1,0 +1,15 @@
+runtime_graph_summary:
+case_ref: case:new12-filesystem
+source: graph_relations
+nodes_total: 44
+edges_total: 68
+outgoing_index_entries: 40
+incoming_index_entries: 31
+generation: 1
+dirty: no
+stale: no
+durable_truth: graph_persistence
+resident: false
+resident_service: planned
+hnsw: future_candidate_index
+context_compiler: future_consumer

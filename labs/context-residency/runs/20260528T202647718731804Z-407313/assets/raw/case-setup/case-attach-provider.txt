@@ -1,0 +1,10 @@
+provider_attachment: accepted
+provider_attachment_status: attached
+case_ref: case:new12-filesystem
+subject_ref: subject:llm-provider
+case_session: active
+case_context: active
+authority_scope: model interpretation_only
+provider_base_url: http://127.0.0.1:43117/v1/chat/completions
+provider_model: Qwen_Qwen3-8B-Q4_K_M.gguf
+api_key_env: OPENCODE_LLM_API_KEY

@@ -1,0 +1,9 @@
+{
+  "schema": "yai.context_residency_invalidation.lab.v1",
+  "case_generation": 1,
+  "fact_generation": 1,
+  "graph_generation": 1,
+  "policy_generation": 1,
+  "redaction_generation": 1,
+  "retrieval_generation": 1
+}

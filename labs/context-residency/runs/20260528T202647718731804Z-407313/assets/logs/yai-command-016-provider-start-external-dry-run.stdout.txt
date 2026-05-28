@@ -1,0 +1,11 @@
+provider_start_plan:
+  target: external
+  provider_kind: openai_compatible
+  endpoint: http://127.0.0.1:43117/v1/chat/completions
+  status: planned
+  action: attach_only
+  would_contact_device: false
+  would_start_provider: false
+  execution_performed: false
+  logs_path: /tmp/yai-cr-h-1780000007-407327/log/providers
+  receipt_required: yes

@@ -11,6 +11,17 @@ is the complete manual operator notebook: build, install, daemon, case
 materialization, command-surface sweeps and hand-written prompt cells.
 `runbook.md` is the static terminal copy of the same flow.
 
+Related benchmark:
+
+```text
+Test 2 - labs/context-residency
+```
+
+Test 2 is the case-native benchmark matrix. It compares naked no-context, naked
+raw-context, naked mini-RAG, YAI case-bound and logical YAI residency paths.
+The YAI path opens/materializes the filesystem-loop case and asks the model
+through YAI CLI; direct provider calls are allowed only for naked baselines.
+
 ## Canonical Files
 
 | Concern | Path |

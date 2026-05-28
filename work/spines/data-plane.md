@@ -864,3 +864,40 @@ quarantine produce explicit review/control residue. `subject:linenoise-terminal
 is prompt surface`; operator reviewer authority is separate. Deny, defer and
 quarantine keep `carrier_attempted: false` and `execution_performed: false`.
 The active lab path is `labs/filesystem-loop`.
+
+## SPINE.51 Fact Plane Freeze
+
+SPINE.51 freezes Fact Plane v1 as a derived analytical layer over existing YAI
+records, relations, projections, receipts, decisions, carriers, memory
+candidates and runtime diagnostics. DuckDB stores `yai.fact.v1`; facts remain
+analytical, temporal and provenance-bearing.
+
+Frozen fact classes:
+
+```text
+fact_receipt
+fact_decision
+fact_projection
+fact_carrier_outcome
+fact_divergence
+fact_model_behavior
+fact_policy_outcome
+fact_memory_quality
+```
+
+Frozen posture:
+
+```text
+bitemporal: transaction_time, valid_time_start, valid_time_end, known_at
+revision: revision_of, superseded_by, retracted_by
+status: current, superseded, retracted, stale, contested, historical_only,
+  branch_only, counterfactual, needs_review, unknown
+facts_are_truth: false
+memory_is_truth: false
+```
+
+`facts summary` is counts. `facts report` is compact explanatory sections.
+`none_observed` is valid for zero divergence facts and `no_model_records` is
+valid for zero model facts. Extraction remains idempotent extraction. Facts
+are not record truth, graph truth, memory, policy authority, reconcile action
+or model authority.

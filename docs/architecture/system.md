@@ -37,3 +37,28 @@ The repository root is not a single runtime component. `docs/` is curated
 architecture documentation, `labs/` is experiment/run material and `work/` is
 execution history, spines, inventories and agent notes.
 
+## Case Boundary
+
+SPINE.51B separates identifiers from runtime authority:
+
+```text
+refs are identifiers, not authority
+bindings are relations, not capabilities
+```
+
+CaseHandle and SubjectHandle are runtime-resolved posture over existing case
+and subject material. AuthorityScope describes what a subject may do.
+VisibilityScope describes what may be projected. ResourceScope describes the
+resource boundary. CapabilityLease is the bounded operation permission derived
+from those scopes.
+
+The command surface is:
+
+```bash
+yai case resolve --case <case_ref> --subject <subject_ref>
+yai case scope --case <case_ref> --subject <subject_ref>
+yai capability derive --case <case_ref> --subject <subject_ref> --operation <operation_family> --resource <resource_ref>
+```
+
+Capability derivation reports carrier dispatch allowed posture,
+`subject_lacks_execute_authority` and `resource_outside_scope` explicitly.

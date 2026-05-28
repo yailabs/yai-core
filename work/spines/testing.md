@@ -2027,3 +2027,78 @@ facts reports are not truth, not audit packets, not reconcile actions and not
 memory consolidation. Zero divergence/model facts are valid when source records
 are absent: `none_observed` and `no_model_records`. Memory report output keeps
 `memory_is_truth: false`.
+
+## SPINE.51 Fact Plane Freeze
+
+`tests/smoke/fact-plane-freeze/test_fact_plane_freeze.sh` validates the frozen
+Fact Plane v1 surface:
+
+```bash
+make check-fact-plane-freeze
+make smoke-spine51
+```
+
+Expected labels:
+
+```text
+fact_freeze:status ok
+fact_freeze:schema ok
+fact_freeze:init ok
+fact_freeze:extract_core ok
+fact_freeze:extract_behavior ok
+fact_freeze:extract_operational ok
+fact_freeze:extract_all ok
+fact_freeze:idempotent ok
+fact_freeze:summary ok
+fact_freeze:report ok
+fact_freeze:divergence none_observed ok
+fact_freeze:model no_model_records ok
+fact_freeze:not_truth ok
+fact_freeze:memory_not_truth ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, initializes
+DuckDB, validates `yai.fact.v1` bitemporal fields `transaction_time`,
+`valid_time_start`, `valid_time_end`, `known_at` and revision fields
+`revision_of`, `superseded_by`, `retracted_by`, then verifies `core`,
+`behavior`, `operational`, `all`, `facts summary` and `facts report`. The known
+fixture expects `fact_receipt: 3`, `fact_decision: 2`, `fact_projection: 3`,
+`fact_carrier_outcome: 3`, `fact_divergence: 0`, `fact_model_behavior: 0`,
+`fact_policy_outcome: 7`, `fact_memory_quality: 1` and `facts_total: 19`.
+Facts are not truth. Memory facts are not memory. Extraction is idempotent
+extraction.
+
+## SPINE.51B CaseHandle / CapabilityLease Boundary
+
+`tests/smoke/casehandle-capability-boundary/test_casehandle_capability_boundary.sh`
+validates runtime-resolved handles, scopes and leases:
+
+```bash
+make check-casehandle-capability-boundary
+make smoke-spine51b
+```
+
+Expected labels:
+
+```text
+case_handle:resolve llm-provider ok
+case_handle:resolve filesystem-sandbox ok
+case_scope:model no_execute ok
+case_scope:reviewer approve ok
+capability:model_write denied ok
+capability:filesystem_write requires_review ok
+capability:filesystem_read minted ok
+capability:outside_sandbox denied ok
+refs:not_authority ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, runs the
+review loop so `subject:operator-reviewer` is visible, then checks `case
+resolve`, `case scope` and `capability derive`. CaseHandle and SubjectHandle
+are runtime-resolved posture. AuthorityScope and VisibilityScope are separate.
+ResourceScope is separate from authority. CapabilityLease is a bounded
+operation permission, not a decision receipt and not proof of execution.
+
+Guard vocabulary includes: refs are identifiers, not authority; bindings are
+relations, not capabilities; carrier dispatch allowed;
+subject_lacks_execute_authority; resource_outside_scope.

@@ -2,6 +2,15 @@
 
 Status: canonical output anchors.
 
+Related benchmark:
+
+```text
+Test 2 - labs/context-residency
+```
+
+Test 2 is the case-native benchmark matrix: naked no-context, naked raw-context,
+naked mini-RAG, YAI case-bound and logical YAI residency.
+
 ## Receipt / Decision / Projection Facts
 
 Receipt extraction:
@@ -234,3 +243,78 @@ model:
 
 facts reports are not truth. facts reports are not audit packets. facts reports
 are not reconcile actions. facts reports are not memory consolidation.
+
+## Fact Plane Freeze
+
+Frozen filesystem-loop summary after installed matrix:
+
+```text
+facts_summary:
+case_ref: case:new12-filesystem
+fact_receipt: 3
+fact_decision: 2
+fact_projection: 3
+fact_carrier_outcome: 3
+fact_divergence: 0
+fact_model_behavior: 0
+fact_policy_outcome: 7
+fact_memory_quality: 1
+facts_total: 19
+facts_are_truth: false
+memory_is_truth: false
+```
+
+Frozen report absence posture:
+
+```text
+divergence:
+  total: 0
+  status: none_observed
+
+model:
+  total: 0
+  status: no_model_records
+
+memory:
+  memory_is_truth: false
+```
+
+DuckDB `yai.fact.v1` facts remain bitemporal and provenance-bearing:
+`transaction_time`, `valid_time_start`, `valid_time_end`, `known_at`,
+`revision_of`, `superseded_by`, `retracted_by`. Status posture includes
+current, superseded, retracted, stale, contested, historical_only, branch_only,
+counterfactual, needs_review and unknown. Fact Plane Freeze keeps
+`fact_receipt`, `fact_decision`, `fact_projection`, `fact_carrier_outcome`,
+`fact_divergence`, `fact_model_behavior`, `fact_policy_outcome` and
+`fact_memory_quality`. `facts summary` and `facts report` are analytical only.
+Extraction is idempotent extraction.
+
+## CaseHandle / CapabilityLease Outputs
+
+SPINE.51B adds runtime-resolved boundary outputs for the filesystem loop:
+
+```bash
+yai case resolve --case case:new12-filesystem --subject subject:llm-provider
+yai case scope --case case:new12-filesystem --subject subject:llm-provider
+yai capability derive --case case:new12-filesystem --subject subject:llm-provider --operation filesystem.write --resource sandbox/output.txt
+```
+
+Expected posture:
+
+```text
+CaseHandle
+SubjectHandle
+AuthorityScope
+VisibilityScope
+ResourceScope
+CapabilityLease
+refs are identifiers, not authority
+bindings are relations, not capabilities
+carrier dispatch allowed
+subject_lacks_execute_authority
+resource_outside_scope
+```
+
+`subject:llm-provider` cannot execute or approve filesystem writes. The
+filesystem sandbox subject can read inside sandbox, requires review for
+inside-sandbox writes and is denied outside sandbox.

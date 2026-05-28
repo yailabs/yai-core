@@ -1,0 +1,10 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/debug/deps/yai_core_engine-64d462f22a0113a9)
+     Running unittests src/lib.rs (target/debug/deps/yai_core_engine_sys-24677f9bc7566579)
+   Doc-tests yai_core_engine
+   Doc-tests yai_core_engine_sys
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/main.rs (target/debug/deps/yai-7985b15b2fa747b6)

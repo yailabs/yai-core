@@ -1,0 +1,15 @@
+runtime_targets:
+- local
+- lan
+- external
+local:
+  provider_process: same_machine
+  supervisor: planned
+lan:
+  device_is_runtime_target: yes
+  requires_paired_device: yes
+  requires_trusted_device: yes
+  supervisor: planned
+external:
+  attach_only: yes
+  supervisor: not_owned

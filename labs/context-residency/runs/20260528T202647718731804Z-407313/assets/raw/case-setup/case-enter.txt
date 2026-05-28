@@ -1,0 +1,97 @@
+case_entry: accepted
+case_entry_status: admitted
+case_session: active
+case_world: materialized
+case_context: active
+case_ref: case:new12-filesystem
+subject_ref: subject:llm-provider
+participant_view: model_context
+consumer: model
+redaction: summary_only
+raw_journal_access: not_provided
+filesystem_access: not_provided
+authority_scope: model interpretation_only
+
+case_ref: case:new12-filesystem
+case_world: materialized
+case_context: active
+consumer: model
+projection_kind: model_context
+redaction: summary_only
+source: case_projection_graph_memory
+raw_journal_access: not_provided
+filesystem_access: not_provided
+decision_authority: not_provided
+receipt_authority: not_provided
+terminal_authority: prompt_surface_only_no_decision_authority
+records: 29
+case_domains: 1
+case_attachments: 1
+case_bindings: 1
+interaction_threads: 0
+interaction_turns: 0
+participant_view_frames: 0
+model_projection_records: 1
+operator_projection_records: 1
+filesystem_receipts: 3
+memory_candidates: 1
+projection_rules: 1
+authority_scopes: 3
+model_interpretations: 0
+graph_edges: 3
+
+## Case World
+- rec:new12-fs-case-domain kind:case_domain subject_ref:subject:none attempt_id:none decision_id:none receipt_id:none summary:case_domain domain:operational_case scope:manual-filesystem-lo family:manual-validation active:true
+- rec:new12-fs-case-attachment-sandbox kind:case_attachment subject_ref:subject:filesystem-sandbox attempt_id:none decision_id:none receipt_id:none summary:case_attachment kind:runtime_subject posture:bound subject:subject:filesystem-sandbox
+- rec:new12-fs-case-binding-model kind:case_binding subject_ref:subject:none attempt_id:none decision_id:none receipt_id:none summary:case_binding kind:model posture:bound target:subject:llm-provider
+
+## Subjects
+- rec:new12-fs-subject kind:subject_binding subject_ref:subject:filesystem-sandbox attempt_id:none decision_id:none receipt_id:none summary:subject:filesystem sandbox bound
+- rec:new12-fs-model-subject kind:subject_binding subject_ref:subject:llm-provider attempt_id:none decision_id:none receipt_id:none summary:subject:llm-provider bound role:model_provider projection:model_context
+- rec:new12-fs-terminal-subject kind:subject_binding subject_ref:subject:linenoise-terminal attempt_id:none decision_id:none receipt_id:none summary:subject:linenoise-terminal bound role:operator_interface prompt_surface:vendored_linenoise
+- rec:new12-fs-policy-subject kind:subject_binding subject_ref:subject:policy-pack attempt_id:none decision_id:none receipt_id:none summary:subject:policy-pack bound source:manual-filesystem-loop-validation
+
+## Policy
+- rec:new12-fs-policy-rule-fs kind:policy_rule subject_ref:subject:policy-pack attempt_id:none decision_id:none receipt_id:none summary:policy:manual-filesystem-sandbox-v0 rule:filesystem-sandbox-boundary condition:fs.effect constraint:sandbox_only
+
+## Projection Rules
+- rec:new12-fs-projection-rule-model kind:projection_rule subject_ref:subject:policy-pack attempt_id:none decision_id:none receipt_id:none summary:projection_rule:model-context-only subject:llm-provider consume:model_context output:claim_or_proposal
+
+## Authority Scopes
+- rec:new12-fs-authority-scope-fs kind:authority_scope subject_ref:subject:filesystem-sandbox attempt_id:none decision_id:none receipt_id:none summary:authority_scope:filesystem subject:filesystem-sandbox may:fs_inside_sandbox requires:decision_receipt
+- rec:new12-fs-authority-scope-model kind:authority_scope subject_ref:subject:llm-provider attempt_id:none decision_id:none receipt_id:none summary:authority_scope:model subject:llm-provider may:claim_proposal no:carrier_effects actions_become:op_attempt
+- rec:new12-fs-authority-scope-terminal kind:authority_scope subject_ref:subject:linenoise-terminal attempt_id:none decision_id:none receipt_id:none summary:authority_scope:terminal subject:linenoise-terminal may:display_submit_input no:execution_authority
+
+## Decisions
+- rec:new12-fs-block-decision kind:decision subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-block decision_id:decision:new12-fs-block receipt_id:none summary:decision:require_review rule:mutative_operation_requires_review
+- rec:new12-fs-write-decision kind:decision subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-write decision_id:decision:new12-fs-write receipt_id:none summary:decision:allow_with_constraints constraint:sandbox_only
+
+## Filesystem Receipts
+- rec:new12-fs-read-receipt kind:filesystem_receipt subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-read decision_id:none receipt_id:receipt:new12-fs-read summary:fs:read status:observed sandbox:inside
+- rec:new12-fs-block-receipt kind:filesystem_receipt subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-block decision_id:decision:new12-fs-block receipt_id:receipt:new12-fs-block summary:fs:write status:blocked sandbox:inside
+- rec:new12-fs-write-receipt kind:filesystem_receipt subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-write decision_id:decision:new12-fs-write receipt_id:receipt:new12-fs-write summary:fs:write status:executed sandbox:inside
+
+## Memory
+- rec:new12-fs-memory kind:memory_candidate subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-block decision_id:decision:new12-fs-block receipt_id:receipt:new12-fs-block summary:memory:operational scope:case basis_records:22 basis_receipts:3 basis_edges:1 summary:filesystem write required review before s
+
+## Graph
+- rec:new12-fs-policy-edge kind:graph_edge subject_ref:subject:policy-pack attempt_id:none decision_id:none receipt_id:none summary:edge:policy_applies_to_subject subjects:filesystem,model,terminal
+- rec:new12-fs-edge kind:graph_edge subject_ref:subject:filesystem-sandbox attempt_id:attempt:new12-fs-write decision_id:decision:new12-fs-write receipt_id:receipt:new12-fs-write summary:edge:decision_controls_op edge:receipt_records_effect
+- rec:new12-fs-model-edge kind:graph_edge subject_ref:subject:llm-provider attempt_id:none decision_id:none receipt_id:none summary:edge:model_context_projects_case_graph subject:llm-provider case:new12-filesystem
+
+## Projection Records
+- rec:new12-fs-model-projection-request kind:projection_request subject_ref:subject:llm-provider attempt_id:none decision_id:none receipt_id:none summary:request:model_context redaction:summary_only subject:llm-provider
+- rec:new12-fs-projection kind:projection_result subject_ref:subject:filesystem-sandbox attempt_id:none decision_id:none receipt_id:none summary:consumer:operator kind:operator_summary redaction:none freshness:fresh source_records:25 source_receipts:3 source_memory:1
+- rec:new12-fs-model-projection kind:projection_result subject_ref:subject:llm-provider attempt_id:none decision_id:none receipt_id:none summary:consumer:model kind:model_context redaction:summary_only freshness:fresh source_records:26 source_receipts:3 source_memory:1
+
+## Model Interpretations
+- none
+
+## Authority Boundaries
+- case_domain, case_attachment and case_binding records define the operational case world visible to this participant.
+- subject:linenoise-terminal is a vendored prompt surface only; it does not generate decisions, authorize writes, mutate receipts or own provider semantics.
+- subject:llm-provider may produce claims, proposals and model_interpretation records; those are not authoritative state until checked against decisions, receipts, graph and memory.
+- filesystem decisions are represented by decision records; existing decisions/receipts are historical residue, not mutable by model output.
+- When answering, state authority granted by the current projection, not physical capability of the host process.
+- raw_journal_access, filesystem_access, decision_authority and receipt_authority are not provided to the model participant view.
+

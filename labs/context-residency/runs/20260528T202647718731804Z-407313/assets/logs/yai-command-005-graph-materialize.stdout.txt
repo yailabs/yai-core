@@ -1,0 +1,10 @@
+graph_materialize:
+case_ref: case:new12-filesystem
+source: lmdb_records
+relations_seen: 68
+relations_written: 68
+relations_duplicate: 0
+relations_skipped: 0
+schema: yai.graph_relation.v1
+graph_store: lmdb_graph_relations_v0
+runtime_graph_updated: false

@@ -16,6 +16,7 @@ labs/
   shared/bin/
   filesystem-loop/
   external-runtime/
+  context-residency/
 ```
 
 ## Canonical Lab Shape
@@ -54,6 +55,14 @@ Current latest runs:
 |---|---|
 | filesystem-loop | `filesystem-loop/runs/20260526-real-fsloop/` |
 | external-runtime | `external-runtime/runs/20260526-canon6-provider-probe/` |
+| context-residency | generated under `context-residency/runs/` |
+
+Canonical test numbering:
+
+| Test | Lab |
+|---|---|
+| Test 1 | `filesystem-loop` |
+| Test 2 | `context-residency` |
 
 ## Lab Standards
 
