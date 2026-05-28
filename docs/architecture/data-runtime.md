@@ -97,6 +97,16 @@ Extraction stays bitemporal and idempotent extraction. `operational` is
 carrier_outcome + divergence + memory_quality. `all` is core + behavior +
 operational.
 
+SPINE.50 adds compact fact reports with `yai facts report --case <case_ref>`
+and section views for `--section receipts`, `--section decisions`,
+`--section projections`, `--section policy`, `--section carriers`,
+`--section divergence`, `--section memory` and `--section model`. `facts
+summary` is counts; `facts report` is interpreted explanatory sections over
+existing DuckDB facts only. facts reports are not truth, not audit packets, not
+reconcile actions and not memory consolidation. Zero divergence/model facts are
+valid when source records are absent: `none_observed` and `no_model_records`.
+Memory reports include `memory_is_truth: false`.
+
 Hard distinction:
 
 ```text

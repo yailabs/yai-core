@@ -129,7 +129,7 @@ SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     done
 SPINE.49  Memory / Divergence / Carrier Facts                       done
-SPINE.50  Fact Reports + CLI Manual Validation                      planned
+SPINE.50  Fact Reports + CLI Manual Validation                      done
 SPINE.51  Fact Plane Freeze                                         planned
 
 SPINE.52  Live Projection Frame Schema                              planned
@@ -361,6 +361,18 @@ yai facts extract --case <case_ref> --kind operational
 carrier facts measure carrier posture. divergence facts are not reconcile
 action. memory facts are not memory. Facts are not truth. Extraction is
 bitemporal and idempotent extraction.
+
+SPINE.50 adds `yai facts report --case <case_ref>` as a compact explanatory
+view over the first operational fact set. The command reads existing DuckDB
+facts only and reports sections for receipts, decisions, projections, policy,
+carriers, divergence, memory and model behavior.
+
+`facts summary` remains count-oriented. `facts report` is an interpreted CLI
+view. facts reports are not truth, not audit packets, not reconcile actions and
+not memory consolidation. Zero divergence/model facts are valid when source
+records are absent; the report prints `none_observed` for divergence and
+`no_model_records` for model behavior. Memory report output keeps
+`memory_is_truth: false`.
 
 SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
 consistency, projection invalidation consistency, memory basis after

@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.49 Memory / Divergence / Carrier Facts.
+Status: SPINE.50 Fact Reports + CLI Manual Validation.
 
 ## Completed Foundation
 
@@ -245,6 +245,18 @@ are not truth. `memory_is_truth: false` is visible for memory quality
 extraction. The group `operational` means carrier_outcome + divergence +
 memory_quality; `all` means core + behavior + operational. Extraction is
 bitemporal and idempotent extraction.
+
+SPINE.50 Fact Reports + CLI Manual Validation completed.
+
+SPINE.50 adds `yai facts report --case <case_ref>` and section-specific report
+views for `--section receipts`, `--section decisions`, `--section projections`,
+`--section policy`, `--section carriers`, `--section divergence`,
+`--section memory` and `--section model`. `facts summary` is counts; `facts
+report` is interpreted compact sections over existing DuckDB facts only. facts
+reports are not truth, not audit packets, not reconcile actions and not memory
+consolidation. Zero divergence/model facts are valid when source records are
+absent: `none_observed` and `no_model_records`. Memory reports include
+`memory_is_truth: false`.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,

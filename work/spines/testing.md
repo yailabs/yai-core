@@ -1993,3 +1993,37 @@ the filesystem loop. `fact_memory_quality` must be greater than zero when
 divergence records. Facts are not truth. carrier facts measure carrier
 posture. divergence facts are not reconcile action. memory facts are not
 memory. The extraction is bitemporal and idempotent extraction.
+
+## SPINE.50 Fact Reports + CLI Manual Validation
+
+`tests/smoke/fact-reports-cli/test_fact_reports_cli.sh` validates compact
+read-only fact reports:
+
+```bash
+make check-fact-reports-cli
+make smoke-spine50
+```
+
+Expected labels:
+
+```text
+facts_report:default ok
+facts_report:receipts ok
+facts_report:decisions ok
+facts_report:policy ok
+facts_report:carriers ok
+facts_report:divergence none_observed ok
+facts_report:memory not_truth ok
+facts_report:model no_model_records ok
+facts_report:not_truth ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, initializes
+DuckDB, extracts `core`, `behavior` and `operational`, then runs
+`yai facts report --case case:new12-filesystem` plus `--section receipts`,
+`--section decisions`, `--section policy`, `--section carriers`,
+`--section divergence`, `--section memory` and `--section model`.
+facts reports are not truth, not audit packets, not reconcile actions and not
+memory consolidation. Zero divergence/model facts are valid when source records
+are absent: `none_observed` and `no_model_records`. Memory report output keeps
+`memory_is_truth: false`.

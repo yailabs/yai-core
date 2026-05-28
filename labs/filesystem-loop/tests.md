@@ -114,3 +114,25 @@ divergence, kind memory_quality, kind operational.
 carrier facts measure carrier posture. divergence facts are not reconcile
 action. memory facts are not memory. facts are not truth. The extraction is
 bitemporal and idempotent extraction.
+
+## Fact Reports CLI
+
+SPINE.50 tests compact read-only report sections over extracted facts:
+
+```bash
+yai facts report --case case:new12-filesystem
+yai facts report --case case:new12-filesystem --section receipts
+yai facts report --case case:new12-filesystem --section decisions
+yai facts report --case case:new12-filesystem --section projections
+yai facts report --case case:new12-filesystem --section policy
+yai facts report --case case:new12-filesystem --section carriers
+yai facts report --case case:new12-filesystem --section divergence
+yai facts report --case case:new12-filesystem --section memory
+yai facts report --case case:new12-filesystem --section model
+```
+
+`facts summary` is counts. `facts report` is interpreted compact sections.
+facts reports are not truth, not audit packets, not reconcile actions and not
+memory consolidation. `none_observed` is valid for zero divergence facts.
+`no_model_records` is valid for zero model facts. Memory report output keeps
+`memory_is_truth: false`.

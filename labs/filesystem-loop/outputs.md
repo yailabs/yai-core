@@ -187,3 +187,50 @@ facts_are_truth: false
 carrier facts measure carrier posture. divergence facts are not reconcile
 action. memory facts are not memory. facts are not truth. Extraction is
 bitemporal and idempotent extraction over memory_candidate and carrier records.
+
+## Fact Reports CLI
+
+Default report:
+
+```text
+facts_report:
+case_ref: case:new12-filesystem
+schema: yai.fact.v1
+facts_are_truth: false
+sections:
+  receipts:
+  decisions:
+  projections:
+  policy:
+  carriers:
+  divergence:
+  memory:
+  model:
+```
+
+Section postures:
+
+```text
+yai facts report --case case:new12-filesystem --section receipts
+yai facts report --case case:new12-filesystem --section decisions
+yai facts report --case case:new12-filesystem --section projections
+yai facts report --case case:new12-filesystem --section policy
+yai facts report --case case:new12-filesystem --section carriers
+yai facts report --case case:new12-filesystem --section divergence
+yai facts report --case case:new12-filesystem --section memory
+yai facts report --case case:new12-filesystem --section model
+```
+
+Expected zero/source-absence posture:
+
+```text
+divergence:
+  status: none_observed
+memory:
+  memory_is_truth: false
+model:
+  status: no_model_records
+```
+
+facts reports are not truth. facts reports are not audit packets. facts reports
+are not reconcile actions. facts reports are not memory consolidation.

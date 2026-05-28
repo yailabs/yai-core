@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts, SPINE.48 Model Behavior / Policy Outcome Facts and SPINE.49 Memory / Divergence / Carrier Facts. | SPINE.50 Fact Reports + CLI Manual Validation. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts, SPINE.48 Model Behavior / Policy Outcome Facts, SPINE.49 Memory / Divergence / Carrier Facts and SPINE.50 Fact Reports + CLI Manual Validation. | SPINE.51 Fact Plane Freeze. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -986,7 +986,7 @@ SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     done
 SPINE.49  Memory / Divergence / Carrier Facts                       done
-SPINE.50  Fact Reports + CLI Manual Validation                      planned
+SPINE.50  Fact Reports + CLI Manual Validation                      done
 SPINE.51  Fact Plane Freeze                                         planned
 
 SPINE.52  Live Projection Frame Schema                              planned
@@ -1208,6 +1208,17 @@ yai facts extract --case <case_ref> --kind operational
 carrier facts measure carrier posture. divergence facts are not reconcile
 action. memory facts are not memory. Facts are not truth. Bitemporal fields and
 idempotent extraction remain mandatory.
+
+SPINE.50 adds `yai facts report --case <case_ref>` and section-specific report
+views for `--section receipts`, `--section decisions`, `--section projections`,
+`--section policy`, `--section carriers`, `--section divergence`,
+`--section memory` and `--section model`.
+
+`facts summary` is counts. `facts report` is interpreted compact sections over
+existing DuckDB facts only. facts reports are not truth, not audit packets, not
+reconcile actions and not memory consolidation. Zero divergence/model facts are
+valid when source records are absent: `none_observed` and `no_model_records`.
+Memory reports include `memory_is_truth: false`.
 
 SPINE.66-72 reconcile now includes:
 

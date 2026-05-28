@@ -86,7 +86,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.49 Memory / Divergence / Carrier Facts");
+    println!("status: SPINE.50 Fact Reports + CLI Manual Validation");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -107,6 +107,7 @@ fn print_info() {
     println!(
         "facts_extraction: receipt_decision_projection model_behavior policy_outcome carrier_outcome divergence memory_quality active"
     );
+    println!("facts_report: compact read-only CLI sections active");
     println!("control_inspection: journal-derived summary");
 }
 
@@ -276,6 +277,7 @@ fn print_usage() {
     println!("       yai facts init");
     println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|model_behavior|policy_outcome|carrier_outcome|divergence|memory_quality|core|behavior|operational|all");
     println!("       yai facts summary --case <case_ref>");
+    println!("       yai facts report --case <case_ref> [--section receipts|decisions|projections|policy|carriers|divergence|memory|model] [--format plain]");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
     println!("       yai query summary --journal <path>");
@@ -2832,6 +2834,33 @@ fn duckdb_count(sql: &str) -> Result<usize, String> {
         .map_err(|err| format!("invalid duckdb count output for `{sql}`: {err}"))
 }
 
+fn csv_field_value(value: &str) -> String {
+    let trimmed = value.trim();
+    if trimmed.len() >= 2 && trimmed.starts_with('"') && trimmed.ends_with('"') {
+        trimmed[1..trimmed.len() - 1].replace("\"\"", "\"")
+    } else {
+        trimmed.to_string()
+    }
+}
+
+fn duckdb_group_counts(sql: &str) -> Result<Vec<(String, usize)>, String> {
+    duckdb_query_csv(sql)?
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            let mut parts = line.splitn(2, ',');
+            let key = csv_field_value(parts.next().unwrap_or("unknown"));
+            let count = parts
+                .next()
+                .unwrap_or("0")
+                .trim()
+                .parse::<usize>()
+                .map_err(|err| format!("invalid duckdb group count output for `{sql}`: {err}"))?;
+            Ok((key, count))
+        })
+        .collect()
+}
+
 fn sql_quote(value: &str) -> String {
     format!("'{}'", value.replace('\'', "''"))
 }
@@ -3808,6 +3837,344 @@ fn facts_summary(args: &[String]) -> Result<(), String> {
     println!("fact_memory_quality: {}", counts.memory_quality);
     println!("facts_total: {}", counts.total);
     println!("facts_are_truth: false");
+    Ok(())
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum FactReportSection {
+    Receipts,
+    Decisions,
+    Projections,
+    Policy,
+    Carriers,
+    Divergence,
+    Memory,
+    Model,
+}
+
+impl FactReportSection {
+    fn from_arg(value: &str) -> Option<Self> {
+        match value {
+            "receipts" => Some(Self::Receipts),
+            "decisions" => Some(Self::Decisions),
+            "projections" => Some(Self::Projections),
+            "policy" => Some(Self::Policy),
+            "carriers" => Some(Self::Carriers),
+            "divergence" => Some(Self::Divergence),
+            "memory" => Some(Self::Memory),
+            "model" => Some(Self::Model),
+            _ => None,
+        }
+    }
+}
+
+fn fact_report_where(case_ref: &str) -> String {
+    format!("case_ref = {}", sql_quote(case_ref))
+}
+
+fn fact_report_total(table: &str, case_ref: &str) -> Result<usize, String> {
+    duckdb_count(&format!(
+        "SELECT count(*) FROM {table} WHERE {};",
+        fact_report_where(case_ref)
+    ))
+}
+
+fn fact_report_count(table: &str, case_ref: &str, predicate: &str) -> Result<usize, String> {
+    duckdb_count(&format!(
+        "SELECT count(*) FROM {table} WHERE {} AND {predicate};",
+        fact_report_where(case_ref)
+    ))
+}
+
+fn fact_report_group(
+    table: &str,
+    case_ref: &str,
+    column: &str,
+) -> Result<Vec<(String, usize)>, String> {
+    duckdb_group_counts(&format!(
+        "SELECT coalesce(nullif({column}, ''), 'unknown') AS value, count(*) FROM {table} WHERE {} GROUP BY value ORDER BY value;",
+        fact_report_where(case_ref)
+    ))
+}
+
+fn print_group_lines(table: &str, case_ref: &str, column: &str) -> Result<(), String> {
+    for (key, count) in fact_report_group(table, case_ref, column)? {
+        println!("    {key}: {count}");
+    }
+    Ok(())
+}
+
+fn print_bool_line(
+    table: &str,
+    case_ref: &str,
+    output_key: &str,
+    column: &str,
+) -> Result<(), String> {
+    println!(
+        "    {output_key}: {}",
+        fact_report_count(table, case_ref, &format!("{column} = TRUE"))?
+    );
+    Ok(())
+}
+
+fn print_receipts_report(case_ref: &str) -> Result<(), String> {
+    println!("  receipts:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_receipt", case_ref)?
+    );
+    print_group_lines("fact_receipt", case_ref, "receipt_status")?;
+    print_group_lines("fact_receipt", case_ref, "carrier_family")?;
+    print_bool_line(
+        "fact_receipt",
+        case_ref,
+        "execution_performed",
+        "execution_performed",
+    )?;
+    print_bool_line(
+        "fact_receipt",
+        case_ref,
+        "carrier_attempted",
+        "carrier_attempted",
+    )?;
+    Ok(())
+}
+
+fn print_decisions_report(case_ref: &str) -> Result<(), String> {
+    println!("  decisions:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_decision", case_ref)?
+    );
+    print_group_lines("fact_decision", case_ref, "decision_outcome")?;
+    print_bool_line(
+        "fact_decision",
+        case_ref,
+        "requires_review",
+        "requires_review",
+    )?;
+    println!(
+        "    review_id: {}",
+        fact_report_count("fact_decision", case_ref, "review_id <> ''")?
+    );
+    Ok(())
+}
+
+fn print_projections_report(case_ref: &str) -> Result<(), String> {
+    println!("  projections:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_projection", case_ref)?
+    );
+    print_group_lines("fact_projection", case_ref, "consumer")?;
+    print_group_lines("fact_projection", case_ref, "projection_kind")?;
+    print_group_lines("fact_projection", case_ref, "freshness")?;
+    print_group_lines("fact_projection", case_ref, "redaction")?;
+    println!(
+        "    model_visible: {}",
+        fact_report_count("fact_projection", case_ref, "consumer = 'model'")?
+    );
+    println!(
+        "    operator_visible: {}",
+        fact_report_count("fact_projection", case_ref, "consumer = 'operator'")?
+    );
+    Ok(())
+}
+
+fn print_policy_report(case_ref: &str) -> Result<(), String> {
+    println!("  policy:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_policy_outcome", case_ref)?
+    );
+    print_group_lines("fact_policy_outcome", case_ref, "policy_outcome")?;
+    print_bool_line(
+        "fact_policy_outcome",
+        case_ref,
+        "review_required",
+        "requires_review",
+    )?;
+    print_bool_line("fact_policy_outcome", case_ref, "approved", "approved")?;
+    print_bool_line("fact_policy_outcome", case_ref, "denied", "denied")?;
+    print_bool_line("fact_policy_outcome", case_ref, "deferred", "deferred")?;
+    print_bool_line(
+        "fact_policy_outcome",
+        case_ref,
+        "quarantined",
+        "quarantined",
+    )?;
+    Ok(())
+}
+
+fn print_carriers_report(case_ref: &str) -> Result<(), String> {
+    println!("  carriers:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_carrier_outcome", case_ref)?
+    );
+    print_group_lines("fact_carrier_outcome", case_ref, "carrier_family")?;
+    print_group_lines("fact_carrier_outcome", case_ref, "effective_outcome")?;
+    print_bool_line(
+        "fact_carrier_outcome",
+        case_ref,
+        "carrier_attempted",
+        "carrier_attempted",
+    )?;
+    print_bool_line(
+        "fact_carrier_outcome",
+        case_ref,
+        "execution_performed",
+        "execution_performed",
+    )?;
+    print_bool_line(
+        "fact_carrier_outcome",
+        case_ref,
+        "receipt_required",
+        "receipt_required",
+    )?;
+    Ok(())
+}
+
+fn print_divergence_report(case_ref: &str) -> Result<(), String> {
+    println!("  divergence:");
+    let total = fact_report_total("fact_divergence", case_ref)?;
+    println!("    total: {total}");
+    if total == 0 {
+        println!("    status: none_observed");
+        return Ok(());
+    }
+    print_group_lines("fact_divergence", case_ref, "divergence_kind")?;
+    print_group_lines("fact_divergence", case_ref, "severity")?;
+    Ok(())
+}
+
+fn print_memory_report(case_ref: &str) -> Result<(), String> {
+    println!("  memory:");
+    println!(
+        "    total: {}",
+        fact_report_total("fact_memory_quality", case_ref)?
+    );
+    println!("    memory_is_truth: false");
+    println!(
+        "    candidates: {}",
+        fact_report_count(
+            "fact_memory_quality",
+            case_ref,
+            "source_record_kind = 'memory_candidate'"
+        )?
+    );
+    print_group_lines("fact_memory_quality", case_ref, "memory_kind")?;
+    print_group_lines("fact_memory_quality", case_ref, "memory_scope")?;
+    println!(
+        "    basis_record_count: {}",
+        duckdb_count(&format!(
+            "SELECT coalesce(sum(basis_record_count), 0) FROM fact_memory_quality WHERE {};",
+            fact_report_where(case_ref)
+        ))?
+    );
+    println!(
+        "    basis_receipt_count: {}",
+        duckdb_count(&format!(
+            "SELECT coalesce(sum(basis_receipt_count), 0) FROM fact_memory_quality WHERE {};",
+            fact_report_where(case_ref)
+        ))?
+    );
+    println!(
+        "    basis_edge_count: {}",
+        duckdb_count(&format!(
+            "SELECT coalesce(sum(basis_edge_count), 0) FROM fact_memory_quality WHERE {};",
+            fact_report_where(case_ref)
+        ))?
+    );
+    print_bool_line(
+        "fact_memory_quality",
+        case_ref,
+        "requires_review",
+        "requires_review",
+    )?;
+    Ok(())
+}
+
+fn print_model_report(case_ref: &str) -> Result<(), String> {
+    println!("  model:");
+    let total = fact_report_total("fact_model_behavior", case_ref)?;
+    println!("    total: {total}");
+    if total == 0 {
+        println!("    status: no_model_records");
+        return Ok(());
+    }
+    print_group_lines("fact_model_behavior", case_ref, "behavior_kind")?;
+    print_bool_line(
+        "fact_model_behavior",
+        case_ref,
+        "authority_overclaim",
+        "authority_overclaim",
+    )?;
+    print_bool_line(
+        "fact_model_behavior",
+        case_ref,
+        "unsupported_claim",
+        "unsupported_claim",
+    )?;
+    print_bool_line(
+        "fact_model_behavior",
+        case_ref,
+        "filesystem_operation_proposed",
+        "filesystem_operation_proposed",
+    )?;
+    print_bool_line(
+        "fact_model_behavior",
+        case_ref,
+        "review_required",
+        "review_required",
+    )?;
+    Ok(())
+}
+
+fn print_fact_report_section(section: FactReportSection, case_ref: &str) -> Result<(), String> {
+    match section {
+        FactReportSection::Receipts => print_receipts_report(case_ref),
+        FactReportSection::Decisions => print_decisions_report(case_ref),
+        FactReportSection::Projections => print_projections_report(case_ref),
+        FactReportSection::Policy => print_policy_report(case_ref),
+        FactReportSection::Carriers => print_carriers_report(case_ref),
+        FactReportSection::Divergence => print_divergence_report(case_ref),
+        FactReportSection::Memory => print_memory_report(case_ref),
+        FactReportSection::Model => print_model_report(case_ref),
+    }
+}
+
+fn facts_report(args: &[String]) -> Result<(), String> {
+    let case_ref = named_arg(args, "--case")?;
+    let format = optional_arg(args, "--format").unwrap_or_else(|| "plain".to_string());
+    if format != "plain" {
+        return Err("unsupported facts report format: use --format plain".to_string());
+    }
+    ensure_facts_ready()?;
+    let sections = if let Some(section) = optional_arg(args, "--section") {
+        vec![FactReportSection::from_arg(&section)
+            .ok_or_else(|| format!("unsupported facts report section: {section}"))?]
+    } else {
+        vec![
+            FactReportSection::Receipts,
+            FactReportSection::Decisions,
+            FactReportSection::Projections,
+            FactReportSection::Policy,
+            FactReportSection::Carriers,
+            FactReportSection::Divergence,
+            FactReportSection::Memory,
+            FactReportSection::Model,
+        ]
+    };
+    println!("facts_report:");
+    println!("case_ref: {case_ref}");
+    println!("schema: {FACT_SCHEMA}");
+    println!("facts_are_truth: false");
+    println!();
+    println!("sections:");
+    for section in sections {
+        print_fact_report_section(section, &case_ref)?;
+    }
     Ok(())
 }
 
@@ -9583,6 +9950,12 @@ fn main() {
         }
         Some("facts") if args.get(1).map(String::as_str) == Some("summary") => {
             if let Err(error) = facts_summary(&args[2..]) {
+                eprintln!("{error}");
+                std::process::exit(2);
+            }
+        }
+        Some("facts") if args.get(1).map(String::as_str) == Some("report") => {
+            if let Err(error) = facts_report(&args[2..]) {
                 eprintln!("{error}");
                 std::process::exit(2);
             }

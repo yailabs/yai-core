@@ -122,7 +122,7 @@ require_line "$model_runtime" "fallback: normal_decoding"
 printf 'model_runtime:status ok\n'
 
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.49 Memory / Divergence / Carrier Facts"
+require_line "$info" "status: SPINE.50 Fact Reports + CLI Manual Validation"
 require_line "$info" "provider-runtime: planned surface active"
 require_line "$info" "device-registry: active"
 

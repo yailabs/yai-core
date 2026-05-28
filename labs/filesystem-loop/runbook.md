@@ -1662,7 +1662,22 @@ yai facts extract --case "$YAI_CASE_REF" --kind memory_quality
 yai facts extract --case "$YAI_CASE_REF" --kind operational
 yai facts extract --case "$YAI_CASE_REF" --kind all
 yai facts summary --case "$YAI_CASE_REF"
+yai facts report --case "$YAI_CASE_REF"
+yai facts report --case "$YAI_CASE_REF" --section receipts
+yai facts report --case "$YAI_CASE_REF" --section decisions
+yai facts report --case "$YAI_CASE_REF" --section projections
+yai facts report --case "$YAI_CASE_REF" --section policy
+yai facts report --case "$YAI_CASE_REF" --section carriers
+yai facts report --case "$YAI_CASE_REF" --section divergence
+yai facts report --case "$YAI_CASE_REF" --section memory
+yai facts report --case "$YAI_CASE_REF" --section model
 ```
+
+`facts summary` is counts. `facts report` is interpreted compact sections.
+facts reports are not truth, not audit packets, not reconcile actions and not
+memory consolidation. Zero divergence/model facts are valid when source records
+are absent: `none_observed` and `no_model_records`. Memory report output keeps
+`memory_is_truth: false`.
 
 ## Lab L: Prompt Manuale Sul Review Loop
 

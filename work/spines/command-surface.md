@@ -1367,3 +1367,26 @@ divergence, kind memory_quality, kind operational.
 `fact_memory_quality`. carrier facts measure carrier posture. divergence facts
 are not reconcile action. memory facts are not memory. facts are not truth.
 Extraction is bitemporal and idempotent extraction.
+
+## SPINE.50 Fact Reports + CLI Manual Validation
+
+SPINE.50 adds compact read-only fact report views over the existing DuckDB
+facts. It does not add new fact extraction.
+
+```bash
+yai facts report --case <case_ref>
+yai facts report --case <case_ref> --section receipts
+yai facts report --case <case_ref> --section decisions
+yai facts report --case <case_ref> --section projections
+yai facts report --case <case_ref> --section policy
+yai facts report --case <case_ref> --section carriers
+yai facts report --case <case_ref> --section divergence
+yai facts report --case <case_ref> --section memory
+yai facts report --case <case_ref> --section model
+```
+
+`facts summary` is counts. `facts report` is interpreted compact sections.
+facts reports are not truth, not audit packets, not reconcile actions and not
+memory consolidation. `none_observed` is valid for zero divergence facts.
+`no_model_records` is valid for zero model facts. Memory reports include
+`memory_is_truth: false`.

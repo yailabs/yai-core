@@ -34,7 +34,7 @@ mkdir -p "$YAI_HOME/run"
 
 "$YAI_BIN" --version >/dev/null
 info=$("$YAI_BIN" info)
-require_line "$info" "status: SPINE.49 Memory / Divergence / Carrier Facts"
+require_line "$info" "status: SPINE.50 Fact Reports + CLI Manual Validation"
 
 doctor_missing=$("$YAI_BIN" doctor)
 require_line "$doctor_missing" "hot_state_path: $HOT"
