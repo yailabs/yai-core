@@ -1343,3 +1343,27 @@ model cannot approve. automatic proposed-op gate import is future work.
 `authority_overclaim`, `unsupported_claim`, `review_required` and
 `policy_outcome` are analytical fields only. No LLM-based classification is
 used.
+
+## SPINE.49 Memory / Divergence / Carrier Fact Commands
+
+SPINE.49 extends `yai facts extract` with operational extraction:
+
+```bash
+yai facts extract --case <case_ref> --kind carrier_outcome
+yai facts extract --case <case_ref> --kind divergence
+yai facts extract --case <case_ref> --kind memory_quality
+yai facts extract --case <case_ref> --kind operational
+yai facts extract --case <case_ref> --kind all
+yai facts summary --case <case_ref>
+make check-memory-divergence-carrier-facts
+make smoke-spine49
+```
+
+`operational` means carrier_outcome + divergence + memory_quality. `all` means
+core + behavior + operational. Guard vocabulary: kind carrier_outcome, kind
+divergence, kind memory_quality, kind operational.
+
+`facts summary` includes `fact_carrier_outcome`, `fact_divergence` and
+`fact_memory_quality`. carrier facts measure carrier posture. divergence facts
+are not reconcile action. memory facts are not memory. facts are not truth.
+Extraction is bitemporal and idempotent extraction.

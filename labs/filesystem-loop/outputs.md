@@ -122,3 +122,68 @@ facts are not truth. model proposal is not execution. model cannot approve.
 automatic proposed-op gate import is future work. `authority_overclaim`,
 `unsupported_claim`, `review_required` and `policy_outcome` are analytical
 fields. No LLM-based classification is used.
+
+## Memory / Divergence / Carrier Facts
+
+Carrier outcome extraction:
+
+```text
+facts_extract:
+kind: carrier_outcome
+status: completed
+table: fact_carrier_outcome
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Divergence extraction:
+
+```text
+facts_extract:
+kind: divergence
+status: completed
+table: fact_divergence
+schema: yai.fact.v1
+facts_are_truth: false
+```
+
+Memory quality extraction:
+
+```text
+facts_extract:
+kind: memory_quality
+status: completed
+table: fact_memory_quality
+schema: yai.fact.v1
+facts_are_truth: false
+memory_is_truth: false
+```
+
+Operational extraction:
+
+```text
+facts_extract:
+kind: operational
+status: completed
+fact_carrier_outcome_written: N
+fact_divergence_written: N
+fact_memory_quality_written: N
+facts_duplicate: N
+facts_are_truth: false
+```
+
+Summary:
+
+```text
+facts_summary:
+case_ref: case:new12-filesystem
+fact_carrier_outcome: N
+fact_divergence: N
+fact_memory_quality: N
+facts_total: N
+facts_are_truth: false
+```
+
+carrier facts measure carrier posture. divergence facts are not reconcile
+action. memory facts are not memory. facts are not truth. Extraction is
+bitemporal and idempotent extraction over memory_candidate and carrier records.

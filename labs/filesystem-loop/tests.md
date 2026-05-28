@@ -83,3 +83,34 @@ policy/control posture. facts are not truth. model proposal is not execution.
 model cannot approve. automatic proposed-op gate import is future work.
 `authority_overclaim`, `unsupported_claim`, `review_required` and
 `policy_outcome` are analytical fields. No LLM-based classification is used.
+
+## Memory / Divergence / Carrier Facts
+
+SPINE.49 tests derived analytical operational facts:
+
+```bash
+yai facts extract --case case:new12-filesystem --kind carrier_outcome
+yai facts extract --case case:new12-filesystem --kind divergence
+yai facts extract --case case:new12-filesystem --kind memory_quality
+yai facts extract --case case:new12-filesystem --kind operational
+yai facts extract --case case:new12-filesystem --kind all
+yai facts summary --case case:new12-filesystem
+```
+
+Expected posture:
+
+```text
+fact_carrier_outcome > 0
+fact_memory_quality > 0 when memory_candidate exists
+fact_divergence >= 0
+facts_are_truth: false
+memory_is_truth: false
+```
+
+`operational` means carrier_outcome + divergence + memory_quality. `all` means
+core + behavior + operational. Guard vocabulary: kind carrier_outcome, kind
+divergence, kind memory_quality, kind operational.
+
+carrier facts measure carrier posture. divergence facts are not reconcile
+action. memory facts are not memory. facts are not truth. The extraction is
+bitemporal and idempotent extraction.

@@ -1,6 +1,6 @@
 # Current Engineering Status
 
-Status: SPINE.48 Model Behavior / Policy Outcome Facts.
+Status: SPINE.49 Memory / Divergence / Carrier Facts.
 
 ## Completed Foundation
 
@@ -236,7 +236,15 @@ idempotency. Facts remain non-authoritative analytical assertions: model
 proposal is not execution, model cannot approve and automatic proposed-op gate
 import is future work.
 
-SPINE.49 Memory / Divergence / Carrier Facts.
+SPINE.49 Memory / Divergence / Carrier Facts completed.
+
+SPINE.49 derives `fact_carrier_outcome`, `fact_divergence` and
+`fact_memory_quality` from LMDB records. carrier facts measure carrier posture;
+divergence facts are not reconcile action; memory facts are not memory. Facts
+are not truth. `memory_is_truth: false` is visible for memory quality
+extraction. The group `operational` means carrier_outcome + divergence +
+memory_quality; `all` means core + behavior + operational. Extraction is
+bitemporal and idempotent extraction.
 ```
 
 Guard vocabulary: control pending, control show, control review --interactive,

@@ -128,7 +128,7 @@ SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Road
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     done
-SPINE.49  Memory / Divergence / Carrier Facts                       planned
+SPINE.49  Memory / Divergence / Carrier Facts                       done
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
 SPINE.51  Fact Plane Freeze                                         planned
 
@@ -339,6 +339,28 @@ policy/control posture through `policy_outcome`, review/control and decision
 records. Facts are not truth. model proposal is not execution. model cannot
 approve. automatic proposed-op gate import is future work. No LLM-based
 classification is used.
+
+SPINE.49 starts extraction for:
+
+```text
+fact_carrier_outcome
+fact_divergence
+fact_memory_quality
+```
+
+`operational` means carrier_outcome + divergence + memory_quality. `all` means
+core + behavior + operational:
+
+```text
+yai facts extract --case <case_ref> --kind carrier_outcome
+yai facts extract --case <case_ref> --kind divergence
+yai facts extract --case <case_ref> --kind memory_quality
+yai facts extract --case <case_ref> --kind operational
+```
+
+carrier facts measure carrier posture. divergence facts are not reconcile
+action. memory facts are not memory. Facts are not truth. Extraction is
+bitemporal and idempotent extraction.
 
 SPINE.66-72 reconcile extends to record/fact revision consistency, graph patch
 consistency, projection invalidation consistency, memory basis after

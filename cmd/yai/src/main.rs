@@ -86,7 +86,7 @@ unsafe extern "C" {
 
 fn print_info() {
     println!("yai: technical YAI control command");
-    println!("status: SPINE.48 Model Behavior / Policy Outcome Facts");
+    println!("status: SPINE.49 Memory / Divergence / Carrier Facts");
     println!("ownership: Rust client over C-defined core primitives");
     println!("daemon_ipc: local Unix socket with daemon-backed loop v0");
     println!("canonical_daemon: yaid");
@@ -104,7 +104,9 @@ fn print_info() {
     println!("graph_relation_write_path: active_minimal");
     println!("runtime_graph: active_minimal per_command_ephemeral rebuildable");
     println!("fact_plane: duckdb bitemporal schema yai.fact.v1");
-    println!("facts_extraction: receipt_decision_projection model_behavior policy_outcome active");
+    println!(
+        "facts_extraction: receipt_decision_projection model_behavior policy_outcome carrier_outcome divergence memory_quality active"
+    );
     println!("control_inspection: journal-derived summary");
 }
 
@@ -272,7 +274,7 @@ fn print_usage() {
     println!("       yai facts status");
     println!("       yai facts schema");
     println!("       yai facts init");
-    println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|model_behavior|policy_outcome|core|behavior|all");
+    println!("       yai facts extract --case <case_ref> --kind receipt|decision|projection|model_behavior|policy_outcome|carrier_outcome|divergence|memory_quality|core|behavior|operational|all");
     println!("       yai facts summary --case <case_ref>");
     println!("       yai memory summary --journal <path>");
     println!("       yai reconcile summary --journal <path>");
@@ -2480,6 +2482,15 @@ CREATE TABLE IF NOT EXISTS fact_memory_quality (
   fact_id TEXT PRIMARY KEY,
   case_ref TEXT,
   subject_ref TEXT,
+  memory_ref TEXT,
+  memory_kind TEXT,
+  memory_scope TEXT,
+  basis_record_count BIGINT,
+  basis_receipt_count BIGINT,
+  basis_edge_count BIGINT,
+  freshness TEXT,
+  quality_status TEXT,
+  requires_review BOOLEAN,
   asserted_by_event_ref TEXT,
   source_record_refs TEXT,
   source_graph_refs TEXT,
@@ -2577,6 +2588,15 @@ ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS approved BOOLEAN;
 ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS denied BOOLEAN;
 ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS deferred BOOLEAN;
 ALTER TABLE fact_policy_outcome ADD COLUMN IF NOT EXISTS quarantined BOOLEAN;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS memory_ref TEXT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS memory_kind TEXT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS memory_scope TEXT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS basis_record_count BIGINT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS basis_receipt_count BIGINT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS basis_edge_count BIGINT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS freshness TEXT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS quality_status TEXT;
+ALTER TABLE fact_memory_quality ADD COLUMN IF NOT EXISTS requires_review BOOLEAN;
 "#;
 
 fn facts_status(args: &[String]) -> Result<(), String> {
@@ -2602,8 +2622,11 @@ fn facts_status(args: &[String]) -> Result<(), String> {
         println!("fact_receipt: {}", counts.receipt);
         println!("fact_decision: {}", counts.decision);
         println!("fact_projection: {}", counts.projection);
+        println!("fact_carrier_outcome: {}", counts.carrier_outcome);
+        println!("fact_divergence: {}", counts.divergence);
         println!("fact_model_behavior: {}", counts.model_behavior);
         println!("fact_policy_outcome: {}", counts.policy_outcome);
+        println!("fact_memory_quality: {}", counts.memory_quality);
     }
     println!("facts_are_truth: false");
     println!("operational_truth: false");
@@ -2628,7 +2651,7 @@ fn facts_schema(args: &[String]) -> Result<(), String> {
     println!("extraction:");
     println!("  facts_extracted: 0");
     println!(
-        "  extraction_status: receipt_decision_projection_model_behavior_policy_outcome_active"
+        "  extraction_status: receipt_decision_projection_model_behavior_policy_outcome_memory_divergence_carrier_active"
     );
     println!("  valid_time_end_sentinel: 0");
     Ok(())
@@ -2678,8 +2701,11 @@ enum FactExtractKind {
     Receipt,
     Decision,
     Projection,
+    CarrierOutcome,
+    Divergence,
     ModelBehavior,
     PolicyOutcome,
+    MemoryQuality,
 }
 
 impl FactExtractKind {
@@ -2688,8 +2714,11 @@ impl FactExtractKind {
             "receipt" => Some(Self::Receipt),
             "decision" => Some(Self::Decision),
             "projection" => Some(Self::Projection),
+            "carrier_outcome" => Some(Self::CarrierOutcome),
+            "divergence" => Some(Self::Divergence),
             "model_behavior" => Some(Self::ModelBehavior),
             "policy_outcome" => Some(Self::PolicyOutcome),
+            "memory_quality" => Some(Self::MemoryQuality),
             _ => None,
         }
     }
@@ -2699,8 +2728,11 @@ impl FactExtractKind {
             Self::Receipt => "receipt",
             Self::Decision => "decision",
             Self::Projection => "projection",
+            Self::CarrierOutcome => "carrier_outcome",
+            Self::Divergence => "divergence",
             Self::ModelBehavior => "model_behavior",
             Self::PolicyOutcome => "policy_outcome",
+            Self::MemoryQuality => "memory_quality",
         }
     }
 
@@ -2709,8 +2741,11 @@ impl FactExtractKind {
             Self::Receipt => "fact_receipt",
             Self::Decision => "fact_decision",
             Self::Projection => "fact_projection",
+            Self::CarrierOutcome => "fact_carrier_outcome",
+            Self::Divergence => "fact_divergence",
             Self::ModelBehavior => "fact_model_behavior",
             Self::PolicyOutcome => "fact_policy_outcome",
+            Self::MemoryQuality => "fact_memory_quality",
         }
     }
 
@@ -2719,8 +2754,11 @@ impl FactExtractKind {
             Self::Receipt => "fact:receipt:",
             Self::Decision => "fact:decision:",
             Self::Projection => "fact:projection:",
+            Self::CarrierOutcome => "fact:carrier_outcome:",
+            Self::Divergence => "fact:divergence:",
             Self::ModelBehavior => "fact:model_behavior:",
             Self::PolicyOutcome => "fact:policy_outcome:",
+            Self::MemoryQuality => "fact:memory_quality:",
         }
     }
 }
@@ -2738,8 +2776,11 @@ struct FactCounts {
     receipt: usize,
     decision: usize,
     projection: usize,
+    carrier_outcome: usize,
+    divergence: usize,
     model_behavior: usize,
     policy_outcome: usize,
+    memory_quality: usize,
     total: usize,
 }
 
@@ -2815,11 +2856,20 @@ fn fact_counts(case_ref: Option<&str>) -> Result<FactCounts, String> {
     let projection = duckdb_count(&format!(
         "SELECT count(*) FROM fact_projection{where_clause};"
     ))?;
+    let carrier_outcome = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_carrier_outcome{where_clause};"
+    ))?;
+    let divergence = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_divergence{where_clause};"
+    ))?;
     let model_behavior = duckdb_count(&format!(
         "SELECT count(*) FROM fact_model_behavior{where_clause};"
     ))?;
     let policy_outcome = duckdb_count(&format!(
         "SELECT count(*) FROM fact_policy_outcome{where_clause};"
+    ))?;
+    let memory_quality = duckdb_count(&format!(
+        "SELECT count(*) FROM fact_memory_quality{where_clause};"
     ))?;
     let total = FACT_TABLES
         .iter()
@@ -2831,8 +2881,11 @@ fn fact_counts(case_ref: Option<&str>) -> Result<FactCounts, String> {
         receipt,
         decision,
         projection,
+        carrier_outcome,
+        divergence,
         model_behavior,
         policy_outcome,
+        memory_quality,
         total,
     })
 }
@@ -3127,6 +3180,78 @@ fn policy_outcome_flags(text: &str, outcome: &str) -> (bool, bool, bool, bool, b
     )
 }
 
+fn carrier_status_from_summary(record: &StoredRecordEnvelope, summary: &str) -> String {
+    let explicit = summary_token_value(summary, "carrier_status");
+    if !explicit.is_empty() {
+        return explicit;
+    }
+    let receipt_status = receipt_status_from_summary(summary);
+    if !receipt_status.is_empty() {
+        return receipt_status;
+    }
+    match record.record_kind.as_str() {
+        "divergence" => "divergence_candidate".to_string(),
+        _ => "unknown".to_string(),
+    }
+}
+
+fn carrier_effective_outcome(record: &StoredRecordEnvelope, summary: &str) -> String {
+    summary_token_value_or(
+        summary,
+        "effective_outcome",
+        &summary_token_value_or(
+            summary,
+            "carrier_outcome",
+            &carrier_status_from_summary(record, summary),
+        ),
+    )
+}
+
+fn carrier_execution_flags(summary: &str, outcome: &str) -> (bool, bool, bool) {
+    let execution_available = !matches!(
+        outcome,
+        "blocked" | "deferred" | "quarantined" | "not_attempted" | "unknown"
+    );
+    let execution_performed = summary_bool(
+        summary,
+        "execution_performed",
+        matches!(outcome, "executed" | "observed"),
+    );
+    let carrier_attempted = summary_bool(
+        summary,
+        "carrier_attempted",
+        matches!(outcome, "executed" | "observed" | "failed" | "mismatch"),
+    );
+    (execution_available, execution_performed, carrier_attempted)
+}
+
+fn divergence_kind(record: &StoredRecordEnvelope, summary: &str) -> String {
+    summary_token_value_or(
+        summary,
+        "divergence_kind",
+        &summary_token_value_or(summary, "divergence", record.record_kind.as_str()),
+    )
+}
+
+fn divergence_severity(summary: &str) -> String {
+    summary_token_value_or(summary, "severity", "unknown")
+}
+
+fn memory_quality_status(summary: &str) -> String {
+    let explicit = summary_token_value(summary, "quality_status");
+    if !explicit.is_empty() {
+        return explicit;
+    }
+    let basis_records = summary_number(summary, "basis_records");
+    let basis_receipts = summary_number(summary, "basis_receipts");
+    let basis_edges = summary_number(summary, "basis_edges");
+    if basis_records > 0 || basis_receipts > 0 || basis_edges > 0 {
+        "basis_present".to_string()
+    } else {
+        "candidate_observed".to_string()
+    }
+}
+
 fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtractKind) -> bool {
     match kind {
         FactExtractKind::Receipt => matches!(
@@ -3143,6 +3268,24 @@ fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtr
         FactExtractKind::Projection => matches!(
             record.record_kind.as_str(),
             "projection_result" | "projection_request" | "participant_view_frame"
+        ),
+        FactExtractKind::CarrierOutcome => matches!(
+            record.record_kind.as_str(),
+            "carrier_outcome"
+                | "carrier_request"
+                | "filesystem_receipt"
+                | "effect_receipt"
+                | "process_receipt"
+                | "carrier_receipt"
+                | "divergence"
+        ),
+        FactExtractKind::Divergence => matches!(
+            record.record_kind.as_str(),
+            "divergence"
+                | "carrier_consistency"
+                | "reconcile_report"
+                | "runtime_graph_rebuild_report"
+                | "replay_report"
         ),
         FactExtractKind::ModelBehavior => {
             let summary = source_record_summary(record);
@@ -3168,6 +3311,10 @@ fn source_record_matches_fact_kind(record: &StoredRecordEnvelope, kind: FactExtr
                 | "control_pending"
                 | "carrier_outcome"
                 | "divergence"
+        ),
+        FactExtractKind::MemoryQuality => matches!(
+            record.record_kind.as_str(),
+            "memory_candidate" | "memory_unit" | "memory_consolidation"
         ),
     }
 }
@@ -3279,6 +3426,64 @@ fn fact_insert_sql(
                 fact_common_sql_values(record, transaction_time)
             )
         }
+        FactExtractKind::CarrierOutcome => {
+            let carrier_family = receipt_carrier_family(record, &summary);
+            let carrier_status = carrier_status_from_summary(record, &summary);
+            let effective_outcome = carrier_effective_outcome(record, &summary);
+            let requested_outcome =
+                summary_token_value_or(&summary, "requested_outcome", &effective_outcome);
+            let (execution_available, execution_performed, carrier_attempted) =
+                carrier_execution_flags(&summary, &effective_outcome);
+            let receipt_required = summary_bool(&summary, "receipt_required", true);
+            let receipt_posture = summary_token_value_or(
+                &summary,
+                "receipt_posture",
+                if source_record_receipt_id(record).is_empty() {
+                    "unknown"
+                } else {
+                    "present"
+                },
+            );
+            format!(
+                "INSERT INTO fact_carrier_outcome (fact_id, case_ref, subject_ref, carrier_family, carrier_mode, carrier_status, requested_outcome, effective_outcome, execution_available, execution_performed, carrier_attempted, receipt_required, receipt_posture, divergence_candidate, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&carrier_family),
+                sql_quote(&summary_token_value(&summary, "carrier_mode")),
+                sql_quote(&carrier_status),
+                sql_quote(&requested_outcome),
+                sql_quote(&effective_outcome),
+                sql_bool(execution_available),
+                sql_bool(execution_performed),
+                sql_bool(carrier_attempted),
+                sql_bool(receipt_required),
+                sql_quote(&receipt_posture),
+                sql_quote(&summary_token_value(&summary, "divergence_candidate")),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
+        FactExtractKind::Divergence => {
+            let divergence_id =
+                summary_token_value_or(&summary, "divergence_id", &record.record_id);
+            let divergence_kind = divergence_kind(record, &summary);
+            format!(
+                "INSERT INTO fact_divergence (fact_id, case_ref, subject_ref, divergence_id, divergence_kind, severity, decision_id, receipt_id, attempt_id, carrier_family, expected_state, observed_state, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&divergence_id),
+                sql_quote(&divergence_kind),
+                sql_quote(&divergence_severity(&summary)),
+                sql_quote(&source_record_decision_id(record)),
+                sql_quote(&source_record_receipt_id(record)),
+                sql_quote(&source_record_attempt_id(record)),
+                sql_quote(&receipt_carrier_family(record, &summary)),
+                sql_quote(&summary_token_value(&summary, "expected_state")),
+                sql_quote(&summary_token_value(&summary, "observed_state")),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
         FactExtractKind::ModelBehavior => {
             let text = source_record_text(record);
             let behavior_kind = model_behavior_kind(record, &text);
@@ -3374,6 +3579,36 @@ fn fact_insert_sql(
                 fact_common_sql_values(record, transaction_time)
             )
         }
+        FactExtractKind::MemoryQuality => {
+            let memory_ref = summary_token_value_or(&summary, "memory_ref", &record.record_id);
+            let memory_kind = summary_token_value_or(
+                &summary,
+                "memory_kind",
+                &summary_token_value(&summary, "memory"),
+            );
+            let memory_scope = summary_token_value_or(
+                &summary,
+                "memory_scope",
+                &summary_token_value(&summary, "scope"),
+            );
+            let quality_status = memory_quality_status(&summary);
+            format!(
+                "INSERT INTO fact_memory_quality (fact_id, case_ref, subject_ref, memory_ref, memory_kind, memory_scope, basis_record_count, basis_receipt_count, basis_edge_count, freshness, quality_status, requires_review, asserted_by_event_ref, source_record_refs, source_graph_refs, evidence_refs, transaction_time, valid_time_start, valid_time_end, known_at, status, revision_of, superseded_by, retracted_by, confidence, authority_scope, source_record_id, source_record_kind, source_schema, fact_schema, created_at_unix_ms) VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {});",
+                sql_quote(&fact_id),
+                sql_quote(&record.case_ref),
+                sql_quote(&subject_ref),
+                sql_quote(&memory_ref),
+                sql_quote(&memory_kind),
+                sql_quote(&memory_scope),
+                summary_number(&summary, "basis_records"),
+                summary_number(&summary, "basis_receipts"),
+                summary_number(&summary, "basis_edges"),
+                sql_quote(&summary_token_value_or(&summary, "freshness", "unknown")),
+                sql_quote(&quality_status),
+                sql_bool(summary_bool(&summary, "requires_review", false)),
+                fact_common_sql_values(record, transaction_time)
+            )
+        }
     }
 }
 
@@ -3459,12 +3694,43 @@ fn facts_extract(args: &[String]) -> Result<(), String> {
         println!("facts_are_truth: false");
         return Ok(());
     }
+    if kind_arg == "operational" {
+        let carrier_outcome =
+            extract_fact_kind(&store, &case_ref, FactExtractKind::CarrierOutcome)?;
+        let divergence = extract_fact_kind(&store, &case_ref, FactExtractKind::Divergence)?;
+        let memory_quality = extract_fact_kind(&store, &case_ref, FactExtractKind::MemoryQuality)?;
+        println!("facts_extract:");
+        println!("case_ref: {case_ref}");
+        println!("kind: operational");
+        println!("status: completed");
+        println!(
+            "fact_carrier_outcome_written: {}",
+            carrier_outcome.facts_written
+        );
+        println!("fact_divergence_written: {}", divergence.facts_written);
+        println!(
+            "fact_memory_quality_written: {}",
+            memory_quality.facts_written
+        );
+        println!(
+            "facts_duplicate: {}",
+            carrier_outcome.facts_duplicate
+                + divergence.facts_duplicate
+                + memory_quality.facts_duplicate
+        );
+        println!("facts_are_truth: false");
+        return Ok(());
+    }
     if kind_arg == "all" {
         let receipt = extract_fact_kind(&store, &case_ref, FactExtractKind::Receipt)?;
         let decision = extract_fact_kind(&store, &case_ref, FactExtractKind::Decision)?;
         let projection = extract_fact_kind(&store, &case_ref, FactExtractKind::Projection)?;
         let model_behavior = extract_fact_kind(&store, &case_ref, FactExtractKind::ModelBehavior)?;
         let policy_outcome = extract_fact_kind(&store, &case_ref, FactExtractKind::PolicyOutcome)?;
+        let carrier_outcome =
+            extract_fact_kind(&store, &case_ref, FactExtractKind::CarrierOutcome)?;
+        let divergence = extract_fact_kind(&store, &case_ref, FactExtractKind::Divergence)?;
+        let memory_quality = extract_fact_kind(&store, &case_ref, FactExtractKind::MemoryQuality)?;
         println!("facts_extract:");
         println!("case_ref: {case_ref}");
         println!("kind: all");
@@ -3481,12 +3747,24 @@ fn facts_extract(args: &[String]) -> Result<(), String> {
             policy_outcome.facts_written
         );
         println!(
+            "fact_carrier_outcome_written: {}",
+            carrier_outcome.facts_written
+        );
+        println!("fact_divergence_written: {}", divergence.facts_written);
+        println!(
+            "fact_memory_quality_written: {}",
+            memory_quality.facts_written
+        );
+        println!(
             "facts_duplicate: {}",
             receipt.facts_duplicate
                 + decision.facts_duplicate
                 + projection.facts_duplicate
                 + model_behavior.facts_duplicate
                 + policy_outcome.facts_duplicate
+                + carrier_outcome.facts_duplicate
+                + divergence.facts_duplicate
+                + memory_quality.facts_duplicate
         );
         println!("facts_are_truth: false");
         return Ok(());
@@ -3502,9 +3780,16 @@ fn facts_extract(args: &[String]) -> Result<(), String> {
     println!("facts_written: {}", stats.facts_written);
     println!("facts_duplicate: {}", stats.facts_duplicate);
     println!("facts_skipped: {}", stats.facts_skipped);
+    if kind == FactExtractKind::Divergence && stats.facts_written == 0 && stats.facts_duplicate == 0
+    {
+        println!("no_divergence_records: true");
+    }
     println!("table: {}", kind.table());
     println!("schema: {FACT_SCHEMA}");
     println!("facts_are_truth: false");
+    if kind == FactExtractKind::MemoryQuality {
+        println!("memory_is_truth: false");
+    }
     Ok(())
 }
 
@@ -3516,8 +3801,11 @@ fn facts_summary(args: &[String]) -> Result<(), String> {
     println!("fact_receipt: {}", counts.receipt);
     println!("fact_decision: {}", counts.decision);
     println!("fact_projection: {}", counts.projection);
+    println!("fact_carrier_outcome: {}", counts.carrier_outcome);
+    println!("fact_divergence: {}", counts.divergence);
     println!("fact_model_behavior: {}", counts.model_behavior);
     println!("fact_policy_outcome: {}", counts.policy_outcome);
+    println!("fact_memory_quality: {}", counts.memory_quality);
     println!("facts_total: {}", counts.total);
     println!("facts_are_truth: false");
     Ok(())

@@ -1960,3 +1960,36 @@ DuckDB, extracts `core`, extracts `fact_model_behavior` and
 Facts are not truth. model proposal is not execution. model cannot approve.
 automatic proposed-op gate import is future work. The extraction is
 bitemporal, duplicate-aware and uses no LLM-based classification.
+
+## SPINE.49 Memory / Divergence / Carrier Facts
+
+`tests/smoke/memory-divergence-carrier-facts/test_memory_divergence_carrier_facts.sh`
+validates the operational extraction path:
+
+```bash
+make check-memory-divergence-carrier-facts
+make smoke-spine49
+```
+
+Expected labels:
+
+```text
+facts_extract:carrier_outcome ok
+facts_extract:divergence ok
+facts_extract:memory_quality ok
+facts_extract:operational ok
+facts_extract:idempotent ok
+facts_summary:operational_counts ok
+facts:not_truth ok
+memory:not_truth ok
+```
+
+The smoke runs the filesystem loop, replays the journal to LMDB, initializes
+DuckDB, extracts `core`, extracts `behavior`, extracts `fact_carrier_outcome`,
+`fact_divergence` and `fact_memory_quality`, then verifies duplicate-aware
+`operational` extraction. `fact_carrier_outcome` must be greater than zero on
+the filesystem loop. `fact_memory_quality` must be greater than zero when
+`memory_candidate` exists. `fact_divergence` may be zero when there are no
+divergence records. Facts are not truth. carrier facts measure carrier
+posture. divergence facts are not reconcile action. memory facts are not
+memory. The extraction is bitemporal and idempotent extraction.

@@ -90,6 +90,13 @@ uses structured fields and stable markers only; No LLM-based classification is
 used. `core` remains receipt + decision + projection. `behavior` is
 model_behavior + policy_outcome. `all` is core + behavior.
 
+SPINE.49 extends derived facts to `fact_carrier_outcome`, `fact_divergence` and
+`fact_memory_quality`. carrier facts measure carrier posture. divergence facts
+are not reconcile action. memory facts are not memory. Facts are not truth.
+Extraction stays bitemporal and idempotent extraction. `operational` is
+carrier_outcome + divergence + memory_quality. `all` is core + behavior +
+operational.
+
 Hard distinction:
 
 ```text

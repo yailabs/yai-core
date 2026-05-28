@@ -2,6 +2,11 @@
 
 YAI treats control as an operational loop, not a label.
 
+SPINE.49 adds analytical carrier, divergence and memory quality facts without
+changing control behavior. carrier facts measure carrier posture; divergence
+facts are not reconcile action; memory facts are not memory. Facts are not
+truth and cannot authorize execution.
+
 ```text
 attempt -> gate -> decision -> dispatch -> carrier -> receipt
 ```
@@ -35,4 +40,3 @@ For deny, defer and quarantine, `carrier_attempted: false` and
 `execution_performed: false` remain visible. `subject:linenoise-terminal` is
 the prompt surface only. `subject:operator-reviewer` is the local-dev review
 authority.
-

@@ -25,7 +25,7 @@ Subdeliveries = nested work inside that one delivery
 
 | Repo | Role | Status | Next |
 |---|---|---|---|
-| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts and SPINE.48 Model Behavior / Policy Outcome Facts. | SPINE.49 Memory / Divergence / Carrier Facts. |
+| `yai` | Canonical local AI operational control system. | Completed foundation through SPINE.45 Graph + RuntimeGraph Freeze, SPINE.45A Documentation Root Canon Collapse, SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Roadmap Rebase, SPINE.46 DuckDB Fact Plane Doctrine + Bitemporal Schema, SPINE.47 Receipt / Decision / Projection Facts, SPINE.48 Model Behavior / Policy Outcome Facts and SPINE.49 Memory / Divergence / Carrier Facts. | SPINE.50 Fact Reports + CLI Manual Validation. |
 | `yai-dev` | Development lab, concept mine, harness and scenario workspace. | Old/current repo renamed to `yai-dev`; useful material is extracted into `yai` by explicit SPINE waves. | DEV.0 role note, then wave-coupled cleanup. |
 | `console` | Operator client / TUI / human UX. | Downstream consumer of projections and interfaces. | CONSOLE.CANON.0 later. |
 
@@ -985,7 +985,7 @@ SPINE.45B Case Runtime Semantics / Retrieval Federation / Context Residency Road
 SPINE.46  DuckDB Fact Plane Doctrine + Bitemporal Schema              done
 SPINE.47  Receipt / Decision / Projection Facts                     done
 SPINE.48  Model Behavior / Policy Outcome Facts                     done
-SPINE.49  Memory / Divergence / Carrier Facts                       planned
+SPINE.49  Memory / Divergence / Carrier Facts                       done
 SPINE.50  Fact Reports + CLI Manual Validation                      planned
 SPINE.51  Fact Plane Freeze                                         planned
 
@@ -1193,6 +1193,21 @@ proposed-op gate import is future work. `authority_overclaim`,
 `unsupported_claim`, `review_required` and `policy_outcome` are analytical
 fields only. The classifier is conservative and uses structured record fields
 or stable markers only; No LLM-based classification is used.
+
+SPINE.49 derives `fact_carrier_outcome`, `fact_divergence` and
+`fact_memory_quality` from LMDB records. `operational` means carrier_outcome +
+divergence + memory_quality. `all` means core + behavior + operational.
+
+```text
+yai facts extract --case <case_ref> --kind carrier_outcome
+yai facts extract --case <case_ref> --kind divergence
+yai facts extract --case <case_ref> --kind memory_quality
+yai facts extract --case <case_ref> --kind operational
+```
+
+carrier facts measure carrier posture. divergence facts are not reconcile
+action. memory facts are not memory. Facts are not truth. Bitemporal fields and
+idempotent extraction remain mandatory.
 
 SPINE.66-72 reconcile now includes:
 

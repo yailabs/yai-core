@@ -1634,11 +1634,13 @@ make smoke-spine44c
 
 ## Fact Plane / Receipt Decision Projection / Behavior Facts
 
-SPINE.46 inizializza `yai.fact.v1`; SPINE.47 estrae `fact_receipt`, `fact_decision` e `fact_projection` da LMDB; SPINE.48 estrae `fact_model_behavior` e `fact_policy_outcome`. I facts sono analytics: facts are not truth, non autorizzano e non sostituiscono record/receipt/decision/projection/policy/model output.
+SPINE.46 inizializza `yai.fact.v1`; SPINE.47 estrae `fact_receipt`, `fact_decision` e `fact_projection` da LMDB; SPINE.48 estrae `fact_model_behavior` e `fact_policy_outcome`; SPINE.49 estrae `fact_carrier_outcome`, `fact_divergence` e `fact_memory_quality`. I facts sono analytics: facts are not truth, non autorizzano e non sostituiscono record/receipt/decision/projection/policy/model output/memory/reconcile.
 
-`core` resta receipt + decision + projection. `behavior` significa model_behavior + policy_outcome. `all` significa core + behavior. Guard vocabulary: kind model_behavior, kind policy_outcome, kind behavior.
+`core` resta receipt + decision + projection. `behavior` significa model_behavior + policy_outcome. `operational` significa carrier_outcome + divergence + memory_quality. `all` significa core + behavior + operational. Guard vocabulary: kind model_behavior, kind policy_outcome, kind behavior, kind carrier_outcome, kind divergence, kind memory_quality, kind operational.
 
 Boundary: model proposal is not execution. model cannot approve. automatic proposed-op gate import is future work. `authority_overclaim`, `unsupported_claim`, `review_required` e `policy_outcome` sono campi analitici; No LLM-based classification.
+
+Operational facts: carrier facts measure carrier posture. divergence facts are not reconcile action. memory facts are not memory. `memory_candidate` alimenta `fact_memory_quality` senza consolidamento. `memory_is_truth: false`. Estrazione bitemporal e idempotent extraction.
 
 ```bash
 set -eu
@@ -1654,6 +1656,10 @@ yai facts extract --case "$YAI_CASE_REF" --kind core
 yai facts extract --case "$YAI_CASE_REF" --kind model_behavior
 yai facts extract --case "$YAI_CASE_REF" --kind policy_outcome
 yai facts extract --case "$YAI_CASE_REF" --kind behavior
+yai facts extract --case "$YAI_CASE_REF" --kind carrier_outcome
+yai facts extract --case "$YAI_CASE_REF" --kind divergence
+yai facts extract --case "$YAI_CASE_REF" --kind memory_quality
+yai facts extract --case "$YAI_CASE_REF" --kind operational
 yai facts extract --case "$YAI_CASE_REF" --kind all
 yai facts summary --case "$YAI_CASE_REF"
 ```
