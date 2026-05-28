@@ -17,6 +17,8 @@ yet.
 
 A node advertises communication identity; it does not grant authority.
 
-Current status: scaffold.
+`net/node/node.c` provides pure node-kind name and validity helpers only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.5 local endpoint registry skeleton.

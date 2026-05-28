@@ -18,7 +18,11 @@
 #define YAI_NET_VERSION_H
 
 #define YAI_NET_COMPONENT_NAME "net"
-#define YAI_NET_COMPONENT_STATUS "scaffold-boundary"
-#define YAI_NET_COMPONENT_VERSION "NET.SPINE.1.0"
+#define YAI_NET_COMPONENT_STATUS "c-translation-unit-scaffold"
+#define YAI_NET_COMPONENT_VERSION "NET.SPINE.9C.0"
+
+const char *yai_net_component_name(void);
+const char *yai_net_component_status(void);
+const char *yai_net_component_version(void);
 
 #endif

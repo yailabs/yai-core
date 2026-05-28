@@ -13,6 +13,9 @@ A capability says what a node can do. It does not approve an operation.
 
 This area does not implement routing or policy.
 
-Current status: scaffold.
+`net/capability/capability.c` provides pure capability-kind name and validity
+helpers only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.5 local endpoint registry skeleton.

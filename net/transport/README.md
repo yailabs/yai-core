@@ -17,6 +17,9 @@ paths.
 This area does not implement network IO, HTTP, probing, routing or lifecycle
 behavior.
 
-Current status: scaffold.
+`net/transport/transport.c` provides pure transport-kind name and validity
+helpers only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.9 local IPC / Unix socket adapter skeleton.

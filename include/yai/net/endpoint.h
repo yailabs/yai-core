@@ -68,4 +68,7 @@ typedef struct yai_net_endpoint_descriptor_v1 {
     uint64_t declared_at_unix_ms;
 } yai_net_endpoint_descriptor_v1_t;
 
+const char *yai_net_endpoint_kind_name(yai_net_endpoint_kind_t value);
+int yai_net_endpoint_kind_is_valid(yai_net_endpoint_kind_t value);
+
 #endif

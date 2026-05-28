@@ -12,6 +12,9 @@ Lifecycle reports are state material, not authority.
 This area does not implement process management, supervision, probing, routing
 or transport.
 
-Current status: scaffold.
+`net/lifecycle/lifecycle.c` provides pure lifecycle-state name and validity
+helpers only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.8 localhost transport adapter skeleton.

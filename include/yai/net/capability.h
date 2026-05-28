@@ -66,4 +66,7 @@ typedef struct yai_net_capability_advertisement_v1 {
     uint64_t advertised_at_unix_ms;
 } yai_net_capability_advertisement_v1_t;
 
+const char *yai_net_capability_kind_name(yai_net_capability_kind_t value);
+int yai_net_capability_kind_is_valid(yai_net_capability_kind_t value);
+
 #endif

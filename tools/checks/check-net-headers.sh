@@ -87,6 +87,21 @@ for header in "${required_headers[@]}"; do
   fi
 done
 
+version_header="include/yai/net/version.h"
+
+for required_version_symbol in \
+  YAI_NET_COMPONENT_NAME \
+  YAI_NET_COMPONENT_STATUS \
+  YAI_NET_COMPONENT_VERSION \
+  yai_net_component_name \
+  yai_net_component_status \
+  yai_net_component_version; do
+  if ! grep -q "$required_version_symbol" "$version_header"; then
+    printf 'NET version header missing required symbol: %s\n' "$required_version_symbol" >&2
+    exit 1
+  fi
+done
+
 stream_header="include/yai/net/stream.h"
 
 for required_stream_symbol in \
@@ -99,7 +114,9 @@ for required_stream_symbol in \
   YAI_NET_STREAM_EVENT_METRIC \
   YAI_NET_STREAM_EVENT_RECEIPT \
   YAI_NET_STREAM_EVENT_ERROR \
-  YAI_NET_STREAM_EVENT_COMPLETE; do
+  YAI_NET_STREAM_EVENT_COMPLETE \
+  yai_net_stream_event_kind_name \
+  yai_net_stream_event_kind_is_valid; do
   if ! grep -q "$required_stream_symbol" "$stream_header"; then
     printf 'NET stream header missing required symbol: %s\n' "$required_stream_symbol" >&2
     exit 1
@@ -133,7 +150,9 @@ for required_node_symbol in \
   YAI_NET_NODE_STATE_HEALTHY \
   YAI_NET_NODE_STATE_DEGRADED \
   YAI_NET_NODE_STATE_UNAVAILABLE \
-  YAI_NET_NODE_STATE_RETIRED; do
+  YAI_NET_NODE_STATE_RETIRED \
+  yai_net_node_kind_name \
+  yai_net_node_kind_is_valid; do
   if ! grep -q "$required_node_symbol" "$node_header"; then
     printf 'NET node header missing required symbol: %s\n' "$required_node_symbol" >&2
     exit 1
@@ -170,7 +189,9 @@ for required_capability_symbol in \
   YAI_NET_CAPABILITY_STATE_AVAILABLE \
   YAI_NET_CAPABILITY_STATE_DEGRADED \
   YAI_NET_CAPABILITY_STATE_UNAVAILABLE \
-  YAI_NET_CAPABILITY_STATE_RETIRED; do
+  YAI_NET_CAPABILITY_STATE_RETIRED \
+  yai_net_capability_kind_name \
+  yai_net_capability_kind_is_valid; do
   if ! grep -q "$required_capability_symbol" "$capability_header"; then
     printf 'NET capability header missing required symbol: %s\n' "$required_capability_symbol" >&2
     exit 1
@@ -210,7 +231,9 @@ for required_endpoint_symbol in \
   YAI_NET_ENDPOINT_SECURITY_LOCAL_ONLY \
   YAI_NET_ENDPOINT_SECURITY_TRUSTED_LOCAL \
   YAI_NET_ENDPOINT_SECURITY_DECLARED_REMOTE \
-  YAI_NET_ENDPOINT_SECURITY_EXTERNAL_UNTRUSTED; do
+  YAI_NET_ENDPOINT_SECURITY_EXTERNAL_UNTRUSTED \
+  yai_net_endpoint_kind_name \
+  yai_net_endpoint_kind_is_valid; do
   if ! grep -q "$required_endpoint_symbol" "$endpoint_header"; then
     printf 'NET endpoint header missing required symbol: %s\n' "$required_endpoint_symbol" >&2
     exit 1
@@ -243,7 +266,9 @@ for required_health_symbol in \
   YAI_NET_HEALTH_SUBJECT_KIND_ENDPOINT \
   YAI_NET_HEALTH_SUBJECT_KIND_CAPABILITY \
   YAI_NET_HEALTH_SUBJECT_KIND_TRANSPORT \
-  YAI_NET_HEALTH_SUBJECT_KIND_EXTERNAL; do
+  YAI_NET_HEALTH_SUBJECT_KIND_EXTERNAL \
+  yai_net_health_state_name \
+  yai_net_health_state_is_valid; do
   if ! grep -q "$required_health_symbol" "$health_header"; then
     printf 'NET health header missing required symbol: %s\n' "$required_health_symbol" >&2
     exit 1
@@ -286,7 +311,9 @@ for required_lifecycle_symbol in \
   YAI_NET_LIFECYCLE_SUBJECT_KIND_ENDPOINT \
   YAI_NET_LIFECYCLE_SUBJECT_KIND_CAPABILITY \
   YAI_NET_LIFECYCLE_SUBJECT_KIND_SERVICE \
-  YAI_NET_LIFECYCLE_SUBJECT_KIND_EXTERNAL; do
+  YAI_NET_LIFECYCLE_SUBJECT_KIND_EXTERNAL \
+  yai_net_lifecycle_state_name \
+  yai_net_lifecycle_state_is_valid; do
   if ! grep -q "$required_lifecycle_symbol" "$lifecycle_header"; then
     printf 'NET lifecycle header missing required symbol: %s\n' "$required_lifecycle_symbol" >&2
     exit 1
@@ -331,7 +358,9 @@ for required_transport_symbol in \
   YAI_NET_TRANSPORT_SECURITY_LOCAL_ONLY \
   YAI_NET_TRANSPORT_SECURITY_TRUSTED_LOCAL \
   YAI_NET_TRANSPORT_SECURITY_DECLARED_REMOTE \
-  YAI_NET_TRANSPORT_SECURITY_EXTERNAL_UNTRUSTED; do
+  YAI_NET_TRANSPORT_SECURITY_EXTERNAL_UNTRUSTED \
+  yai_net_transport_kind_name \
+  yai_net_transport_kind_is_valid; do
   if ! grep -q "$required_transport_symbol" "$transport_header"; then
     printf 'NET transport header missing required symbol: %s\n' "$required_transport_symbol" >&2
     exit 1

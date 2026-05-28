@@ -1,8 +1,8 @@
 # NET Spine
 
-Reference version: NET.SPINE.9.0
+Reference version: NET.SPINE.9C.0
 Authority: YAI repository
-Status: Local IPC channel contract started
+Status: C translation unit scaffold started
 
 NET is the root-level runtime communication substrate inside YAI.
 
@@ -117,6 +117,15 @@ adapter and endpoint fixture ids. Create abstract local IPC, Unix socket future,
 named pipe future and platform IPC future vocabulary only; do not implement
 IPC, Unix sockets, named pipes, filesystem socket paths, network IO, probing,
 routing or live streaming.
+
+### NET.SPINE.9C - C Translation Unit Scaffold
+
+Status: done.
+
+Adds real integrated NET C translation units under `net/<area>/`, pure
+enum/string helpers, build/check wiring and source guards. This prevents NET
+from remaining a contract-only module while still forbidding network IO,
+discovery, routing, sockets, service control, CLI behavior or CLORI behavior.
 
 ### NET.SPINE.10 - LAN Discovery Adapter Skeleton
 
@@ -252,7 +261,7 @@ with this header:
 
 Source repository: yai
 Source path: work/spines/net-spine.md
-Reference version: NET.SPINE.9.0
+Reference version: NET.SPINE.9C.0
 Authority: YAI repository
 Mode: copied compatibility reference
 

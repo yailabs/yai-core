@@ -20,6 +20,9 @@ An endpoint is not authority.
 
 This area does not implement discovery, probing, routing or transport.
 
-Current status: scaffold.
+`net/endpoint/endpoint.c` provides pure endpoint-kind name and validity helpers
+only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.6 health/readiness/liveness probe skeleton.

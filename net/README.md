@@ -14,7 +14,7 @@ CLORI executes neural computation.
 
 ## Status
 
-Current status: scaffold.
+Current status: C translation unit scaffold started.
 
 NET.SPINE.1 establishes canonical terms, public header discipline and module
 area README discipline. NET.SPINE.2 starts stream envelope contract material.
@@ -26,11 +26,15 @@ NET.SPINE.6 starts health/readiness/liveness contract material.
 NET.SPINE.7 starts local service lifecycle contract material.
 NET.SPINE.8 starts localhost transport adapter contract material.
 NET.SPINE.9 starts local IPC channel contract material.
+NET.SPINE.9C adds integrated C translation units for pure vocabulary helpers.
 NET protocol vocabulary and fixtures live under `proto/`.
 
 NET is not a standalone repository. It has no local Makefile, docs tree, test
 tree, fixture tree, benchmark tree or examples tree. Public headers live under
 `include/yai/net/`. Internal module areas live directly under `net/`.
+Current C implementation is limited to enum/string validity helpers and stable
+component metadata. It does not implement network IO, discovery, routing,
+transport behavior, service execution or CLORI code.
 
 ## Module Layout
 
@@ -53,7 +57,9 @@ compat/      future external node compatibility
 
 ```sh
 make net-info
+make build-net-c
 make check-net-headers
+make check-net-c-sources
 make check-net-stream-fixtures
 make check-net-node-fixtures
 make check-net-capability-fixtures
@@ -67,7 +73,7 @@ make check-net-boundary
 
 ## Non-Goals
 
-NET.SPINE.9 does not implement LAN discovery, remote transport, local socket
+NET.SPINE.9C does not implement LAN discovery, remote transport, local socket
 transport, HTTP behavior, routing behavior, live IPC, server behavior, CLI
 behavior or CLORI support. It keeps NET as an integrated module, not a
 standalone repository.

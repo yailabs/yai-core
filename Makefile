@@ -106,6 +106,14 @@ C_SOURCES := \
 	system/store/record_codec.c \
 	system/store/journal_file.c \
 	system/engine_bridge/rust_engine_backend.c \
+	net/core/net.c \
+	net/stream/stream.c \
+	net/node/node.c \
+	net/capability/capability.c \
+	net/endpoint/endpoint.c \
+	net/health/health.c \
+	net/lifecycle/lifecycle.c \
+	net/transport/transport.c \
 	system/projection/projection.c \
 	system/projection/projection_kind.c \
 	system/projection/redaction.c \
@@ -171,6 +179,7 @@ SMOKE_FACT_REPORTS_CLI := tests/smoke/fact-reports-cli/test_fact_reports_cli.sh
 SMOKE_DAEMON_IPC := tests/smoke/daemon-ipc/test_daemon_ipc.sh
 SMOKE_DAEMON_CORE_LOOP := tests/smoke/daemon-core-loop/test_daemon_core_loop.sh
 SMOKE_PROVIDER_RUNTIME_SURFACE := tests/smoke/provider-runtime-surface/test_provider_runtime_surface.sh
+NET_ENUM_NAMES_TEST := $(BUILD_DIR)/test_net_enum_names
 
 info:
 	@printf "yai: local AI operational control core\n"
@@ -196,14 +205,21 @@ info:
 
 net-info:
 	@printf "net: yai runtime communication module\n"
-	@printf "status: integrated scaffold\n"
+	@printf "status: C translation unit scaffold started\n"
+	@printf "reference: NET.SPINE.9C.0\n"
 	@printf "discovery: not implemented\n"
 	@printf "transport: not implemented\n"
 	@printf "routing: not implemented\n"
 	@printf "external-nodes: planned\n"
 
+build-net-c: $(NET_ENUM_NAMES_TEST)
+	@$(NET_ENUM_NAMES_TEST)
+
 check-net-boundary:
 	@./tools/checks/check-net-boundary.sh
+
+check-net-c-sources:
+	@./tools/checks/check-net-c-sources.sh
 
 check-net-headers:
 	@./tools/checks/check-net-headers.sh
@@ -541,6 +557,10 @@ $(SMOKE_HOT_STATE_SESSION): tests/smoke/hot-state-session/test_hot_state_session
 $(SMOKE_PROJECTION_FRESHNESS): tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY)
 	@mkdir -p "$(dir $@)"
 	$(CC) $(CFLAGS) tests/smoke/projection-freshness/test_projection_freshness.c $(C_LIBRARY) -o "$@"
+
+$(NET_ENUM_NAMES_TEST): tests/net/test_net_enum_names.c $(C_LIBRARY)
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) tests/net/test_net_enum_names.c $(C_LIBRARY) -o "$@"
 
 build-c: build-rust-ffi $(C_LIBRARY) $(YAID) $(SMOKE_MINIMUM_LOOP) $(SMOKE_PERSISTENT_JOURNAL) $(SMOKE_CONTROL_GATE) $(SMOKE_FILESYSTEM_CARRIER) $(SMOKE_GRAPH_RECONSTRUCTION) $(SMOKE_OPERATIONAL_MEMORY) $(SMOKE_RECONCILE_DIVERGENCE) $(SMOKE_PROJECTION_HARDENING) $(SMOKE_QUERY_BOUNDARY) $(SMOKE_RUST_ENGINE_R1) $(SMOKE_CASE_CONTEXT) $(SMOKE_INTERACTION_THREAD) $(SMOKE_HOT_STATE) $(SMOKE_CONTROL_CARRIER_SUBSTRATE) $(SMOKE_OPERATION_DISPATCH_MULTIPLEX) $(SMOKE_CARRIER_CONTRACT_FILESYSTEM) $(SMOKE_PROCESS_CARRIER) $(SMOKE_HOST_OBSERVATION_PROBE) $(SMOKE_CARRIER_COVERAGE_MATRIX) $(SMOKE_NON_PROCESS_CARRIER_SKELETONS) $(SMOKE_CARRIER_OUTCOME_HARNESS) $(SMOKE_CARRIER_RECEIPT_DIVERGENCE) $(SMOKE_GRAPH_RUNTIMEGRAPH_SCHEMA) $(SMOKE_HOT_STATE_SESSION) $(SMOKE_PROJECTION_FRESHNESS)
 

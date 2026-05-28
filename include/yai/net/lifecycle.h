@@ -74,4 +74,7 @@ typedef struct yai_net_lifecycle_report_v1 {
     uint64_t observed_at_unix_ms;
 } yai_net_lifecycle_report_v1_t;
 
+const char *yai_net_lifecycle_state_name(yai_net_lifecycle_state_t value);
+int yai_net_lifecycle_state_is_valid(yai_net_lifecycle_state_t value);
+
 #endif

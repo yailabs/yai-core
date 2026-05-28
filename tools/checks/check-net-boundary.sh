@@ -103,10 +103,22 @@ for path in \
   require_file "$path"
 done
 
-if ! grep -Fx 'Reference version: NET.SPINE.9.0' work/spines/net-spine.md >/dev/null; then
-  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.9.0\n' >&2
+if ! grep -Fx 'Reference version: NET.SPINE.9C.0' work/spines/net-spine.md >/dev/null; then
+  printf 'work/spines/net-spine.md must declare Reference version: NET.SPINE.9C.0\n' >&2
   exit 1
 fi
+
+if ! find net -path 'net/*/*.c' -print -quit | grep -q .; then
+  printf 'NET boundary requires integrated C translation units under net/<area>/\n' >&2
+  exit 1
+fi
+
+for source in \
+  net/core/net.c \
+  net/stream/stream.c \
+  net/transport/transport.c; do
+  require_file "$source"
+done
 
 if ! grep -F '## Node Identity' proto/net.md >/dev/null; then
   printf 'proto/net.md must define Node Identity\n' >&2
@@ -227,7 +239,7 @@ if grep -R -n -E '#[[:space:]]*include[[:space:]]+[<"]((system|engine)/|yai/(sys
 fi
 rm -f /tmp/yai-net-boundary-includes.$$
 
-if grep -R -n -E '\b(socket|connect|listen|accept|bind|getaddrinfo|recv|send|read|write|close|mkfifo|pipe)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
+if grep -R -n -E '\b(socket|connect|listen|accept|bind|getaddrinfo|recv|send|read|write|close|open|mkfifo|pipe)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-network.$$ 2>/dev/null; then
   cat /tmp/yai-net-boundary-network.$$ >&2
   rm -f /tmp/yai-net-boundary-network.$$
   printf 'NET.SPINE.0R must not contain network implementation symbols\n' >&2
@@ -250,6 +262,14 @@ if grep -R -n -i -E '\b(curl|http request)\b' net include/yai/net >/tmp/yai-net-
   exit 1
 fi
 rm -f /tmp/yai-net-boundary-http-request.$$
+
+if grep -R -n -i -E '\b(mdns|dns_sd|broadcast)\b' net --include='*.c' >/tmp/yai-net-boundary-discovery.$$ 2>/dev/null; then
+  cat /tmp/yai-net-boundary-discovery.$$ >&2
+  rm -f /tmp/yai-net-boundary-discovery.$$
+  printf 'NET.SPINE.9C must not contain discovery implementation signals\n' >&2
+  exit 1
+fi
+rm -f /tmp/yai-net-boundary-discovery.$$
 
 if grep -R -n -E '\b(fork|exec|system|popen|kill|waitpid)[[:space:]]*\(' net include/yai/net >/tmp/yai-net-boundary-process.$$ 2>/dev/null; then
   cat /tmp/yai-net-boundary-process.$$ >&2

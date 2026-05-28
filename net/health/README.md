@@ -14,6 +14,9 @@ readiness/liveness, lifecycle describes service state.
 
 This area does not implement live probing, routing, discovery or transport.
 
-Current status: scaffold.
+`net/health/health.c` provides pure health-state name and validity helpers
+only.
+
+Current status: C translation unit scaffold started.
 
 Next expected wave: NET.SPINE.7 local service lifecycle contract.

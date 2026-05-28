@@ -64,4 +64,7 @@ typedef struct yai_net_stream_envelope_v1 {
     uint64_t timestamp_unix_ms;
 } yai_net_stream_envelope_v1_t;
 
+const char *yai_net_stream_event_kind_name(yai_net_stream_event_kind_t value);
+int yai_net_stream_event_kind_is_valid(yai_net_stream_event_kind_t value);
+
 #endif
